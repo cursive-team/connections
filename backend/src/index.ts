@@ -1,12 +1,12 @@
-import express, { Request, Response } from "express";
+import express from "express";
+import userRoutes from "./routes/user";
 
 const app = express();
 
 app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, world!");
-});
+// Routes
+app.use("/api/user", userRoutes);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
