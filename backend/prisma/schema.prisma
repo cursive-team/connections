@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String      @id @default(uuid())
+  registrationNumber  Int         @unique @default(autoincrement())
+  email               String      @unique
+  signaturePublicKey  String
+  encryptionPublicKey String
+  createdAt           DateTime    @default(now())
+  AuthToken           AuthToken[]
+  Backup              Backup?
+}
+
+model AuthToken {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  value     String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Backup {
+  id                String   @id @default(uuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id])
+  passwordSalt      String
+  passwordHash      String
+  encryptedData     String
+  authenticationTag String
+  iv                String
+  sequenceNumber    Int
+  lastUpdatedAt     DateTime
+  createdAt         DateTime @default(now())
+}
