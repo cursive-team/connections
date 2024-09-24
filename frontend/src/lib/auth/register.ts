@@ -1,3 +1,5 @@
+import { BASE_API_URL } from "@/constants";
+
 interface RegisterResponse {
   registrationNumber: number;
 }
@@ -7,7 +9,7 @@ export async function registerUser(
   password: string
 ): Promise<RegisterResponse> {
   try {
-    const response = await fetch("/api/user/register", {
+    const response = await fetch(`${BASE_API_URL}/api/user/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
