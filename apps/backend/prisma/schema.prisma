@@ -13,6 +13,8 @@ model User {
   email               String      @unique
   signaturePublicKey  String
   encryptionPublicKey String
+  passwordSalt        String
+  passwordHash        String
   createdAt           DateTime    @default(now())
   AuthToken           AuthToken[]
   Backup              Backup?
@@ -32,12 +34,10 @@ model Backup {
   id                String   @id @default(uuid())
   userId            String   @unique
   user              User     @relation(fields: [userId], references: [id])
-  passwordSalt      String
-  passwordHash      String
+  backupEntryType   String
   encryptedData     String
-  authenticationTag String
   iv                String
-  sequenceNumber    Int
-  lastUpdatedAt     DateTime
-  createdAt         DateTime @default(now())
+  authenticationTag String
+  clientCreatedAt   DateTime
+  submittedAt       DateTime @default(now())
 }

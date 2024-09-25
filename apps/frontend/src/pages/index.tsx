@@ -1,3 +1,4 @@
+import { registerUser } from "@/lib/auth/register";
 import { useState } from "react";
 
 export default function Home() {
@@ -8,7 +9,7 @@ export default function Home() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Add your register logic here
+    registerUser(registerEmail, registerPassword);
   };
 
   const handleLogin = async (e: React.FormEvent) => {
