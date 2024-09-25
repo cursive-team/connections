@@ -1,34 +1,30 @@
 import express, { Request, Response } from "express";
 import prisma from "../../lib/prisma/client";
+import {
+  ErrorResponse,
+  UserRegisterRequest,
+  UserRegisterResponse,
+} from "@types";
 
 const router = express.Router();
 
-interface UserRegisterRequest {
-  email: string;
-  signaturePublicKey: string;
-  encryptionPublicKey: string;
-}
-
-interface UserRegisterResponse {
-  id: string;
-  registrationNumber: number;
-  email: string;
-  signaturePublicKey: string;
-  encryptionPublicKey: string;
-  createdAt: Date;
-}
-
 /**
  * @route POST /api/user/register
- * @desc Registers a new user with the provided email and public keys.
+ * @desc Registers a new user with the provided email, public keys, and password information.
  */
 router.post(
   "/register",
   async (
     req: Request<{}, {}, UserRegisterRequest>,
-    res: Response<UserRegisterResponse | { error: string }>
+    res: Response<UserRegisterResponse | ErrorResponse>
   ) => {
-    const { email, signaturePublicKey, encryptionPublicKey } = req.body;
+    const {
+      email,
+      signaturePublicKey,
+      encryptionPublicKey,
+      passwordSalt,
+      passwordHash,
+    } = req.body;
 
     try {
       // Check if the user already exists by email
@@ -42,20 +38,22 @@ router.post(
           .json({ error: "User with this email already exists" });
       }
 
-      // Create the new user
       const newUser = await prisma.user.create({
         data: {
           email,
           signaturePublicKey,
           encryptionPublicKey,
+          passwordSalt,
+          passwordHash,
         },
       });
 
-      // Send the newly created user data as a response
-      res.status(201).json(newUser);
+      return res
+        .status(201)
+        .json({ registrationNumber: newUser.registrationNumber });
     } catch (error) {
-      console.error("Error registering user:", error);
-      res
+      console.error("Error registering user: ", error);
+      return res
         .status(500)
         .json({ error: "An error occurred while registering the user" });
     }

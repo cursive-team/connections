@@ -75,3 +75,30 @@ export const decryptBackupString = (
   decrypted += decipher.final("utf8");
   return decrypted;
 };
+
+/**
+ * Generates a random salt.
+ * @returns A string containing the salt.
+ */
+export const generateSalt = (): string => {
+  return window.crypto.getRandomValues(new Uint8Array(16)).toString();
+};
+
+/**
+ * Hashes a password using a salt.
+ * @param password The password to hash.
+ * @param salt The salt to use for hashing.
+ * @returns A string containing the hashed password.
+ */
+export const hashPassword = async (
+  password: string,
+  salt: string
+): Promise<string> => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password + salt);
+  const hashBuffer = await window.crypto.subtle.digest("SHA-256", data);
+
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+};
