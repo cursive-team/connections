@@ -1,9 +1,14 @@
 import { BASE_API_URL } from "@/constants";
 import { generateEncryptionKeyPair } from "@/lib/crypto/encrypt";
 import { generateSignatureKeyPair } from "@/lib/crypto/sign";
-import { generateSalt, hashPassword } from "@/lib/crypto/backup";
+import {
+  encryptBackupString,
+  generateSalt,
+  hashPassword,
+} from "@/lib/crypto/backup";
 import {
   ErrorResponse,
+  UserRegisterRequest,
   UserRegisterResponse,
   UserRegisterResponseSchema,
   errorToString,
@@ -19,18 +24,30 @@ export async function registerUser(
   const passwordSalt = generateSalt();
   const passwordHash = await hashPassword(password, passwordSalt);
 
+  const { encryptedData, authenticationTag, iv } = encryptBackupString(
+    JSON.stringify({}), // TODO: Implement initial backup
+    email,
+    password
+  );
+
+  const request: UserRegisterRequest = {
+    email,
+    signaturePublicKey,
+    encryptionPublicKey,
+    passwordSalt,
+    passwordHash,
+    authenticationTag,
+    iv,
+    encryptedData,
+    backupEntryType: "INITIAL",
+    clientCreatedAt: new Date(),
+  };
   const response = await fetch(`${BASE_API_URL}/api/user/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      email,
-      signaturePublicKey,
-      encryptionPublicKey,
-      passwordSalt,
-      passwordHash,
-    }),
+    body: JSON.stringify(request),
   });
 
   if (!response.ok) {
