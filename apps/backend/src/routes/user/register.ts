@@ -1,11 +1,13 @@
 import express, { Request, Response } from "express";
 import prisma from "@/lib/prisma/client";
+import { generateAuthToken } from "@/lib/auth/token";
 import {
   ErrorResponse,
   UserRegisterRequest,
   UserRegisterResponse,
   UserRegisterRequestSchema,
   errorToString,
+  BackupData,
 } from "@types";
 
 const router = express.Router();
@@ -21,7 +23,6 @@ router.post(
     res: Response<UserRegisterResponse | ErrorResponse>
   ) => {
     try {
-      // Validate request body with Zod
       const validatedData = UserRegisterRequestSchema.parse(req.body);
 
       const {
@@ -30,6 +31,11 @@ router.post(
         encryptionPublicKey,
         passwordSalt,
         passwordHash,
+        authenticationTag,
+        iv,
+        encryptedData,
+        backupEntryType,
+        clientCreatedAt,
       } = validatedData;
 
       // Check if the user already exists by email
@@ -53,9 +59,36 @@ router.post(
         },
       });
 
-      return res
-        .status(201)
-        .json({ registrationNumber: newUser.registrationNumber });
+      const backup = await prisma.backup.create({
+        data: {
+          user: { connect: { id: newUser.id } },
+          authenticationTag,
+          iv,
+          encryptedData,
+          backupEntryType,
+          clientCreatedAt,
+        },
+      });
+
+      const returnedBackupData: BackupData[] = [
+        {
+          authenticationTag: backup.authenticationTag,
+          iv: backup.iv,
+          encryptedData: backup.encryptedData,
+          backupEntryType: backup.backupEntryType,
+          clientCreatedAt: backup.clientCreatedAt,
+          submittedAt: backup.submittedAt,
+        },
+      ];
+
+      // Generate a new auth token for the user
+      const authToken = await generateAuthToken(newUser.id);
+
+      return res.status(201).json({
+        registrationNumber: newUser.registrationNumber,
+        authToken,
+        backupData: returnedBackupData,
+      });
     } catch (error) {
       return res.status(500).json({
         error: errorToString(error),

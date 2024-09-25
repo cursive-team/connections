@@ -1,21 +1,23 @@
 {
   "name": "backend",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/index.ts",
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
-    "build": "tsc",
-    "serve": "node dist/index.js"
+    "build": "tsc --project tsconfig.json",
+    "serve": "node -r tsconfig-paths/register dist/apps/backend/src/index.js"
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
-    "express": "^4.21.0"
+    "express": "^4.21.0",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^22.5.5",
+    "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.7",
     "prisma": "^5.19.1",
     "ts-node": "^10.9.2",

@@ -9,12 +9,11 @@ export default function Home() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    registerUser(registerEmail, registerPassword);
+    await registerUser(registerEmail, registerPassword);
   };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Add your login logic here
   };
 
   return (
