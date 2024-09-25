@@ -42,7 +42,7 @@ export async function registerUser(
     backupEntryType: "INITIAL",
     clientCreatedAt: new Date(),
   };
-  const response = await fetch(`${BASE_API_URL}/api/user/register`, {
+  const response = await fetch(`${BASE_API_URL}/user/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
