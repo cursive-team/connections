@@ -4,6 +4,8 @@ import {
   ErrorResponse,
   UserRegisterRequest,
   UserRegisterResponse,
+  UserRegisterRequestSchema,
+  errorToString,
 } from "@types";
 
 const router = express.Router();
@@ -18,15 +20,18 @@ router.post(
     req: Request<{}, {}, UserRegisterRequest>,
     res: Response<UserRegisterResponse | ErrorResponse>
   ) => {
-    const {
-      email,
-      signaturePublicKey,
-      encryptionPublicKey,
-      passwordSalt,
-      passwordHash,
-    } = req.body;
-
     try {
+      // Validate request body with Zod
+      const validatedData = UserRegisterRequestSchema.parse(req.body);
+
+      const {
+        email,
+        signaturePublicKey,
+        encryptionPublicKey,
+        passwordSalt,
+        passwordHash,
+      } = validatedData;
+
       // Check if the user already exists by email
       const existingUser = await prisma.user.findUnique({
         where: { email },
@@ -52,10 +57,9 @@ router.post(
         .status(201)
         .json({ registrationNumber: newUser.registrationNumber });
     } catch (error) {
-      console.error("Error registering user: ", error);
-      return res
-        .status(500)
-        .json({ error: "An error occurred while registering the user" });
+      return res.status(500).json({
+        error: errorToString(error),
+      });
     }
   }
 );

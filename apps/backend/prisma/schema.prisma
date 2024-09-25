@@ -17,7 +17,7 @@ model User {
   passwordHash        String
   createdAt           DateTime    @default(now())
   AuthToken           AuthToken[]
-  Backup              Backup?
+  Backup              Backup[]
 }
 
 model AuthToken {
@@ -32,7 +32,7 @@ model AuthToken {
 
 model Backup {
   id                String   @id @default(uuid())
-  userId            String   @unique
+  userId            String
   user              User     @relation(fields: [userId], references: [id])
   backupEntryType   String
   encryptedData     String

@@ -2,7 +2,12 @@ import { BASE_API_URL } from "@/constants";
 import { generateEncryptionKeyPair } from "../crypto/encrypt";
 import { generateSignatureKeyPair } from "../crypto/sign";
 import { generateSalt, hashPassword } from "../crypto/backup";
-import { ErrorResponse, UserRegisterResponse } from "@types";
+import {
+  ErrorResponse,
+  UserRegisterResponse,
+  UserRegisterResponseSchema,
+  errorToString,
+} from "@types";
 
 export async function registerUser(
   email: string,
@@ -33,6 +38,11 @@ export async function registerUser(
     throw new Error(error);
   }
 
-  const data: UserRegisterResponse = await response.json();
-  return data;
+  const rawData = await response.json();
+  try {
+    const validatedData = UserRegisterResponseSchema.parse(rawData);
+    return validatedData;
+  } catch (error) {
+    throw new Error(errorToString(error));
+  }
 }
