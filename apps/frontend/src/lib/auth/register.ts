@@ -1,7 +1,7 @@
 import { BASE_API_URL } from "@/constants";
-import { generateEncryptionKeyPair } from "../crypto/encrypt";
-import { generateSignatureKeyPair } from "../crypto/sign";
-import { generateSalt, hashPassword } from "../crypto/backup";
+import { generateEncryptionKeyPair } from "@/lib/crypto/encrypt";
+import { generateSignatureKeyPair } from "@/lib/crypto/sign";
+import { generateSalt, hashPassword } from "@/lib/crypto/backup";
 import {
   ErrorResponse,
   UserRegisterResponse,
