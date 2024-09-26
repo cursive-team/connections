@@ -3,7 +3,6 @@ import { User } from "@/lib/storage/user";
 
 // TODO: Implement loading user from backup
 export const loadUserFromBackup = (backupData: BackupData[]): User => {
-  console.log(backupData);
   return {
     email: "",
     signaturePublicKey: "",

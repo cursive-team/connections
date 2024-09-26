@@ -59,8 +59,6 @@ export class PrismaPostgresClient {
       data: createBackup,
     });
 
-    console.log(prismaBackup)
-
     if (prismaBackup) {
       return BackupSchema.parse(prismaBackup);
     }

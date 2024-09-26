@@ -1,5 +1,5 @@
 import { PrismaPostgresClient } from "@/lib/controller/postgres/prisma/client";
-import { iPostgresClient } from "@/lib/controller/interfaces";
+import { iPostgresClient } from "@/lib/controller/postgres/interfaces";
 import {
   User,
   UserCreateRequest,
@@ -10,11 +10,11 @@ import {
 import {AuthToken} from "@types";
 
 export class Controller {
-  postgresClient: iPostgresClient // Use interface so that it could be mocked out
+  postgresClient: iPostgresClient // Use interface so that it can be mocked out
 
   constructor() {
     // Default client, could also pass through mock
-    this.postgresClient = new PrismaPostgresClient(); // HERE: something up with this
+    this.postgresClient = new PrismaPostgresClient();
 
     // Over time more clients will be added (e.g. nitro enclave client)...
   }
