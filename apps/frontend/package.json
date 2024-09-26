@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "prisma migrate deploy && prisma generate"
+    "lint": "next lint"
   },
   "dependencies": {
     "elliptic": "^6.5.7",
