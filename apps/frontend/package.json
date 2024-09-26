@@ -9,7 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "babyjubjub-ecdsa": "^1.2.0",
+    "elliptic": "^6.5.7",
+    "ffjavascript": "^0.3.0",
+    "hash.js": "^1.1.7",
+    "js-sha256": "^0.11.0",
     "next": "14.2.13",
     "react": "^18",
     "react-dom": "^18",

@@ -2,7 +2,7 @@ import {
   generateSignatureKeyPair as getBBJJKeyPair,
   sign as signBBJJ,
   verify as verifyBBJJ,
-} from "babyjubjub-ecdsa";
+} from "@/lib/crypto/babyJubJub";
 
 export const generateSignatureKeyPair = (): {
   signingKey: string;

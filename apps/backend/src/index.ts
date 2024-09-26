@@ -1,13 +1,13 @@
 import express from "express";
 import userRoutes from "./routes/user";
-import {FRONTEND_API_URL} from "../constants";
+import { FRONTEND_URL } from "../constants";
 
-const cors = require('cors');
+const cors = require("cors");
 
 const app = express();
 
 const corsOptions = {
-  origin: `${FRONTEND_API_URL}`,
+  origin: `${FRONTEND_URL}`,
 };
 
 app.use(cors(corsOptions));

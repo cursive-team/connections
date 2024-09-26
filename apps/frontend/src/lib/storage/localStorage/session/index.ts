@@ -2,19 +2,10 @@ import {
   deleteFromLocalStorage,
   getFromLocalStorage,
   saveToLocalStorage,
-} from "..";
-import { z } from "zod";
+} from "@/lib/storage/localStorage/utils";
+import { Session, SessionSchema } from "@/lib/storage/types";
 
 export const SESSION_STORAGE_KEY = "session";
-
-export const SessionSchema = z.object({
-  value: z.string(),
-  expiresAt: z.coerce.date(),
-  backupMasterPassword: z.string(),
-  lastBackupFetchedAt: z.coerce.date(),
-});
-
-export type Session = z.infer<typeof SessionSchema>;
 
 export const saveSession = (session: Session): void => {
   saveToLocalStorage(SESSION_STORAGE_KEY, JSON.stringify(session));
