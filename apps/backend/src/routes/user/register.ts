@@ -1,6 +1,4 @@
 import express, { Request, Response } from "express";
-import prisma from "@/lib/prisma/client";
-import { generateAuthToken } from "@/lib/auth/token";
 import {
   ErrorResponse,
   UserRegisterRequest,
@@ -11,6 +9,10 @@ import {
 } from "@types";
 
 const router = express.Router();
+
+import {Controller} from "@/lib/controller";
+
+const controller = new Controller();
 
 /**
  * @route POST /api/user/register
@@ -39,9 +41,7 @@ router.post(
       } = validatedData;
 
       // Check if the user already exists by email
-      const existingUser = await prisma.user.findUnique({
-        where: { email },
-      });
+      const existingUser = await controller.GetUserByEmail(email);
 
       if (existingUser) {
         return res
@@ -49,25 +49,21 @@ router.post(
           .json({ error: "User with this email already exists" });
       }
 
-      const newUser = await prisma.user.create({
-        data: {
-          email,
-          signaturePublicKey,
-          encryptionPublicKey,
-          passwordSalt,
-          passwordHash,
-        },
+      const newUser = await controller.CreateUser({
+        email,
+        signaturePublicKey,
+        encryptionPublicKey,
+        passwordSalt,
+        passwordHash,
       });
 
-      const backup = await prisma.backup.create({
-        data: {
-          user: { connect: { id: newUser.id } },
-          authenticationTag,
-          iv,
-          encryptedData,
-          backupEntryType,
-          clientCreatedAt,
-        },
+      const backup = await controller.CreateBackup({
+        user: { connect: { id: newUser.id } },
+        authenticationTag,
+        iv,
+        encryptedData,
+        backupEntryType,
+        clientCreatedAt,
       });
 
       const returnedBackupData: BackupData[] = [
@@ -82,7 +78,7 @@ router.post(
       ];
 
       // Generate a new auth token for the user
-      const authToken = await generateAuthToken(newUser.id);
+      const authToken = await controller.CreateAuthTokenForUser(newUser.id)
 
       return res.status(201).json({
         registrationNumber: newUser.registrationNumber,
