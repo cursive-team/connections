@@ -1,5 +1,6 @@
 import { BackupData } from "@types";
 import { Session } from "./types";
+import { LocalStorage } from "./localStorage/client";
 
 export interface InitialData {
   backupData: BackupData[];
@@ -14,3 +15,6 @@ export interface ClientStorage {
   getSession(): Promise<Session | undefined>;
   saveSession(session: Session): Promise<void>;
 }
+
+const storage = new LocalStorage();
+export { storage };
