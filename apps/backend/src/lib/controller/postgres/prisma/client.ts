@@ -4,7 +4,7 @@ import {
   AuthTokenCreateRequest,
   UserCreateRequest,
   User,
-  Backup
+  Backup,
 } from "@/lib/controller/postgres/types";
 import { AuthToken } from "@types";
 
@@ -13,10 +13,9 @@ import("@/lib/controller/postgres/prisma/user/user");
 import("@/lib/controller/postgres/prisma/backup/backup");
 import("@/lib/controller/postgres/prisma/auth/token");
 
-
 // Should follow iPostgresClient implementation
 export class PrismaPostgresClient {
-  prismaClient: PrismaClient
+  prismaClient: PrismaClient;
 
   constructor() {
     this.prismaClient = new PrismaClient();
@@ -26,17 +25,20 @@ export class PrismaPostgresClient {
   GetUserByEmail(email: string): Promise<User | null>;
 
   // @ts-expect-error (ts2391)
-  GetUserById(email: string): Promise<User | null>;
+  GetUserById(userId: string): Promise<User | null>;
 
   // @ts-expect-error (ts2391)
   CreateUser(createUser: UserCreateRequest): Promise<User>;
 
   // @ts-expect-error (ts2391)
+  GetAllBackupsForUser(userId: string): Promise<Backup[]>;
+
+  // @ts-expect-error (ts2391)
   CreateBackup(createBackup: BackupCreateRequest): Promise<Backup>;
 
   // @ts-expect-error (ts2391)
-  CreateAuthToken(createAuthToken: AuthTokenCreateRequest): Promise<AuthToken>
+  CreateAuthToken(createAuthToken: AuthTokenCreateRequest): Promise<AuthToken>;
 
   // @ts-expect-error (ts2391)
-  CreateAuthTokenForUser(userId: string): Promise<AuthToken>
+  CreateAuthTokenForUser(userId: string): Promise<AuthToken>;
 }

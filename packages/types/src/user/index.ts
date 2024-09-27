@@ -52,9 +52,24 @@ export const UserRegisterRequestSchema = z.object({
 export type UserRegisterRequest = z.infer<typeof UserRegisterRequestSchema>;
 
 export const UserRegisterResponseSchema = z.object({
-  registrationNumber: z.number().int(),
   authToken: AuthTokenSchema,
   backupData: z.array(BackupDataSchema),
+  registrationNumber: z.number().int(),
 });
 
 export type UserRegisterResponse = z.infer<typeof UserRegisterResponseSchema>;
+
+export const UserLoginRequestSchema = z.object({
+  email: z.string().email(),
+});
+
+export type UserLoginRequest = z.infer<typeof UserLoginRequestSchema>;
+
+export const UserLoginResponseSchema = z.object({
+  authToken: AuthTokenSchema,
+  backupData: z.array(BackupDataSchema),
+  passwordSalt: z.string(),
+  passwordHash: z.string(),
+});
+
+export type UserLoginResponse = z.infer<typeof UserLoginResponseSchema>;

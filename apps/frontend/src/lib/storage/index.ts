@@ -12,6 +12,7 @@ export interface InitialStorageData {
 export interface ClientStorage {
   loadInitialStorageData(initialStorageData: InitialStorageData): Promise<void>;
   deleteStorageData(): Promise<void>;
+  getUser(): Promise<User | undefined>;
   getSession(): Promise<Session | undefined>;
   saveSession(session: Session): Promise<void>;
 }

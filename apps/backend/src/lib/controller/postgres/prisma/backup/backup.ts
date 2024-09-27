@@ -1,7 +1,28 @@
 import { PrismaPostgresClient } from "@/lib/controller/postgres/prisma/client";
-import {Backup, BackupCreateRequest, BackupSchema} from "@/lib/controller/postgres/types";
+import {
+  Backup,
+  BackupCreateRequest,
+  BackupSchema,
+} from "@/lib/controller/postgres/types";
 
-PrismaPostgresClient.prototype.CreateBackup = async function (createBackup: BackupCreateRequest): Promise<Backup> {
+PrismaPostgresClient.prototype.GetAllBackupsForUser = async function (
+  userId: string
+): Promise<Backup[]> {
+  const prismaBackups = await this.prismaClient.backup.findMany({
+    where: {
+      userId,
+    },
+    orderBy: {
+      submittedAt: "asc",
+    },
+  });
+
+  return prismaBackups.map((prismaBackup) => BackupSchema.parse(prismaBackup));
+};
+
+PrismaPostgresClient.prototype.CreateBackup = async function (
+  createBackup: BackupCreateRequest
+): Promise<Backup> {
   const prismaBackup = await this.prismaClient.backup.create({
     data: createBackup,
   });
@@ -11,4 +32,4 @@ PrismaPostgresClient.prototype.CreateBackup = async function (createBackup: Back
   }
 
   return {} as Backup;
-}
+};

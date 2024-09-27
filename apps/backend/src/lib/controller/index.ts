@@ -5,12 +5,12 @@ import {
   UserCreateRequest,
   Backup,
   BackupCreateRequest,
-  AuthTokenCreateRequest
+  AuthTokenCreateRequest,
 } from "@/lib/controller/postgres/types";
-import {AuthToken} from "@types";
+import { AuthToken } from "@types";
 
 export class Controller {
-  postgresClient: iPostgresClient // Use interface so that it can be mocked out
+  postgresClient: iPostgresClient; // Use interface so that it can be mocked out
 
   constructor() {
     // Default client, could also pass through mock
@@ -20,27 +20,30 @@ export class Controller {
   }
 
   GetUserByEmail(email: string): Promise<User | null> {
-    return this.postgresClient.GetUserByEmail(email)
+    return this.postgresClient.GetUserByEmail(email);
   }
 
-  GetUserById(id: string): Promise<User | null> {
-    return this.postgresClient.GetUserById(id)
+  GetUserById(userId: string): Promise<User | null> {
+    return this.postgresClient.GetUserById(userId);
   }
 
   CreateUser(createUser: UserCreateRequest): Promise<User> {
-    return this.postgresClient.CreateUser(createUser)
+    return this.postgresClient.CreateUser(createUser);
+  }
+
+  GetAllBackupsForUser(userId: string): Promise<Backup[]> {
+    return this.postgresClient.GetAllBackupsForUser(userId);
   }
 
   CreateBackup(createBackup: BackupCreateRequest): Promise<Backup> {
-    return this.postgresClient.CreateBackup(createBackup)
+    return this.postgresClient.CreateBackup(createBackup);
   }
 
   CreateAuthToken(createAuthToken: AuthTokenCreateRequest): Promise<AuthToken> {
-    return this.postgresClient.CreateAuthToken(createAuthToken)
+    return this.postgresClient.CreateAuthToken(createAuthToken);
   }
 
   CreateAuthTokenForUser(userId: string): Promise<AuthToken> {
-    return this.postgresClient.CreateAuthTokenForUser(userId)
+    return this.postgresClient.CreateAuthTokenForUser(userId);
   }
 }
-

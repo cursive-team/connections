@@ -5,17 +5,22 @@ import { generateSalt, hashPassword } from "@/lib/crypto/backup";
 import {
   ErrorResponse,
   UserRegisterRequest,
-  UserRegisterResponse,
   UserRegisterResponseSchema,
   errorToString,
 } from "@types";
-import { createInitialBackup } from "@/lib/backup";
+import { createInitialBackup, parseUserFromBackup } from "@/lib/backup";
 import { User } from "@/lib/storage/types";
+import { storage } from "@/lib/storage";
 
+/**
+ * Registers a user and loads initial storage data.
+ * @param email - The email of the user.
+ * @param password - The password of the user.
+ */
 export async function registerUser(
   email: string,
   password: string
-): Promise<UserRegisterResponse> {
+): Promise<void> {
   const { publicKey: encryptionPublicKey, privateKey: encryptionPrivateKey } =
     await generateEncryptionKeyPair();
   const { verifyingKey: signaturePublicKey, signingKey: signaturePrivateKey } =
@@ -71,7 +76,21 @@ export async function registerUser(
   const rawData = await response.json();
   try {
     const validatedData = UserRegisterResponseSchema.parse(rawData);
-    return validatedData;
+    const { authToken, backupData } = validatedData;
+
+    // Parse the user from the backup data
+    const user = parseUserFromBackup(email, password, backupData);
+
+    // Load the initial storage data
+    await storage.loadInitialStorageData({
+      user,
+      authTokenValue: authToken.value,
+      authTokenExpiresAt: new Date(authToken.expiresAt),
+      backupMasterPassword: password,
+      lastBackupFetchedAt: new Date(),
+    });
+
+    return;
   } catch (error) {
     throw new Error(errorToString(error));
   }

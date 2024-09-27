@@ -6,7 +6,9 @@ import {
   UserCreateRequest,
 } from "@/lib/controller/postgres/types";
 
-PrismaPostgresClient.prototype.GetUserByEmail = async function (email: string): Promise<User | null> {
+PrismaPostgresClient.prototype.GetUserByEmail = async function (
+  email: string
+): Promise<User | null> {
   const prismaUser = await this.prismaClient.user.findUnique({
     where: { email },
   });
@@ -16,11 +18,13 @@ PrismaPostgresClient.prototype.GetUserByEmail = async function (email: string): 
   }
 
   return null;
-}
+};
 
-PrismaPostgresClient.prototype.GetUserById = async function (id: string): Promise<User | null> {
+PrismaPostgresClient.prototype.GetUserById = async function (
+  userId: string
+): Promise<User | null> {
   const prismaUser = await this.prismaClient.user.findUnique({
-    where: { id },
+    where: { id: userId },
   });
 
   if (prismaUser) {
@@ -28,9 +32,11 @@ PrismaPostgresClient.prototype.GetUserById = async function (id: string): Promis
   }
 
   return null;
-}
+};
 
-PrismaPostgresClient.prototype.CreateUser = async function (createUser: UserCreateRequest): Promise<User> {
+PrismaPostgresClient.prototype.CreateUser = async function (
+  createUser: UserCreateRequest
+): Promise<User> {
   const prismaUser = await this.prismaClient.user.create({
     data: createUser,
   });
@@ -40,4 +46,4 @@ PrismaPostgresClient.prototype.CreateUser = async function (createUser: UserCrea
   }
 
   return {} as User;
-}
+};

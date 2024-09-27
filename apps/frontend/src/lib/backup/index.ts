@@ -3,13 +3,13 @@ import { User, UserSchema } from "@/lib/storage/types";
 import { decryptBackupString, encryptBackupString } from "@/lib/crypto/backup";
 
 /**
- * Loads a user from a backup.
+ * Parses a user object from a backup.
  * @param email - The email of the user.
  * @param password - The password of the user.
  * @param backupData - The backup data of the user.
  * @returns The user.
  */
-export const loadUserFromBackup = (
+export const parseUserFromBackup = (
   email: string,
   password: string,
   backupData: BackupData[]

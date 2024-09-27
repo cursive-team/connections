@@ -7,11 +7,9 @@ import {
   errorToString,
   BackupData,
 } from "@types";
-
-const router = express.Router();
-
 import { Controller } from "@/lib/controller";
 
+const router = express.Router();
 const controller = new Controller();
 
 /**
