@@ -7,11 +7,33 @@ export const AuthTokenSchema = z.object({
 
 export type AuthToken = z.infer<typeof AuthTokenSchema>;
 
+export const BackupEntryTypeSchema = z.enum(["INITIAL"]);
+
+export const CreateBackupDataSchema = z.object({
+  authenticationTag: z.string(),
+  iv: z.string(),
+  encryptedData: z.string(),
+  backupEntryType: z.coerce.string().transform((val) => {
+    if (BackupEntryTypeSchema.safeParse(val).success) {
+      return val;
+    }
+    throw new Error("Invalid backup entry type");
+  }),
+  clientCreatedAt: z.coerce.date(),
+});
+
+export type CreateBackupData = z.infer<typeof CreateBackupDataSchema>;
+
 export const BackupDataSchema = z.object({
   authenticationTag: z.string(),
   iv: z.string(),
   encryptedData: z.string(),
-  backupEntryType: z.string(),
+  backupEntryType: z.coerce.string().transform((val) => {
+    if (BackupEntryTypeSchema.safeParse(val).success) {
+      return val;
+    }
+    throw new Error("Invalid backup entry type");
+  }),
   clientCreatedAt: z.coerce.date(),
   submittedAt: z.coerce.date(),
 });
@@ -24,11 +46,7 @@ export const UserRegisterRequestSchema = z.object({
   encryptionPublicKey: z.string(),
   passwordSalt: z.string(),
   passwordHash: z.string(),
-  authenticationTag: z.string(),
-  iv: z.string(),
-  encryptedData: z.string(),
-  backupEntryType: z.string(),
-  clientCreatedAt: z.coerce.date(),
+  initialBackupData: CreateBackupDataSchema,
 });
 
 export type UserRegisterRequest = z.infer<typeof UserRegisterRequestSchema>;

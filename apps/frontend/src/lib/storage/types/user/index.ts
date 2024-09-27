@@ -6,8 +6,8 @@ import { ActivitySchema } from "./activity";
 
 export const UserSchema = z.object({
   email: z.string().email(),
-  signaturePublicKey: z.string(),
-  encryptionPublicKey: z.string(),
+  signaturePrivateKey: z.string(),
+  encryptionPrivateKey: z.string(),
   lastMessageFetchedAt: z.coerce.date(),
   userData: UserDataSchema,
   chips: z.array(ChipSchema),

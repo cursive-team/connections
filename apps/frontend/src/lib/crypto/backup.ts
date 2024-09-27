@@ -27,6 +27,12 @@ const deriveBackupEncryptionKey = (email: string, password: string): Buffer => {
   );
 };
 
+export interface EncryptBackupStringArgs {
+  backup: string;
+  email: string;
+  password: string;
+}
+
 /**
  * Encrypts a string using a key derived from an email and password.
  * @param text The text to encrypt.
@@ -34,11 +40,15 @@ const deriveBackupEncryptionKey = (email: string, password: string): Buffer => {
  * @param password The user's password.
  * @returns An object containing the encrypted text as a hex string and the auth tag.
  */
-export const encryptBackupString = (
-  backup: string,
-  email: string,
-  password: string
-): { encryptedData: string; authenticationTag: string; iv: string } => {
+export const encryptBackupString = ({
+  backup,
+  email,
+  password,
+}: EncryptBackupStringArgs): {
+  encryptedData: string;
+  authenticationTag: string;
+  iv: string;
+} => {
   const key = deriveBackupEncryptionKey(email, password);
   const iv = randomBytes(IV_LENGTH);
   const cipher = createCipheriv("aes-256-gcm", key, iv);
@@ -52,6 +62,14 @@ export const encryptBackupString = (
   };
 };
 
+export interface DecryptBackupStringArgs {
+  encryptedData: string;
+  authenticationTag: string;
+  iv: string;
+  email: string;
+  password: string;
+}
+
 /**
  * Decrypts a string using a key derived from an email and password.
  * @param encryptedData The encrypted text as a hex string.
@@ -60,13 +78,13 @@ export const encryptBackupString = (
  * @param password The user's password.
  * @returns The decrypted text.
  */
-export const decryptBackupString = (
-  encryptedData: string,
-  authenticationTag: string,
-  iv: string,
-  email: string,
-  password: string
-): string => {
+export const decryptBackupString = ({
+  encryptedData,
+  authenticationTag,
+  iv,
+  email,
+  password,
+}: DecryptBackupStringArgs): string => {
   const key = deriveBackupEncryptionKey(email, password);
   const ivBuffer = Buffer.from(iv, "hex");
   const decipher = createDecipheriv("aes-256-gcm", key, ivBuffer);

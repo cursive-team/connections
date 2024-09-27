@@ -1,11 +1,7 @@
 import { BASE_API_URL } from "@/constants";
 import { generateEncryptionKeyPair } from "@/lib/crypto/encrypt";
 import { generateSignatureKeyPair } from "@/lib/crypto/sign";
-import {
-  encryptBackupString,
-  generateSalt,
-  hashPassword,
-} from "@/lib/crypto/backup";
+import { generateSalt, hashPassword } from "@/lib/crypto/backup";
 import {
   ErrorResponse,
   UserRegisterRequest,
@@ -13,22 +9,43 @@ import {
   UserRegisterResponseSchema,
   errorToString,
 } from "@types";
+import { createInitialBackup } from "@/lib/backup";
+import { User } from "@/lib/storage/types";
 
 export async function registerUser(
   email: string,
   password: string
 ): Promise<UserRegisterResponse> {
-  const { publicKey: encryptionPublicKey } = await generateEncryptionKeyPair();
-  const { verifyingKey: signaturePublicKey } = generateSignatureKeyPair();
+  const { publicKey: encryptionPublicKey, privateKey: encryptionPrivateKey } =
+    await generateEncryptionKeyPair();
+  const { verifyingKey: signaturePublicKey, signingKey: signaturePrivateKey } =
+    generateSignatureKeyPair();
 
   const passwordSalt = generateSalt();
   const passwordHash = await hashPassword(password, passwordSalt);
 
-  const { encryptedData, authenticationTag, iv } = encryptBackupString(
-    JSON.stringify({}), // TODO: Implement initial backup
+  // Default user data
+  const user: User = {
     email,
-    password
-  );
+    signaturePrivateKey,
+    encryptionPrivateKey,
+    lastMessageFetchedAt: new Date(),
+    userData: {
+      displayName: "Bob", // TODO
+      bio: "Hello, I am Bob", // TODO
+      signaturePublicKey,
+      encryptionPublicKey,
+    },
+    chips: [],
+    connections: {},
+    activities: [],
+  };
+
+  const initialBackupData = createInitialBackup({
+    email,
+    password,
+    user,
+  });
 
   const request: UserRegisterRequest = {
     email,
@@ -36,11 +53,7 @@ export async function registerUser(
     encryptionPublicKey,
     passwordSalt,
     passwordHash,
-    authenticationTag,
-    iv,
-    encryptedData,
-    backupEntryType: "INITIAL",
-    clientCreatedAt: new Date(),
+    initialBackupData,
   };
   const response = await fetch(`${BASE_API_URL}/user/register`, {
     method: "POST",
