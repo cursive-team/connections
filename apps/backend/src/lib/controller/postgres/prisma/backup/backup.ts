@@ -17,7 +17,9 @@ PrismaPostgresClient.prototype.GetAllBackupsForUser = async function (
     },
   });
 
-  return prismaBackups.map((prismaBackup) => BackupSchema.parse(prismaBackup));
+  return prismaBackups.map((prismaBackup: Backup) =>
+    BackupSchema.parse(prismaBackup)
+  );
 };
 
 PrismaPostgresClient.prototype.CreateBackup = async function (

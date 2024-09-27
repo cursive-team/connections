@@ -1,6 +1,6 @@
 import express from "express";
 import userRoutes from "./routes/user";
-import { FRONTEND_URL } from "../constants";
+import { FRONTEND_URL } from "./constants";
 
 const cors = require("cors");
 
