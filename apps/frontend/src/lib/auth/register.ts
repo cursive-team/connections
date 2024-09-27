@@ -16,10 +16,14 @@ import { storage } from "@/lib/storage";
  * Registers a user and loads initial storage data.
  * @param email - The email of the user.
  * @param password - The password of the user.
+ * @param displayName - The display name of the user.
+ * @param bio - The bio of the user.
  */
 export async function registerUser(
   email: string,
-  password: string
+  password: string,
+  displayName: string,
+  bio: string
 ): Promise<void> {
   const { publicKey: encryptionPublicKey, privateKey: encryptionPrivateKey } =
     await generateEncryptionKeyPair();
@@ -29,15 +33,15 @@ export async function registerUser(
   const passwordSalt = generateSalt();
   const passwordHash = await hashPassword(password, passwordSalt);
 
-  // Default user data
+  // User data with provided displayName and bio
   const user: User = {
     email,
     signaturePrivateKey,
     encryptionPrivateKey,
     lastMessageFetchedAt: new Date(),
     userData: {
-      displayName: "Bob", // TODO
-      bio: "Hello, I am Bob", // TODO
+      displayName,
+      bio,
       signaturePublicKey,
       encryptionPublicKey,
     },
