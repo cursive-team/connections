@@ -1,9 +1,8 @@
-import { BackupData } from "@types";
-import { Session } from "./types";
+import { Session, User } from "./types";
 import { LocalStorage } from "./localStorage/client";
 
-export interface InitialData {
-  backupData: BackupData[];
+export interface InitialStorageData {
+  user: User;
   authTokenValue: string;
   authTokenExpiresAt: Date;
   backupMasterPassword: string;
@@ -11,7 +10,9 @@ export interface InitialData {
 }
 
 export interface ClientStorage {
-  loadInitialData(initialData: InitialData): Promise<void>;
+  loadInitialStorageData(initialStorageData: InitialStorageData): Promise<void>;
+  deleteStorageData(): Promise<void>;
+  getUser(): Promise<User | undefined>;
   getSession(): Promise<Session | undefined>;
   saveSession(session: Session): Promise<void>;
 }

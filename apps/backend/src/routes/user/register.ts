@@ -7,11 +7,9 @@ import {
   errorToString,
   BackupData,
 } from "@types";
+import { Controller } from "@/lib/controller";
 
 const router = express.Router();
-
-import {Controller} from "@/lib/controller";
-
 const controller = new Controller();
 
 /**
@@ -33,12 +31,16 @@ router.post(
         encryptionPublicKey,
         passwordSalt,
         passwordHash,
+        initialBackupData,
+      } = validatedData;
+
+      const {
         authenticationTag,
         iv,
         encryptedData,
         backupEntryType,
         clientCreatedAt,
-      } = validatedData;
+      } = initialBackupData;
 
       // Check if the user already exists by email
       const existingUser = await controller.GetUserByEmail(email);
@@ -78,7 +80,7 @@ router.post(
       ];
 
       // Generate a new auth token for the user
-      const authToken = await controller.CreateAuthTokenForUser(newUser.id)
+      const authToken = await controller.CreateAuthTokenForUser(newUser.id);
 
       return res.status(201).json({
         registrationNumber: newUser.registrationNumber,

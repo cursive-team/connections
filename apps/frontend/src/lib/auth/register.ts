@@ -1,34 +1,60 @@
 import { BASE_API_URL } from "@/constants";
 import { generateEncryptionKeyPair } from "@/lib/crypto/encrypt";
 import { generateSignatureKeyPair } from "@/lib/crypto/sign";
-import {
-  encryptBackupString,
-  generateSalt,
-  hashPassword,
-} from "@/lib/crypto/backup";
+import { generateSalt, hashPassword } from "@/lib/crypto/backup";
 import {
   ErrorResponse,
   UserRegisterRequest,
-  UserRegisterResponse,
   UserRegisterResponseSchema,
   errorToString,
 } from "@types";
+import { createInitialBackup, parseUserFromBackup } from "@/lib/backup";
+import { User } from "@/lib/storage/types";
+import { storage } from "@/lib/storage";
 
+/**
+ * Registers a user and loads initial storage data.
+ * @param email - The email of the user.
+ * @param password - The password of the user.
+ * @param displayName - The display name of the user.
+ * @param bio - The bio of the user.
+ */
 export async function registerUser(
   email: string,
-  password: string
-): Promise<UserRegisterResponse> {
-  const { publicKey: encryptionPublicKey } = await generateEncryptionKeyPair();
-  const { verifyingKey: signaturePublicKey } = generateSignatureKeyPair();
+  password: string,
+  displayName: string,
+  bio: string
+): Promise<void> {
+  const { publicKey: encryptionPublicKey, privateKey: encryptionPrivateKey } =
+    await generateEncryptionKeyPair();
+  const { verifyingKey: signaturePublicKey, signingKey: signaturePrivateKey } =
+    generateSignatureKeyPair();
 
   const passwordSalt = generateSalt();
   const passwordHash = await hashPassword(password, passwordSalt);
 
-  const { encryptedData, authenticationTag, iv } = encryptBackupString(
-    JSON.stringify({}), // TODO: Implement initial backup
+  // User data with provided displayName and bio
+  const user: User = {
     email,
-    password
-  );
+    signaturePrivateKey,
+    encryptionPrivateKey,
+    lastMessageFetchedAt: new Date(),
+    userData: {
+      displayName,
+      bio,
+      signaturePublicKey,
+      encryptionPublicKey,
+    },
+    chips: [],
+    connections: {},
+    activities: [],
+  };
+
+  const initialBackupData = createInitialBackup({
+    email,
+    password,
+    user,
+  });
 
   const request: UserRegisterRequest = {
     email,
@@ -36,11 +62,7 @@ export async function registerUser(
     encryptionPublicKey,
     passwordSalt,
     passwordHash,
-    authenticationTag,
-    iv,
-    encryptedData,
-    backupEntryType: "INITIAL",
-    clientCreatedAt: new Date(),
+    initialBackupData,
   };
   const response = await fetch(`${BASE_API_URL}/user/register`, {
     method: "POST",
@@ -58,7 +80,21 @@ export async function registerUser(
   const rawData = await response.json();
   try {
     const validatedData = UserRegisterResponseSchema.parse(rawData);
-    return validatedData;
+    const { authToken, backupData } = validatedData;
+
+    // Parse the user from the backup data
+    const user = parseUserFromBackup(email, password, backupData);
+
+    // Load the initial storage data
+    await storage.loadInitialStorageData({
+      user,
+      authTokenValue: authToken.value,
+      authTokenExpiresAt: new Date(authToken.expiresAt),
+      backupMasterPassword: password,
+      lastBackupFetchedAt: new Date(),
+    });
+
+    return;
   } catch (error) {
     throw new Error(errorToString(error));
   }
