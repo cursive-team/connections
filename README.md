@@ -7,7 +7,10 @@ From root:
 - Create local postgres database, set name to be `connections` and port to `5432` (the default).
 - `createdb connections_test`
 - `pnpm install`
+<<<<<<< HEAD
 - Copy over .env.example into .env and update vars accordingly in frontend and backend
+=======
+>>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)
 
 Frontend:
 
@@ -20,6 +23,7 @@ Backend:
 - `pnpm prisma migrate dev`
 - `pnpm run dev`
 - To seed database with testing UserChip values: `pnpm run seed`
+<<<<<<< HEAD
 
 Docker
 
@@ -35,3 +39,5 @@ For reducing the size of the docker image, I found this utility to be useful:
 Notes:
 
 - API/backend uses null types for interop, client storage uses undefined for storage efficiency - conversions are done with zod.transform
+=======
+>>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)

@@ -17,9 +17,14 @@ export enum BackupEntryType {
   ACTIVITY = "ACTIVITY",
 }
 
+<<<<<<< HEAD
 export const BackupEntryTypeSchema = z.nativeEnum(BackupEntryType);
 
 // Generic backup data schema for creating a backup
+=======
+export type BackupEntryType = z.infer<typeof BackupEntryTypeSchema>;
+
+>>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)
 export const CreateBackupDataSchema = z.object({
   authenticationTag: z.string(),
   iv: z.string(),

@@ -7,7 +7,11 @@
     "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/index.ts",
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "build": "prisma generate && tsc --project tsconfig.json && tsc-alias",
+<<<<<<< HEAD
     "serve": "pnpm ts-node -r tsconfig-paths/register dist/apps/backend/src/index.js",
+=======
+    "serve": "node -r tsconfig-paths/register dist/apps/backend/src/index.js",
+>>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {

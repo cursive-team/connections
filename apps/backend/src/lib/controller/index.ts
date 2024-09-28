@@ -9,9 +9,13 @@ import {
 } from "@/lib/controller/postgres/types";
 import {
   AuthToken,
+<<<<<<< HEAD
   BackupData,
   ChipTapResponse,
   CreateBackupData,
+=======
+  ChipTapResponse,
+>>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)
   RegisterChipRequest,
   TapParams,
 } from "@types";

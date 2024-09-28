@@ -23,6 +23,7 @@ router.post(
     try {
       const validatedData = RegisterChipRequestSchema.parse(req.body);
 
+<<<<<<< HEAD
       const user = await controller.GetUserByAuthToken(validatedData.authToken);
       if (!user) {
         return res.status(401).json({ error: "Invalid authentication token" });
@@ -53,6 +54,10 @@ router.post(
         throw new Error("Failed to generate chip keys");
       }
 
+=======
+      const newChip = await controller.RegisterChip(validatedData);
+
+>>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)
       return res.status(201).json({
         chipIssuer: newChip.chipIssuer,
         chipId: newChip.chipId,
