@@ -22,6 +22,7 @@ export function errorToString(error: unknown): string {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export * from "./chip";
 export * from "./user";
 export * from "./util";
@@ -44,3 +45,8 @@ export const JsonSchema: z.ZodType<Json> = z.lazy(() =>
 export * from "./user";
 export * from "./chip";
 >>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)
+=======
+export * from "./user";
+export * from "./chip";
+export * from "./util";
+>>>>>>> 32df80b (fix type exporting)
