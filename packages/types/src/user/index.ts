@@ -9,6 +9,8 @@ export type AuthToken = z.infer<typeof AuthTokenSchema>;
 
 export const BackupEntryTypeSchema = z.enum(["INITIAL"]);
 
+export type BackupEntryType = z.infer<typeof BackupEntryTypeSchema>;
+
 export const CreateBackupDataSchema = z.object({
   authenticationTag: z.string(),
   iv: z.string(),

@@ -1,3 +1,4 @@
+import { iPostgresClient } from "@/lib/controller/postgres/interfaces";
 import { PrismaClient } from "@prisma/client";
 import {
   BackupCreateRequest,
@@ -14,7 +15,7 @@ import("@/lib/controller/postgres/prisma/backup/backup");
 import("@/lib/controller/postgres/prisma/auth/token");
 
 // Should follow iPostgresClient implementation
-export class PrismaPostgresClient {
+export class PrismaPostgresClient implements iPostgresClient {
   prismaClient: PrismaClient;
 
   constructor() {

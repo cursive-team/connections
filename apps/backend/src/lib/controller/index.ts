@@ -7,14 +7,25 @@ import {
   BackupCreateRequest,
   AuthTokenCreateRequest,
 } from "@/lib/controller/postgres/types";
-import { AuthToken } from "@types";
+import {
+  AuthToken,
+  ChipTapResponse,
+  RegisterChipRequest,
+  TapParams,
+} from "@types";
+import { Chip } from "@/lib/controller/chip/types";
+import { iChipClient } from "@/lib/controller/chip/interfaces";
+import { ManagedChipClient } from "@/lib/controller/chip/managed/client";
 
 export class Controller {
   postgresClient: iPostgresClient; // Use interface so that it can be mocked out
+  chipClient: iChipClient;
 
   constructor() {
     // Default client, could also pass through mock
     this.postgresClient = new PrismaPostgresClient();
+
+    this.chipClient = new ManagedChipClient();
 
     // Over time more clients will be added (e.g. nitro enclave client)...
   }
@@ -45,5 +56,13 @@ export class Controller {
 
   CreateAuthTokenForUser(userId: string): Promise<AuthToken> {
     return this.postgresClient.CreateAuthTokenForUser(userId);
+  }
+
+  RegisterChip(registerChip: RegisterChipRequest): Promise<Chip> {
+    return this.chipClient.RegisterChip(registerChip);
+  }
+
+  GetTapFromChip(tapParams: TapParams): Promise<ChipTapResponse> {
+    return this.chipClient.GetTapFromChip(tapParams);
   }
 }

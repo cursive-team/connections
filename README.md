@@ -1,10 +1,21 @@
 # Cursive Connections
 
-Dev Setup
-- `pnpm install`
+## Dev Setup
+
+From root:
+
 - Create local postgres database, set name to be `connections` and port to `5432` (the default).
 - `createdb connections_test`
+- `pnpm install`
+
+Frontend:
+
+- `cd apps/frontend && pnpm run dev`
+
+Backend:
+
+- `cd apps/backend`
 - `pnpm prisma generate`
 - `pnpm prisma migrate dev`
-- `cd apps/frontend && pnpm run dev`
-- `cd apps/backend && pnpm run dev`
+- `pnpm run dev`
+- To seed database with testing UserChip values: `pnpm run seed`

@@ -7,19 +7,23 @@
     "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/index.ts",
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "build": "prisma generate && tsc --project tsconfig.json && tsc-alias",
-    "serve": "node -r tsconfig-paths/register dist/apps/backend/src/index.js"
+    "serve": "node -r tsconfig-paths/register dist/apps/backend/src/index.js",
+    "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
     "cors": "^2.8.5",
     "express": "^4.21.0",
+    "ffjavascript": "^0.3.0",
+    "hash.js": "^1.1.7",
+    "js-sha256": "^0.11.0",
     "uuid": "^10.0.0",
     "zod": "^3.23.8",
     "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
-    "@types/node": "^22.5.5",
+    "@types/node": "^22.7.4",
     "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.7",
     "prisma": "^5.20.0",
