@@ -1,4 +1,4 @@
-import { JsonSchema } from "@types";
+import { JsonSchema } from "../util";
 import { z } from "zod";
 
 export const ChipIssuerSchema = z.enum([
