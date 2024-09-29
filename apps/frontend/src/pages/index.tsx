@@ -4,10 +4,15 @@ import { storage } from "@/lib/storage";
 import { Session, User } from "@/lib/storage/types";
 import { tapChip } from "@/lib/chip/tap";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { registerChip } from "@/lib/chip/register";
 import { ChipTapResponse, TapParams } from "@types";
 =======
 >>>>>>> a49a19c (make api use null, client storage use undefined)
+=======
+import { registerChip } from "@/lib/chip/register";
+import { ChipTapResponse, TapParams } from "@types";
+>>>>>>> c10b8a5 (working chip registration and tap)
 
 export default function Home() {
   const [registerEmail, setRegisterEmail] = useState("");
@@ -20,12 +25,18 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [chipId, setChipId] = useState("");
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c10b8a5 (working chip registration and tap)
   const [tapParams, setTapParams] = useState<TapParams | null>(null);
   const [tapResponse, setTapResponse] = useState<ChipTapResponse | null>(null);
   const [showRegisterChipModal, setShowRegisterChipModal] = useState(false);
   const [showTapChipModal, setShowTapChipModal] = useState(false);
+<<<<<<< HEAD
 =======
 >>>>>>> a49a19c (make api use null, client storage use undefined)
+=======
+>>>>>>> c10b8a5 (working chip registration and tap)
 
   useEffect(() => {
     const checkUser = async () => {
@@ -88,11 +99,15 @@ export default function Home() {
 
     try {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c10b8a5 (working chip registration and tap)
       const params: TapParams = { chipId };
       setTapParams(params);
 
       const result = await tapChip(params);
       setTapResponse(result);
+<<<<<<< HEAD
 
       if (result.chipIsRegistered) {
         setShowTapChipModal(true);
@@ -105,6 +120,15 @@ export default function Home() {
       console.log("Chip tap result:", result);
       alert(`Chip tapped successfully!`);
 >>>>>>> a49a19c (make api use null, client storage use undefined)
+=======
+      console.log("Chip tap result:", result);
+
+      if (result.chipIsRegistered) {
+        setShowTapChipModal(true);
+      } else {
+        setShowRegisterChipModal(true);
+      }
+>>>>>>> c10b8a5 (working chip registration and tap)
     } catch (error) {
       console.error("Error tapping chip:", error);
       alert("Failed to tap chip.");
@@ -112,6 +136,9 @@ export default function Home() {
   };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c10b8a5 (working chip registration and tap)
   const handleRegisterChip = async () => {
     if (!user || !tapResponse || !tapParams) return;
 
@@ -174,6 +201,7 @@ export default function Home() {
           <p>Message: {tapResponse?.tap?.message}</p>
           <p>Signature: {tapResponse?.tap?.signature}</p>
           <p>Tap Count: {tapResponse?.tap?.tapCount}</p>
+<<<<<<< HEAD
           <p>Owner Display Name: {tapResponse?.tap?.ownerDisplayName}</p>
           <p>Owner Bio: {tapResponse?.tap?.ownerBio}</p>
           <p>
@@ -187,6 +215,8 @@ export default function Home() {
           <p>
             Owner User Data: {JSON.stringify(tapResponse?.tap?.ownerUserData)}
           </p>
+=======
+>>>>>>> c10b8a5 (working chip registration and tap)
           <p>Timestamp: {tapResponse?.tap?.timestamp.toISOString()}</p>
           <button
             onClick={() => setShowTapChipModal(false)}
@@ -199,8 +229,11 @@ export default function Home() {
     );
   };
 
+<<<<<<< HEAD
 =======
 >>>>>>> a49a19c (make api use null, client storage use undefined)
+=======
+>>>>>>> c10b8a5 (working chip registration and tap)
   if (user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100 dark:bg-gray-900">

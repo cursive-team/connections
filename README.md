@@ -24,6 +24,7 @@ Backend:
 - `pnpm run dev`
 - To seed database with testing UserChip values: `pnpm run seed`
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 Docker
 
@@ -35,9 +36,14 @@ To locally build the image and run the container:
 
 For reducing the size of the docker image, I found this utility to be useful: 
 - `du -shc $dir-or-file`
+=======
+>>>>>>> c10b8a5 (working chip registration and tap)
 
 Notes:
 
 - API/backend uses null types for interop, client storage uses undefined for storage efficiency - conversions are done with zod.transform
+<<<<<<< HEAD
 =======
 >>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)
+=======
+>>>>>>> c10b8a5 (working chip registration and tap)

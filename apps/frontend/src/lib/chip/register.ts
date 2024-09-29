@@ -8,9 +8,13 @@ import {
 
 interface RegisterChipArgs {
 <<<<<<< HEAD
+<<<<<<< HEAD
   authToken: string;
 =======
 >>>>>>> a49a19c (make api use null, client storage use undefined)
+=======
+  authToken: string;
+>>>>>>> c10b8a5 (working chip registration and tap)
   tapParams: Record<string, string>;
   ownerDisplayName?: string;
   ownerBio?: string;
@@ -23,9 +27,13 @@ interface RegisterChipArgs {
  * Registers a new chip.
  * @param args - The arguments for registering a chip.
 <<<<<<< HEAD
+<<<<<<< HEAD
  * @param args.authToken - The authentication token for the user.
 =======
 >>>>>>> a49a19c (make api use null, client storage use undefined)
+=======
+ * @param args.authToken - The authentication token for the user.
+>>>>>>> c10b8a5 (working chip registration and tap)
  * @param args.tapParams - The parameters from the chip tap.
  * @param args.ownerDisplayName - The display name of the chip owner.
  * @param args.ownerBio - The bio of the chip owner.
@@ -40,9 +48,13 @@ export async function registerChip(
   try {
     const request: RegisterChipRequest = {
 <<<<<<< HEAD
+<<<<<<< HEAD
       authToken: args.authToken,
 =======
 >>>>>>> a49a19c (make api use null, client storage use undefined)
+=======
+      authToken: args.authToken,
+>>>>>>> c10b8a5 (working chip registration and tap)
       tapParams: args.tapParams,
       ownerDisplayName: args.ownerDisplayName ?? null,
       ownerBio: args.ownerBio ?? null,
