@@ -7,7 +7,7 @@ import {
   User,
   Backup,
 } from "@/lib/controller/postgres/types";
-import { AuthToken } from "@types";
+import { AuthToken, CreateBackupData } from "@types";
 
 // NOTE: Hoist all prototype methods -- if you do not import the method file, the method(s) will evaluate to undefined at runtime
 import("@/lib/controller/postgres/prisma/user/user");
@@ -38,7 +38,16 @@ export class PrismaPostgresClient implements iPostgresClient {
   GetAllBackupsForUser(userId: string): Promise<Backup[]>;
 
   // @ts-expect-error (ts2391)
+  GetBackupDataAfter(userId: string, submittedAt: Date): Promise<Backup[]>;
+
+  // @ts-expect-error (ts2391)
   CreateBackup(createBackup: BackupCreateRequest): Promise<Backup>;
+
+  // @ts-expect-error (ts2391)
+  AppendBackupData(
+    userId: string,
+    backupData: CreateBackupData[]
+  ): Promise<Date>;
 
   // @ts-expect-error (ts2391)
   CreateAuthToken(createAuthToken: AuthTokenCreateRequest): Promise<AuthToken>;

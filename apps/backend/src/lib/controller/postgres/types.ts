@@ -1,4 +1,4 @@
-import {z} from "zod";
+import { z } from "zod";
 
 // These values represent controller-level types, e.g. prisma types will be converted to these
 
@@ -35,7 +35,7 @@ export const BackupSchema = z.object({
 export const BackupCreateRequestSchema = z.object({
   user: z.object({
     connect: z.object({
-      id: z.string()
+      id: z.string(),
     }),
   }),
   authenticationTag: z.string(),
@@ -57,4 +57,6 @@ export type User = z.infer<typeof UserSchema>;
 export type UserCreateRequest = z.infer<typeof UserCreateRequestSchema>;
 export type Backup = z.infer<typeof BackupSchema>;
 export type BackupCreateRequest = z.infer<typeof BackupCreateRequestSchema>;
-export type AuthTokenCreateRequest = z.infer<typeof AuthTokenCreateRequestSchema>;
+export type AuthTokenCreateRequest = z.infer<
+  typeof AuthTokenCreateRequestSchema
+>;

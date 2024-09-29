@@ -10,6 +10,7 @@ import {
 import {
   AuthToken,
   ChipTapResponse,
+  CreateBackupData,
   RegisterChipRequest,
   TapParams,
 } from "@types";
@@ -50,8 +51,20 @@ export class Controller {
     return this.postgresClient.GetAllBackupsForUser(userId);
   }
 
+  GetBackupDataAfter(userId: string, submittedAt: Date): Promise<Backup[]> {
+    return this.postgresClient.GetBackupDataAfter(userId, submittedAt);
+  }
+
   CreateBackup(createBackup: BackupCreateRequest): Promise<Backup> {
     return this.postgresClient.CreateBackup(createBackup);
+  }
+
+  // Returns the date the new backup data entries were submitted at
+  AppendBackupData(
+    userId: string,
+    backupData: CreateBackupData[]
+  ): Promise<Date> {
+    return this.postgresClient.AppendBackupData(userId, backupData);
   }
 
   CreateAuthToken(createAuthToken: AuthTokenCreateRequest): Promise<AuthToken> {

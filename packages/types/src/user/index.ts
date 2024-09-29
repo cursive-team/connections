@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// Auth token schema
 export const AuthTokenSchema = z.object({
   value: z.string(),
   expiresAt: z.coerce.date(),
@@ -7,10 +8,12 @@ export const AuthTokenSchema = z.object({
 
 export type AuthToken = z.infer<typeof AuthTokenSchema>;
 
+// Enum for backup entry types
 export const BackupEntryTypeSchema = z.enum(["INITIAL"]);
 
 export type BackupEntryType = z.infer<typeof BackupEntryTypeSchema>;
 
+// Generic backup data schema for creating a backup
 export const CreateBackupDataSchema = z.object({
   authenticationTag: z.string(),
   iv: z.string(),
@@ -26,6 +29,7 @@ export const CreateBackupDataSchema = z.object({
 
 export type CreateBackupData = z.infer<typeof CreateBackupDataSchema>;
 
+// Backup data schema for fetched backup data entries
 export const BackupDataSchema = z.object({
   authenticationTag: z.string(),
   iv: z.string(),
@@ -42,6 +46,29 @@ export const BackupDataSchema = z.object({
 
 export type BackupData = z.infer<typeof BackupDataSchema>;
 
+// Request schema for appending backup data
+export const AppendBackupDataRequestSchema = z.object({
+  authToken: z.string(),
+  newBackupData: z.array(CreateBackupDataSchema),
+  previousSubmittedAt: z.coerce.date(),
+});
+
+export type AppendBackupDataRequest = z.infer<
+  typeof AppendBackupDataRequestSchema
+>;
+
+// Response schema for appending backup data
+export const AppendBackupDataResponseSchema = z.object({
+  success: z.boolean(),
+  submittedAt: z.coerce.date(),
+  unprocessedBackupData: z.array(BackupDataSchema),
+});
+
+export type AppendBackupDataResponse = z.infer<
+  typeof AppendBackupDataResponseSchema
+>;
+
+// Request schema for registering a user
 export const UserRegisterRequestSchema = z.object({
   email: z.string().email(),
   signaturePublicKey: z.string(),
@@ -53,6 +80,7 @@ export const UserRegisterRequestSchema = z.object({
 
 export type UserRegisterRequest = z.infer<typeof UserRegisterRequestSchema>;
 
+// Response schema for registering a user
 export const UserRegisterResponseSchema = z.object({
   authToken: AuthTokenSchema,
   backupData: z.array(BackupDataSchema),
@@ -61,12 +89,14 @@ export const UserRegisterResponseSchema = z.object({
 
 export type UserRegisterResponse = z.infer<typeof UserRegisterResponseSchema>;
 
+// Request schema for logging in a user
 export const UserLoginRequestSchema = z.object({
   email: z.string().email(),
 });
 
 export type UserLoginRequest = z.infer<typeof UserLoginRequestSchema>;
 
+// Response schema for logging in a user
 export const UserLoginResponseSchema = z.object({
   authToken: AuthTokenSchema,
   backupData: z.array(BackupDataSchema),
