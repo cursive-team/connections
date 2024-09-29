@@ -54,6 +54,11 @@ export const ChipTapSchema = z.object({
   message: z.string(),
   signature: z.string(),
   tapCount: z.number().int().nonnegative(),
+  ownerDisplayName: z.string().nullable(),
+  ownerBio: z.string().nullable(),
+  ownerSignaturePublicKey: z.string().nullable(),
+  ownerEncryptionPublicKey: z.string().nullable(),
+  ownerUserData: JsonSchema.nullable(),
   timestamp: z.coerce.date(),
 });
 

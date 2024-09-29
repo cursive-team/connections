@@ -161,6 +161,19 @@ export default function Home() {
           <p>Message: {tapResponse?.tap?.message}</p>
           <p>Signature: {tapResponse?.tap?.signature}</p>
           <p>Tap Count: {tapResponse?.tap?.tapCount}</p>
+          <p>Owner Display Name: {tapResponse?.tap?.ownerDisplayName}</p>
+          <p>Owner Bio: {tapResponse?.tap?.ownerBio}</p>
+          <p>
+            Owner Signature Public Key:{" "}
+            {tapResponse?.tap?.ownerSignaturePublicKey}
+          </p>
+          <p>
+            Owner Encryption Public Key:{" "}
+            {tapResponse?.tap?.ownerEncryptionPublicKey}
+          </p>
+          <p>
+            Owner User Data: {JSON.stringify(tapResponse?.tap?.ownerUserData)}
+          </p>
           <p>Timestamp: {tapResponse?.tap?.timestamp.toISOString()}</p>
           <button
             onClick={() => setShowTapChipModal(false)}

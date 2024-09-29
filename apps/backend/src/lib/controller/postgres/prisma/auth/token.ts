@@ -31,7 +31,10 @@ PrismaPostgresClient.prototype.CreateAuthTokenForUser = async function (
     expiresAt: twoWeeksFromNow,
   });
 
-  return { value: tokenValue, expiresAt: twoWeeksFromNow };
+  return AuthTokenSchema.parse({
+    value: tokenValue,
+    expiresAt: twoWeeksFromNow,
+  });
 };
 
 PrismaPostgresClient.prototype.CreateAuthToken = async function (
