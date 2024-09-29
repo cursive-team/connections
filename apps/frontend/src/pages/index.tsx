@@ -82,7 +82,10 @@ export default function Home() {
 
       const result = await tapChip(params);
       setTapResponse(result);
+<<<<<<< HEAD
       await refreshStorage();
+=======
+>>>>>>> 3229d1d (backend handler for updating backup data)
 
       if (result.chipIsRegistered) {
         setShowTapChipModal(true);

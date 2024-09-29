@@ -5,7 +5,11 @@ import {
   BackupCreateRequest,
   AuthTokenCreateRequest,
 } from "@/lib/controller/postgres/types";
+<<<<<<< HEAD
 import { AuthToken, BackupData, CreateBackupData } from "@types";
+=======
+import { AuthToken, CreateBackupData } from "@types";
+>>>>>>> 3229d1d (backend handler for updating backup data)
 
 export interface iPostgresClient {
   // User methods
@@ -21,7 +25,11 @@ export interface iPostgresClient {
   AppendBackupData(
     userId: string,
     backupData: CreateBackupData[]
+<<<<<<< HEAD
   ): Promise<BackupData[]>;
+=======
+  ): Promise<Date>;
+>>>>>>> 3229d1d (backend handler for updating backup data)
 
   // AuthToken methods
   CreateAuthToken(createAuthToken: AuthTokenCreateRequest): Promise<AuthToken>;

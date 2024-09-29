@@ -47,16 +47,26 @@ router.post(
       }));
 
       // Append backup data for user
+<<<<<<< HEAD
       const newlyAppendedBackupData = await controller.AppendBackupData(
+=======
+      const submittedAt = await controller.AppendBackupData(
+>>>>>>> 3229d1d (backend handler for updating backup data)
         user.id,
         newBackupData
       );
 
+<<<<<<< HEAD
       return res.status(200).json({
         success: true,
         unprocessedBackupData,
         newBackupData: newlyAppendedBackupData,
       });
+=======
+      return res
+        .status(200)
+        .json({ success: true, submittedAt, unprocessedBackupData });
+>>>>>>> 3229d1d (backend handler for updating backup data)
     } catch (error) {
       console.error("Error in backup route:", error);
       return res.status(400).json({ error: errorToString(error) });
