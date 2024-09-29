@@ -2,6 +2,7 @@ import { registerUser, loginUser, logoutUser } from "@/lib/auth";
 import { useState, useEffect } from "react";
 import { storage } from "@/lib/storage";
 import { Session, User } from "@/lib/storage/types";
+import { tapChip } from "@/lib/chip/tap";
 
 export default function Home() {
   const [registerEmail, setRegisterEmail] = useState("");
@@ -12,6 +13,7 @@ export default function Home() {
   const [loginPassword, setLoginPassword] = useState("");
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [chipId, setChipId] = useState("");
 
   useEffect(() => {
     const checkUser = async () => {
@@ -69,6 +71,20 @@ export default function Home() {
     window.location.reload();
   };
 
+  const handleTapChip = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const tapParams = { chipId };
+      const result = await tapChip(tapParams);
+      console.log("Chip tap result:", result);
+      alert(`Chip tapped successfully!`);
+    } catch (error) {
+      console.error("Error tapping chip:", error);
+      alert("Failed to tap chip.");
+    }
+  };
+
   if (user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100 dark:bg-gray-900">
@@ -88,6 +104,22 @@ export default function Home() {
           >
             Log Session and User
           </button>
+          <form onSubmit={handleTapChip} className="flex flex-col gap-4 w-full">
+            <input
+              type="text"
+              placeholder="Chip ID"
+              value={chipId}
+              onChange={(e) => setChipId(e.target.value)}
+              className="p-2 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
+              required
+            />
+            <button
+              type="submit"
+              className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
+            >
+              Tap Chip
+            </button>
+          </form>
           <button
             onClick={handleLogout}
             className="p-2 bg-red-500 text-white rounded hover:bg-red-600 dark:bg-red-700 dark:hover:bg-red-800"

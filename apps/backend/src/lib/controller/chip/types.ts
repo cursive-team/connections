@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ChipIssuerSchema, ChipVariantSchema } from "@types";
+import { ChipIssuerSchema, ChipVariantSchema, JsonSchema } from "@types";
 
 export const ChipSchema = z.object({
   id: z.string(),
@@ -7,14 +7,14 @@ export const ChipSchema = z.object({
   chipId: z.string(),
   chipVariant: ChipVariantSchema,
   chipIsRegistered: z.boolean(),
-  chipPublicKey: z.string(),
-  chipPrivateKey: z.string(),
+  chipPublicKey: z.string().nullable(),
+  chipPrivateKey: z.string().nullable(),
   chipTapCount: z.number().int().nonnegative(),
-  ownerDisplayName: z.string().optional(),
-  ownerBio: z.string().optional(),
-  ownerSignaturePublicKey: z.string().optional(),
-  ownerEncryptionPublicKey: z.string().optional(),
-  ownerUserData: z.record(z.unknown()).optional(),
+  ownerDisplayName: z.string().nullable(),
+  ownerBio: z.string().nullable(),
+  ownerSignaturePublicKey: z.string().nullable(),
+  ownerEncryptionPublicKey: z.string().nullable(),
+  ownerUserData: JsonSchema.nullable(),
   createdAt: z.date(),
 });
 

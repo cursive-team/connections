@@ -14,3 +14,10 @@ export type Json = Literal | { [key: string]: Json } | Json[];
 export const JsonSchema: z.ZodType<Json> = z.lazy(() =>
   z.union([LiteralSchema, z.array(JsonSchema), z.record(JsonSchema)])
 );
+
+// Helper function to create a schema that converts null to undefined
+export const nullToUndefined = <T extends z.ZodTypeAny>(schema: T) =>
+  schema
+    .nullable()
+    .transform((val) => (val === null ? undefined : val))
+    .optional();

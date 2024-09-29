@@ -25,6 +25,10 @@ router.post(
 
       const newChip = await controller.RegisterChip(validatedData);
 
+      if (!newChip.chipPublicKey || !newChip.chipPrivateKey) {
+        throw new Error("Failed to generate chip keys");
+      }
+
       return res.status(201).json({
         chipIssuer: newChip.chipIssuer,
         chipId: newChip.chipId,

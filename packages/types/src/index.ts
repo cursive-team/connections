@@ -18,6 +18,6 @@ export function errorToString(error: unknown): string {
   }
 }
 
-export * from "./user";
 export * from "./chip";
+export * from "./user";
 export * from "./util";

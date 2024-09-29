@@ -1,4 +1,4 @@
-import { ChipTapResponse, TapParams } from "@types";
+import { ChipTapResponse, errorToString, TapParams } from "@types";
 import { Chip, ChipSchema } from "@/lib/controller/chip/types";
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
@@ -19,11 +19,13 @@ export async function getChipFromTapParams(
   tapParams: TapParams
 ): Promise<Chip | null> {
   // Try to parse the tapParams as an NTAG212
+  console.log("tapParams:", tapParams);
   try {
     const NTAG212Schema = z.object({
       chipId: z.string(),
     });
     const validatedTapParams = NTAG212Schema.parse(tapParams);
+    console.log("validatedTapParams:", validatedTapParams);
 
     const chip = await prisma.userChip.findUnique({
       where: { chipId: validatedTapParams.chipId },
@@ -31,9 +33,16 @@ export async function getChipFromTapParams(
 
     // If the chip exists, return it, otherwise continue parsing other schemas
     if (chip) {
-      return ChipSchema.parse(chip);
+      try {
+        return ChipSchema.parse(chip);
+      } catch (error) {
+        console.log("error:", errorToString(error));
+        throw error;
+      }
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log("error:", error);
+  }
 
   // Try to parse the tapParams as an NTAG424
   try {
@@ -91,10 +100,11 @@ export const generateTapSignatureFromChip = async (
   } = chip;
 
   // If chip is not registered, return a response indicating so
-  if (!chipIsRegistered) {
+  if (!chipIsRegistered || !chipPublicKey || !chipPrivateKey) {
     return {
       chipIssuer,
       chipIsRegistered,
+      tap: null,
     };
   }
 

@@ -19,11 +19,11 @@ export type TapParams = z.infer<typeof TapParamsSchema>;
 
 export const RegisterChipRequestSchema = z.object({
   tapParams: TapParamsSchema,
-  ownerDisplayName: z.string().optional(),
-  ownerBio: z.string().optional(),
-  ownerSignaturePublicKey: z.string().optional(),
-  ownerEncryptionPublicKey: z.string().optional(),
-  ownerUserData: JsonSchema.optional(),
+  ownerDisplayName: z.string().nullable(),
+  ownerBio: z.string().nullable(),
+  ownerSignaturePublicKey: z.string().nullable(),
+  ownerEncryptionPublicKey: z.string().nullable(),
+  ownerUserData: JsonSchema.nullable(),
 });
 
 export type RegisterChipRequest = z.infer<typeof RegisterChipRequestSchema>;
@@ -61,7 +61,7 @@ export type ChipTap = z.infer<typeof ChipTapSchema>;
 export const ChipTapResponseSchema = z.object({
   chipIssuer: ChipIssuerSchema,
   chipIsRegistered: z.boolean(),
-  tap: ChipTapSchema.optional(),
+  tap: ChipTapSchema.nullable(),
 });
 
 export type ChipTapResponse = z.infer<typeof ChipTapResponseSchema>;
