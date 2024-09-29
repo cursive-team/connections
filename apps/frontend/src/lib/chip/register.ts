@@ -7,7 +7,10 @@ import {
 } from "@types";
 
 interface RegisterChipArgs {
+<<<<<<< HEAD
   authToken: string;
+=======
+>>>>>>> a49a19c (make api use null, client storage use undefined)
   tapParams: Record<string, string>;
   ownerDisplayName?: string;
   ownerBio?: string;
@@ -19,7 +22,10 @@ interface RegisterChipArgs {
 /**
  * Registers a new chip.
  * @param args - The arguments for registering a chip.
+<<<<<<< HEAD
  * @param args.authToken - The authentication token for the user.
+=======
+>>>>>>> a49a19c (make api use null, client storage use undefined)
  * @param args.tapParams - The parameters from the chip tap.
  * @param args.ownerDisplayName - The display name of the chip owner.
  * @param args.ownerBio - The bio of the chip owner.
@@ -33,7 +39,10 @@ export async function registerChip(
 ): Promise<RegisterChipResponse> {
   try {
     const request: RegisterChipRequest = {
+<<<<<<< HEAD
       authToken: args.authToken,
+=======
+>>>>>>> a49a19c (make api use null, client storage use undefined)
       tapParams: args.tapParams,
       ownerDisplayName: args.ownerDisplayName ?? null,
       ownerBio: args.ownerBio ?? null,

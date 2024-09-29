@@ -23,6 +23,7 @@ export function errorToString(error: unknown): string {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 export * from "./chip";
 export * from "./user";
 export * from "./util";
@@ -47,6 +48,9 @@ export * from "./chip";
 >>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)
 =======
 export * from "./user";
+=======
+>>>>>>> a49a19c (make api use null, client storage use undefined)
 export * from "./chip";
+export * from "./user";
 export * from "./util";
 >>>>>>> 32df80b (fix type exporting)

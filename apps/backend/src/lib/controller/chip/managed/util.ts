@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   ChipTapResponse,
   ChipTapResponseSchema,
@@ -10,6 +11,10 @@ import {
   NTAG212TapParamsSchema,
   NTAG424TapParamsSchema,
 } from "@/lib/controller/chip/types";
+=======
+import { ChipTapResponse, errorToString, TapParams } from "@types";
+import { Chip, ChipSchema } from "@/lib/controller/chip/types";
+>>>>>>> a49a19c (make api use null, client storage use undefined)
 import { PrismaClient } from "@prisma/client";
 import { getCounterMessage, sign } from "@/lib/util";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -28,8 +33,17 @@ export async function getChipFromTapParams(
   tapParams: TapParams
 ): Promise<Chip | null> {
   // Try to parse the tapParams as an NTAG212
+  console.log("tapParams:", tapParams);
   try {
+<<<<<<< HEAD
     const validatedTapParams = NTAG212TapParamsSchema.parse(tapParams);
+=======
+    const NTAG212Schema = z.object({
+      chipId: z.string(),
+    });
+    const validatedTapParams = NTAG212Schema.parse(tapParams);
+    console.log("validatedTapParams:", validatedTapParams);
+>>>>>>> a49a19c (make api use null, client storage use undefined)
 
     const chip = await prisma.chip.findUnique({
       where: { chipId: validatedTapParams.chipId },
@@ -106,11 +120,19 @@ export const generateTapSignatureFromChip = async (
 
   // If chip is not registered, return a response indicating so
   if (!chipIsRegistered || !chipPublicKey || !chipPrivateKey) {
+<<<<<<< HEAD
     return ChipTapResponseSchema.parse({
       chipIssuer,
       chipIsRegistered,
       tap: null,
     });
+=======
+    return {
+      chipIssuer,
+      chipIsRegistered,
+      tap: null,
+    };
+>>>>>>> a49a19c (make api use null, client storage use undefined)
   }
 
   // Generate a tap signature
