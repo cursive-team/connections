@@ -1,5 +1,5 @@
 import { BASE_API_URL } from "@/constants";
-import { TapParams, ChipTapResponse } from "@types";
+import { TapParams, ChipTapResponse, ChipTapResponseSchema } from "@types";
 
 /**
  * Taps a chip with the given parameters.
@@ -22,8 +22,9 @@ export async function tapChip(tapParams: TapParams): Promise<ChipTapResponse> {
     }
 
     const data = await response.json();
+    const parsedData = ChipTapResponseSchema.parse(data);
 
-    return data as ChipTapResponse;
+    return parsedData;
   } catch (error) {
     console.error("Error tapping chip:", error);
     throw error;

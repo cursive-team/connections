@@ -23,6 +23,30 @@ router.post(
     try {
       const validatedData = RegisterChipRequestSchema.parse(req.body);
 
+      const user = await controller.GetUserByAuthToken(validatedData.authToken);
+      if (!user) {
+        return res.status(401).json({ error: "Invalid authentication token" });
+      }
+
+      // Check if the owner's public keys match the user's keys
+      if (
+        validatedData.ownerSignaturePublicKey &&
+        validatedData.ownerSignaturePublicKey !== user.signaturePublicKey
+      ) {
+        return res.status(400).json({
+          error: "Submitted signature public key does not match user's key",
+        });
+      }
+
+      if (
+        validatedData.ownerEncryptionPublicKey &&
+        validatedData.ownerEncryptionPublicKey !== user.encryptionPublicKey
+      ) {
+        return res.status(400).json({
+          error: "Submitted encryption public key does not match user's key",
+        });
+      }
+
       const newChip = await controller.RegisterChip(validatedData);
 
       if (!newChip.chipPublicKey || !newChip.chipPrivateKey) {

@@ -38,6 +38,10 @@ export class Controller {
     return this.postgresClient.GetUserById(userId);
   }
 
+  GetUserByAuthToken(authToken: string): Promise<User | null> {
+    return this.postgresClient.GetUserByAuthToken(authToken);
+  }
+
   CreateUser(createUser: UserCreateRequest): Promise<User> {
     return this.postgresClient.CreateUser(createUser);
   }

@@ -18,6 +18,7 @@ export const TapParamsSchema = z.record(z.string(), z.string());
 export type TapParams = z.infer<typeof TapParamsSchema>;
 
 export const RegisterChipRequestSchema = z.object({
+  authToken: z.string(),
   tapParams: TapParamsSchema,
   ownerDisplayName: z.string().nullable(),
   ownerBio: z.string().nullable(),

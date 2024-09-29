@@ -34,6 +34,36 @@ PrismaPostgresClient.prototype.GetUserById = async function (
   return null;
 };
 
+PrismaPostgresClient.prototype.GetUserByAuthToken = async function (
+  authToken: string
+): Promise<User | null> {
+  const prismaAuthToken = await this.prismaClient.authToken.findUnique({
+    where: { value: authToken },
+  });
+
+  if (!prismaAuthToken) {
+    return null;
+  }
+
+  const currentTime = new Date();
+  if (prismaAuthToken.revokedAt && prismaAuthToken.revokedAt <= currentTime) {
+    return null;
+  }
+  if (prismaAuthToken.expiresAt <= currentTime) {
+    return null;
+  }
+
+  const prismaUser = await this.prismaClient.user.findUnique({
+    where: { id: prismaAuthToken.userId },
+  });
+
+  if (prismaUser) {
+    return UserSchema.parse(prismaUser);
+  }
+
+  return null;
+};
+
 PrismaPostgresClient.prototype.CreateUser = async function (
   createUser: UserCreateRequest
 ): Promise<User> {

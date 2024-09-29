@@ -11,6 +11,7 @@ export interface iPostgresClient {
   // User methods
   GetUserByEmail(email: string): Promise<User | null>;
   GetUserById(userId: string): Promise<User | null>;
+  GetUserByAuthToken(authToken: string): Promise<User | null>;
   CreateUser(createUser: UserCreateRequest): Promise<User>;
 
   // Backup methods
