@@ -47,7 +47,7 @@ export const processUserBackup = ({
   }
 
   let user = existingUser;
-  let submittedAt = previousSubmittedAt || new Date();
+  let submittedAt = previousSubmittedAt || backupData[0].submittedAt;
 
   if (!user && backupData[0].backupEntryType !== "INITIAL") {
     throw new Error("INITIAL backup entry not found");
