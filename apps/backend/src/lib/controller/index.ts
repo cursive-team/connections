@@ -9,6 +9,7 @@ import {
 } from "@/lib/controller/postgres/types";
 import {
   AuthToken,
+  BackupData,
   ChipTapResponse,
   CreateBackupData,
   RegisterChipRequest,
@@ -59,11 +60,10 @@ export class Controller {
     return this.postgresClient.CreateBackup(createBackup);
   }
 
-  // Returns the date the new backup data entries were submitted at
   AppendBackupData(
     userId: string,
     backupData: CreateBackupData[]
-  ): Promise<Date> {
+  ): Promise<BackupData[]> {
     return this.postgresClient.AppendBackupData(userId, backupData);
   }
 

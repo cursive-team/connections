@@ -1,6 +1,6 @@
 import { BASE_API_URL } from "@/constants";
 import { storage } from "@/lib/storage";
-import { parseUserFromBackup } from "@/lib/backup";
+import { processUserBackup } from "@/lib/backup";
 import {
   ErrorResponse,
   UserLoginRequest,
@@ -40,14 +40,18 @@ export async function loginUser(
       throw new Error("Invalid password");
     }
 
-    const user = parseUserFromBackup(email, password, backupData);
+    const { user, submittedAt } = processUserBackup({
+      email,
+      password,
+      backupData,
+    });
 
     await storage.loadInitialStorageData({
       user,
       authTokenValue: authToken.value,
-      authTokenExpiresAt: new Date(authToken.expiresAt),
+      authTokenExpiresAt: authToken.expiresAt,
       backupMasterPassword: password,
-      lastBackupFetchedAt: new Date(),
+      lastBackupFetchedAt: submittedAt,
     });
 
     return;

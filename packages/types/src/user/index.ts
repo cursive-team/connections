@@ -60,8 +60,8 @@ export type AppendBackupDataRequest = z.infer<
 // Response schema for appending backup data
 export const AppendBackupDataResponseSchema = z.object({
   success: z.boolean(),
-  submittedAt: z.coerce.date(),
   unprocessedBackupData: z.array(BackupDataSchema),
+  newBackupData: z.array(BackupDataSchema),
 });
 
 export type AppendBackupDataResponse = z.infer<

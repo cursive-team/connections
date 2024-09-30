@@ -4,7 +4,7 @@ import {
   BackupCreateRequest,
   BackupSchema,
 } from "@/lib/controller/postgres/types";
-import { CreateBackupData } from "@types";
+import { BackupData, BackupDataSchema, CreateBackupData } from "@types";
 
 PrismaPostgresClient.prototype.GetAllBackupsForUser = async function (
   userId: string
@@ -61,20 +61,25 @@ PrismaPostgresClient.prototype.CreateBackup = async function (
 PrismaPostgresClient.prototype.AppendBackupData = async function (
   userId: string,
   backupData: CreateBackupData[]
-): Promise<Date> {
+): Promise<BackupData[]> {
   const submittedAt = new Date();
 
+  // Cache the new backup data so we don't have to make another request to the database
+  const newBackupData = backupData.map((data) => ({
+    userId,
+    authenticationTag: data.authenticationTag,
+    iv: data.iv,
+    encryptedData: data.encryptedData,
+    backupEntryType: data.backupEntryType,
+    clientCreatedAt: data.clientCreatedAt,
+    submittedAt,
+  }));
+
   await this.prismaClient.backup.createMany({
-    data: backupData.map((data) => ({
-      userId,
-      authenticationTag: data.authenticationTag,
-      iv: data.iv,
-      encryptedData: data.encryptedData,
-      backupEntryType: data.backupEntryType,
-      clientCreatedAt: data.clientCreatedAt,
-      submittedAt,
-    })),
+    data: newBackupData,
   });
 
-  return submittedAt;
+  return newBackupData.map((backupData: BackupData) =>
+    BackupDataSchema.parse(backupData)
+  );
 };

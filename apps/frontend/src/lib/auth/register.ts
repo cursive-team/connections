@@ -8,7 +8,7 @@ import {
   UserRegisterResponseSchema,
   errorToString,
 } from "@types";
-import { createInitialBackup, parseUserFromBackup } from "@/lib/backup";
+import { createInitialBackup, processUserBackup } from "@/lib/backup";
 import { User } from "@/lib/storage/types";
 import { storage } from "@/lib/storage";
 
@@ -83,15 +83,19 @@ export async function registerUser(
     const { authToken, backupData } = validatedData;
 
     // Parse the user from the backup data
-    const user = parseUserFromBackup(email, password, backupData);
+    const { user, submittedAt } = processUserBackup({
+      email,
+      password,
+      backupData,
+    });
 
     // Load the initial storage data
     await storage.loadInitialStorageData({
       user,
       authTokenValue: authToken.value,
-      authTokenExpiresAt: new Date(authToken.expiresAt),
+      authTokenExpiresAt: authToken.expiresAt,
       backupMasterPassword: password,
-      lastBackupFetchedAt: new Date(),
+      lastBackupFetchedAt: submittedAt,
     });
 
     return;
