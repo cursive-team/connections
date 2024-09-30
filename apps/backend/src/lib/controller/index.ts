@@ -10,6 +10,9 @@ import {
 import {
   AuthToken,
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 65414bd (add frontend submission and processing of backup data)
   BackupData,
   ChipTapResponse,
   CreateBackupData,
@@ -68,6 +71,7 @@ export class Controller {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   AppendBackupData(
     userId: string,
     backupData: CreateBackupData[]
@@ -79,6 +83,12 @@ export class Controller {
     backupData: CreateBackupData[]
   ): Promise<Date> {
 >>>>>>> 3229d1d (backend handler for updating backup data)
+=======
+  AppendBackupData(
+    userId: string,
+    backupData: CreateBackupData[]
+  ): Promise<BackupData[]> {
+>>>>>>> 65414bd (add frontend submission and processing of backup data)
     return this.postgresClient.AppendBackupData(userId, backupData);
   }
 

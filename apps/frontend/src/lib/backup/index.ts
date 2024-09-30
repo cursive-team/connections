@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {
   AppendBackupDataRequest,
   AppendBackupDataResponseSchema,
@@ -16,15 +15,6 @@ import {
   User,
   UserData,
   UserDataSchema,
-=======
-import { BackupData, CreateBackupData } from "@types";
-import {
-  Activity,
-  Chip,
-  Connection,
-  User,
-  UserData,
->>>>>>> 3229d1d (backend handler for updating backup data)
   UserSchema,
 } from "@/lib/storage/types";
 import { decryptBackupString, encryptBackupString } from "@/lib/crypto/backup";
@@ -328,110 +318,6 @@ export const createActivityBackup = ({
     iv,
     encryptedData,
     backupEntryType: BackupEntryType.ACTIVITY,
-    clientCreatedAt: new Date(),
-  };
-};
-
-export interface CreateUserDataBackupArgs {
-  email: string;
-  password: string;
-  userData: UserData;
-}
-
-export const createUserDataBackup = ({
-  email,
-  password,
-  userData,
-}: CreateUserDataBackupArgs): CreateBackupData => {
-  const { authenticationTag, iv, encryptedData } = encryptBackupString({
-    backup: JSON.stringify(userData),
-    email,
-    password,
-  });
-
-  return {
-    authenticationTag,
-    iv,
-    encryptedData,
-    backupEntryType: "USER_DATA",
-    clientCreatedAt: new Date(),
-  };
-};
-
-export interface CreateChipBackupArgs {
-  email: string;
-  password: string;
-  chip: Chip;
-}
-
-export const createChipBackup = ({
-  email,
-  password,
-  chip,
-}: CreateChipBackupArgs): CreateBackupData => {
-  const { authenticationTag, iv, encryptedData } = encryptBackupString({
-    backup: JSON.stringify(chip),
-    email,
-    password,
-  });
-
-  return {
-    authenticationTag,
-    iv,
-    encryptedData,
-    backupEntryType: "CHIP",
-    clientCreatedAt: new Date(),
-  };
-};
-
-export interface CreateConnectionBackupArgs {
-  email: string;
-  password: string;
-  connection: Connection;
-}
-
-export const createConnectionBackup = ({
-  email,
-  password,
-  connection,
-}: CreateConnectionBackupArgs): CreateBackupData => {
-  const { authenticationTag, iv, encryptedData } = encryptBackupString({
-    backup: JSON.stringify(connection),
-    email,
-    password,
-  });
-
-  return {
-    authenticationTag,
-    iv,
-    encryptedData,
-    backupEntryType: "CONNECTION",
-    clientCreatedAt: new Date(),
-  };
-};
-
-export interface CreateActivityBackupArgs {
-  email: string;
-  password: string;
-  activity: Activity;
-}
-
-export const createActivityBackup = ({
-  email,
-  password,
-  activity,
-}: CreateActivityBackupArgs): CreateBackupData => {
-  const { authenticationTag, iv, encryptedData } = encryptBackupString({
-    backup: JSON.stringify(activity),
-    email,
-    password,
-  });
-
-  return {
-    authenticationTag,
-    iv,
-    encryptedData,
-    backupEntryType: "ACTIVITY",
     clientCreatedAt: new Date(),
   };
 };
