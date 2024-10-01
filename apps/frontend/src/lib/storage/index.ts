@@ -1,4 +1,4 @@
-import { Session, User } from "./types";
+import { Chip, Session, User } from "./types";
 import { LocalStorage } from "./localStorage/client";
 
 export interface InitialStorageData {
@@ -14,7 +14,7 @@ export interface ClientStorage {
   deleteStorageData(): Promise<void>;
   getUser(): Promise<User | undefined>;
   getSession(): Promise<Session | undefined>;
-  saveSession(session: Session): Promise<void>;
+  addChip(chip: Chip): Promise<void>;
 }
 
 const storage = new LocalStorage();

@@ -5,7 +5,8 @@ import {
   saveSession,
 } from "@/lib/storage/localStorage/session";
 import { deleteUser, getUser, saveUser } from "@/lib/storage/localStorage/user";
-import { Session, User } from "@/lib/storage/types";
+import { Chip, Session, User } from "@/lib/storage/types";
+import { addChip } from "@/lib/storage/localStorage/chip";
 
 export class LocalStorage implements ClientStorage {
   async loadInitialStorageData(
@@ -36,7 +37,7 @@ export class LocalStorage implements ClientStorage {
     return getSession();
   }
 
-  async saveSession(session: Session): Promise<void> {
-    return saveSession(session);
+  async addChip(chip: Chip): Promise<void> {
+    return addChip(chip);
   }
 }
