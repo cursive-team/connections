@@ -1,26 +1,15 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 24726d4 (return owner info upon tap)
 import {
   ChipTapResponse,
   ChipTapResponseSchema,
   errorToString,
   TapParams,
 } from "@types";
-<<<<<<< HEAD
 import {
   Chip,
   ChipSchema,
   NTAG212TapParamsSchema,
   NTAG424TapParamsSchema,
 } from "@/lib/controller/chip/types";
-=======
-import { ChipTapResponse, errorToString, TapParams } from "@types";
-=======
->>>>>>> 24726d4 (return owner info upon tap)
-import { Chip, ChipSchema } from "@/lib/controller/chip/types";
->>>>>>> a49a19c (make api use null, client storage use undefined)
 import { PrismaClient } from "@prisma/client";
 import { getCounterMessage, sign } from "@/lib/util";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -40,18 +29,7 @@ export async function getChipFromTapParams(
 ): Promise<Chip | null> {
   // Try to parse the tapParams as an NTAG212
   try {
-<<<<<<< HEAD
     const validatedTapParams = NTAG212TapParamsSchema.parse(tapParams);
-=======
-    const NTAG212Schema = z.object({
-      chipId: z.string(),
-    });
-    const validatedTapParams = NTAG212Schema.parse(tapParams);
-<<<<<<< HEAD
-    console.log("validatedTapParams:", validatedTapParams);
->>>>>>> a49a19c (make api use null, client storage use undefined)
-=======
->>>>>>> 24726d4 (return owner info upon tap)
 
     const chip = await prisma.chip.findUnique({
       where: { chipId: validatedTapParams.chipId },
@@ -128,27 +106,11 @@ export const generateTapSignatureFromChip = async (
 
   // If chip is not registered, return a response indicating so
   if (!chipIsRegistered || !chipPublicKey || !chipPrivateKey) {
-<<<<<<< HEAD
-<<<<<<< HEAD
     return ChipTapResponseSchema.parse({
       chipIssuer,
       chipIsRegistered,
       tap: null,
     });
-=======
-    return {
-      chipIssuer,
-      chipIsRegistered,
-      tap: null,
-    };
->>>>>>> a49a19c (make api use null, client storage use undefined)
-=======
-    return ChipTapResponseSchema.parse({
-      chipIssuer,
-      chipIsRegistered,
-      tap: null,
-    });
->>>>>>> 24726d4 (return owner info upon tap)
   }
 
   // Generate a tap signature

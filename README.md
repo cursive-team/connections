@@ -8,9 +8,13 @@ From root:
 - `createdb connections_test`
 - `pnpm install`
 <<<<<<< HEAD
+<<<<<<< HEAD
 - Copy over .env.example into .env and update vars accordingly in frontend and backend
 =======
 >>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)
+=======
+- Copy over .env.example into .env and update vars accordingly in frontend and backend
+>>>>>>> 7edace6 (pr feedback, refactors)
 
 Frontend:
 

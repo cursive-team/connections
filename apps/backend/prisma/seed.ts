@@ -12,10 +12,14 @@ async function main() {
   ];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   await prisma.chip.createMany({
 =======
   await prisma.userChip.createMany({
 >>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)
+=======
+  await prisma.chip.createMany({
+>>>>>>> 7edace6 (pr feedback, refactors)
     data: testChips.map((chip) => ({
       chipIssuer: "TESTING",
       chipId: chip.chipId,
