@@ -62,18 +62,21 @@ PrismaPostgresClient.prototype.AppendBackupData = async function (
   userId: string,
   backupData: CreateBackupData[]
 ): Promise<BackupData[]> {
-  const submittedAt = new Date();
+  let submittedAt = new Date();
 
-  // Cache the new backup data so we don't have to make another request to the database
-  const newBackupData = backupData.map((data) => ({
-    userId,
-    authenticationTag: data.authenticationTag,
-    iv: data.iv,
-    encryptedData: data.encryptedData,
-    backupEntryType: data.backupEntryType,
-    clientCreatedAt: data.clientCreatedAt,
-    submittedAt,
-  }));
+  const newBackupData = backupData.map((data, index) => {
+    // Offset each submittedAt by a millisecond to retain client ordering
+    const offsetSubmittedAt = new Date(submittedAt.getTime() + index);
+    return {
+      userId,
+      authenticationTag: data.authenticationTag,
+      iv: data.iv,
+      encryptedData: data.encryptedData,
+      backupEntryType: data.backupEntryType,
+      clientCreatedAt: data.clientCreatedAt,
+      submittedAt: offsetSubmittedAt,
+    };
+  });
 
   await this.prismaClient.backup.createMany({
     data: newBackupData,

@@ -20,7 +20,7 @@ ManagedChipClient.prototype.RegisterChip = async function (
   const { signingKey, verifyingKey } = generateSignatureKeyPair();
 
   // Update the chip with registration information
-  const updatedChip = await this.prismaClient.userChip.update({
+  const updatedChip = await this.prismaClient.chip.update({
     where: { id: chip.id },
     data: {
       chipIsRegistered: true,

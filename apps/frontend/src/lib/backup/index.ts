@@ -2,6 +2,7 @@ import {
   AppendBackupDataRequest,
   AppendBackupDataResponseSchema,
   BackupData,
+  BackupEntryType,
   CreateBackupData,
 } from "@types";
 import {
@@ -49,7 +50,7 @@ export const processUserBackup = ({
   let user = existingUser;
   let submittedAt = previousSubmittedAt || backupData[0].submittedAt;
 
-  if (!user && backupData[0].backupEntryType !== "INITIAL") {
+  if (!user && backupData[0].backupEntryType !== BackupEntryType.INITIAL) {
     throw new Error("INITIAL backup entry not found");
   }
 
@@ -69,26 +70,26 @@ export const processUserBackup = ({
     });
 
     switch (data.backupEntryType) {
-      case "INITIAL":
+      case BackupEntryType.INITIAL:
         if (user) {
           throw new Error("INITIAL backup entry found for existing user");
         }
         user = UserSchema.parse(JSON.parse(decryptedData));
         break;
-      case "USER_DATA":
+      case BackupEntryType.USER_DATA:
         if (!user) {
           throw new Error("USER_DATA backup entry found before INITIAL");
         }
         user.userData = UserDataSchema.parse(JSON.parse(decryptedData));
         break;
-      case "CHIP":
+      case BackupEntryType.CHIP:
         if (!user) {
           throw new Error("CHIP backup entry found before INITIAL");
         }
         const chip: Chip = ChipSchema.parse(JSON.parse(decryptedData));
         user.chips.push(chip);
         break;
-      case "CONNECTION":
+      case BackupEntryType.CONNECTION:
         if (!user) {
           throw new Error("CONNECTION backup entry found before INITIAL");
         }
@@ -97,7 +98,7 @@ export const processUserBackup = ({
         );
         user.connections[connection.user.signaturePublicKey] = connection;
         break;
-      case "ACTIVITY":
+      case BackupEntryType.ACTIVITY:
         if (!user) {
           throw new Error("ACTIVITY backup entry found before INITIAL");
         }
@@ -212,7 +213,7 @@ export const createInitialBackup = ({
     authenticationTag,
     iv,
     encryptedData,
-    backupEntryType: "INITIAL",
+    backupEntryType: BackupEntryType.INITIAL,
     clientCreatedAt: new Date(),
   };
 };
@@ -238,7 +239,7 @@ export const createUserDataBackup = ({
     authenticationTag,
     iv,
     encryptedData,
-    backupEntryType: "USER_DATA",
+    backupEntryType: BackupEntryType.USER_DATA,
     clientCreatedAt: new Date(),
   };
 };
@@ -264,7 +265,7 @@ export const createChipBackup = ({
     authenticationTag,
     iv,
     encryptedData,
-    backupEntryType: "CHIP",
+    backupEntryType: BackupEntryType.CHIP,
     clientCreatedAt: new Date(),
   };
 };
@@ -290,7 +291,7 @@ export const createConnectionBackup = ({
     authenticationTag,
     iv,
     encryptedData,
-    backupEntryType: "CONNECTION",
+    backupEntryType: BackupEntryType.CONNECTION,
     clientCreatedAt: new Date(),
   };
 };
@@ -316,7 +317,7 @@ export const createActivityBackup = ({
     authenticationTag,
     iv,
     encryptedData,
-    backupEntryType: "ACTIVITY",
+    backupEntryType: BackupEntryType.ACTIVITY,
     clientCreatedAt: new Date(),
   };
 };

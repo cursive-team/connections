@@ -11,7 +11,7 @@ async function main() {
     { chipId: "TEST005" },
   ];
 
-  await prisma.userChip.createMany({
+  await prisma.chip.createMany({
     data: testChips.map((chip) => ({
       chipIssuer: "TESTING",
       chipId: chip.chipId,

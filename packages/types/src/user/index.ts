@@ -9,9 +9,15 @@ export const AuthTokenSchema = z.object({
 export type AuthToken = z.infer<typeof AuthTokenSchema>;
 
 // Enum for backup entry types
-export const BackupEntryTypeSchema = z.enum(["INITIAL"]);
+export enum BackupEntryType {
+  INITIAL = "INITIAL",
+  USER_DATA = "USER_DATA",
+  CHIP = "CHIP",
+  CONNECTION = "CONNECTION",
+  ACTIVITY = "ACTIVITY",
+}
 
-export type BackupEntryType = z.infer<typeof BackupEntryTypeSchema>;
+export const BackupEntryTypeSchema = z.nativeEnum(BackupEntryType);
 
 // Generic backup data schema for creating a backup
 export const CreateBackupDataSchema = z.object({

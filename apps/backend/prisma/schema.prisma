@@ -42,7 +42,7 @@ model Backup {
   submittedAt       DateTime @default(now())
 }
 
-model UserChip {
+model Chip {
   id                       String   @id @default(uuid())
   chipIssuer               String // e.g., "LANNA", "DEVCON"
   chipId                   String   @unique

@@ -7,6 +7,7 @@ From root:
 - Create local postgres database, set name to be `connections` and port to `5432` (the default).
 - `createdb connections_test`
 - `pnpm install`
+- Copy over .env.example into .env and update vars accordingly in frontend and backend
 
 Frontend:
 

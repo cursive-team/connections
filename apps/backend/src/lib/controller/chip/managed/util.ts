@@ -4,9 +4,13 @@ import {
   errorToString,
   TapParams,
 } from "@types";
-import { Chip, ChipSchema } from "@/lib/controller/chip/types";
+import {
+  Chip,
+  ChipSchema,
+  NTAG212TapParamsSchema,
+  NTAG424TapParamsSchema,
+} from "@/lib/controller/chip/types";
 import { PrismaClient } from "@prisma/client";
-import { z } from "zod";
 import { getCounterMessage, sign } from "@/lib/util";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const crypto = require("crypto");
@@ -25,12 +29,9 @@ export async function getChipFromTapParams(
 ): Promise<Chip | null> {
   // Try to parse the tapParams as an NTAG212
   try {
-    const NTAG212Schema = z.object({
-      chipId: z.string(),
-    });
-    const validatedTapParams = NTAG212Schema.parse(tapParams);
+    const validatedTapParams = NTAG212TapParamsSchema.parse(tapParams);
 
-    const chip = await prisma.userChip.findUnique({
+    const chip = await prisma.chip.findUnique({
       where: { chipId: validatedTapParams.chipId },
     });
 
@@ -49,15 +50,11 @@ export async function getChipFromTapParams(
 
   // Try to parse the tapParams as an NTAG424
   try {
-    const NTAG424Schema = z.object({
-      encryptedChipId: z.string(),
-      cmac: z.string(),
-    });
-    const validatedTapParams = NTAG424Schema.parse(tapParams);
+    const validatedTapParams = NTAG424TapParamsSchema.parse(tapParams);
 
     // TODO: Decrypt the chipId and validate the cmac
 
-    const chip = await prisma.userChip.findUnique({
+    const chip = await prisma.chip.findUnique({
       where: { chipId: validatedTapParams.encryptedChipId },
     });
 
@@ -123,7 +120,7 @@ export const generateTapSignatureFromChip = async (
   const signature = sign(chipPrivateKey, message);
 
   // Update chip tap count
-  await prisma.userChip.update({
+  await prisma.chip.update({
     where: {
       id,
     },
