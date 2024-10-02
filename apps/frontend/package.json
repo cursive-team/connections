@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@local-shared/types": "file:../../local-shared/types",
     "elliptic": "^6.5.7",
     "ffjavascript": "^0.3.0",
     "hash.js": "^1.1.7",

@@ -5,10 +5,10 @@ RUN corepack enable
 
 # Copy shared packages
 WORKDIR /usr/src
-COPY packages/types ./packages/types
+COPY local-shared/types ./local-shared/types
 
 # Install shared package dependencies
-WORKDIR /usr/src/packages/types
+WORKDIR /usr/src/local-shared/types
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
 
 # Copy backend app

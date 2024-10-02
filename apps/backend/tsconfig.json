@@ -31,7 +31,7 @@
     "baseUrl": "./",                                     /* Specify the base directory to resolve non-relative module names. */
     "paths": {                                           /* Specify a set of entries that re-map imports to additional lookup locations. */
       "@/*": ["./src/*"],
-      "@types": ["../../packages/types/src"]
+      "@local-shared/*": ["../../local-shared/*"]
     },                                                  
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
     // "typeRoots": [],                                  /* Specify multiple folders that act like './node_modules/@types'. */
@@ -110,6 +110,11 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
-  "include": ["src/**/*.ts"],
+  "ts-node": {
+    // Do not forget to `npm i -D tsconfig-paths`
+    "require": ["tsconfig-paths/register"]
+  },
+  // TODO: include local packages?
+  "include": ["src/**/*.ts", "../../local-shared/*"],
   "exclude": ["node_modules", "dist"]
 }

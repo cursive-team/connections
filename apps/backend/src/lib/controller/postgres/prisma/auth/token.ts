@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { PrismaPostgresClient } from "@/lib/controller/postgres/prisma/client";
-import { AuthToken, AuthTokenSchema } from "@types";
+import { AuthToken, AuthTokenSchema } from "@local-shared/types";
 import { AuthTokenCreateRequest } from "@/lib/controller/postgres/types";
 
 /**
