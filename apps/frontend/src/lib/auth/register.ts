@@ -11,6 +11,7 @@ import {
 import { createInitialBackup, processUserBackup } from "@/lib/backup";
 import { User } from "@/lib/storage/types";
 import { storage } from "@/lib/storage";
+import { createRegisterActivity } from "../activity";
 
 /**
  * Registers a user and loads initial storage data.
@@ -34,6 +35,8 @@ export async function registerUser(
   const passwordHash = await hashPassword(password, passwordSalt);
 
   // User data with provided displayName and bio
+  // Add register activity
+  const registerActivity = createRegisterActivity();
   const user: User = {
     email,
     signaturePrivateKey,
@@ -47,7 +50,7 @@ export async function registerUser(
     },
     chips: [],
     connections: {},
-    activities: [],
+    activities: [registerActivity],
   };
 
   const initialBackupData = createInitialBackup({

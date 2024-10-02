@@ -1,4 +1,4 @@
-import { Chip, CommentData, Session, User, UserData } from "./types";
+import { Activity, Chip, CommentData, Session, User, UserData } from "./types";
 import { LocalStorage } from "./localStorage/client";
 import { ChipTapResponse } from "@types";
 
@@ -22,6 +22,7 @@ export interface ClientStorage {
     connectionSignaturePublicKey: string,
     comment: CommentData
   ): Promise<void>;
+  addActivity(activity: Activity): Promise<void>;
 }
 
 const storage = new LocalStorage();

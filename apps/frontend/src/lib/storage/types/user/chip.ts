@@ -1,9 +1,10 @@
+import { ChipIssuerSchema, ChipVariantSchema } from "@types";
 import { z } from "zod";
 
 export const ChipSchema = z.object({
-  issuer: z.string(),
+  issuer: ChipIssuerSchema,
   id: z.string(),
-  variant: z.string(),
+  variant: ChipVariantSchema,
   publicKey: z.string(),
   privateKey: z.string(),
 });

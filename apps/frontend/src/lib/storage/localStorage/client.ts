@@ -6,6 +6,7 @@ import {
 } from "@/lib/storage/localStorage/session";
 import { deleteUser, getUser, saveUser } from "@/lib/storage/localStorage/user";
 import {
+  Activity,
   Chip,
   CommentData,
   Session,
@@ -17,6 +18,7 @@ import { updateUserData } from "@/lib/storage/localStorage/user/userData";
 import { ChipTapResponse } from "@types";
 import { addTap } from "@/lib/storage/localStorage/user/connection/tap";
 import { updateComment } from "@/lib/storage/localStorage/user/connection/comment";
+import { addActivity } from "@/lib/storage/localStorage/user/activity";
 
 export class LocalStorage implements ClientStorage {
   async loadInitialStorageData(
@@ -64,5 +66,9 @@ export class LocalStorage implements ClientStorage {
     comment: CommentData
   ): Promise<void> {
     return updateComment(connectionSignaturePublicKey, comment);
+  }
+
+  async addActivity(activity: Activity): Promise<void> {
+    return addActivity(activity);
   }
 }

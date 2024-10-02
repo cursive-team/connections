@@ -1,4 +1,8 @@
-import { appendBackupData, createConnectionBackup } from "@/lib/backup";
+import {
+  appendBackupData,
+  createActivityBackup,
+  createConnectionBackup,
+} from "@/lib/backup";
 import { ChipTapResponse } from "@types";
 import { getUser, saveUser } from "../../user";
 import { getSession, saveSession } from "../../session";
@@ -9,6 +13,7 @@ import {
   TwitterData,
   TwitterDataSchema,
 } from "@/lib/storage/types";
+import { createTapActivity } from "@/lib/activity";
 
 export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
   const user = getUser();
@@ -102,11 +107,22 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
     connection: newConnection,
   });
 
+  // Create activity for tapping a chip
+  const tapActivity = createTapActivity(
+    tapResponse.chipIssuer,
+    tap.ownerDisplayName
+  );
+  const tapActivityBackup = createActivityBackup({
+    email: user.email,
+    password: session.backupMasterPassword,
+    activity: tapActivity,
+  });
+
   const { updatedUser, updatedSubmittedAt } = await appendBackupData({
     email: user.email,
     password: session.backupMasterPassword,
     authToken: session.authTokenValue,
-    newBackupData: [connectionBackup],
+    newBackupData: [connectionBackup, tapActivityBackup],
     existingUser: user,
     previousSubmittedAt: session.lastBackupFetchedAt,
   });
