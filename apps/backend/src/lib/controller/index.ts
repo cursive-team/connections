@@ -9,19 +9,9 @@ import {
 } from "@/lib/controller/postgres/types";
 import {
   AuthToken,
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 65414bd (add frontend submission and processing of backup data)
   BackupData,
   ChipTapResponse,
   CreateBackupData,
-<<<<<<< HEAD
-=======
-  ChipTapResponse,
->>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)
-=======
->>>>>>> 3229d1d (backend handler for updating backup data)
   RegisterChipRequest,
   TapParams,
 } from "@types";
@@ -70,25 +60,10 @@ export class Controller {
     return this.postgresClient.CreateBackup(createBackup);
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   AppendBackupData(
     userId: string,
     backupData: CreateBackupData[]
   ): Promise<BackupData[]> {
-=======
-  // Returns the date the new backup data entries were submitted at
-  AppendBackupData(
-    userId: string,
-    backupData: CreateBackupData[]
-  ): Promise<Date> {
->>>>>>> 3229d1d (backend handler for updating backup data)
-=======
-  AppendBackupData(
-    userId: string,
-    backupData: CreateBackupData[]
-  ): Promise<BackupData[]> {
->>>>>>> 65414bd (add frontend submission and processing of backup data)
     return this.postgresClient.AppendBackupData(userId, backupData);
   }
 

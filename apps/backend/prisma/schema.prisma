@@ -42,15 +42,7 @@ model Backup {
   submittedAt       DateTime @default(now())
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 model Chip {
-=======
-model UserChip {
->>>>>>> 0d1ba92 (backend implementation of chip registration and tapping)
-=======
-model Chip {
->>>>>>> 7edace6 (pr feedback, refactors)
   id                       String   @id @default(uuid())
   chipIssuer               String // e.g., "LANNA", "DEVCON"
   chipId                   String   @unique
