@@ -10,6 +10,9 @@ importers:
 
   apps/backend:
     dependencies:
+      '@local-shared/types':
+        specifier: file:../../local-shared/types
+        version: file:local-shared/types
       '@prisma/client':
         specifier: ^5.19.1
         version: 5.20.0(prisma@5.20.0)
