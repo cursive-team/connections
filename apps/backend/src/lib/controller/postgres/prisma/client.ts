@@ -6,7 +6,7 @@ import {
   User,
   Backup,
 } from "@/lib/controller/postgres/types";
-import { AuthToken } from "@types";
+import { AuthToken } from "@local-shared/types";
 
 // NOTE: Hoist all prototype methods -- if you do not import the method file, the method(s) will evaluate to undefined at runtime
 import("@/lib/controller/postgres/prisma/user/user");

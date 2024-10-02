@@ -1,4 +1,4 @@
-import { BackupData, CreateBackupData } from "@types";
+import { BackupData, CreateBackupData } from "@local-shared/types";
 import { User, UserSchema } from "@/lib/storage/types";
 import { decryptBackupString, encryptBackupString } from "@/lib/crypto/backup";
 

@@ -7,7 +7,7 @@ import {
   BackupCreateRequest,
   AuthTokenCreateRequest,
 } from "@/lib/controller/postgres/types";
-import { AuthToken } from "@types";
+import { AuthToken } from "@local-shared/types";
 
 export class Controller {
   postgresClient: iPostgresClient; // Use interface so that it can be mocked out

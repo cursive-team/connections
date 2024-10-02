@@ -5,7 +5,7 @@ import {
   BackupCreateRequest,
   AuthTokenCreateRequest,
 } from "@/lib/controller/postgres/types";
-import { AuthToken } from "@types";
+import { AuthToken } from "@local-shared/types";
 
 export interface iPostgresClient {
   // User methods

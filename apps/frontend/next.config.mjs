@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@types"],
+  transpilePackages: ["@local-shared/*"],
   webpack: (config) => {
     config.resolve.fallback = {
       net: false,

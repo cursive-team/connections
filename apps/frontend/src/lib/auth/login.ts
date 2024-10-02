@@ -7,7 +7,7 @@ import {
   UserLoginResponse,
   UserLoginResponseSchema,
   errorToString,
-} from "@types";
+} from "@local-shared/types";
 import { hashPassword } from "@/lib/crypto/backup";
 
 export async function loginUser(

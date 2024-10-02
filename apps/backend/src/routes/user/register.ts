@@ -6,7 +6,7 @@ import {
   UserRegisterRequestSchema,
   errorToString,
   BackupData,
-} from "@types";
+} from "@local-shared/types";
 import { Controller } from "@/lib/controller";
 
 const router = express.Router();

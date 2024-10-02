@@ -19,3 +19,11 @@ To locally build the image and run the container:
 
 For reducing the size of the docker image, I found this utility to be useful: 
 - `du -shc $dir-or-file`
+
+Utilities 
+
+For finding the port that a process is listening to: 
+- ` lsof -i -P | grep LISTEN | grep :$PORT`
+
+To kill process: 
+- `kill -9 $PID`

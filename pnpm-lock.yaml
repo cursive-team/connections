@@ -59,6 +59,9 @@ importers:
 
   apps/frontend:
     dependencies:
+      '@local-shared/types':
+        specifier: file:../../local-shared/types
+        version: file:local-shared/types
       elliptic:
         specifier: ^6.5.7
         version: 6.5.7
@@ -109,7 +112,7 @@ importers:
         specifier: ^5
         version: 5.6.2
 
-  packages/types:
+  local-shared/types:
     dependencies:
       zod:
         specifier: ^3.23.8
@@ -183,6 +186,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
+
+  '@local-shared/types@file:local-shared/types':
+    resolution: {directory: local-shared/types, type: directory}
 
   '@next/env@14.2.13':
     resolution: {integrity: sha512-s3lh6K8cbW1h5Nga7NNeXrbe0+2jIIYK9YaA9T7IufDWnZpozdFUp6Hf0d5rNWUKu4fEuSX2rCKlGjCrtylfDw==}
@@ -2124,6 +2130,11 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  '@local-shared/types@file:local-shared/types':
+    dependencies:
+      zod: 3.23.8
+      zod-validation-error: 3.4.0(zod@3.23.8)
 
   '@next/env@14.2.13': {}
 

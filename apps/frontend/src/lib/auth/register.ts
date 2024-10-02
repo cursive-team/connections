@@ -7,7 +7,7 @@ import {
   UserRegisterRequest,
   UserRegisterResponseSchema,
   errorToString,
-} from "@types";
+} from "@local-shared/types";
 import { createInitialBackup, parseUserFromBackup } from "@/lib/backup";
 import { User } from "@/lib/storage/types";
 import { storage } from "@/lib/storage";
