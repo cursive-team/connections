@@ -25,7 +25,9 @@ export async function tapChip(tapParams: TapParams): Promise<ChipTapResponse> {
     const data = await response.json();
     const parsedData = ChipTapResponseSchema.parse(data);
 
-    await storage.addTap(parsedData);
+    if (parsedData.chipIsRegistered && parsedData.tap) {
+      await storage.addTap(parsedData);
+    }
 
     return parsedData;
   } catch (error) {

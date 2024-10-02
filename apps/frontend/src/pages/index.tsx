@@ -319,7 +319,6 @@ export default function Home() {
             <button
               onClick={handleSubmitComment}
               className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
-              disabled={!selectedEmoji && !privateNote}
             >
               Submit
             </button>
