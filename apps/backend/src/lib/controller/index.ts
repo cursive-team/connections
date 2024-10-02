@@ -7,14 +7,27 @@ import {
   BackupCreateRequest,
   AuthTokenCreateRequest,
 } from "@/lib/controller/postgres/types";
-import { AuthToken } from "@types";
+import {
+  AuthToken,
+  BackupData,
+  ChipTapResponse,
+  CreateBackupData,
+  RegisterChipRequest,
+  TapParams,
+} from "@types";
+import { Chip } from "@/lib/controller/chip/types";
+import { iChipClient } from "@/lib/controller/chip/interfaces";
+import { ManagedChipClient } from "@/lib/controller/chip/managed/client";
 
 export class Controller {
   postgresClient: iPostgresClient; // Use interface so that it can be mocked out
+  chipClient: iChipClient;
 
   constructor() {
     // Default client, could also pass through mock
     this.postgresClient = new PrismaPostgresClient();
+
+    this.chipClient = new ManagedChipClient();
 
     // Over time more clients will be added (e.g. nitro enclave client)...
   }
@@ -27,6 +40,10 @@ export class Controller {
     return this.postgresClient.GetUserById(userId);
   }
 
+  GetUserByAuthToken(authToken: string): Promise<User | null> {
+    return this.postgresClient.GetUserByAuthToken(authToken);
+  }
+
   CreateUser(createUser: UserCreateRequest): Promise<User> {
     return this.postgresClient.CreateUser(createUser);
   }
@@ -35,8 +52,19 @@ export class Controller {
     return this.postgresClient.GetAllBackupsForUser(userId);
   }
 
+  GetBackupDataAfter(userId: string, submittedAt: Date): Promise<Backup[]> {
+    return this.postgresClient.GetBackupDataAfter(userId, submittedAt);
+  }
+
   CreateBackup(createBackup: BackupCreateRequest): Promise<Backup> {
     return this.postgresClient.CreateBackup(createBackup);
+  }
+
+  AppendBackupData(
+    userId: string,
+    backupData: CreateBackupData[]
+  ): Promise<BackupData[]> {
+    return this.postgresClient.AppendBackupData(userId, backupData);
   }
 
   CreateAuthToken(createAuthToken: AuthTokenCreateRequest): Promise<AuthToken> {
@@ -45,5 +73,13 @@ export class Controller {
 
   CreateAuthTokenForUser(userId: string): Promise<AuthToken> {
     return this.postgresClient.CreateAuthTokenForUser(userId);
+  }
+
+  RegisterChip(registerChip: RegisterChipRequest): Promise<Chip> {
+    return this.chipClient.RegisterChip(registerChip);
+  }
+
+  GetTapFromChip(tapParams: TapParams): Promise<ChipTapResponse> {
+    return this.chipClient.GetTapFromChip(tapParams);
   }
 }

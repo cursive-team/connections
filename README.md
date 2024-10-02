@@ -1,14 +1,25 @@
 # Cursive Connections
 
-Dev Setup
-- `pnpm install`
+## Dev Setup
+
+From root:
+
 - Create local postgres database, set name to be `connections` and port to `5432` (the default).
 - `createdb connections_test`
-- `export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/connections_test?schema=public"`
+- `pnpm install`
+- Copy over .env.example into .env and update vars accordingly in frontend and backend
+
+Frontend:
+
+- `cd apps/frontend && pnpm run dev`
+
+Backend:
+
+- `cd apps/backend`
 - `pnpm prisma generate`
 - `pnpm prisma migrate dev`
-- `cd apps/frontend && pnpm run dev`
-- `cd apps/backend && pnpm run dev`
+- `pnpm run dev`
+- To seed database with testing UserChip values: `pnpm run seed`
 
 Docker
 
@@ -20,3 +31,7 @@ To locally build the image and run the container:
 
 For reducing the size of the docker image, I found this utility to be useful: 
 - `du -shc $dir-or-file`
+
+Notes:
+
+- API/backend uses null types for interop, client storage uses undefined for storage efficiency - conversions are done with zod.transform

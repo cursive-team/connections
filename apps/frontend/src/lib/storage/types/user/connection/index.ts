@@ -2,10 +2,11 @@ import { z } from "zod";
 import { UserDataSchema } from "../userData";
 import { CommentDataSchema } from "./commentData";
 import { TapDataSchema } from "./tapData";
+import { nullToUndefined } from "@types";
 
 export const ConnectionSchema = z.object({
   user: UserDataSchema,
-  comment: CommentDataSchema.optional(),
+  comment: nullToUndefined(CommentDataSchema),
   taps: z.array(TapDataSchema),
 });
 

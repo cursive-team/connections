@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { nullToUndefined } from "@types";
 import { TwitterDataSchema } from "./twitterData";
 import { TelegramDataSchema } from "./telegramData";
 
@@ -7,8 +8,8 @@ export const UserDataSchema = z.object({
   bio: z.string(),
   signaturePublicKey: z.string(),
   encryptionPublicKey: z.string(),
-  twitter: TwitterDataSchema.optional(),
-  telegram: TelegramDataSchema.optional(),
+  twitter: nullToUndefined(TwitterDataSchema),
+  telegram: nullToUndefined(TelegramDataSchema),
 });
 
 export type UserData = z.infer<typeof UserDataSchema>;

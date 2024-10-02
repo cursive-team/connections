@@ -13,8 +13,8 @@ export class LocalStorage implements ClientStorage {
   ): Promise<void> {
     const user = initialStorageData.user;
     const session = {
-      value: initialStorageData.authTokenValue,
-      expiresAt: initialStorageData.authTokenExpiresAt,
+      authTokenValue: initialStorageData.authTokenValue,
+      authTokenExpiresAt: initialStorageData.authTokenExpiresAt,
       backupMasterPassword: initialStorageData.backupMasterPassword,
       lastBackupFetchedAt: initialStorageData.lastBackupFetchedAt,
     };

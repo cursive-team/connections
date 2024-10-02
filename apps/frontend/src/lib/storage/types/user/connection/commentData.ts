@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { nullToUndefined } from "@types";
 
 export const CommentDataSchema = z.object({
-  note: z.string().optional(),
-  emoji: z.string().optional(),
-  lastUpdatedAt: z.coerce.date().optional(),
+  note: nullToUndefined(z.string()),
+  emoji: nullToUndefined(z.string()),
+  lastUpdatedAt: nullToUndefined(z.coerce.date()),
 });
 
 export type CommentData = z.infer<typeof CommentDataSchema>;
