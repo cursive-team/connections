@@ -82,14 +82,7 @@ export default function Home() {
 
       const result = await tapChip(params);
       setTapResponse(result);
-<<<<<<< HEAD
-<<<<<<< HEAD
       await refreshStorage();
-=======
->>>>>>> 3229d1d (backend handler for updating backup data)
-=======
-      await refreshStorage();
->>>>>>> 81368d3 (user data and tap backups)
 
       if (result.chipIsRegistered) {
         setShowTapChipModal(true);
@@ -171,7 +164,6 @@ export default function Home() {
     }
   };
 
-<<<<<<< HEAD
   const handleEmojiSelect = (emoji: string) => {
     setSelectedEmoji(selectedEmoji === emoji ? null : emoji);
   };
@@ -201,8 +193,6 @@ export default function Home() {
     }
   };
 
-=======
->>>>>>> 81368d3 (user data and tap backups)
   const RegisterChipModal = () => {
     if (!showRegisterChipModal || !tapResponse) return null;
 
