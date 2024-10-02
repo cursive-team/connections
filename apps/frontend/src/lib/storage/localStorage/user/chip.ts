@@ -1,6 +1,6 @@
 import { appendBackupData, createChipBackup } from "@/lib/backup";
 import { Chip } from "@/lib/storage/types";
-import { getUser, saveUser } from ".";
+import { getUser, saveUser } from "../user";
 import { getSession, saveSession } from "../session";
 
 export const addChip = async (chip: Chip): Promise<void> => {

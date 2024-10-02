@@ -1,5 +1,5 @@
 import { appendBackupData, createConnectionBackup } from "@/lib/backup";
-import { getUser, saveUser } from "..";
+import { getUser, saveUser } from "../../user";
 import { getSession, saveSession } from "../../session";
 import { CommentData, CommentDataSchema } from "@/lib/storage/types";
 

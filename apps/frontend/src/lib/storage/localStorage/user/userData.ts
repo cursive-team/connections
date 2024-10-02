@@ -1,5 +1,5 @@
 import { UserData } from "@/lib/storage/types";
-import { getUser, saveUser } from "./index";
+import { getUser, saveUser } from "../user";
 import { getSession, saveSession } from "../session";
 import { appendBackupData, createUserDataBackup } from "@/lib/backup";
 

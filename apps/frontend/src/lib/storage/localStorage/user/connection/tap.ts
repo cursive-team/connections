@@ -1,7 +1,7 @@
 import { appendBackupData, createConnectionBackup } from "@/lib/backup";
 import { ChipTapResponse } from "@types";
-import { getUser, saveUser } from ".";
-import { getSession, saveSession } from "../session";
+import { getUser, saveUser } from "../../user";
+import { getSession, saveSession } from "../../session";
 import {
   TapDataSchema,
   TelegramData,
