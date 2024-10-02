@@ -1,9 +1,9 @@
-import { appendBackupData, createChipBackup } from "@/lib/backup";
-import { Chip } from "@/lib/storage/types";
-import { getUser, saveUser } from "../user";
+import { UserData } from "@/lib/storage/types";
+import { getUser, saveUser } from "./index";
 import { getSession, saveSession } from "../session";
+import { appendBackupData, createUserDataBackup } from "@/lib/backup";
 
-export const addChip = async (chip: Chip): Promise<void> => {
+export const updateUserData = async (userData: UserData): Promise<void> => {
   const user = getUser();
   const session = getSession();
 
@@ -14,17 +14,17 @@ export const addChip = async (chip: Chip): Promise<void> => {
     throw new Error("Session expired");
   }
 
-  const chipBackup = createChipBackup({
+  const userDataBackup = createUserDataBackup({
     email: user.email,
     password: session.backupMasterPassword,
-    chip,
+    userData,
   });
 
   const { updatedUser, updatedSubmittedAt } = await appendBackupData({
     email: user.email,
     password: session.backupMasterPassword,
     authToken: session.authTokenValue,
-    newBackupData: [chipBackup],
+    newBackupData: [userDataBackup],
     existingUser: user,
     previousSubmittedAt: session.lastBackupFetchedAt,
   });
