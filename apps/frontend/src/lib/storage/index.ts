@@ -1,5 +1,6 @@
-import { Session, User } from "./types";
+import { Activity, Chip, CommentData, Session, User, UserData } from "./types";
 import { LocalStorage } from "./localStorage/client";
+import { ChipTapResponse } from "@types";
 
 export interface InitialStorageData {
   user: User;
@@ -14,7 +15,14 @@ export interface ClientStorage {
   deleteStorageData(): Promise<void>;
   getUser(): Promise<User | undefined>;
   getSession(): Promise<Session | undefined>;
-  saveSession(session: Session): Promise<void>;
+  updateUserData(userData: UserData): Promise<void>;
+  addChip(chip: Chip): Promise<void>;
+  addTap(tapResponse: ChipTapResponse): Promise<void>;
+  updateComment(
+    connectionSignaturePublicKey: string,
+    comment: CommentData
+  ): Promise<void>;
+  addActivity(activity: Activity): Promise<void>;
 }
 
 const storage = new LocalStorage();

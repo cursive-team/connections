@@ -5,7 +5,20 @@ import {
   saveSession,
 } from "@/lib/storage/localStorage/session";
 import { deleteUser, getUser, saveUser } from "@/lib/storage/localStorage/user";
-import { Session, User } from "@/lib/storage/types";
+import {
+  Activity,
+  Chip,
+  CommentData,
+  Session,
+  User,
+  UserData,
+} from "@/lib/storage/types";
+import { addChip } from "@/lib/storage/localStorage/user/chip";
+import { updateUserData } from "@/lib/storage/localStorage/user/userData";
+import { ChipTapResponse } from "@types";
+import { addTap } from "@/lib/storage/localStorage/user/connection/tap";
+import { updateComment } from "@/lib/storage/localStorage/user/connection/comment";
+import { addActivity } from "@/lib/storage/localStorage/user/activity";
 
 export class LocalStorage implements ClientStorage {
   async loadInitialStorageData(
@@ -36,7 +49,26 @@ export class LocalStorage implements ClientStorage {
     return getSession();
   }
 
-  async saveSession(session: Session): Promise<void> {
-    return saveSession(session);
+  async updateUserData(userData: UserData): Promise<void> {
+    return updateUserData(userData);
+  }
+
+  async addChip(chip: Chip): Promise<void> {
+    return addChip(chip);
+  }
+
+  async addTap(tapResponse: ChipTapResponse): Promise<void> {
+    return addTap(tapResponse);
+  }
+
+  async updateComment(
+    connectionSignaturePublicKey: string,
+    comment: CommentData
+  ): Promise<void> {
+    return updateComment(connectionSignaturePublicKey, comment);
+  }
+
+  async addActivity(activity: Activity): Promise<void> {
+    return addActivity(activity);
   }
 }

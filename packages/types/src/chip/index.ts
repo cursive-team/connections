@@ -1,17 +1,20 @@
 import { JsonSchema } from "../util";
 import { z } from "zod";
 
-export const ChipIssuerSchema = z.enum([
-  "EDGE_CITY_LANNA",
-  "DEVCON_2024",
-  "TESTING",
-]);
+export enum ChipIssuer {
+  EDGE_CITY_LANNA = "EDGE_CITY_LANNA",
+  DEVCON_2024 = "DEVCON_2024",
+  TESTING = "TESTING",
+}
 
-export type ChipIssuer = z.infer<typeof ChipIssuerSchema>;
+export const ChipIssuerSchema = z.nativeEnum(ChipIssuer);
 
-export const ChipVariantSchema = z.enum(["NTAG212", "NTAG424"]);
+export enum ChipVariant {
+  NTAG212 = "NTAG212",
+  NTAG424 = "NTAG424",
+}
 
-export type ChipVariant = z.infer<typeof ChipVariantSchema>;
+export const ChipVariantSchema = z.nativeEnum(ChipVariant);
 
 export const TapParamsSchema = z.record(z.string(), z.string());
 

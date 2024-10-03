@@ -1,7 +1,13 @@
 import { z } from "zod";
 
+export enum ActivityType {
+  REGISTER = "REGISTER",
+  REGISTER_CHIP = "REGISTER_CHIP",
+  TAP = "TAP",
+}
+
 export const ActivitySchema = z.object({
-  type: z.string(),
+  type: z.nativeEnum(ActivityType),
   serializedData: z.string(),
   timestamp: z.coerce.date(),
 });
