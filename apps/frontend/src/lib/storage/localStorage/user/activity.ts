@@ -1,18 +1,9 @@
-import { appendBackupData, createActivityBackup } from "@/lib/backup";
+import { createActivityBackup } from "@/lib/backup";
 import { Activity } from "@/lib/storage/types";
-import { getUser, saveUser } from "../user";
-import { getSession, saveSession } from "../session";
+import { getUserAndSession, saveBackupAndUpdateStorage } from "../utils";
 
 export const addActivity = async (activity: Activity): Promise<void> => {
-  const user = getUser();
-  const session = getSession();
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-  if (!session || session.authTokenExpiresAt < new Date()) {
-    throw new Error("Session expired");
-  }
+  const { user, session } = getUserAndSession();
 
   const activityBackup = createActivityBackup({
     email: user.email,
@@ -20,18 +11,9 @@ export const addActivity = async (activity: Activity): Promise<void> => {
     activity,
   });
 
-  const { updatedUser, updatedSubmittedAt } = await appendBackupData({
-    email: user.email,
-    password: session.backupMasterPassword,
-    authToken: session.authTokenValue,
+  await saveBackupAndUpdateStorage({
+    user,
+    session,
     newBackupData: [activityBackup],
-    existingUser: user,
-    previousSubmittedAt: session.lastBackupFetchedAt,
-  });
-
-  saveUser(updatedUser);
-  saveSession({
-    ...session,
-    lastBackupFetchedAt: updatedSubmittedAt,
   });
 };

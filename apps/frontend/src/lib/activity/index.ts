@@ -14,17 +14,20 @@ export const createRegisterActivity = (): Activity => {
 
 export const RegisterChipActivityDataSchema = z.object({
   chipIssuer: ChipIssuerSchema,
+  chipId: z.string(),
 });
 export type RegisterChipActivityData = z.infer<
   typeof RegisterChipActivityDataSchema
 >;
 export const createRegisterChipActivity = (
-  chipIssuer: ChipIssuer
+  chipIssuer: ChipIssuer,
+  chipId: string
 ): Activity => {
   return {
     type: ActivityType.REGISTER_CHIP,
     serializedData: JSON.stringify({
       chipIssuer,
+      chipId,
     }),
     timestamp: new Date(),
   };
@@ -33,17 +36,20 @@ export const createRegisterChipActivity = (
 export const TapActivityDataSchema = z.object({
   chipIssuer: ChipIssuerSchema,
   chipOwnerDisplayName: z.string(),
+  chipOwnerSignaturePublicKey: z.string(),
 });
 export type TapActivityData = z.infer<typeof TapActivityDataSchema>;
 export const createTapActivity = (
   chipIssuer: ChipIssuer,
-  chipOwnerDisplayName: string
+  chipOwnerDisplayName: string,
+  chipOwnerSignaturePublicKey: string
 ): Activity => {
   return {
     type: ActivityType.TAP,
     serializedData: JSON.stringify({
       chipIssuer,
       chipOwnerDisplayName,
+      chipOwnerSignaturePublicKey: chipOwnerSignaturePublicKey,
     }),
     timestamp: new Date(),
   };

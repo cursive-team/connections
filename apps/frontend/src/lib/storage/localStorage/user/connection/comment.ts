@@ -1,21 +1,12 @@
-import { appendBackupData, createConnectionBackup } from "@/lib/backup";
-import { getUser, saveUser } from "../../user";
-import { getSession, saveSession } from "../../session";
+import { createConnectionBackup } from "@/lib/backup";
+import { getUserAndSession, saveBackupAndUpdateStorage } from "../../utils";
 import { CommentData, CommentDataSchema } from "@/lib/storage/types";
 
 export const updateComment = async (
   connectionSignaturePublicKey: string,
   commentData: CommentData
 ): Promise<void> => {
-  const user = getUser();
-  const session = getSession();
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-  if (!session || session.authTokenExpiresAt < new Date()) {
-    throw new Error("Session expired");
-  }
+  const { user, session } = getUserAndSession();
 
   const connection = user.connections[connectionSignaturePublicKey];
   if (!connection) {
@@ -38,18 +29,9 @@ export const updateComment = async (
     connection: updatedConnection,
   });
 
-  const { updatedUser, updatedSubmittedAt } = await appendBackupData({
-    email: user.email,
-    password: session.backupMasterPassword,
-    authToken: session.authTokenValue,
+  await saveBackupAndUpdateStorage({
+    user,
+    session,
     newBackupData: [connectionBackup],
-    existingUser: user,
-    previousSubmittedAt: session.lastBackupFetchedAt,
-  });
-
-  saveUser(updatedUser);
-  saveSession({
-    ...session,
-    lastBackupFetchedAt: updatedSubmittedAt,
   });
 };

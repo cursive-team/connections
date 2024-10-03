@@ -1,23 +1,10 @@
-import {
-  appendBackupData,
-  createActivityBackup,
-  createChipBackup,
-} from "@/lib/backup";
+import { createActivityBackup, createChipBackup } from "@/lib/backup";
 import { Chip } from "@/lib/storage/types";
-import { getUser, saveUser } from "../user";
-import { getSession, saveSession } from "../session";
 import { createRegisterChipActivity } from "@/lib/activity";
+import { getUserAndSession, saveBackupAndUpdateStorage } from "../utils";
 
 export const addChip = async (chip: Chip): Promise<void> => {
-  const user = getUser();
-  const session = getSession();
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-  if (!session || session.authTokenExpiresAt < new Date()) {
-    throw new Error("Session expired");
-  }
+  const { user, session } = getUserAndSession();
 
   const chipBackup = createChipBackup({
     email: user.email,
@@ -26,25 +13,16 @@ export const addChip = async (chip: Chip): Promise<void> => {
   });
 
   // Create activity for registering a chip
-  const registerChipActivity = createRegisterChipActivity(chip.issuer);
+  const registerChipActivity = createRegisterChipActivity(chip.issuer, chip.id);
   const registerChipActivityBackup = createActivityBackup({
     email: user.email,
     password: session.backupMasterPassword,
     activity: registerChipActivity,
   });
 
-  const { updatedUser, updatedSubmittedAt } = await appendBackupData({
-    email: user.email,
-    password: session.backupMasterPassword,
-    authToken: session.authTokenValue,
+  await saveBackupAndUpdateStorage({
+    user,
+    session,
     newBackupData: [chipBackup, registerChipActivityBackup],
-    existingUser: user,
-    previousSubmittedAt: session.lastBackupFetchedAt,
-  });
-
-  saveUser(updatedUser);
-  saveSession({
-    ...session,
-    lastBackupFetchedAt: updatedSubmittedAt,
   });
 };

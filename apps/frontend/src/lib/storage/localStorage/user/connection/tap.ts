@@ -1,11 +1,5 @@
-import {
-  appendBackupData,
-  createActivityBackup,
-  createConnectionBackup,
-} from "@/lib/backup";
+import { createActivityBackup, createConnectionBackup } from "@/lib/backup";
 import { ChipTapResponse } from "@types";
-import { getUser, saveUser } from "../../user";
-import { getSession, saveSession } from "../../session";
 import {
   TapDataSchema,
   TelegramData,
@@ -14,17 +8,10 @@ import {
   TwitterDataSchema,
 } from "@/lib/storage/types";
 import { createTapActivity } from "@/lib/activity";
+import { getUserAndSession, saveBackupAndUpdateStorage } from "../../utils";
 
 export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
-  const user = getUser();
-  const session = getSession();
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-  if (!session || session.authTokenExpiresAt < new Date()) {
-    throw new Error("Session expired");
-  }
+  const { user, session } = getUserAndSession();
 
   const tap = tapResponse.tap;
   if (!tap) {
@@ -33,11 +20,10 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
 
   if (
     !tap.ownerDisplayName ||
-    !tap.ownerBio ||
     !tap.ownerSignaturePublicKey ||
     !tap.ownerEncryptionPublicKey
   ) {
-    throw new Error("Tap owner keys not found");
+    throw new Error("Tap owner display name or keys not found");
   }
 
   const previousConnection = user.connections[tap.ownerSignaturePublicKey];
@@ -72,9 +58,10 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
   }
 
   // NOTE: For now, tapping a connection's chip will overwrite the existing connection data
+  const ownerBio = tap.ownerBio === null ? "" : tap.ownerBio;
   const newConnectionUserData = {
     displayName: tap.ownerDisplayName,
-    bio: tap.ownerBio,
+    bio: ownerBio,
     signaturePublicKey: tap.ownerSignaturePublicKey,
     encryptionPublicKey: tap.ownerEncryptionPublicKey,
     twitter: ownerTwitter,
@@ -110,7 +97,8 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
   // Create activity for tapping a chip
   const tapActivity = createTapActivity(
     tapResponse.chipIssuer,
-    tap.ownerDisplayName
+    tap.ownerDisplayName,
+    tap.ownerSignaturePublicKey
   );
   const tapActivityBackup = createActivityBackup({
     email: user.email,
@@ -118,18 +106,9 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
     activity: tapActivity,
   });
 
-  const { updatedUser, updatedSubmittedAt } = await appendBackupData({
-    email: user.email,
-    password: session.backupMasterPassword,
-    authToken: session.authTokenValue,
+  await saveBackupAndUpdateStorage({
+    user,
+    session,
     newBackupData: [connectionBackup, tapActivityBackup],
-    existingUser: user,
-    previousSubmittedAt: session.lastBackupFetchedAt,
-  });
-
-  saveUser(updatedUser);
-  saveSession({
-    ...session,
-    lastBackupFetchedAt: updatedSubmittedAt,
   });
 };
