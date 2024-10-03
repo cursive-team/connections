@@ -43,18 +43,19 @@ model Backup {
 }
 
 model Chip {
-  id                       String   @id @default(uuid())
+  id                       String    @id @default(uuid())
   chipIssuer               String // e.g., "LANNA", "DEVCON"
-  chipId                   String   @unique
+  chipId                   String    @unique
   chipVariant              String // e.g., "QR", "NTAG424", "NTAG212", "SLJ52"
-  chipIsRegistered         Boolean  @default(false)
+  chipIsRegistered         Boolean   @default(false)
+  chipRegisteredAt         DateTime?
   chipPublicKey            String?
   chipPrivateKey           String?
-  chipTapCount             Int      @default(0)
+  chipTapCount             Int       @default(0)
   ownerDisplayName         String?
   ownerBio                 String?
   ownerSignaturePublicKey  String?
   ownerEncryptionPublicKey String?
   ownerUserData            Json? // Nullable JSONB field
-  createdAt                DateTime @default(now())
+  createdAt                DateTime  @default(now())
 }

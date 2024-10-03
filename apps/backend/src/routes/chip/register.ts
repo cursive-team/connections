@@ -49,7 +49,11 @@ router.post(
 
       const newChip = await controller.RegisterChip(validatedData);
 
-      if (!newChip.chipPublicKey || !newChip.chipPrivateKey) {
+      if (
+        !newChip.chipPublicKey ||
+        !newChip.chipPrivateKey ||
+        !newChip.chipRegisteredAt
+      ) {
         throw new Error("Failed to generate chip keys");
       }
 
@@ -59,6 +63,7 @@ router.post(
         chipVariant: newChip.chipVariant,
         chipPublicKey: newChip.chipPublicKey,
         chipPrivateKey: newChip.chipPrivateKey,
+        chipRegisteredAt: newChip.chipRegisteredAt,
       });
     } catch (error) {
       console.error("Chip registration error:", error);

@@ -48,6 +48,7 @@ export const RegisterChipResponseSchema = z.object({
   }),
   chipPublicKey: z.string(),
   chipPrivateKey: z.string(),
+  chipRegisteredAt: z.coerce.date(),
 });
 
 export type RegisterChipResponse = z.infer<typeof RegisterChipResponseSchema>;

@@ -64,6 +64,7 @@ export async function registerChip(args: RegisterChipArgs): Promise<void> {
       variant: parsedData.chipVariant,
       publicKey: parsedData.chipPublicKey,
       privateKey: parsedData.chipPrivateKey,
+      registeredAt: parsedData.chipRegisteredAt,
     });
 
     return;
