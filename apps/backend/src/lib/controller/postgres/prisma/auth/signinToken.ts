@@ -60,14 +60,16 @@ PrismaPostgresClient.prototype.CreateSigninToken = async function (
 };
 
 /**
- * Verifies a signin token, marks it as used, and returns true if successful.
+ * Verifies a signin token, marks it as used if desired, and returns true if successful.
  * @param email The email for which to verify the signin token.
  * @param signinTokenGuess The 6-digit code to verify.
+ * @param useToken Whether to mark the signin token as used.
  * @returns True if the signin token is valid, false otherwise.
  */
-PrismaPostgresClient.prototype.VerifyAndUseSigninToken = async function (
+PrismaPostgresClient.prototype.VerifySigninToken = async function (
   email: string,
-  signinTokenGuess: string
+  signinTokenGuess: string,
+  useToken: boolean
 ): Promise<boolean> {
   const prismaSigninToken = await this.prismaClient.signinToken.findFirst({
     where: {
@@ -108,10 +110,12 @@ PrismaPostgresClient.prototype.VerifyAndUseSigninToken = async function (
   }
 
   // Mark signin token as used
-  await this.prismaClient.signinToken.update({
-    where: { id: prismaSigninToken.id },
-    data: { isUsed: true },
-  });
+  if (useToken) {
+    await this.prismaClient.signinToken.update({
+      where: { id: prismaSigninToken.id },
+      data: { isUsed: true },
+    });
+  }
 
   return true;
 };

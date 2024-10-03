@@ -17,24 +17,75 @@ export class SESEmailClient implements iEmailClient {
 
   async EmailSigninToken(signinToken: SigninToken): Promise<void> {
     const emailParams = {
-      Source: process.env.AWS_SES_SENDER_EMAIL!,
+      Source: `"Cursive" <${process.env.AWS_SES_SENDER_EMAIL!}>`,
       Destination: {
         ToAddresses: [signinToken.email],
       },
       Message: {
         Subject: {
-          Data: "Your Cursive Sign-in Code",
+          Data: "Cursive Connections Signin Code",
           Charset: "UTF-8",
         },
         Body: {
           Html: {
-            Data: `<html>
-                           <body>
-                             <h1>Sign-in Code</h1>
-                             <p>Your sign-in code is: <strong>${signinToken.value}</strong></p>
-                             <p>This code will expire in 15 minutes.</p>
-                           </body>
-                         </html>`,
+            Data: `
+              <!DOCTYPE html>
+              <html lang="en">
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>Cursive Connections Signin Code</title>
+                  <style>
+                    body {
+                      font-family: 'Helvetica Neue', Arial, sans-serif;
+                      line-height: 1.6;
+                      color: #333;
+                      background-color: #f4f4f4;
+                      margin: 0;
+                      padding: 0;
+                    }
+                    .container {
+                      max-width: 600px;
+                      margin: 40px auto;
+                      padding: 30px;
+                      background-color: #ffffff;
+                      border-radius: 8px;
+                      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    }
+                    h1 {
+                      color: #2c3e50;
+                      font-size: 24px;
+                      margin-bottom: 20px;
+                      text-align: center;
+                    }
+                    .code {
+                      font-size: 32px;
+                      font-weight: bold;
+                      color: #3498db;
+                      text-align: center;
+                      padding: 15px;
+                      background-color: #f8f9fa;
+                      border-radius: 4px;
+                      margin: 20px 0;
+                      letter-spacing: 5px;
+                    }
+                    .expiry {
+                      text-align: center;
+                      font-size: 14px;
+                      color: #7f8c8d;
+                      margin-top: 20px;
+                    }
+                  </style>
+                </head>
+                <body>
+                  <div class="container">
+                    <h1>Your signin code is:</h1>
+                    <div class="code">${signinToken.value}</div>
+                    <p class="expiry">This code will expire in 15 minutes.</p>
+                  </div>
+                </body>
+              </html>
+            `,
             Charset: "UTF-8",
           },
         },

@@ -78,11 +78,16 @@ export class Controller {
     return this.postgresClient.CreateSigninToken(email);
   }
 
-  VerifyAndUseSigninToken(
+  VerifySigninToken(
     email: string,
-    signinTokenGuess: string
+    signinTokenGuess: string,
+    useToken: boolean
   ): Promise<boolean> {
-    return this.postgresClient.VerifyAndUseSigninToken(email, signinTokenGuess);
+    return this.postgresClient.VerifySigninToken(
+      email,
+      signinTokenGuess,
+      useToken
+    );
   }
 
   CreateAuthToken(createAuthToken: AuthTokenCreateRequest): Promise<AuthToken> {
