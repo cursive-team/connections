@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
+    "aws-sdk": "^2.1691.0",
     "bn.js": "^5.2.1",
     "cors": "^2.8.5",
     "elliptic": "^6.5.7",
