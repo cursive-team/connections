@@ -26,7 +26,7 @@ export interface iPostgresClient {
 
   // SigninToken methods
   CreateSigninToken(email: string): Promise<SigninToken>;
-  VerifyAndExpireSigninToken(
+  VerifyAndUseSigninToken(
     email: string,
     signinTokenGuess: string
   ): Promise<boolean>;

@@ -65,7 +65,7 @@ PrismaPostgresClient.prototype.CreateSigninToken = async function (
  * @param signinTokenGuess The 6-digit code to verify.
  * @returns True if the signin token is valid, false otherwise.
  */
-PrismaPostgresClient.prototype.VerifyAndExpireSigninToken = async function (
+PrismaPostgresClient.prototype.VerifyAndUseSigninToken = async function (
   email: string,
   signinTokenGuess: string
 ): Promise<boolean> {

@@ -1,15 +1,17 @@
-import { SES } from "aws-sdk";
+import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { SigninToken } from "@/lib/controller/postgres/types";
 import { iEmailClient } from "@/lib/controller/email/interfaces";
 
 export class SESEmailClient implements iEmailClient {
-  private ses: SES;
+  private sesClient: SESClient;
 
   constructor() {
-    this.ses = new SES({
-      region: process.env.AWS_REGION,
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    this.sesClient = new SESClient({
+      region: process.env.AWS_REGION!,
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+      },
     });
   }
 
@@ -40,7 +42,8 @@ export class SESEmailClient implements iEmailClient {
     };
 
     try {
-      await this.ses.sendEmail(emailParams).promise();
+      const command = new SendEmailCommand(emailParams);
+      await this.sesClient.send(command);
 
       return;
     } catch (error) {

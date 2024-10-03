@@ -55,7 +55,7 @@ export class PrismaPostgresClient implements iPostgresClient {
   CreateSigninToken(email: string): Promise<SigninToken>;
 
   // @ts-expect-error (ts2391)
-  VerifyAndExpireSigninToken(
+  VerifyAndUseSigninToken(
     email: string,
     signinTokenGuess: string
   ): Promise<boolean>;
