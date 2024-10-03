@@ -24,6 +24,7 @@ ManagedChipClient.prototype.RegisterChip = async function (
     where: { id: chip.id },
     data: {
       chipIsRegistered: true,
+      chipRegisteredAt: new Date(),
       chipPublicKey: verifyingKey,
       chipPrivateKey: signingKey,
       chipTapCount: 0, // Reset tap count on registration

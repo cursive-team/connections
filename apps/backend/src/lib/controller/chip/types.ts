@@ -7,6 +7,7 @@ export const ChipSchema = z.object({
   chipId: z.string(),
   chipVariant: ChipVariantSchema,
   chipIsRegistered: z.boolean(),
+  chipRegisteredAt: z.date().nullable(),
   chipPublicKey: z.string().nullable(),
   chipPrivateKey: z.string().nullable(),
   chipTapCount: z.number().int().nonnegative(),
