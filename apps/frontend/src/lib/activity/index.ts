@@ -49,7 +49,7 @@ export const createTapActivity = (
     serializedData: JSON.stringify({
       chipIssuer,
       chipOwnerDisplayName,
-      chipOwnerSignaturePublicKey: chipOwnerSignaturePublicKey,
+      chipOwnerSignaturePublicKey,
     }),
     timestamp: new Date(),
   };
