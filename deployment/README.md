@@ -124,14 +124,17 @@ docker run -td -p 8080:8080 connections:1
 export ACCOUNT_NUMBER="${AWS account number}"
 export AWS_REGION="ap-southeast-1"
 export ECR_REPO_NAME=${Repo name} 
-export $IMAGE-ID=${Image ID from docker image build}
+export IMAGE_ID=${Image ID from docker image build}
 
-aws ecr get-login-password --profile connections-admin-role --region $AWS_REGION 
+aws ecr get-login-password --profile connections-admin --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNT_NUMBER.dkr.ecr.$AWS_REGION.amazonaws.com 
 
-docker login --username AWS --password-stdin $ACCOUNT_NUMBER.dkr.ecr.$AWS_REGION.amazonaws.com 
+docker tag $IMAGE_ID $ACCOUNT_NUMBER.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:1
+docker push $ACCOUNT_NUMBER.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:1
+```
 
-docker tag $IMAGE-ID $ACCOUNT_NUMBER.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:1`
-docker push $ACCOUNT_NUMBER.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:1`
+### Manually Apply Specific Tag to Infra 
+``` 
+terraform apply -var="image_tag=${tag number}" -auto-approve
 ```
 
 ### TODO
