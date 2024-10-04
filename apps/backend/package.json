@@ -11,6 +11,7 @@
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.662.0",
     "@prisma/client": "^5.19.1",
     "bn.js": "^5.2.1",
     "cors": "^2.8.5",

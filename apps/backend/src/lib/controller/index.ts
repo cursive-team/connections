@@ -6,6 +6,7 @@ import {
   Backup,
   BackupCreateRequest,
   AuthTokenCreateRequest,
+  SigninToken,
 } from "@/lib/controller/postgres/types";
 import {
   AuthToken,
@@ -18,16 +19,22 @@ import {
 import { Chip } from "@/lib/controller/chip/types";
 import { iChipClient } from "@/lib/controller/chip/interfaces";
 import { ManagedChipClient } from "@/lib/controller/chip/managed/client";
+import { SESEmailClient } from "@/lib/controller/email/ses/client";
+import { iEmailClient } from "@/lib/controller/email/interfaces";
 
 export class Controller {
   postgresClient: iPostgresClient; // Use interface so that it can be mocked out
   chipClient: iChipClient;
+  emailClient: iEmailClient;
 
   constructor() {
     // Default client, could also pass through mock
     this.postgresClient = new PrismaPostgresClient();
 
     this.chipClient = new ManagedChipClient();
+
+    // Email client with AWS Simple Email Service
+    this.emailClient = new SESEmailClient();
 
     // Over time more clients will be added (e.g. nitro enclave client)...
   }
@@ -67,6 +74,22 @@ export class Controller {
     return this.postgresClient.AppendBackupData(userId, backupData);
   }
 
+  CreateSigninToken(email: string): Promise<SigninToken> {
+    return this.postgresClient.CreateSigninToken(email);
+  }
+
+  VerifySigninToken(
+    email: string,
+    signinTokenGuess: string,
+    useToken: boolean
+  ): Promise<boolean> {
+    return this.postgresClient.VerifySigninToken(
+      email,
+      signinTokenGuess,
+      useToken
+    );
+  }
+
   CreateAuthToken(createAuthToken: AuthTokenCreateRequest): Promise<AuthToken> {
     return this.postgresClient.CreateAuthToken(createAuthToken);
   }
@@ -81,5 +104,9 @@ export class Controller {
 
   GetTapFromChip(tapParams: TapParams): Promise<ChipTapResponse> {
     return this.chipClient.GetTapFromChip(tapParams);
+  }
+
+  EmailSigninToken(signinToken: SigninToken): Promise<void> {
+    return this.emailClient.EmailSigninToken(signinToken);
   }
 }

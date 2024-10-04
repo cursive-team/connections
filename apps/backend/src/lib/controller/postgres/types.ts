@@ -45,6 +45,15 @@ export const BackupCreateRequestSchema = z.object({
   clientCreatedAt: z.date(),
 });
 
+export const SigninTokenSchema = z.object({
+  id: z.string(),
+  email: z.string(),
+  value: z.string(),
+  isUsed: z.boolean(),
+  expiresAt: z.date(),
+  createdAt: z.date(),
+});
+
 export const AuthTokenCreateRequestSchema = z.object({
   value: z.string(),
   userId: z.string(),
@@ -57,6 +66,7 @@ export type User = z.infer<typeof UserSchema>;
 export type UserCreateRequest = z.infer<typeof UserCreateRequestSchema>;
 export type Backup = z.infer<typeof BackupSchema>;
 export type BackupCreateRequest = z.infer<typeof BackupCreateRequestSchema>;
+export type SigninToken = z.infer<typeof SigninTokenSchema>;
 export type AuthTokenCreateRequest = z.infer<
   typeof AuthTokenCreateRequestSchema
 >;

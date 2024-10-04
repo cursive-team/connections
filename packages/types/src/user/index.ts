@@ -74,6 +74,25 @@ export type AppendBackupDataResponse = z.infer<
   typeof AppendBackupDataResponseSchema
 >;
 
+// Request schema for creating a signin token
+export const CreateSigninTokenRequestSchema = z.object({
+  email: z.string().email(),
+});
+
+export type CreateSigninTokenRequest = z.infer<
+  typeof CreateSigninTokenRequestSchema
+>;
+
+// Request schema for verifying a signin token
+export const VerifySigninTokenRequestSchema = z.object({
+  email: z.string().email(),
+  signinToken: z.string().length(6).regex(/^\d+$/),
+});
+
+export type VerifySigninTokenRequest = z.infer<
+  typeof VerifySigninTokenRequestSchema
+>;
+
 // Request schema for registering a user
 export const UserRegisterRequestSchema = z.object({
   email: z.string().email(),

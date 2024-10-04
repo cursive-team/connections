@@ -6,13 +6,15 @@ import {
   UserCreateRequest,
   User,
   Backup,
+  SigninToken,
 } from "@/lib/controller/postgres/types";
 import { AuthToken, BackupData, CreateBackupData } from "@types";
 
 // NOTE: Hoist all prototype methods -- if you do not import the method file, the method(s) will evaluate to undefined at runtime
 import("@/lib/controller/postgres/prisma/user/user");
 import("@/lib/controller/postgres/prisma/backup/backup");
-import("@/lib/controller/postgres/prisma/auth/token");
+import("@/lib/controller/postgres/prisma/auth/authToken");
+import("@/lib/controller/postgres/prisma/auth/signinToken");
 
 // Should follow iPostgresClient implementation
 export class PrismaPostgresClient implements iPostgresClient {
@@ -48,6 +50,16 @@ export class PrismaPostgresClient implements iPostgresClient {
     userId: string,
     backupData: CreateBackupData[]
   ): Promise<BackupData[]>;
+
+  // @ts-expect-error (ts2391)
+  CreateSigninToken(email: string): Promise<SigninToken>;
+
+  // @ts-expect-error (ts2391)
+  VerifySigninToken(
+    email: string,
+    signinTokenGuess: string,
+    useToken: boolean
+  ): Promise<boolean>;
 
   // @ts-expect-error (ts2391)
   CreateAuthToken(createAuthToken: AuthTokenCreateRequest): Promise<AuthToken>;

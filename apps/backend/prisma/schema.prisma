@@ -20,6 +20,16 @@ model User {
   Backup              Backup[]
 }
 
+model SigninToken {
+  id                 String   @id @default(uuid())
+  email              String
+  value              String   @unique
+  signinAttemptCount Int      @default(0)
+  isUsed             Boolean  @default(false)
+  expiresAt          DateTime
+  createdAt          DateTime @default(now())
+}
+
 model AuthToken {
   id        String    @id @default(uuid())
   userId    String

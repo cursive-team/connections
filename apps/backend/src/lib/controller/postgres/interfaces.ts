@@ -4,6 +4,7 @@ import {
   Backup,
   BackupCreateRequest,
   AuthTokenCreateRequest,
+  SigninToken,
 } from "@/lib/controller/postgres/types";
 import { AuthToken, BackupData, CreateBackupData } from "@types";
 
@@ -22,6 +23,14 @@ export interface iPostgresClient {
     userId: string,
     backupData: CreateBackupData[]
   ): Promise<BackupData[]>;
+
+  // SigninToken methods
+  CreateSigninToken(email: string): Promise<SigninToken>;
+  VerifySigninToken(
+    email: string,
+    signinTokenGuess: string,
+    useToken: boolean
+  ): Promise<boolean>;
 
   // AuthToken methods
   CreateAuthToken(createAuthToken: AuthTokenCreateRequest): Promise<AuthToken>;
