@@ -16,6 +16,6 @@ provider "aws" {
   }
 
   # For creating / destroying infra with Admin profile
-  # shared_credentials_files = ["~/.aws/credentials"]
-  # profile = "connections-admin"
+  shared_credentials_files = ["~/.aws/credentials"]
+  profile = "connections-admin"
 }
