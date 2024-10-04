@@ -15,5 +15,6 @@ export const ConnectionSchema = z.object({
 export type Connection = z.infer<typeof ConnectionSchema>;
 
 export * from "./commentData";
+export * from "./messageLog";
 export * from "./psiData";
 export * from "./tapData";
