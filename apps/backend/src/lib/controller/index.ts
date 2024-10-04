@@ -14,6 +14,8 @@ import {
   ChipIssuer,
   ChipTapResponse,
   CreateBackupData,
+  CreateMessageData,
+  MessageData,
   RegisterChipRequest,
   TapParams,
   UpdateChipRequest,
@@ -115,6 +117,20 @@ export class Controller {
 
   CreateAuthTokenForUser(userId: string): Promise<AuthToken> {
     return this.postgresClient.CreateAuthTokenForUser(userId);
+  }
+
+  GetMessagesForUser(
+    userSignaturePublicKey: string,
+    lastMessageFetchedAt: Date | undefined
+  ): Promise<MessageData[]> {
+    return this.postgresClient.GetMessagesForUser(
+      userSignaturePublicKey,
+      lastMessageFetchedAt
+    );
+  }
+
+  CreateMessages(messages: CreateMessageData[]): Promise<void> {
+    return this.postgresClient.CreateMessages(messages);
   }
 
   RegisterChip(registerChip: RegisterChipRequest): Promise<Chip> {

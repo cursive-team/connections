@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+export const GetMessagesRequestSchema = z.object({
+  authToken: z.string(),
+  lastMessageFetchedAt: z.coerce.date().optional(),
+});
+
+export type GetMessagesRequest = z.infer<typeof GetMessagesRequestSchema>;
+
 export const CreateMessageDataSchema = z.object({
   receiverSignaturePublicKey: z.string(),
   senderEphemeralEncryptionPublicKey: z.string(),
@@ -10,12 +17,12 @@ export const CreateMessageDataSchema = z.object({
 
 export type CreateMessageData = z.infer<typeof CreateMessageDataSchema>;
 
-export const CreateMessageRequestSchema = z.object({
+export const CreateMessagesRequestSchema = z.object({
   authToken: z.string(),
   messages: z.array(CreateMessageDataSchema),
 });
 
-export type CreateMessageRequest = z.infer<typeof CreateMessageRequestSchema>;
+export type CreateMessagesRequest = z.infer<typeof CreateMessagesRequestSchema>;
 
 export const MessageDataSchema = z.object({
   receiverSignaturePublicKey: z.string(),
