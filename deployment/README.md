@@ -136,7 +136,7 @@ To create a local tag. If the `$commit-hash` is not supplied, the most recent co
 
 To annotate a tag: 
 
-`git tag -a v0.0.0 -m "Initial Release" $commit-hash`
+`git tag -a v0.0.0 -m "Initial release" $commit-hash`
 
 Push tag:
 `git push origin v0.0.0`
@@ -158,6 +158,9 @@ docker push $ACCOUNT_NUMBER.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:1
 ```
 
 ### Apply Specific Image Tag to Infra 
+
+To run locally, you must uncomment the credential path and profile in `provider.tf`.
+
 ``` 
 terraform apply -var="image_tag=${tag number}" -auto-approve
 ```
