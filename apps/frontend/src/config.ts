@@ -18,20 +18,20 @@ export const APP_CONFIG = {
 
 export const ROUTER_ITEMS: RouterItem[] = [
   {
-    label: "Home",
-    href: "/",
+    label: "People",
+    href: "/people",
     icon: Icons.Home,
     iconSize: 20,
   },
   {
-    label: "Settings",
-    href: "/settings",
+    label: "Activity",
+    href: "/activity",
     icon: Icons.Settings,
     iconSize: 20,
   },
   {
-    label: "Components",
-    href: "/components",
+    label: "Profile",
+    href: "/profile",
     icon: Icons.Profile,
     iconSize: 20,
   },
