@@ -7,8 +7,9 @@ on:
       - '*'
 
 env:
-  AWS_REGION: us-east-1
-  IAM_ROLE_ARN: arn:aws:iam::xxxxxxxxxxxx:role/github_actions # TODO: update once corresponding terraform role code is written
+  AWS_REGION: ap-southeast-1
+  IAM_ROLE_ARN: ${{ secrets.GH_ACTION_IAM_ROLE_ARN }}
+  AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
 
 permissions:
   id-token: write # This is required for requesting the JWT
@@ -36,7 +37,7 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: cursive/connections
+          ECR_REPOSITORY: cursive-connections
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_REF_NAME -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
           docker image push -a $ECR_REGISTRY/$ECR_REPOSITORY
@@ -72,7 +73,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         working-directory: ./terraform
-        run: terraform plan -var="image_tag=$GITHUB_REF_NAME"
+        run: terraform plan -var="image_tag=$GITHUB_REF_NAME" -var="aws_account_number=${{ env.AWS_ACCOUNT }}"
         continue-on-error: true
 
       - name: Terraform Plan Status
@@ -81,4 +82,4 @@ jobs:
 
       - name: Terraform Apply
         working-directory: ./terraform
-        run: terraform apply -var="image_tag=$GITHUB_REF_NAME" -auto-approve
+        run: terraform apply -var="image_tag=$GITHUB_REF_NAME" -var="aws_account_number=${{ env.AWS_ACCOUNT }}" -auto-approve
