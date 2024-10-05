@@ -1,4 +1,4 @@
-import { BASE_API_URL } from "@/constants";
+import { BASE_API_URL } from "@/config";
 import { generateEncryptionKeyPair } from "@/lib/crypto/encrypt";
 import { generateSignatureKeyPair } from "@/lib/crypto/sign";
 import { generateSalt, hashPassword } from "@/lib/crypto/backup";

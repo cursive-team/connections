@@ -1,4 +1,4 @@
-import { BASE_API_URL } from "@/constants";
+import { BASE_API_URL } from "@/config";
 import { TapParams, ChipTapResponse, ChipTapResponseSchema } from "@types";
 import { storage } from "@/lib/storage";
 
