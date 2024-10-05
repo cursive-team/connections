@@ -4,6 +4,7 @@ import {
   errorToString,
   VerifyUsernameUniqueRequest,
   VerifyUsernameUniqueRequestSchema,
+  VerifyUsernameUniqueResponse,
 } from "@types";
 import { Controller } from "@/lib/controller";
 
@@ -18,7 +19,7 @@ router.post(
   "/verify_username_unique",
   async (
     req: Request<{}, {}, VerifyUsernameUniqueRequest>,
-    res: Response<{ isUnique: boolean } | ErrorResponse>
+    res: Response<VerifyUsernameUniqueResponse | ErrorResponse>
   ) => {
     try {
       const validatedData = VerifyUsernameUniqueRequestSchema.parse(req.body);

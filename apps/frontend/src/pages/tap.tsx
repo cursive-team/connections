@@ -47,7 +47,7 @@ const TapPage: React.FC = () => {
           await storage.addTap(response);
 
           // Save tap to populate modal upon redirect
-          await storage.saveTapResponse(response);
+          await storage.saveTapInfo({ tapParams, tapResponse: response });
           router.push(`/people/${response.tap.ownerUsername}`);
           return;
         } else {
@@ -55,7 +55,7 @@ const TapPage: React.FC = () => {
           // If user is not logged in, direct them to registration
           if (!session) {
             // Save tap to populate registration flow data
-            await storage.saveTapResponse(response);
+            await storage.saveTapInfo({ tapParams, tapResponse: response });
             router.push("/register");
             return;
           } else {

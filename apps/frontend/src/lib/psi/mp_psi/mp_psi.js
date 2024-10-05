@@ -197,6 +197,7 @@ function debugString(val) {
     // easier than looping through ownProperties of `val`.
     try {
       return "Object(" + JSON.stringify(val) + ")";
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_) {
       return "Object";
     }
@@ -452,6 +453,7 @@ function __wbg_get_imports() {
     return ret;
   };
   imports.wbg.__wbg_new_34c624469fb1d4fd = function () {
+    // eslint-disable-next-line @typescript-eslint/no-array-constructor
     const ret = new Array();
     return addHeapObject(ret);
   };
@@ -536,6 +538,7 @@ function __wbg_get_imports() {
     let result;
     try {
       result = getObject(arg0) instanceof ArrayBuffer;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_) {
       result = false;
     }
@@ -579,6 +582,7 @@ function __wbg_get_imports() {
     let result;
     try {
       result = getObject(arg0) instanceof Uint8Array;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_) {
       result = false;
     }
@@ -615,6 +619,7 @@ function __wbg_get_imports() {
   return imports;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function __wbg_init_memory(imports, maybe_memory) {}
 
 function __wbg_finalize_init(instance, module) {

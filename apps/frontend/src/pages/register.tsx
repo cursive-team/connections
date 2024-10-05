@@ -1,76 +1,200 @@
-import React, { useState } from "react";
-import { z } from "zod";
-import { errorToString } from "@types";
-import { BASE_API_URL } from "@/config";
+import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
+import { useRouter } from "next/router";
+import { storage } from "@/lib/storage";
+import { Json, UsernameSchema } from "@types";
+import EnterEmail from "@/features/register/EnterEmail";
+import EnterCode from "@/features/register/EnterCode";
+import EnterUserInfo from "@/features/register/EnterUserInfo";
+import RegisterWithPasskey from "@/features/register/RegisterWithPasskey";
+import RegisterWithPassword from "@/features/register/RegisterWithPassword";
+import CreatingAccount from "@/features/register/CreatingAccount";
 
-const EmailSchema = z.string().email();
-const CodeSchema = z.string().length(6).regex(/^\d+$/);
+import {
+  verifyEmailIsUnique,
+  verifySigninToken,
+  verifyUsernameIsUnique,
+} from "@/lib/auth/util";
+import { TapInfo } from "@/lib/storage/types";
+import { registerChip } from "@/lib/chip/register";
+
+enum DisplayState {
+  ENTER_EMAIL,
+  ENTER_CODE,
+  ENTER_USER_INFO,
+  REGISTER_WITH_PASSKEY,
+  REGISTER_WITH_PASSWORD,
+  CREATING_ACCOUNT,
+}
 
 const Register: React.FC = () => {
+  const router = useRouter();
+  const [displayState, setDisplayState] = useState<DisplayState>(
+    DisplayState.ENTER_EMAIL
+  );
+  const [attemptedToLoadSavedTap, setAttemptedToLoadSavedTap] = useState(false);
+  const [savedTap, setSavedTap] = useState<TapInfo | null>(null);
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const [username, setUsername] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [bio, setBio] = useState("");
+  const [telegramHandle, setTelegramHandle] = useState("");
+  const [twitterHandle, setTwitterHandle] = useState("");
+  const [backupPassword, setBackupPassword] = useState("");
+  const [authPublicKey, setAuthPublicKey] = useState<string | null>(null);
+  const [registeredWithPasskey, setRegisteredWithPasskey] = useState<
+    boolean | null
+  >(null);
 
-  const handleGetSigninToken = async () => {
-    try {
-      const parsedEmail = EmailSchema.parse(email);
-      const response = await fetch(
-        `${BASE_API_URL}/user/get_signin_token?email=${encodeURIComponent(
-          parsedEmail
-        )}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+  useEffect(() => {
+    const loadSavedTap = async () => {
+      const tap = await storage.loadSavedTapInfo();
+      if (!tap) {
+        // TODO: Enable registration without a saved tap
+        toast.error("No saved tap found!");
+        router.push("/");
+      } else {
+        if (tap.tapResponse.chipIsRegistered) {
+          toast.error("Chip is already registered!");
+          router.push("/");
         }
-      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to get signin token");
+        await storage.deleteSavedTapInfo();
+        setSavedTap(tap);
       }
-      setMessage("Signin token sent to your email");
-    } catch (error) {
-      const errorMessage = errorToString(error);
-      console.error(errorMessage);
-      setError(
-        "Failed to get signin token. Please check your email and try again."
-      );
+      setAttemptedToLoadSavedTap(true);
+    };
+    loadSavedTap();
+  }, [router]);
+
+  const handleEmailSubmit = async (submittedEmail: string) => {
+    const isUnique = await verifyEmailIsUnique(submittedEmail);
+    if (!isUnique) {
+      toast.error("Email is already in use");
+      return;
     }
+
+    setEmail(submittedEmail);
+    setDisplayState(DisplayState.ENTER_CODE);
   };
 
-  const handleVerifySigninToken = async () => {
+  const handleCodeSubmit = async (submittedCode: string) => {
+    const isValid = await verifySigninToken(email, submittedCode);
+    if (!isValid) {
+      toast.error("Invalid code");
+      return;
+    }
+
+    setCode(submittedCode);
+    setDisplayState(DisplayState.ENTER_USER_INFO);
+  };
+
+  const handleUserInfoSubmit = async (userInfo: {
+    username: string;
+    displayName: string;
+    bio: string;
+    telegramHandle: string;
+    twitterHandle: string;
+  }) => {
+    const parsedUsername = UsernameSchema.parse(userInfo.username);
+    const usernameIsUnique = await verifyUsernameIsUnique(parsedUsername);
+    if (!usernameIsUnique) {
+      toast.error("Username is already taken");
+      return;
+    }
+
+    setUsername(parsedUsername);
+    setDisplayName(userInfo.displayName);
+    setBio(userInfo.bio);
+    setTelegramHandle(userInfo.telegramHandle);
+    setTwitterHandle(userInfo.twitterHandle);
+    setDisplayState(DisplayState.REGISTER_WITH_PASSKEY);
+  };
+
+  const handleSwitchToRegisterWithPassword = () => {
+    setDisplayState(DisplayState.REGISTER_WITH_PASSWORD);
+  };
+
+  const handleRegisterWithPasskey = async (
+    password: string,
+    authPublicKey: string
+  ) => {
+    setBackupPassword(password);
+    setRegisteredWithPasskey(true);
+    setAuthPublicKey(authPublicKey);
+    setDisplayState(DisplayState.CREATING_ACCOUNT);
+  };
+
+  const handleSwitchToRegisterWithPasskey = () => {
+    setDisplayState(DisplayState.REGISTER_WITH_PASSKEY);
+  };
+
+  const handleRegisterWithPassword = async (password: string) => {
+    setBackupPassword(password);
+    setRegisteredWithPasskey(false);
+    setDisplayState(DisplayState.CREATING_ACCOUNT);
+  };
+
+  const handleAccountCreated = async () => {
+    const user = await storage.getUser();
+    const session = await storage.getSession();
+    if (!user || !session) {
+      toast.error("Error creating account! Please try again.");
+      return;
+    }
+
+    // Register edge city chip
     try {
-      CodeSchema.parse(code);
-      const response = await fetch(`${BASE_API_URL}/user/verify_signin_token`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, signinToken: code }),
-      });
+      if (savedTap) {
+        const {
+          username,
+          displayName,
+          bio,
+          signaturePublicKey,
+          encryptionPublicKey,
+          psiPublicKeyLink,
+        } = user.userData;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to verify signin token");
+        // Set owner user data
+        // TODO: Generalize this to be extensible for arbitrary user data
+        const ownerUserData: Json = {};
+        if (user.userData.twitter && user.userData.twitter.username) {
+          ownerUserData.twitter = { username: user.userData.twitter.username };
+        }
+        if (user.userData.telegram && user.userData.telegram.username) {
+          ownerUserData.telegram = {
+            username: user.userData.telegram.username,
+          };
+        }
+
+        await registerChip({
+          authToken: session.authTokenValue,
+          tapParams: savedTap.tapParams,
+          ownerUsername: username,
+          ownerDisplayName: displayName,
+          ownerBio: bio,
+          ownerSignaturePublicKey: signaturePublicKey,
+          ownerEncryptionPublicKey: encryptionPublicKey,
+          ownerPsiPublicKeyLink: psiPublicKeyLink,
+          ownerUserData,
+        });
       }
-      const data = await response.json();
-      setMessage(
-        data.success
-          ? "Signin token verified successfully"
-          : "Invalid signin token"
-      );
+
+      toast.success("Account created successfully!");
+      router.push("/");
+      return;
     } catch (error) {
-      const errorMessage = errorToString(error);
-      console.error(errorMessage);
-      setError(
-        "Failed to verify signin token. Please check your code and try again."
-      );
+      console.error(error);
+      toast.error("Created account but failed to register chip.");
     }
   };
 
+  if (!attemptedToLoadSavedTap) {
+    return null;
+  }
+
+  const chipIssuer = savedTap?.tapResponse.chipIssuer ?? null;
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -81,56 +205,55 @@ const Register: React.FC = () => {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {error && <div className="mb-4 text-red-600 text-sm">{error}</div>}
-          {message && (
-            <div className="mb-4 text-green-600 text-sm">{message}</div>
+          {displayState === DisplayState.ENTER_EMAIL && (
+            <EnterEmail
+              chipIssuer={chipIssuer}
+              submitEmail={handleEmailSubmit}
+            />
           )}
-
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email address
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          {displayState === DisplayState.ENTER_CODE && (
+            <EnterCode
+              chipIssuer={chipIssuer}
+              email={email}
+              submitCode={handleCodeSubmit}
             />
-          </div>
-
-          <button
-            onClick={handleGetSigninToken}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Get Signin Token
-          </button>
-
-          <div className="mt-6">
-            <label
-              htmlFor="code"
-              className="block text-sm font-medium text-gray-700"
-            >
-              6-digit Code
-            </label>
-            <input
-              id="code"
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          )}
+          {displayState === DisplayState.ENTER_USER_INFO && (
+            <EnterUserInfo
+              chipIssuer={chipIssuer}
+              onSubmit={handleUserInfoSubmit}
             />
-          </div>
-
-          <button
-            onClick={handleVerifySigninToken}
-            className="mt-4 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Verify Signin Token
-          </button>
+          )}
+          {displayState === DisplayState.REGISTER_WITH_PASSKEY && (
+            <RegisterWithPasskey
+              chipIssuer={chipIssuer}
+              username={username}
+              onPasskeyRegister={handleRegisterWithPasskey}
+              onSwitchToPassword={handleSwitchToRegisterWithPassword}
+            />
+          )}
+          {displayState === DisplayState.REGISTER_WITH_PASSWORD && (
+            <RegisterWithPassword
+              chipIssuer={chipIssuer}
+              onSubmit={handleRegisterWithPassword}
+              onSwitchToPasskey={handleSwitchToRegisterWithPasskey}
+            />
+          )}
+          {displayState === DisplayState.CREATING_ACCOUNT && (
+            <CreatingAccount
+              signinToken={code}
+              email={email}
+              password={backupPassword}
+              username={username}
+              displayName={displayName}
+              bio={bio}
+              telegramHandle={telegramHandle}
+              twitterHandle={twitterHandle}
+              registeredWithPasskey={registeredWithPasskey}
+              passkeyAuthPublicKey={authPublicKey}
+              onAccountCreated={handleAccountCreated}
+            />
+          )}
         </div>
       </div>
     </div>

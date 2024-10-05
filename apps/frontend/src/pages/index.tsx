@@ -1,7 +1,7 @@
-import { registerUser, loginUser, logoutUser } from "@/lib/auth";
+import { loginUser, logoutUser } from "@/lib/auth";
 import { useState, useEffect } from "react";
 import { storage } from "@/lib/storage";
-import { Session, User, UserData } from "@/lib/storage/types";
+import { Session, User } from "@/lib/storage/types";
 import { tapChip } from "@/lib/chip/tap";
 import { registerChip } from "@/lib/chip/register";
 import { ChipTapResponse, TapParams } from "@types";
@@ -42,12 +42,12 @@ export default function Home() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await registerUser(
-        registerEmail,
-        registerPassword,
-        registerDisplayName,
-        registerBio
-      );
+      // await registerUser(
+      //   registerEmail,
+      //   registerPassword,
+      //   registerDisplayName,
+      //   registerBio
+      // );
       await refreshStorage();
     } catch (error) {
       console.error("Registration error:", error);
@@ -131,37 +131,37 @@ export default function Home() {
   const handleUpdateSocials = async () => {
     if (!user || !session) return;
 
-    if (
-      user.userData.twitter?.username === editedTwitterUsername &&
-      user.userData.telegram?.username === editedTelegramUsername
-    ) {
-      setIsEditingSocials(false);
-      return;
-    }
+    // if (
+    //   user.userData.twitter?.username === editedTwitterUsername &&
+    //   user.userData.telegram?.username === editedTelegramUsername
+    // ) {
+    //   setIsEditingSocials(false);
+    //   return;
+    // }
 
-    const updateTwitterUsername =
-      editedTwitterUsername === "" ? undefined : editedTwitterUsername;
-    const updateTelegramUsername =
-      editedTelegramUsername === "" ? undefined : editedTelegramUsername;
+    // const updateTwitterUsername =
+    //   editedTwitterUsername === "" ? undefined : editedTwitterUsername;
+    // const updateTelegramUsername =
+    //   editedTelegramUsername === "" ? undefined : editedTelegramUsername;
 
-    try {
-      const userData: UserData = {
-        displayName: user.userData.displayName,
-        bio: user.userData.bio,
-        signaturePublicKey: user.userData.signaturePublicKey,
-        encryptionPublicKey: user.userData.encryptionPublicKey,
-        twitter: { username: updateTwitterUsername },
-        telegram: { username: updateTelegramUsername },
-      };
-      await storage.updateUserData(userData);
-      await refreshStorage();
+    // try {
+    //   const userData: UserData = {
+    //     displayName: user.userData.displayName,
+    //     bio: user.userData.bio,
+    //     signaturePublicKey: user.userData.signaturePublicKey,
+    //     encryptionPublicKey: user.userData.encryptionPublicKey,
+    //     twitter: { username: updateTwitterUsername },
+    //     telegram: { username: updateTelegramUsername },
+    //   };
+    //   await storage.updateUserData(userData);
+    //   await refreshStorage();
 
-      setIsEditingSocials(false);
-      alert("Socials updated successfully!");
-    } catch (error) {
-      console.error("Error updating socials:", error);
-      alert("Failed to update socials.");
-    }
+    //   setIsEditingSocials(false);
+    //   alert("Socials updated successfully!");
+    // } catch (error) {
+    //   console.error("Error updating socials:", error);
+    //   alert("Failed to update socials.");
+    // }
   };
 
   const handleEmojiSelect = (emoji: string) => {

@@ -10,6 +10,7 @@ import {
   Chip,
   CommentData,
   Session,
+  TapInfo,
   User,
   UserData,
 } from "@/lib/storage/types";
@@ -19,6 +20,11 @@ import { ChipTapResponse } from "@types";
 import { addTap } from "@/lib/storage/localStorage/user/connection/tap";
 import { updateComment } from "@/lib/storage/localStorage/user/connection/comment";
 import { addActivity } from "@/lib/storage/localStorage/user/activity";
+import {
+  deleteSavedTapInfo,
+  loadSavedTapInfo,
+  saveTapInfo,
+} from "@/lib/storage/localStorage/tapInfo";
 
 export class LocalStorage implements ClientStorage {
   async loadInitialStorageData(
@@ -47,6 +53,18 @@ export class LocalStorage implements ClientStorage {
 
   async getSession(): Promise<Session | undefined> {
     return getSession();
+  }
+
+  async saveTapInfo(tapInfo: TapInfo): Promise<void> {
+    return saveTapInfo(tapInfo);
+  }
+
+  async loadSavedTapInfo(): Promise<TapInfo | undefined> {
+    return loadSavedTapInfo();
+  }
+
+  async deleteSavedTapInfo(): Promise<void> {
+    return deleteSavedTapInfo();
   }
 
   async updateUserData(userData: UserData): Promise<void> {

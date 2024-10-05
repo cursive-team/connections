@@ -14,23 +14,45 @@ import { storage } from "@/lib/storage";
 import { createRegisterActivity } from "../activity";
 import { generatePSIKeyPair, psiBlobUploadClient } from "../psi";
 
+export interface RegisterUserArgs {
+  signinToken: string;
+  email: string;
+  password: string;
+  username: string;
+  displayName: string;
+  bio: string;
+  telegramHandle?: string;
+  twitterHandle?: string;
+  registeredWithPasskey: boolean;
+  passkeyAuthPublicKey?: string;
+}
+
 /**
  * Registers a user and loads initial storage data.
- * @param email - The email of the user.
- * @param password - The password of the user.
- * @param username - The username of the user.
- * @param displayName - The display name of the user.
- * @param bio - The bio of the user.
- * @param registeredWithPasskey - Whether the user registered with a passkey.
+ * @param args - Object containing user registration details
+ * @param args.signinToken - The signin token if registering with email.
+ * @param args.email - The email of the user.
+ * @param args.password - The password of the user.
+ * @param args.username - The username of the user.
+ * @param args.displayName - The display name of the user.
+ * @param args.bio - The bio of the user.
+ * @param args.telegramHandle - The telegram handle of the user.
+ * @param args.twitterHandle - The twitter handle of the user.
+ * @param args.registeredWithPasskey - Whether the user registered with a passkey.
+ * @param args.passkeyAuthPublicKey - The public key of the authenticator if registering with passkey.
  */
-export async function registerUser(
-  email: string,
-  password: string,
-  username: string,
-  displayName: string,
-  bio: string,
-  registeredWithPasskey: boolean
-): Promise<void> {
+export async function registerUser({
+  signinToken,
+  email,
+  password,
+  username,
+  displayName,
+  bio,
+  telegramHandle,
+  twitterHandle,
+  registeredWithPasskey,
+  passkeyAuthPublicKey,
+}: RegisterUserArgs): Promise<void> {
   const { publicKey: encryptionPublicKey, privateKey: encryptionPrivateKey } =
     await generateEncryptionKeyPair();
   const { verifyingKey: signaturePublicKey, signingKey: signaturePrivateKey } =
@@ -62,6 +84,12 @@ export async function registerUser(
       signaturePublicKey,
       encryptionPublicKey,
       psiPublicKeyLink,
+      twitter: {
+        username: twitterHandle,
+      },
+      telegram: {
+        username: telegramHandle,
+      },
     },
     chips: [],
     connections: {},
@@ -75,6 +103,7 @@ export async function registerUser(
   });
 
   const request: UserRegisterRequest = {
+    signinToken,
     username,
     email,
     signaturePublicKey,
@@ -83,6 +112,7 @@ export async function registerUser(
     passwordSalt,
     passwordHash,
     registeredWithPasskey,
+    passkeyAuthPublicKey,
     initialBackupData,
   };
   const response = await fetch(`${BASE_API_URL}/user/register`, {

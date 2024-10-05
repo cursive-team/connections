@@ -19,6 +19,7 @@ model User {
   passwordHash          String
   registrationNumber    Int         @unique @default(autoincrement())
   registeredWithPasskey Boolean
+  passkeyAuthPublicKey  String?
   createdAt             DateTime    @default(now())
   AuthToken             AuthToken[]
   Backup                Backup[]

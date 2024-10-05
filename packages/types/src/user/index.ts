@@ -1,12 +1,10 @@
 import { z } from "zod";
 
-// Auth token schema
-export const AuthTokenSchema = z.object({
-  value: z.string(),
-  expiresAt: z.coerce.date(),
-});
+// Username schema
+export const UsernameSchema = z.string().regex(/^[a-zA-Z0-9]{3,20}$/);
 
-export type AuthToken = z.infer<typeof AuthTokenSchema>;
+// Email schema
+export const EmailSchema = z.string().email();
 
 // Enum for backup entry types
 export enum BackupEntryType {
@@ -74,27 +72,18 @@ export type AppendBackupDataResponse = z.infer<
   typeof AppendBackupDataResponseSchema
 >;
 
-// Request schema for creating a signin token
-export const CreateSigninTokenRequestSchema = z.object({
-  email: z.string().email(),
+// Auth token schema
+export const AuthTokenSchema = z.object({
+  value: z.string(),
+  expiresAt: z.coerce.date(),
 });
 
-export type CreateSigninTokenRequest = z.infer<
-  typeof CreateSigninTokenRequestSchema
->;
+export type AuthToken = z.infer<typeof AuthTokenSchema>;
 
-// Request schema for verifying a signin token
-export const VerifySigninTokenRequestSchema = z.object({
-  email: z.string().email(),
-  signinToken: z.string().length(6).regex(/^\d+$/),
-});
+// Signin token schema
+export const SigninTokenSchema = z.string().length(6).regex(/^\d+$/);
 
-export type VerifySigninTokenRequest = z.infer<
-  typeof VerifySigninTokenRequestSchema
->;
-
-// Username schema
-export const UsernameSchema = z.string().regex(/^[a-zA-Z0-9]{3,20}$/);
+export type SigninToken = z.infer<typeof SigninTokenSchema>;
 
 // Request schema for verifying username uniqueness
 export const VerifyUsernameUniqueRequestSchema = z.object({
@@ -105,16 +94,43 @@ export type VerifyUsernameUniqueRequest = z.infer<
   typeof VerifyUsernameUniqueRequestSchema
 >;
 
+export const VerifyUsernameUniqueResponseSchema = z.object({
+  isUnique: z.boolean(),
+});
+
+export type VerifyUsernameUniqueResponse = z.infer<
+  typeof VerifyUsernameUniqueResponseSchema
+>;
+
+// Request schema for verifying email uniqueness
+export const VerifyEmailUniqueRequestSchema = z.object({
+  email: EmailSchema,
+});
+
+export type VerifyEmailUniqueRequest = z.infer<
+  typeof VerifyEmailUniqueRequestSchema
+>;
+
+export const VerifyEmailUniqueResponseSchema = z.object({
+  isUnique: z.boolean(),
+});
+
+export type VerifyEmailUniqueResponse = z.infer<
+  typeof VerifyEmailUniqueResponseSchema
+>;
+
 // Request schema for registering a user
 export const UserRegisterRequestSchema = z.object({
+  signinToken: SigninTokenSchema,
   username: UsernameSchema,
-  email: z.string().email(),
+  email: EmailSchema,
   signaturePublicKey: z.string(),
   encryptionPublicKey: z.string(),
   psiPublicKeyLink: z.string(),
   passwordSalt: z.string(),
   passwordHash: z.string(),
   registeredWithPasskey: z.boolean(),
+  passkeyAuthPublicKey: z.string().optional(),
   initialBackupData: CreateBackupDataSchema,
 });
 
@@ -131,7 +147,7 @@ export type UserRegisterResponse = z.infer<typeof UserRegisterResponseSchema>;
 
 // Request schema for logging in a user
 export const UserLoginRequestSchema = z.object({
-  email: z.string().email(),
+  email: EmailSchema,
 });
 
 export type UserLoginRequest = z.infer<typeof UserLoginRequestSchema>;
@@ -145,3 +161,30 @@ export const UserLoginResponseSchema = z.object({
 });
 
 export type UserLoginResponse = z.infer<typeof UserLoginResponseSchema>;
+
+// Request schema for creating a signin token
+export const CreateSigninTokenRequestSchema = z.object({
+  email: EmailSchema,
+});
+
+export type CreateSigninTokenRequest = z.infer<
+  typeof CreateSigninTokenRequestSchema
+>;
+
+// Request schema for verifying a signin token
+export const VerifySigninTokenRequestSchema = z.object({
+  email: EmailSchema,
+  signinToken: SigninTokenSchema,
+});
+
+export type VerifySigninTokenRequest = z.infer<
+  typeof VerifySigninTokenRequestSchema
+>;
+
+export const VerifySigninTokenResponseSchema = z.object({
+  success: z.boolean(),
+});
+
+export type VerifySigninTokenResponse = z.infer<
+  typeof VerifySigninTokenResponseSchema
+>;

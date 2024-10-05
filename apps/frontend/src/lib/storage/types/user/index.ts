@@ -3,9 +3,10 @@ import { UserDataSchema } from "./userData";
 import { ChipSchema } from "./chip";
 import { ConnectionSchema } from "./connection";
 import { ActivitySchema } from "./activity";
+import { EmailSchema } from "@types";
 
 export const UserSchema = z.object({
-  email: z.string().email(),
+  email: EmailSchema,
   signaturePrivateKey: z.string(),
   encryptionPrivateKey: z.string(),
   psiPrivateKey: z.string(),

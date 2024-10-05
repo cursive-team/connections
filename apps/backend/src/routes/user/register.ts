@@ -26,6 +26,7 @@ router.post(
       const validatedData = UserRegisterRequestSchema.parse(req.body);
 
       const {
+        signinToken,
         username,
         email,
         signaturePublicKey,
@@ -34,6 +35,7 @@ router.post(
         passwordSalt,
         passwordHash,
         registeredWithPasskey,
+        passkeyAuthPublicKey,
         initialBackupData,
       } = validatedData;
 
@@ -62,6 +64,16 @@ router.post(
           .json({ error: "User with this email already exists" });
       }
 
+      // Validate and expire signin token
+      const isSigninTokenValid = await controller.VerifySigninToken(
+        email,
+        signinToken,
+        true
+      );
+      if (!isSigninTokenValid) {
+        return res.status(400).json({ error: "Invalid signin token" });
+      }
+
       const newUser = await controller.CreateUser({
         username,
         email,
@@ -71,6 +83,7 @@ router.post(
         passwordSalt,
         passwordHash,
         registeredWithPasskey,
+        passkeyAuthPublicKey,
       });
 
       const backup = await controller.CreateBackup({
