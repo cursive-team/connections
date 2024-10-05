@@ -67,12 +67,12 @@ jobs:
           terraform_version: 1.4.1
 
       - name: Terraform Init
-        working-directory: ./terraform
+        working-directory: ./deployment
         run: terraform init
 
       - name: Terraform Plan
         id: plan
-        working-directory: ./terraform
+        working-directory: ./deployment
         run: terraform plan -var="image_tag=$GITHUB_REF_NAME" -var="aws_account_number=${{ env.AWS_ACCOUNT }}"
         continue-on-error: true
 
@@ -81,5 +81,5 @@ jobs:
         run: exit 1
 
       - name: Terraform Apply
-        working-directory: ./terraform
+        working-directory: ./deployment
         run: terraform apply -var="image_tag=$GITHUB_REF_NAME" -var="aws_account_number=${{ env.AWS_ACCOUNT }}" -auto-approve
