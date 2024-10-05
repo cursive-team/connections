@@ -173,9 +173,6 @@ For surfacing typescript resolution process:
 - `tsc --traceResolution`
 
 ### TODO
-- [ ] Make a Github Secret for generated role.
-- [ ] Add networking and ECS resources to terraform code.
-- [ ] Add Github Action to run `terraform apply` on latest tag.
 - [ ] Create rollback command, some way of rolling back to last healthy version.
 - [ ] Have some manual testing step, ie running `apply` creates newest version but the ALB won't point to it until it's been manually validated.
 - [ ] Figure out how to fully manage AWS resources so terraform can also destroy them.
