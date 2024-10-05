@@ -96,7 +96,7 @@ export const processUserBackup = ({
         const connection: Connection = ConnectionSchema.parse(
           JSON.parse(decryptedData)
         );
-        user.connections[connection.user.signaturePublicKey] = connection;
+        user.connections[connection.user.username] = connection;
         break;
       case BackupEntryType.ACTIVITY:
         if (!user) {

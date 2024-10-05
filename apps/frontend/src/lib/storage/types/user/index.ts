@@ -8,6 +8,7 @@ export const UserSchema = z.object({
   email: z.string().email(),
   signaturePrivateKey: z.string(),
   encryptionPrivateKey: z.string(),
+  psiPrivateKey: z.string(),
   lastMessageFetchedAt: z.coerce.date(),
   userData: UserDataSchema,
   chips: z.array(ChipSchema),

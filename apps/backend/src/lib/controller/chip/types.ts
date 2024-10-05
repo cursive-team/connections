@@ -11,10 +11,12 @@ export const ChipSchema = z.object({
   chipPublicKey: z.string().nullable(),
   chipPrivateKey: z.string().nullable(),
   chipTapCount: z.number().int().nonnegative(),
+  ownerUsername: z.string().nullable(),
   ownerDisplayName: z.string().nullable(),
   ownerBio: z.string().nullable(),
   ownerSignaturePublicKey: z.string().nullable(),
   ownerEncryptionPublicKey: z.string().nullable(),
+  ownerPsiPublicKeyLink: z.string().nullable(),
   ownerUserData: JsonSchema.nullable(),
   createdAt: z.date(),
 });

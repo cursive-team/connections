@@ -17,14 +17,18 @@ import { createRegisterActivity } from "../activity";
  * Registers a user and loads initial storage data.
  * @param email - The email of the user.
  * @param password - The password of the user.
+ * @param username - The username of the user.
  * @param displayName - The display name of the user.
  * @param bio - The bio of the user.
+ * @param registeredWithPasskey - Whether the user registered with a passkey.
  */
 export async function registerUser(
   email: string,
   password: string,
+  username: string,
   displayName: string,
-  bio: string
+  bio: string,
+  registeredWithPasskey: boolean
 ): Promise<void> {
   const { publicKey: encryptionPublicKey, privateKey: encryptionPrivateKey } =
     await generateEncryptionKeyPair();
@@ -34,19 +38,23 @@ export async function registerUser(
   const passwordSalt = generateSalt();
   const passwordHash = await hashPassword(password, passwordSalt);
 
-  // User data with provided displayName and bio
-  // Add register activity
+  const { psiPublicKeyLink, psiPrivateKey } = generatePsiKeyPair();
+
+  // Add activity for registering
   const registerActivity = createRegisterActivity();
   const user: User = {
     email,
     signaturePrivateKey,
     encryptionPrivateKey,
+    psiPrivateKey,
     lastMessageFetchedAt: new Date(),
     userData: {
+      username,
       displayName,
       bio,
       signaturePublicKey,
       encryptionPublicKey,
+      psiPublicKeyLink,
     },
     chips: [],
     connections: {},
@@ -60,11 +68,14 @@ export async function registerUser(
   });
 
   const request: UserRegisterRequest = {
+    username,
     email,
     signaturePublicKey,
     encryptionPublicKey,
+    psiPublicKeyLink,
     passwordSalt,
     passwordHash,
+    registeredWithPasskey,
     initialBackupData,
   };
   const response = await fetch(`${BASE_API_URL}/user/register`, {

@@ -19,14 +19,16 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
   }
 
   if (
+    !tap.ownerUsername ||
     !tap.ownerDisplayName ||
     !tap.ownerSignaturePublicKey ||
-    !tap.ownerEncryptionPublicKey
+    !tap.ownerEncryptionPublicKey ||
+    !tap.ownerPsiPublicKeyLink
   ) {
-    throw new Error("Tap owner display name or keys not found");
+    throw new Error("Tap owner username, display name, or keys not found");
   }
 
-  const previousConnection = user.connections[tap.ownerSignaturePublicKey];
+  const previousConnection = user.connections[tap.ownerUsername];
 
   let ownerTwitter: TwitterData | undefined;
   let ownerTelegram: TelegramData | undefined;
@@ -60,10 +62,12 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
   // NOTE: For now, tapping a connection's chip will overwrite the existing connection data
   const ownerBio = tap.ownerBio === null ? "" : tap.ownerBio;
   const newConnectionUserData = {
+    username: tap.ownerUsername,
     displayName: tap.ownerDisplayName,
     bio: ownerBio,
     signaturePublicKey: tap.ownerSignaturePublicKey,
     encryptionPublicKey: tap.ownerEncryptionPublicKey,
+    psiPublicKeyLink: tap.ownerPsiPublicKeyLink,
     twitter: ownerTwitter,
     telegram: ownerTelegram,
   };
@@ -98,7 +102,7 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
   const tapActivity = createTapActivity(
     tapResponse.chipIssuer,
     tap.ownerDisplayName,
-    tap.ownerSignaturePublicKey
+    tap.ownerUsername
   );
   const tapActivityBackup = createActivityBackup({
     email: user.email,

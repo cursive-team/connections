@@ -62,10 +62,10 @@ export class LocalStorage implements ClientStorage {
   }
 
   async updateComment(
-    connectionSignaturePublicKey: string,
+    connectionUsername: string,
     comment: CommentData
   ): Promise<void> {
-    return updateComment(connectionSignaturePublicKey, comment);
+    return updateComment(connectionUsername, comment);
   }
 
   async addActivity(activity: Activity): Promise<void> {

@@ -8,16 +8,20 @@ datasource db {
 }
 
 model User {
-  id                  String      @id @default(uuid())
-  registrationNumber  Int         @unique @default(autoincrement())
-  email               String      @unique
-  signaturePublicKey  String
-  encryptionPublicKey String
-  passwordSalt        String
-  passwordHash        String
-  createdAt           DateTime    @default(now())
-  AuthToken           AuthToken[]
-  Backup              Backup[]
+  id                    String      @id @default(uuid())
+  username              String      @unique
+  usernameLowercase     String      @unique
+  email                 String      @unique
+  signaturePublicKey    String
+  encryptionPublicKey   String
+  psiPublicKeyLink      String
+  passwordSalt          String
+  passwordHash          String
+  registrationNumber    Int         @unique @default(autoincrement())
+  registeredWithPasskey Boolean
+  createdAt             DateTime    @default(now())
+  AuthToken             AuthToken[]
+  Backup                Backup[]
 }
 
 model SigninToken {
@@ -62,10 +66,12 @@ model Chip {
   chipPublicKey            String?
   chipPrivateKey           String?
   chipTapCount             Int       @default(0)
+  ownerUsername            String?
   ownerDisplayName         String?
   ownerBio                 String?
   ownerSignaturePublicKey  String?
   ownerEncryptionPublicKey String?
+  ownerPsiPublicKeyLink    String?
   ownerUserData            Json? // Nullable JSONB field
   createdAt                DateTime  @default(now())
 }

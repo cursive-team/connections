@@ -4,10 +4,12 @@ import { TwitterDataSchema } from "./twitterData";
 import { TelegramDataSchema } from "./telegramData";
 
 export const UserDataSchema = z.object({
+  username: z.string(),
   displayName: z.string(),
   bio: z.string(),
   signaturePublicKey: z.string(),
   encryptionPublicKey: z.string(),
+  psiPublicKeyLink: z.string(),
   twitter: nullToUndefined(TwitterDataSchema),
   telegram: nullToUndefined(TelegramDataSchema),
 });

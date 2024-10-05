@@ -173,14 +173,14 @@ export default function Home() {
       !user ||
       !tapResponse ||
       !tapResponse.tap ||
-      !tapResponse.tap.ownerSignaturePublicKey
+      !tapResponse.tap.ownerUsername
     ) {
       alert("Failed to submit comment.");
       return;
     }
 
     try {
-      await storage.updateComment(tapResponse.tap.ownerSignaturePublicKey, {
+      await storage.updateComment(tapResponse.tap.ownerUsername, {
         emoji: selectedEmoji || undefined,
         note: privateNote === "" ? undefined : privateNote,
       });

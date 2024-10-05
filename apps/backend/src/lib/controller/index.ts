@@ -39,6 +39,10 @@ export class Controller {
     // Over time more clients will be added (e.g. nitro enclave client)...
   }
 
+  GetUserByUsernameCaseInsensitive(username: string): Promise<User | null> {
+    return this.postgresClient.GetUserByUsernameCaseInsensitive(username);
+  }
+
   GetUserByEmail(email: string): Promise<User | null> {
     return this.postgresClient.GetUserByEmail(email);
   }

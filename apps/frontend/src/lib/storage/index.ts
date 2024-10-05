@@ -19,7 +19,7 @@ export interface ClientStorage {
   addChip(chip: Chip): Promise<void>;
   addTap(tapResponse: ChipTapResponse): Promise<void>;
   updateComment(
-    connectionSignaturePublicKey: string,
+    connectionUsername: string,
     comment: CommentData
   ): Promise<void>;
   addActivity(activity: Activity): Promise<void>;

@@ -26,11 +26,14 @@ router.post(
       const validatedData = UserRegisterRequestSchema.parse(req.body);
 
       const {
+        username,
         email,
         signaturePublicKey,
         encryptionPublicKey,
+        psiPublicKeyLink,
         passwordSalt,
         passwordHash,
+        registeredWithPasskey,
         initialBackupData,
       } = validatedData;
 
@@ -42,21 +45,32 @@ router.post(
         clientCreatedAt,
       } = initialBackupData;
 
-      // Check if the user already exists by email
-      const existingUser = await controller.GetUserByEmail(email);
+      // Check if the user already exists by username (this is case insensitive)
+      const existingUserByUsername =
+        await controller.GetUserByUsernameCaseInsensitive(username);
+      if (existingUserByUsername) {
+        return res
+          .status(400)
+          .json({ error: "User with this username already exists" });
+      }
 
-      if (existingUser) {
+      // Check if the user already exists by email
+      const existingUserByEmail = await controller.GetUserByEmail(email);
+      if (existingUserByEmail) {
         return res
           .status(400)
           .json({ error: "User with this email already exists" });
       }
 
       const newUser = await controller.CreateUser({
+        username,
         email,
         signaturePublicKey,
         encryptionPublicKey,
+        psiPublicKeyLink,
         passwordSalt,
         passwordHash,
+        registeredWithPasskey,
       });
 
       const backup = await controller.CreateBackup({

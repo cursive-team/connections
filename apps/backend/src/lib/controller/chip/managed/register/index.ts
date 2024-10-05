@@ -28,10 +28,12 @@ ManagedChipClient.prototype.RegisterChip = async function (
       chipPublicKey: verifyingKey,
       chipPrivateKey: signingKey,
       chipTapCount: 0, // Reset tap count on registration
+      ownerUsername: registerChip.ownerUsername,
       ownerDisplayName: registerChip.ownerDisplayName,
       ownerBio: registerChip.ownerBio,
       ownerSignaturePublicKey: registerChip.ownerSignaturePublicKey,
       ownerEncryptionPublicKey: registerChip.ownerEncryptionPublicKey,
+      ownerPsiPublicKeyLink: registerChip.ownerPsiPublicKeyLink,
       // If the ownerUserData is null (equal to the Json null value), set it to undefined, which just doesn't update the field
       // This is due to how Prisma handles Json null types
       // https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types/working-with-json-fields#using-null-values

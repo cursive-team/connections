@@ -25,6 +25,9 @@ export class PrismaPostgresClient implements iPostgresClient {
   }
 
   // @ts-expect-error (ts2391: function implementation does not immediately follow declaration)
+  GetUserByUsernameCaseInsensitive(username: string): Promise<User | null>;
+
+  // @ts-expect-error (ts2391)
   GetUserByEmail(email: string): Promise<User | null>;
 
   // @ts-expect-error (ts2391)

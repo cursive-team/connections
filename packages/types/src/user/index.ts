@@ -93,13 +93,28 @@ export type VerifySigninTokenRequest = z.infer<
   typeof VerifySigninTokenRequestSchema
 >;
 
+// Username schema
+export const UsernameSchema = z.string().regex(/^[a-zA-Z0-9]{3,20}$/);
+
+// Request schema for verifying username uniqueness
+export const VerifyUsernameUniqueRequestSchema = z.object({
+  username: UsernameSchema,
+});
+
+export type VerifyUsernameUniqueRequest = z.infer<
+  typeof VerifyUsernameUniqueRequestSchema
+>;
+
 // Request schema for registering a user
 export const UserRegisterRequestSchema = z.object({
+  username: UsernameSchema,
   email: z.string().email(),
   signaturePublicKey: z.string(),
   encryptionPublicKey: z.string(),
+  psiPublicKeyLink: z.string(),
   passwordSalt: z.string(),
   passwordHash: z.string(),
+  registeredWithPasskey: z.boolean(),
   initialBackupData: CreateBackupDataSchema,
 });
 
