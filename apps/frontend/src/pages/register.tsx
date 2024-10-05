@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { z } from "zod";
 import { errorToString } from "@types";
-import { BASE_API_URL } from "@/constants";
+import { BASE_API_URL } from "@/config";
 
 const EmailSchema = z.string().email();
 const CodeSchema = z.string().length(6).regex(/^\d+$/);

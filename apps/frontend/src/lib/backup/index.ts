@@ -18,7 +18,7 @@ import {
   UserSchema,
 } from "@/lib/storage/types";
 import { decryptBackupString, encryptBackupString } from "@/lib/crypto/backup";
-import { BASE_API_URL } from "@/constants";
+import { BASE_API_URL } from "@/config";
 
 /**
  * Parses a user object from backup data.

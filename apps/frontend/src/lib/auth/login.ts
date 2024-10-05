@@ -1,4 +1,4 @@
-import { BASE_API_URL } from "@/constants";
+import { BASE_API_URL } from "@/config";
 import { storage } from "@/lib/storage";
 import { processUserBackup } from "@/lib/backup";
 import {
