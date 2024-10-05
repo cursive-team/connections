@@ -12,6 +12,7 @@ import { createInitialBackup, processUserBackup } from "@/lib/backup";
 import { User } from "@/lib/storage/types";
 import { storage } from "@/lib/storage";
 import { createRegisterActivity } from "../activity";
+import { generatePSIKeyPair, psiBlobUploadClient } from "../psi";
 
 /**
  * Registers a user and loads initial storage data.
@@ -38,7 +39,13 @@ export async function registerUser(
   const passwordSalt = generateSalt();
   const passwordHash = await hashPassword(password, passwordSalt);
 
-  const { psiPublicKeyLink, psiPrivateKey } = generatePsiKeyPair();
+  const { psiPublicKey, psiPrivateKey } = await generatePSIKeyPair();
+
+  // Upload PSI public key to blob storage
+  const psiPublicKeyLink = await psiBlobUploadClient(
+    "connectionsPsiPublicKey",
+    JSON.stringify(psiPublicKey)
+  );
 
   // Add activity for registering
   const registerActivity = createRegisterActivity();
