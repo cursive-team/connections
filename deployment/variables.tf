@@ -11,7 +11,7 @@ variable "aws_account_number" {
 
 variable "namespace" {
   type        = string
-  default     = "cursive"
+  default     = "cursive-team"
   description = "Usually an abbreviation of your organization name, e.g. 'eg' or 'cp'"
 }
 

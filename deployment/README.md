@@ -10,8 +10,11 @@
 ### Appendix: 
 - [Dependency Installation](#dependency-installation-)
 - [Manually Create and Apply Admin User](#manually-create-and-apply-admin-user)
-- [Creating a New Tag](#creating-a-new-tag)
-- [Manually Push Tag to ECR](#manually-push-tag-to-ecr-)
+- [Creating Docker Image and Running Container](#creating-docker-image-and-running-container-)
+- [Tagging Release](#manually-tagging-release-)
+- [Push Docker Image to ECR](#manually-push-docker-image-to-ecr-)
+- [Apply Specific Image Tag to Infra](#apply-specific-image-tag-to-infra-)
+- [Utilities](#useful-utilities-)
 - [Deployment TODOs](#todo)
 
 ### Infra Phases
@@ -108,7 +111,7 @@ Create Local Profile for User:
 - Provide default region name: `ap-southeast-1` (Singapore).
 
 
-### Creating and Running Docker Image 
+### Creating Docker Image and Running Container 
 ``` 
 docker image build -t connections:1 -f ./Dockerfile .
 ```
@@ -118,7 +121,29 @@ Run on port 8080:
 docker run -td -p 8080:8080 connections:1
 ```
 
-### Manually Push Tag to ECR 
+### Tagging Release 
+Versioning will follow semantic versioning conventions (https://semver.org/).
+
+First, ensure you're on the `main` branch and it's up to date: 
+```
+git checkout main
+git pull origin main
+```
+
+To create a local tag. If the `$commit-hash` is not supplied, the most recent commit will be used.  
+
+`git tag v0.0.0 $commit-hash`
+
+To annotate a tag: 
+
+`git tag -a v0.0.0 -m "Initial Release" $commit-hash`
+
+Push tag:
+`git push origin v0.0.0`
+
+After pushing, the GH actions will be triggered automatically
+
+### Push Docker Image to ECR 
 
 ``` 
 export ACCOUNT_NUMBER="${AWS account number}"
@@ -132,15 +157,22 @@ docker tag $IMAGE_ID $ACCOUNT_NUMBER.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO
 docker push $ACCOUNT_NUMBER.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:1
 ```
 
-### Manually Apply Specific Tag to Infra 
+### Apply Specific Image Tag to Infra 
 ``` 
 terraform apply -var="image_tag=${tag number}" -auto-approve
 ```
 
+### Useful Utilities 
+
+For reducing the size of the docker image, I found this utility to be useful:
+
+- `du -shc $dir-or-file`
+
+For surfacing typescript resolution process: 
+
+- `tsc --traceResolution`
+
 ### TODO
-- [ ] Make a Github Secret for generated role.
-- [ ] Add networking and ECS resources to terraform code.
-- [ ] Add Github Action to run `terraform apply` on latest tag.
 - [ ] Create rollback command, some way of rolling back to last healthy version.
 - [ ] Have some manual testing step, ie running `apply` creates newest version but the ALB won't point to it until it's been manually validated.
 - [ ] Figure out how to fully manage AWS resources so terraform can also destroy them.
