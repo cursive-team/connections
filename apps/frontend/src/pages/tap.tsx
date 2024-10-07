@@ -10,10 +10,16 @@ const TapPage: React.FC = () => {
 
   useEffect(() => {
     const handleTap = async () => {
-      const { chipId } = router.query;
+      if (!location.hash) {
+        toast.error("Invalid tap! Please try again.");
+        router.push("/");
+        return;
+      }
 
-      if (typeof chipId !== "string") {
-        console.error("Invalid chipId");
+      const urlParams = new URLSearchParams(location.hash.slice(1));
+      const chipId = urlParams.get("chipId");
+
+      if (!chipId) {
         toast.error("Invalid tap!");
         router.push("/");
         return;

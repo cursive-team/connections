@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { registerUser } from "@/lib/auth/register";
 import { toast } from "sonner";
 
@@ -29,6 +29,8 @@ const CreatingAccount: React.FC<CreatingAccountProps> = ({
   passkeyAuthPublicKey,
   onAccountCreated,
 }) => {
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+
   useEffect(() => {
     const createAccount = async () => {
       try {
@@ -44,14 +46,18 @@ const CreatingAccount: React.FC<CreatingAccountProps> = ({
           registeredWithPasskey: registeredWithPasskey || false,
           passkeyAuthPublicKey: passkeyAuthPublicKey || undefined,
         });
-        onAccountCreated();
+        setIsCreatingAccount(false);
+        await onAccountCreated();
       } catch (error) {
         toast.error(`Failed to create account: ${error}`);
       }
     };
 
-    createAccount();
-  }, []);
+    if (!isCreatingAccount) {
+      setIsCreatingAccount(true);
+      createAccount();
+    }
+  }, [isCreatingAccount]);
 
   return (
     <div className="flex flex-col items-center justify-center space-y-4">

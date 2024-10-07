@@ -2,6 +2,7 @@ import { BASE_API_URL } from "@/config";
 import {
   EmailSchema,
   SigninTokenSchema,
+  VerifyEmailUniqueRequest,
   VerifyEmailUniqueResponseSchema,
   VerifySigninTokenResponseSchema,
   VerifyUsernameUniqueResponseSchema,
@@ -95,13 +96,15 @@ export const verifyUsernameIsUnique = async (
 };
 
 export const verifyEmailIsUnique = async (email: string): Promise<boolean> => {
+  const request: VerifyEmailUniqueRequest = { email };
+
   try {
     const response = await fetch(`${BASE_API_URL}/user/verify_email_unique`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify(request),
     });
 
     if (!response.ok) {

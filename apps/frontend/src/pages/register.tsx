@@ -11,6 +11,7 @@ import RegisterWithPassword from "@/features/register/RegisterWithPassword";
 import CreatingAccount from "@/features/register/CreatingAccount";
 
 import {
+  requestSigninToken,
   verifyEmailIsUnique,
   verifySigninToken,
   verifyUsernameIsUnique,
@@ -72,6 +73,14 @@ const Register: React.FC = () => {
     const isUnique = await verifyEmailIsUnique(submittedEmail);
     if (!isUnique) {
       toast.error("Email is already in use");
+      return;
+    }
+
+    try {
+      await requestSigninToken(submittedEmail);
+    } catch (error) {
+      console.error(error);
+      toast.error("Error requesting signin token");
       return;
     }
 
