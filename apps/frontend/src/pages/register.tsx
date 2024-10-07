@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { Json, UsernameSchema } from "@types";
+import { UsernameSchema } from "@types";
 import EnterEmail from "@/features/register/EnterEmail";
 import EnterCode from "@/features/register/EnterCode";
 import EnterUserInfo from "@/features/register/EnterUserInfo";
@@ -17,7 +17,6 @@ import {
   verifyUsernameIsUnique,
 } from "@/lib/auth/util";
 import { TapInfo } from "@/lib/storage/types";
-import { registerChip } from "@/lib/chip/register";
 
 enum DisplayState {
   ENTER_EMAIL,
@@ -146,57 +145,8 @@ const Register: React.FC = () => {
   };
 
   const handleAccountCreated = async () => {
-    const user = await storage.getUser();
-    const session = await storage.getSession();
-    if (!user || !session) {
-      toast.error("Error creating account! Please try again.");
-      return;
-    }
-
-    // Register edge city chip
-    try {
-      if (savedTap) {
-        const {
-          username,
-          displayName,
-          bio,
-          signaturePublicKey,
-          encryptionPublicKey,
-          psiPublicKeyLink,
-        } = user.userData;
-
-        // Set owner user data
-        // TODO: Generalize this to be extensible for arbitrary user data
-        const ownerUserData: Json = {};
-        if (user.userData.twitter && user.userData.twitter.username) {
-          ownerUserData.twitter = { username: user.userData.twitter.username };
-        }
-        if (user.userData.telegram && user.userData.telegram.username) {
-          ownerUserData.telegram = {
-            username: user.userData.telegram.username,
-          };
-        }
-
-        await registerChip({
-          authToken: session.authTokenValue,
-          tapParams: savedTap.tapParams,
-          ownerUsername: username,
-          ownerDisplayName: displayName,
-          ownerBio: bio,
-          ownerSignaturePublicKey: signaturePublicKey,
-          ownerEncryptionPublicKey: encryptionPublicKey,
-          ownerPsiPublicKeyLink: psiPublicKeyLink,
-          ownerUserData,
-        });
-      }
-
-      toast.success("Account created successfully!");
-      router.push("/");
-      return;
-    } catch (error) {
-      console.error(error);
-      toast.error("Created account but failed to register chip.");
-    }
+    toast.success("Account created successfully!");
+    router.push("/");
   };
 
   if (!attemptedToLoadSavedTap) {
@@ -250,6 +200,7 @@ const Register: React.FC = () => {
           )}
           {displayState === DisplayState.CREATING_ACCOUNT && (
             <CreatingAccount
+              savedTap={savedTap}
               signinToken={code}
               email={email}
               password={backupPassword}

@@ -75,7 +75,7 @@ export async function registerUser({
     email,
     signaturePrivateKey,
     encryptionPrivateKey,
-    psiPrivateKey,
+    serializedPsiPrivateKey: JSON.stringify(psiPrivateKey),
     lastMessageFetchedAt: new Date(),
     userData: {
       username,

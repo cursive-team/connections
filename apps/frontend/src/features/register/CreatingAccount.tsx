@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { registerUser } from "@/lib/auth/register";
 import { toast } from "sonner";
+import { storage } from "@/lib/storage";
+import { registerChip } from "@/lib/chip/register";
+import { Json } from "@types";
+import { TapInfo } from "@/lib/storage/types";
 
 interface CreatingAccountProps {
+  savedTap: TapInfo | null;
   signinToken: string;
   email: string;
   password: string;
@@ -17,6 +22,7 @@ interface CreatingAccountProps {
 }
 
 const CreatingAccount: React.FC<CreatingAccountProps> = ({
+  savedTap,
   signinToken,
   email,
   password,
@@ -46,6 +52,52 @@ const CreatingAccount: React.FC<CreatingAccountProps> = ({
           registeredWithPasskey: registeredWithPasskey || false,
           passkeyAuthPublicKey: passkeyAuthPublicKey || undefined,
         });
+
+        const user = await storage.getUser();
+        const session = await storage.getSession();
+        if (!user || !session) {
+          toast.error("Error creating account! Please try again.");
+          return;
+        }
+
+        // Register chip if saved tap is present
+        if (savedTap) {
+          const {
+            username,
+            displayName,
+            bio,
+            signaturePublicKey,
+            encryptionPublicKey,
+            psiPublicKeyLink,
+          } = user.userData;
+
+          // Set owner user data for chip registration
+          // TODO: Generalize this to be extensible for arbitrary user data
+          const ownerUserData: Json = {};
+          if (user.userData.twitter && user.userData.twitter.username) {
+            ownerUserData.twitter = {
+              username: user.userData.twitter.username,
+            };
+          }
+          if (user.userData.telegram && user.userData.telegram.username) {
+            ownerUserData.telegram = {
+              username: user.userData.telegram.username,
+            };
+          }
+
+          await registerChip({
+            authToken: session.authTokenValue,
+            tapParams: savedTap.tapParams,
+            ownerUsername: username,
+            ownerDisplayName: displayName,
+            ownerBio: bio,
+            ownerSignaturePublicKey: signaturePublicKey,
+            ownerEncryptionPublicKey: encryptionPublicKey,
+            ownerPsiPublicKeyLink: psiPublicKeyLink,
+            ownerUserData,
+          });
+        }
+
         setIsCreatingAccount(false);
         await onAccountCreated();
       } catch (error) {
