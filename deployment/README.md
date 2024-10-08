@@ -6,6 +6,8 @@
 - [Phase 2: Updating Infra](#phase-2-updating-infra-)
 - [Push Image on New Tag](#push-image-on-new-tag-)
 - [Apply Terraform on New Tag](#apply-terraform-on-new-tag)
+- [Setting Up Postgres Database](#setting-up-postgres-database-)
+- [Running Postgres Schema Migrations](#run-schema-migrations-on-rds-)
 
 ### Appendix: 
 - [Dependency Installation](#dependency-installation-)
@@ -49,6 +51,24 @@ And to destroy resources:
 terraform destroy
 ```
 
+There are some output values: 
+
+``` 
+Outputs:
+
+alb_dns_name = "cursive-team-connections-$id.ap-southeast-1.elb.amazonaws.com"
+ecr_repository_name = "$repo-name"
+github_actions_role_arn = "arn:aws:iam::$account:role/github_actions"
+nat_gateway_ip = tolist([
+  "$ip",
+])
+
+```
+
+`alb_dns_name` should be used as CNAME in our DNS records for the domain to point to the ALB.
+`github_actions_role_arn` should be added as Github Secret for the Github Action usage.
+`nat_gateway_ip $ip:5432` should be used for the RDS inbound rule to allow the backend to communicate with RDS.
+
 ### Phase 2: Updating Infra 
 
 Given the repeated nature of updating, it's important to have a streamlined, automated, and tightly scoped process for updating our infra. 
@@ -72,7 +92,23 @@ After a successful push, our Terraform code will be applied to our AWS account t
 
 One goal I have for the terraform setup is to have a validation step (ideally automated, but realistically probably manual) to check the new version works, and _then and only then_ point the ALB (Amazon Load Balancer) to the new version from the old version. At that point we can either destroy the old version or keep it around in the event we need to failover. This goal is the main "known unknown" in the Terraform setup at this point.
 
-## Appendix
+### Setting Up Postgres Database 
+
+As user data is the most persistent part of our web application, the database is the highest stakes component. As a result, I will manually create it so that there's no chance of accidental terraform changes that destroy it. 
+
+Once the DB is created I'll pass in environment variables to the backend using something like the ECS Secrets Manager (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/secrets-envvar-secrets-manager.html) to point to the DB. 
+
+1. Navigate to [AWS DB creation](https://ap-southeast-1.console.aws.amazon.com/rds/home?region=ap-southeast-1#launch-dbinstance:). Create RDS DB with DB name `connections`. Make master password without special characters (special characters need password encoding). Ensure there are versioned backups.
+2. Once the DB is created, update security group (one with source sg) inbound rule to ip belonging to the NAT gateway and port 5432. This value will be output by `terraform plan / apply`.
+3. In AWS Secrets Manager, create secret key with name `SECRET_DATABASE_URL` and value of form: `postgresql://$user:$password@$db-endpoint:$port/$db?schema=public` where `$user` is usually `postgres`, `$password` is the value from step 2, `$db-endpoint` is the endpoint of the RDS database, `$port` is usually `5432`, and `$db` is `connections`. 
+4. Once the value is created, note the Secret ARN, and update the `valueFrom` field of `DATABASE_URL` in `ecs.tf`. Only the last route section should be updated (which will include the name of the secret).
+
+### Run Schema Migrations on RDS 
+
+``` 
+export DATABASE_URL="postgresql://$user:$password@$db-endpoint:$port/$db?schema=public"
+pnpm prisma migrate deploy
+```
 
 ### Dependency Installation 
 
@@ -86,6 +122,8 @@ Install docker:
 ``` 
 brew install --cask docker
 ```
+
+Install AWS cli (TODO)
 
 ### Manually Create and Apply Admin User
 
@@ -162,8 +200,19 @@ docker push $ACCOUNT_NUMBER.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:1
 To run locally, you must uncomment the credential path and profile in `provider.tf`.
 
 ``` 
-terraform apply -var="image_tag=${tag number}" -auto-approve
+terraform apply -var="image_tag=${tag number}" -var="aws_account_number=${account number}" -auto-approve
 ```
+
+### Manually Run Prisma Migrations on RDS 
+
+```
+export DATABASE_URL="postgresql://$user:$password@$db-endpoint:$port/$db?schema=public
+pnpm prisma migrate deploy
+```
+
+### Postgres Utilities 
+
+`psql -h $db-endpoint -p 5432 -U $user $db-name -W` and input password to connect to DB.
 
 ### Useful Utilities 
 
@@ -177,8 +226,8 @@ For surfacing typescript resolution process:
 
 ### TODO
 - [ ] Create rollback command, some way of rolling back to last healthy version.
-- [ ] Have some manual testing step, ie running `apply` creates newest version but the ALB won't point to it until it's been manually validated.
-- [ ] Figure out how to fully manage AWS resources so terraform can also destroy them.
+- [ ] Have some manual testing step, ie running `apply` creates newest version but the ALB won't point to it until it's been manually validated. 
+- [ ] Figure out how to rollback using last tfstate.
 - [ ] Minimize scope of github action policy.
 - [ ] swap to AWS CLI V2 (https://aws.amazon.com/cli/)
 

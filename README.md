@@ -16,10 +16,12 @@ Frontend:
 Backend:
 
 - `cd apps/backend`
+- `source .env.example`
 - `pnpm prisma generate`
 - `pnpm prisma migrate dev`
 - `pnpm run dev`
 - To seed database with testing UserChip values: `pnpm run seed`
+
 
 Notes:
 
