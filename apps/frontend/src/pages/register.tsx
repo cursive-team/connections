@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { UsernameSchema } from "@types";
+import { Json, UsernameSchema } from "@types";
 import EnterEmail from "@/features/register/EnterEmail";
 import EnterCode from "@/features/register/EnterCode";
 import EnterUserInfo from "@/features/register/EnterUserInfo";
 import RegisterWithPasskey from "@/features/register/RegisterWithPasskey";
 import RegisterWithPassword from "@/features/register/RegisterWithPassword";
 import CreatingAccount from "@/features/register/CreatingAccount";
-
+import LannaDiscoverConnections from "@/features/register/LannaDiscoverConnections";
 import {
   requestSigninToken,
   verifyEmailIsUnique,
@@ -17,6 +17,9 @@ import {
   verifyUsernameIsUnique,
 } from "@/lib/auth/util";
 import { TapInfo } from "@/lib/storage/types";
+import { registerChip } from "@/lib/chip/register";
+import { registerUser } from "@/lib/auth/register";
+import { LannaDesiredConnections } from "@/lib/storage/types/user";
 
 enum DisplayState {
   ENTER_EMAIL,
@@ -25,6 +28,7 @@ enum DisplayState {
   REGISTER_WITH_PASSKEY,
   REGISTER_WITH_PASSWORD,
   CREATING_ACCOUNT,
+  LANNA_DISCOVER_CONNECTIONS,
 }
 
 const Register: React.FC = () => {
@@ -131,7 +135,7 @@ const Register: React.FC = () => {
     setBackupPassword(password);
     setRegisteredWithPasskey(true);
     setAuthPublicKey(authPublicKey);
-    setDisplayState(DisplayState.CREATING_ACCOUNT);
+    await handleCreateAccount();
   };
 
   const handleSwitchToRegisterWithPasskey = () => {
@@ -141,12 +145,102 @@ const Register: React.FC = () => {
   const handleRegisterWithPassword = async (password: string) => {
     setBackupPassword(password);
     setRegisteredWithPasskey(false);
-    setDisplayState(DisplayState.CREATING_ACCOUNT);
+    await handleCreateAccount();
   };
 
-  const handleAccountCreated = async () => {
-    toast.success("Account created successfully!");
-    router.push("/");
+  const handleCreateAccount = async () => {
+    setDisplayState(DisplayState.CREATING_ACCOUNT);
+    try {
+      // Register user
+      await registerUser({
+        signinToken: code,
+        email,
+        password: backupPassword,
+        username,
+        displayName,
+        bio,
+        telegramHandle,
+        twitterHandle,
+        registeredWithPasskey: registeredWithPasskey || false,
+        passkeyAuthPublicKey: authPublicKey || undefined,
+      });
+
+      const user = await storage.getUser();
+      const session = await storage.getSession();
+      if (!user || !session) {
+        toast.error("Error creating account! Please try again.");
+        return;
+      }
+
+      // Register chip if saved tap is present
+      if (savedTap) {
+        const {
+          username,
+          displayName,
+          bio,
+          signaturePublicKey,
+          encryptionPublicKey,
+          psiPublicKeyLink,
+        } = user.userData;
+
+        // Set owner user data for chip registration
+        // TODO: Generalize this to be extensible for arbitrary user data
+        const ownerUserData: Json = {};
+        if (user.userData.twitter && user.userData.twitter.username) {
+          ownerUserData.twitter = {
+            username: user.userData.twitter.username,
+          };
+        }
+        if (user.userData.telegram && user.userData.telegram.username) {
+          ownerUserData.telegram = {
+            username: user.userData.telegram.username,
+          };
+        }
+
+        await registerChip({
+          authToken: session.authTokenValue,
+          tapParams: savedTap.tapParams,
+          ownerUsername: username,
+          ownerDisplayName: displayName,
+          ownerBio: bio,
+          ownerSignaturePublicKey: signaturePublicKey,
+          ownerEncryptionPublicKey: encryptionPublicKey,
+          ownerPsiPublicKeyLink: psiPublicKeyLink,
+          ownerUserData,
+        });
+
+        // If user is registering with a chip, continue onboarding
+        // TODO: Only do this for Lanna chips
+        setDisplayState(DisplayState.LANNA_DISCOVER_CONNECTIONS);
+        return;
+      }
+
+      // Show success toast and redirect to home
+      toast.success("Account created successfully!");
+      router.push("/");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to create account. Please try again");
+      router.push("/");
+      return;
+    }
+  };
+
+  const handleLannaDiscoverConnectionsSubmit = async (
+    desiredConnections: LannaDesiredConnections
+  ) => {
+    const user = await storage.getUser();
+    if (!user) {
+      toast.error("User not found");
+      return;
+    }
+
+    await storage.updateUserData({
+      ...user.userData,
+      lanna: { desiredConnections },
+    });
+    toast.success("Successfully created your account!");
+    router.push("/profile");
   };
 
   if (!attemptedToLoadSavedTap) {
@@ -199,19 +293,11 @@ const Register: React.FC = () => {
             />
           )}
           {displayState === DisplayState.CREATING_ACCOUNT && (
-            <CreatingAccount
-              savedTap={savedTap}
-              signinToken={code}
-              email={email}
-              password={backupPassword}
-              username={username}
-              displayName={displayName}
-              bio={bio}
-              telegramHandle={telegramHandle}
-              twitterHandle={twitterHandle}
-              registeredWithPasskey={registeredWithPasskey}
-              passkeyAuthPublicKey={authPublicKey}
-              onAccountCreated={handleAccountCreated}
+            <CreatingAccount />
+          )}
+          {displayState === DisplayState.LANNA_DISCOVER_CONNECTIONS && (
+            <LannaDiscoverConnections
+              onSubmit={handleLannaDiscoverConnectionsSubmit}
             />
           )}
         </div>

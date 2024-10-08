@@ -2,6 +2,7 @@ import { z } from "zod";
 import { nullToUndefined } from "@types";
 import { TwitterDataSchema } from "./twitterData";
 import { TelegramDataSchema } from "./telegramData";
+import { LannaDataSchema } from "./lannaData";
 
 export const UserDataSchema = z.object({
   username: z.string(),
@@ -12,9 +13,16 @@ export const UserDataSchema = z.object({
   psiPublicKeyLink: z.string(),
   twitter: nullToUndefined(TwitterDataSchema),
   telegram: nullToUndefined(TelegramDataSchema),
+  lanna: nullToUndefined(LannaDataSchema),
 });
 
 export type UserData = z.infer<typeof UserDataSchema>;
 
 export { type TwitterData, TwitterDataSchema } from "./twitterData";
 export { type TelegramData, TelegramDataSchema } from "./telegramData";
+export {
+  type LannaDesiredConnections,
+  LannaDesiredConnectionsSchema,
+  type LannaData,
+  LannaDataSchema,
+} from "./lannaData";
