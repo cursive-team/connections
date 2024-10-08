@@ -10,13 +10,14 @@ env:
   AWS_REGION: ap-southeast-1
   IAM_ROLE_ARN: ${{ secrets.GH_ACTION_IAM_ROLE_ARN }}
   AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
 permissions:
   id-token: write # This is required for requesting the JWT
   contents: read # This is required for actions/checkout
 
 jobs:
-  build:
+  build-and-push-image:
     name: Build Docker Image
     runs-on: ubuntu-latest
 
@@ -25,7 +26,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v1-node20
         with:
           role-to-assume: ${{ env.IAM_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
@@ -41,9 +42,27 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_REF_NAME -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
           docker image push -a $ECR_REGISTRY/$ECR_REPOSITORY
-  terraform:
+  db-migrations:
+    name: Run DB Migrations
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Apply all pending migrations to the database
+        run: pnpm prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+  apply-terraform:
     name: Terraform Apply
-    needs: build
+    needs: db-migrations
     runs-on: ubuntu-latest
     environment: production
 
