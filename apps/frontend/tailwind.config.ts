@@ -5,9 +5,14 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/layouts/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/features/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
+      container: {
+        padding: "24px",
+        center: true,
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
@@ -19,9 +24,10 @@ const config: Config = {
       colors: {
         background: "#FFF",
 
-        primary: "#191A1E",
+        primary: "#090909",
         secondary: "rgba(9, 9, 9, 0.60)",
         tertiary: "rgba(9, 9, 9, 0.50)",
+        quaternary: "rgba(9, 9, 9, 0.40)",
         cinnamon: "#F74227",
 
         stroke: {
