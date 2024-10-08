@@ -258,6 +258,7 @@ const Register: React.FC = () => {
         DisplayState.REGISTER_WITH_PASSKEY,
         DisplayState.REGISTER_WITH_PASSWORD,
         DisplayState.CREATING_ACCOUNT,
+        DisplayState.LANNA_DISCOVER_CONNECTIONS,
       ].includes(displayState) && (
         <div className="h-[200px] w-full top-0">
           <Image
