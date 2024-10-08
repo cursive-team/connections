@@ -31,19 +31,17 @@ const PeoplePage: React.FC = () => {
             className="bg-white dark:bg-gray-800 shadow rounded-lg p-4"
           >
             <Link href={`/people/${connection.user.username}`}>
-              <a className="flex items-center space-x-4">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-                </div>
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {connection.user.displayName}
-                  </h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    @{connection.user.username}
-                  </p>
-                </div>
-              </a>
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {connection.user.displayName}
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  @{connection.user.username}
+                </p>
+              </div>
             </Link>
           </li>
         ))}
