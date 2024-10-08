@@ -22,22 +22,23 @@ module "container_definition" {
   port_mappings    = var.container_port_mappings
 
   # The environment variables to pass to the container.
-  #environment = [
-  #  {
-  #    name  = "ENV_NAME"
-  #    value = "ENV_VALUE"
-  #  },
-  #]
+  environment = [
+    {
+      name  = "DATABASE_URL"
+      # Leveraging the permissions of the role which applies the changes, which is admin, rather than the container
+      value = jsondecode(data.aws_secretsmanager_secret_version.database_url.secret_string)["SECRET_DATABASE_URL"]
+    },
+  ]
 
   # Pull secrets from AWS Parameter Store.
   # "name" is the name of the env var.
   # "valueFrom" is the name of the secret in PS.
-  secrets = [
-    # {
-    #   name      = "SECRET_ENV_NAME"
-    #   valueFrom = "SECRET_ENV_NAME"
-    # },
-  ]
+  #secrets = [
+  #   {
+  #     name      = "DATABASE_URL"
+  #     valueFrom = "arn:aws:secretsmanager:${var.region}:${var.aws_account_number}:secret:connections/$name
+  #   },
+  #]
 
   log_configuration = {
     logDriver = "awslogs"
