@@ -1,6 +1,8 @@
 import { ForwardedRef, forwardRef, useState } from "react";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CodeInput = forwardRef<HTMLInputElement, any>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (props: any, ref: ForwardedRef<HTMLInputElement>) => {
     const [code, setCode] = useState(["", "", "", "", "", ""]);
 
