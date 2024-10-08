@@ -10,10 +10,12 @@ import { storage } from "@/lib/storage";
 interface RegisterChipArgs {
   authToken: string;
   tapParams: Record<string, string>;
+  ownerUsername?: string;
   ownerDisplayName?: string;
   ownerBio?: string;
   ownerSignaturePublicKey?: string;
   ownerEncryptionPublicKey?: string;
+  ownerPsiPublicKeyLink?: string;
   ownerUserData?: Json;
 }
 
@@ -22,10 +24,12 @@ interface RegisterChipArgs {
  * @param args - The arguments for registering a chip.
  * @param args.authToken - The authentication token for the user.
  * @param args.tapParams - The parameters from the chip tap.
+ * @param args.ownerUsername - The username of the chip owner.
  * @param args.ownerDisplayName - The display name of the chip owner.
  * @param args.ownerBio - The bio of the chip owner.
  * @param args.ownerSignaturePublicKey - The signature public key of the chip owner.
  * @param args.ownerEncryptionPublicKey - The encryption public key of the chip owner.
+ * @param args.ownerPsiPublicKeyLink - The PSI public key link of the chip owner.
  * @param args.ownerUserData - Additional user data for the chip owner.
  * @returns A promise that resolves to the RegisterChipResponse when the chip registration is complete.
  */
@@ -34,10 +38,12 @@ export async function registerChip(args: RegisterChipArgs): Promise<void> {
     const request: RegisterChipRequest = {
       authToken: args.authToken,
       tapParams: args.tapParams,
+      ownerUsername: args.ownerUsername ?? null,
       ownerDisplayName: args.ownerDisplayName ?? null,
       ownerBio: args.ownerBio ?? null,
       ownerSignaturePublicKey: args.ownerSignaturePublicKey ?? null,
       ownerEncryptionPublicKey: args.ownerEncryptionPublicKey ?? null,
+      ownerPsiPublicKeyLink: args.ownerPsiPublicKeyLink ?? null,
       ownerUserData: args.ownerUserData ?? null,
     };
 

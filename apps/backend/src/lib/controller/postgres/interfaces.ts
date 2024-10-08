@@ -12,6 +12,7 @@ export interface iPostgresClient {
   HealthCheck(): Promise<boolean>;
 
   // User methods
+  GetUserByUsernameCaseInsensitive(username: string): Promise<User | null>;
   GetUserByEmail(email: string): Promise<User | null>;
   GetUserById(userId: string): Promise<User | null>;
   GetUserByAuthToken(authToken: string): Promise<User | null>;

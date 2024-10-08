@@ -42,6 +42,10 @@ export class Controller {
   PostgresHealthCheck(): Promise<boolean> {
     return this.postgresClient.HealthCheck();
   }
+  
+  GetUserByUsernameCaseInsensitive(username: string): Promise<User | null> {
+    return this.postgresClient.GetUserByUsernameCaseInsensitive(username);
+  }
 
   GetUserByEmail(email: string): Promise<User | null> {
     return this.postgresClient.GetUserByEmail(email);

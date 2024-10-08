@@ -74,7 +74,7 @@ const LoadingSpinner = ({ size }: Pick<ButtonProps, "size">) => {
   );
 };
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const AppButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       variant,
@@ -112,6 +112,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
-Button.displayName = "Button";
+AppButton.displayName = "AppButton";
 
-export { Button };
+export { AppButton };

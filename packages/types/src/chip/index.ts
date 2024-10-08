@@ -23,10 +23,12 @@ export type TapParams = z.infer<typeof TapParamsSchema>;
 export const RegisterChipRequestSchema = z.object({
   authToken: z.string(),
   tapParams: TapParamsSchema,
+  ownerUsername: z.string().nullable(),
   ownerDisplayName: z.string().nullable(),
   ownerBio: z.string().nullable(),
   ownerSignaturePublicKey: z.string().nullable(),
   ownerEncryptionPublicKey: z.string().nullable(),
+  ownerPsiPublicKeyLink: z.string().nullable(),
   ownerUserData: JsonSchema.nullable(),
 });
 
@@ -58,10 +60,12 @@ export const ChipTapSchema = z.object({
   message: z.string(),
   signature: z.string(),
   tapCount: z.number().int().nonnegative(),
+  ownerUsername: z.string().nullable(),
   ownerDisplayName: z.string().nullable(),
   ownerBio: z.string().nullable(),
   ownerSignaturePublicKey: z.string().nullable(),
   ownerEncryptionPublicKey: z.string().nullable(),
+  ownerPsiPublicKeyLink: z.string().nullable(),
   ownerUserData: JsonSchema.nullable(),
   timestamp: z.coerce.date(),
 });

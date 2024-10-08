@@ -20,11 +20,24 @@ PrismaPostgresClient.prototype.HealthCheck = async function (): Promise<boolean>
   return false;
 };
 
+PrismaPostgresClient.prototype.GetUserByUsernameCaseInsensitive =
+  async function (username: string): Promise<User | null> {
+    const prismaUser = await this.prismaClient.user.findUnique({
+      where: { usernameLowercase: username.toLowerCase() },
+    });
+
+    if (prismaUser) {
+      return UserSchema.parse(prismaUser);
+    }
+
+    return null;
+  };
+
 PrismaPostgresClient.prototype.GetUserByEmail = async function (
   email: string
 ): Promise<User | null> {
   const prismaUser = await this.prismaClient.user.findUnique({
-    where: { email },
+    where: { email: email.toLowerCase() },
   });
 
   if (prismaUser) {
@@ -81,8 +94,13 @@ PrismaPostgresClient.prototype.GetUserByAuthToken = async function (
 PrismaPostgresClient.prototype.CreateUser = async function (
   createUser: UserCreateRequest
 ): Promise<User> {
+  // Create the user with the lowercase username and email
   const prismaUser = await this.prismaClient.user.create({
-    data: createUser,
+    data: {
+      ...createUser,
+      usernameLowercase: createUser.username.toLowerCase(),
+      email: createUser.email.toLowerCase(),
+    },
   });
 
   if (prismaUser) {

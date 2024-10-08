@@ -40,7 +40,7 @@ interface InputProps
   action?: ReactNode;
 }
 
-const Input = forwardRef<HTMLInputElement, InputProps>(
+const AppInput = forwardRef<HTMLInputElement, InputProps>(
   (props: InputProps, ref: ForwardedRef<HTMLInputElement>) => {
     const {
       label,
@@ -91,6 +91,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
-Input.displayName = "Input";
+AppInput.displayName = "AppInput";
 
-export { Input };
+export { AppInput };

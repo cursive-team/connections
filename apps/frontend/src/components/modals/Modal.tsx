@@ -1,4 +1,9 @@
-import { Transition, Dialog } from "@headlessui/react";
+import {
+  Transition,
+  Dialog,
+  TransitionChild,
+  DialogPanel,
+} from "@headlessui/react";
 import React, { Fragment } from "react";
 import { Icons } from "../Icons";
 import { fontBase } from "@/config";
@@ -31,7 +36,7 @@ const Modal = ({
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-[100]" onClose={onCloseModal}>
-        <Transition.Child
+        <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
@@ -41,14 +46,14 @@ const Modal = ({
           leaveTo="opacity-0"
         >
           <div className="fixed inset-0 bg-white z-[100]" />
-        </Transition.Child>
+        </TransitionChild>
 
         <div
           data-component="modal"
           className={`fixed inset-0 overflow-y-auto z-[100] ${fontBase.variable} font-sans`}
         >
           <div className="flex min-h-full w-full items-center justify-center p-4 text-center">
-            <Transition.Child
+            <TransitionChild
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 scale-95"
@@ -57,7 +62,7 @@ const Modal = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="bg-main fixed top-0 bottom-0 left-0 right-0 bg-shark-970 w-full max-h-screen transform py-6 px-3 xs:px-4 text-left align-middle shadow-xl transition-all">
+              <DialogPanel className="bg-main fixed top-0 bottom-0 left-0 right-0 bg-shark-970 w-full max-h-screen transform py-6 px-3 xs:px-4 text-left align-middle shadow-xl transition-all">
                 {closable && (
                   <div
                     className={cn(
@@ -86,8 +91,8 @@ const Modal = ({
                 <div className="flex flex-col grow h-full overflow-y-auto mt-8 z-100">
                   <div className="pt-4 pb-6 grow text-white">{children}</div>
                 </div>
-              </Dialog.Panel>
-            </Transition.Child>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </div>
       </Dialog>

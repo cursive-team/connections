@@ -1,24 +1,33 @@
+import { EmailSchema, UsernameSchema } from "@types";
 import { z } from "zod";
 
 // These values represent controller-level types, e.g. prisma types will be converted to these
 
 export const UserSchema = z.object({
-  email: z.string().email(),
+  id: z.string(),
+  username: UsernameSchema,
+  usernameLowercase: z.string(),
+  email: EmailSchema,
   signaturePublicKey: z.string(),
   encryptionPublicKey: z.string(),
-  id: z.string(),
-  registrationNumber: z.number(),
-  createdAt: z.date(),
+  psiPublicKeyLink: z.string(),
   passwordSalt: z.string(),
   passwordHash: z.string(),
+  registrationNumber: z.number(),
+  registeredWithPasskey: z.boolean(),
+  createdAt: z.date(),
 });
 
 export const UserCreateRequestSchema = z.object({
-  email: z.string().email(),
+  username: UsernameSchema,
+  email: EmailSchema,
   signaturePublicKey: z.string(),
   encryptionPublicKey: z.string(),
+  psiPublicKeyLink: z.string(),
   passwordSalt: z.string(),
   passwordHash: z.string(),
+  registeredWithPasskey: z.boolean(),
+  passkeyAuthPublicKey: z.string().optional(),
 });
 
 export const BackupSchema = z.object({

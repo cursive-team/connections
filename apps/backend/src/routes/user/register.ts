@@ -26,11 +26,16 @@ router.post(
       const validatedData = UserRegisterRequestSchema.parse(req.body);
 
       const {
+        signinToken,
+        username,
         email,
         signaturePublicKey,
         encryptionPublicKey,
+        psiPublicKeyLink,
         passwordSalt,
         passwordHash,
+        registeredWithPasskey,
+        passkeyAuthPublicKey,
         initialBackupData,
       } = validatedData;
 
@@ -42,21 +47,43 @@ router.post(
         clientCreatedAt,
       } = initialBackupData;
 
-      // Check if the user already exists by email
-      const existingUser = await controller.GetUserByEmail(email);
+      // Check if the user already exists by username (this is case insensitive)
+      const existingUserByUsername =
+        await controller.GetUserByUsernameCaseInsensitive(username);
+      if (existingUserByUsername) {
+        return res
+          .status(400)
+          .json({ error: "User with this username already exists" });
+      }
 
-      if (existingUser) {
+      // Check if the user already exists by email
+      const existingUserByEmail = await controller.GetUserByEmail(email);
+      if (existingUserByEmail) {
         return res
           .status(400)
           .json({ error: "User with this email already exists" });
       }
 
+      // Validate and expire signin token
+      const isSigninTokenValid = await controller.VerifySigninToken(
+        email,
+        signinToken,
+        true
+      );
+      if (!isSigninTokenValid) {
+        return res.status(400).json({ error: "Invalid signin token" });
+      }
+
       const newUser = await controller.CreateUser({
+        username,
         email,
         signaturePublicKey,
         encryptionPublicKey,
+        psiPublicKeyLink,
         passwordSalt,
         passwordHash,
+        registeredWithPasskey,
+        passkeyAuthPublicKey,
       });
 
       const backup = await controller.CreateBackup({

@@ -28,6 +28,9 @@ export class PrismaPostgresClient implements iPostgresClient {
   HealthCheck(): Promise<boolean>;
 
   // @ts-expect-error (ts2391)
+  GetUserByUsernameCaseInsensitive(username: string): Promise<User | null>;
+
+  // @ts-expect-error (ts2391)
   GetUserByEmail(email: string): Promise<User | null>;
 
   // @ts-expect-error (ts2391)

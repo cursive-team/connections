@@ -4,6 +4,7 @@ import {
   ErrorResponse,
   errorToString,
   VerifySigninTokenRequestSchema,
+  VerifySigninTokenResponse,
 } from "@types";
 import { Controller } from "@/lib/controller";
 
@@ -18,7 +19,7 @@ router.post(
   "/verify_signin_token",
   async (
     req: Request<{}, {}, VerifySigninTokenRequest>,
-    res: Response<{ success: boolean } | ErrorResponse>
+    res: Response<VerifySigninTokenResponse | ErrorResponse>
   ) => {
     try {
       const validatedData = VerifySigninTokenRequestSchema.parse(req.body);

@@ -9,9 +9,15 @@ import { AppFooter } from "@/components/AppFooter";
 
 interface AppLayoutProps {
   children?: React.ReactNode;
+  showFooter?: boolean;
+  showHeader?: boolean;
 }
 
-export default function AppLayout({ children }: AppLayoutProps) {
+export default function AppLayout({
+  children,
+  showFooter = true,
+  showHeader = true,
+}: AppLayoutProps) {
   const { isIncognito } = useSettings();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   if (isIncognito) {
@@ -22,9 +28,11 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <OnlyMobileLayout>
-      <AppHeader isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+      {showHeader && (
+        <AppHeader isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
+      )}
       <div className="px-3">{children}</div>
-      {!isMenuOpen && <AppFooter />}
+      {!isMenuOpen && showFooter && <AppFooter />}
     </OnlyMobileLayout>
   );
 }
