@@ -9,9 +9,8 @@ import EnterUserInfo from "@/features/register/EnterUserInfo";
 import RegisterWithPasskey from "@/features/register/RegisterWithPasskey";
 import RegisterWithPassword from "@/features/register/RegisterWithPassword";
 import CreatingAccount from "@/features/register/CreatingAccount";
-import Image from "next/image";
-
 import LannaDiscoverConnections from "@/features/register/LannaDiscoverConnections";
+import Image from "next/image";
 import {
   requestSigninToken,
   verifyEmailIsUnique,
