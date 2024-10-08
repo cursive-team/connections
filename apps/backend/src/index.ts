@@ -19,7 +19,7 @@ app.use(express.json());
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/chip", chipRoutes);
-app.use("/api/health", healthRoutes);
+app.use("/", healthRoutes);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
