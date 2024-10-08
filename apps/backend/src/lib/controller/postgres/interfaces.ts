@@ -9,6 +9,8 @@ import {
 import { AuthToken, BackupData, CreateBackupData } from "@types";
 
 export interface iPostgresClient {
+  HealthCheck(): Promise<boolean>;
+
   // User methods
   GetUserByEmail(email: string): Promise<User | null>;
   GetUserById(userId: string): Promise<User | null>;
