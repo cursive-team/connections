@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { SigninTokenSchema } from "@types";
 import { toast } from "sonner";
 import { RegisterHeader } from "./RegisterHeader";
-import { AppInput } from "@/components/ui/AppInput";
-import { CodeInput } from "@/components/ui/CodeInput";
 import { AppButton } from "@/components/ui/Button";
 import { AppCopy } from "@/components/ui/AppCopy";
 

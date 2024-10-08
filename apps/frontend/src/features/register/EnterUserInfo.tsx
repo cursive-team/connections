@@ -86,7 +86,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
 
     const { username, bio, telegramHandle, twitterHandle, displayName } =
       formData ?? {};
-    // @ts-ignore
+    // @ts-expect-error - e is unknown
     e?.preventDefault();
     try {
       UsernameSchema.parse(formData.username);
@@ -123,9 +123,9 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
   };
 
   const handleKeyDown = (e: unknown) => {
-    // @ts-ignore
+    // @ts-expect-error - e is unknown
     if (e?.key === "Enter" && !e?.shiftKey) {
-      // @ts-ignore
+      // @ts-expect-error - e is unknown
       e?.preventDefault();
       if (isStepValid()) {
         handleNext(e);

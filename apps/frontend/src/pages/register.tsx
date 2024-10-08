@@ -304,22 +304,7 @@ const Register: React.FC = () => {
             onSwitchToPasskey={handleSwitchToRegisterWithPasskey}
           />
         )}
-        {displayState === DisplayState.CREATING_ACCOUNT && (
-          <CreatingAccount
-            savedTap={savedTap}
-            signinToken={code}
-            email={email}
-            password={backupPassword}
-            username={username}
-            displayName={displayName}
-            bio={bio}
-            telegramHandle={telegramHandle}
-            twitterHandle={twitterHandle}
-            registeredWithPasskey={registeredWithPasskey}
-            passkeyAuthPublicKey={authPublicKey}
-            onAccountCreated={handleCreateAccount}
-          />
-        )}
+        {displayState === DisplayState.CREATING_ACCOUNT && <CreatingAccount />}
         {displayState === DisplayState.LANNA_DISCOVER_CONNECTIONS && (
           <LannaDiscoverConnections
             onSubmit={handleLannaDiscoverConnectionsSubmit}
