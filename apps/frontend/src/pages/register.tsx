@@ -10,16 +10,17 @@ import RegisterWithPasskey from "@/features/register/RegisterWithPasskey";
 import RegisterWithPassword from "@/features/register/RegisterWithPassword";
 import CreatingAccount from "@/features/register/CreatingAccount";
 import LannaDiscoverConnections from "@/features/register/LannaDiscoverConnections";
+import Image from "next/image";
 import {
   requestSigninToken,
   verifyEmailIsUnique,
   verifySigninToken,
   verifyUsernameIsUnique,
 } from "@/lib/auth/util";
-import { TapInfo } from "@/lib/storage/types";
+import { LannaDesiredConnections, TapInfo } from "@/lib/storage/types";
+import { AppCopy } from "@/components/ui/AppCopy";
 import { registerChip } from "@/lib/chip/register";
 import { registerUser } from "@/lib/auth/register";
-import { LannaDesiredConnections } from "@/lib/storage/types/user";
 
 enum DisplayState {
   ENTER_EMAIL,
@@ -249,59 +250,68 @@ const Register: React.FC = () => {
 
   const chipIssuer = savedTap?.tapResponse.chipIssuer ?? null;
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Register for Cursive
-        </h2>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {displayState === DisplayState.ENTER_EMAIL && (
-            <EnterEmail
-              chipIssuer={chipIssuer}
-              submitEmail={handleEmailSubmit}
-            />
-          )}
-          {displayState === DisplayState.ENTER_CODE && (
-            <EnterCode
-              chipIssuer={chipIssuer}
-              email={email}
-              submitCode={handleCodeSubmit}
-            />
-          )}
-          {displayState === DisplayState.ENTER_USER_INFO && (
-            <EnterUserInfo
-              chipIssuer={chipIssuer}
-              onSubmit={handleUserInfoSubmit}
-            />
-          )}
-          {displayState === DisplayState.REGISTER_WITH_PASSKEY && (
-            <RegisterWithPasskey
-              chipIssuer={chipIssuer}
-              username={username}
-              onPasskeyRegister={handleRegisterWithPasskey}
-              onSwitchToPassword={handleSwitchToRegisterWithPassword}
-            />
-          )}
-          {displayState === DisplayState.REGISTER_WITH_PASSWORD && (
-            <RegisterWithPassword
-              chipIssuer={chipIssuer}
-              onSubmit={handleRegisterWithPassword}
-              onSwitchToPasskey={handleSwitchToRegisterWithPasskey}
-            />
-          )}
-          {displayState === DisplayState.CREATING_ACCOUNT && (
-            <CreatingAccount />
-          )}
-          {displayState === DisplayState.LANNA_DISCOVER_CONNECTIONS && (
-            <LannaDiscoverConnections
-              onSubmit={handleLannaDiscoverConnectionsSubmit}
-            />
-          )}
+    <div className="min-h-screen bg-gray-100 flex flex-col pb-12 sm:px-6 lg:px-8">
+      {[
+        DisplayState.ENTER_EMAIL,
+        DisplayState.ENTER_CODE,
+        DisplayState.REGISTER_WITH_PASSKEY,
+        DisplayState.REGISTER_WITH_PASSWORD,
+        DisplayState.CREATING_ACCOUNT,
+        DisplayState.LANNA_DISCOVER_CONNECTIONS,
+      ].includes(displayState) && (
+        <div className="h-[200px] w-full top-0">
+          <Image
+            src="/images/register-main.svg"
+            alt="register main"
+            layout="responsive"
+            className=" object-cover"
+            sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
+            width={100}
+            height={375}
+          />
         </div>
+      )}
+
+      <div className="container mt-16 sm:mx-auto sm:w-full sm:max-w-md">
+        {displayState === DisplayState.ENTER_EMAIL && (
+          <EnterEmail chipIssuer={chipIssuer} submitEmail={handleEmailSubmit} />
+        )}
+        {displayState === DisplayState.ENTER_CODE && (
+          <EnterCode
+            chipIssuer={chipIssuer}
+            email={email}
+            submitCode={handleCodeSubmit}
+          />
+        )}
+        {displayState === DisplayState.ENTER_USER_INFO && (
+          <EnterUserInfo
+            chipIssuer={chipIssuer}
+            onSubmit={handleUserInfoSubmit}
+          />
+        )}
+        {displayState === DisplayState.REGISTER_WITH_PASSKEY && (
+          <RegisterWithPasskey
+            chipIssuer={chipIssuer}
+            username={username}
+            onPasskeyRegister={handleRegisterWithPasskey}
+            onSwitchToPassword={handleSwitchToRegisterWithPassword}
+          />
+        )}
+        {displayState === DisplayState.REGISTER_WITH_PASSWORD && (
+          <RegisterWithPassword
+            chipIssuer={chipIssuer}
+            onSubmit={handleRegisterWithPassword}
+            onSwitchToPasskey={handleSwitchToRegisterWithPasskey}
+          />
+        )}
+        {displayState === DisplayState.CREATING_ACCOUNT && <CreatingAccount />}
+        {displayState === DisplayState.LANNA_DISCOVER_CONNECTIONS && (
+          <LannaDiscoverConnections
+            onSubmit={handleLannaDiscoverConnectionsSubmit}
+          />
+        )}
       </div>
+      <AppCopy className="mt-auto mx-auto absolute bottom-5 text-center justify-center left-1/2 -translate-x-1/2" />
     </div>
   );
 };

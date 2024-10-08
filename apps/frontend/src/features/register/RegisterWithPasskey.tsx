@@ -2,6 +2,9 @@ import React from "react";
 import { toast } from "sonner";
 import { startRegistration } from "@simplewebauthn/browser";
 import { generateRegistrationOptions } from "@simplewebauthn/server";
+import { AppButton } from "@/components/ui/Button";
+import { RegisterHeader } from "./RegisterHeader";
+import { AppCopy } from "@/components/ui/AppCopy";
 
 interface RegisterWithPasskeyProps {
   chipIssuer: string | null;
@@ -49,20 +52,27 @@ const RegisterWithPasskey: React.FC<RegisterWithPasskeyProps> = ({
           Registering chip issued by: {chipIssuer}
         </p>
       )}
-      <div className="space-y-4">
-        <button
-          onClick={handlePasskeyRegistration}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-        >
+      <RegisterHeader
+        title={
+          <span className="font-sans text-center text-[30px] leading-[30px] font-semibold text-primary tracking-[-0.22px]">
+            Welcome, <br /> {`${username || "placeholder"}!`}
+          </span>
+        }
+        subtitle="Get started wielding your data"
+        description="We only host encrypted backups of your data and cannot see the contents."
+      />
+      <div className="flex flex-col space-y-3">
+        <AppButton onClick={handlePasskeyRegistration}>
           Register with passkey
-        </button>
-        <button
-          onClick={onSwitchToPassword}
-          className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600"
-        >
+        </AppButton>
+        <span className="text-quaternary text-center text-sm font-sans ">
+          or
+        </span>
+        <AppButton onClick={onSwitchToPassword} variant="outline">
           Choose a password
-        </button>
+        </AppButton>
       </div>
+      <AppCopy className=" mt-auto mx-auto absolute bottom-5 text-center justify-center left-1/2 -translate-x-1/2" />
     </div>
   );
 };

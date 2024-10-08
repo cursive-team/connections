@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { SigninTokenSchema } from "@types";
 import { toast } from "sonner";
+import { RegisterHeader } from "./RegisterHeader";
+import { AppButton } from "@/components/ui/Button";
+import { AppCopy } from "@/components/ui/AppCopy";
 
 interface EnterCodeProps {
   chipIssuer: string | null;
@@ -13,65 +16,80 @@ const EnterCode: React.FC<EnterCodeProps> = ({
   email,
   submitCode,
 }) => {
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(["", "", "", "", "", ""]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      SigninTokenSchema.parse(code);
-      await submitCode(code);
+      const normalizedCode = code.join("");
+      SigninTokenSchema.parse(normalizedCode);
+      await submitCode(normalizedCode);
     } catch (error) {
       console.error(error);
       toast.error("Please enter a valid 6-digit code");
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newCode = e.target.value.replace(/\D/g, "").slice(0, 6);
-    setCode(newCode);
+  const handleChange = (index: number, value: string) => {
+    if (value.length <= 1) {
+      const newCode = [...code];
+      newCode[index] = value;
+      setCode(newCode);
+
+      if (value && index < 5) {
+        const nextInput = document.getElementById(`code-${index + 1}`);
+        nextInput?.focus();
+      }
+    }
+  };
+
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === "Backspace" && !code[index] && index > 0) {
+      const prevInput = document.getElementById(`code-${index - 1}`);
+      prevInput?.focus();
+    }
   };
 
   return (
     <div className="space-y-6">
+      <RegisterHeader
+        title="Enter the 6-digit code "
+        description={`Sent to ${email} - expires in 15 minutes.`}
+      />
       {chipIssuer && (
         <p className="text-sm text-gray-500 dark:text-gray-400">
           Registering chip issued by: {chipIssuer}
         </p>
       )}
-      <p className="text-sm text-gray-700 dark:text-gray-300">
-        Enter the 6-digit code sent to: <strong>{email}</strong>
-      </p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label
-            htmlFor="code"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
-            Enter 6-digit code
-          </label>
-          <div className="mt-1">
-            <input
-              id="code"
-              name="code"
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              required
-              value={code}
-              onChange={handleChange}
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-indigo-500 dark:focus:border-indigo-500"
-            />
+          <div className="flex flex-col gap-2 mt-20">
+            <div className="flex justify-between">
+              {code.map((digit, index) => (
+                <input
+                  key={index}
+                  id={`code-${index}`}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  className="w-12 h-12 text-2xl text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              ))}
+            </div>
+            <span className=" text-xs font-sans text-tertiary text-center">
+              Check your spam folder if you didn’t receive a code.
+            </span>
           </div>
         </div>
-        <div>
-          <button
-            type="submit"
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-black bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-indigo-500 dark:hover:bg-indigo-600"
-          >
-            Verify Code
-          </button>
-        </div>
+        <AppButton type="submit">Verify Code</AppButton>
       </form>
+      <AppCopy className=" mt-auto mx-auto absolute bottom-5 text-center justify-center left-1/2 -translate-x-1/2" />
     </div>
   );
 };
