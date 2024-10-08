@@ -48,7 +48,9 @@ resource "aws_iam_role" "github_actions_role" {
         Action = "sts:AssumeRoleWithWebIdentity",
         Condition = {
           StringLike = {
-            "token.actions.githubusercontent.com:sub" : "repo:${var.namespace}-${var.name}:*"
+            # TODO: if this works, then scope to specific repo:
+            # "token.actions.githubusercontent.com:sub" : "repo:${var.namespace}/${var.name}"
+            "token.actions.githubusercontent.com:sub" : "repo:${var.namespace}/*"
           },
           StringEquals = {
             "token.actions.githubusercontent.com:aud" : "sts.amazonaws.com"

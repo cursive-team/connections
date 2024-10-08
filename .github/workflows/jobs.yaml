@@ -1,0 +1,85 @@
+name: 'Build docker image'
+
+# The action will trigger when a new tag is created
+on:
+  push:
+    tags:
+      - '*'
+
+env:
+  AWS_REGION: ap-southeast-1
+  IAM_ROLE_ARN: ${{ secrets.GH_ACTION_IAM_ROLE_ARN }}
+  AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+jobs:
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: ${{ env.IAM_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: cursive-team-connections
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_REF_NAME -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker image push -a $ECR_REGISTRY/$ECR_REPOSITORY
+  terraform:
+    name: Terraform Apply
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: ${{ env.IAM_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.9.7
+
+      - name: Terraform Init
+        working-directory: ./deployment
+        run: terraform init
+
+      - name: Terraform Plan
+        id: plan
+        working-directory: ./deployment
+        run: terraform plan -var="image_tag=$GITHUB_REF_NAME" -var="aws_account_number=${{ env.AWS_ACCOUNT }}"
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        working-directory: ./deployment
+        run: terraform apply -var="image_tag=$GITHUB_REF_NAME" -var="aws_account_number=${{ env.AWS_ACCOUNT }}" -auto-approve

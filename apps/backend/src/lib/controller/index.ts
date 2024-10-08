@@ -39,6 +39,10 @@ export class Controller {
     // Over time more clients will be added (e.g. nitro enclave client)...
   }
 
+  PostgresHealthCheck(): Promise<boolean> {
+    return this.postgresClient.HealthCheck();
+  }
+  
   GetUserByUsernameCaseInsensitive(username: string): Promise<User | null> {
     return this.postgresClient.GetUserByUsernameCaseInsensitive(username);
   }

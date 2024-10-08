@@ -16,6 +16,7 @@ Frontend:
 Backend:
 
 - `cd apps/backend`
+- `source .env.example`
 - `pnpm prisma generate`
 - `pnpm prisma migrate dev`
 - `pnpm run dev`
@@ -25,18 +26,6 @@ Testing:
 - Make sure you've seeded database with testing UserChip values: `pnpm run seed`
 - To mock a tap, visit: http://localhost:3000/tap#?chipId=TEST001
 
-Docker
-
-The `Dockerfile` corresponds to the backend service. Its context is the repo root because of the shared packages.
-
-To locally build the image and run the container:
-
-- `docker image build -t connections:1 -f ./Dockerfile .`
-- `docker run -td -p 8080:8080 connections:1`
-
-For reducing the size of the docker image, I found this utility to be useful:
-
-- `du -shc $dir-or-file`
 
 Notes:
 
