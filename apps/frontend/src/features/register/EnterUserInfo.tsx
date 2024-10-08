@@ -84,6 +84,8 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
       return; // Don't submit if not on the last step
     }
 
+    const { username, bio, telegramHandle, twitterHandle, displayName } =
+      formData ?? {};
     // @ts-ignore
     e?.preventDefault();
     try {
@@ -93,7 +95,19 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
         toast.error("Username is already taken");
         return;
       }
-      await onSubmit(formData);
+
+      if (telegramHandle.includes("@") || twitterHandle.includes("@")) {
+        toast.error("Please enter handles without the '@' symbol");
+        return;
+      }
+
+      await onSubmit({
+        username,
+        displayName: displayName.trim(),
+        bio: bio.trim(),
+        telegramHandle: telegramHandle.trim(),
+        twitterHandle: twitterHandle.trim(),
+      });
     } catch (error) {
       console.error(error);
       toast.error("Please enter a valid username");
