@@ -33,12 +33,18 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
         toast.error("Username is already taken");
         return;
       }
+
+      if (telegramHandle.includes("@") || twitterHandle.includes("@")) {
+        toast.error("Please enter handles without the '@' symbol");
+        return;
+      }
+
       await onSubmit({
         username,
-        displayName,
-        bio,
-        telegramHandle,
-        twitterHandle,
+        displayName: displayName.trim(),
+        bio: bio.trim(),
+        telegramHandle: telegramHandle.trim(),
+        twitterHandle: twitterHandle.trim(),
       });
     } catch (error) {
       console.error(error);
