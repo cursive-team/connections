@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import React, { useEffect, useState } from "react";
 import { generateSelfBitVector, psiBlobUploadClient } from "@/lib/psi";
 import init, { round1_js, round2_js, round3_js } from "@/lib/psi/mp_psi/mp_psi";
@@ -14,7 +16,6 @@ enum PSIState {
   ROUND1,
   ROUND2,
   ROUND3,
-  JUBSIGNAL,
   COMPLETE,
 }
 
@@ -23,14 +24,24 @@ const PSIStateMapping: Record<PSIState, string> = {
   [PSIState.ROUND1]: "Creating collective encryption pubkey with 2PC...",
   [PSIState.ROUND2]: "Performing PSI with FHE...",
   [PSIState.ROUND3]: "Decrypting encrypted results with 2PC...",
-  [PSIState.JUBSIGNAL]: "Creating encrypted backup of overlap...",
   [PSIState.COMPLETE]: "Complete",
 };
 
-const InteractivePSI: React.FC = () => {
-  const [selfEncPk, setSelfEncPk] = useState<string>();
-  const [otherEncPk, setOtherEncPk] = useState<string>();
-  const [channelName, setChannelName] = useState<string>();
+export interface InteractivePSIProps {
+  selfSigPK: string;
+  otherSigPK: string;
+  serializedPsiPrivateKey: string;
+  selfPsiPublicKeyLink: string;
+  otherPsiPublicKeyLink: string;
+}
+
+const InteractivePSI: React.FC<InteractivePSIProps> = ({
+  selfSigPK,
+  otherSigPK,
+  serializedPsiPrivateKey,
+  selfPsiPublicKeyLink,
+  otherPsiPublicKeyLink,
+}) => {
   const [broadcastEvent, setBroadcastEvent] = useState<any>();
 
   const [psiState, setPsiState] = useState<PSIState>(PSIState.NOT_STARTED);
@@ -46,14 +57,12 @@ const InteractivePSI: React.FC = () => {
   const [wantsToInitiatePSI, setWantsToInitiatePSI] = useState(false);
   const [otherUserWantsToInitiatePSI, setOtherUserWantsToInitiatePSI] =
     useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [currentUserInChannel, setCurrentUserInChannel] = useState(false);
   const [otherUserInChannel, setOtherUserInChannel] = useState(false);
   const [otherUserTemporarilyLeft, setOtherUserTemporarilyLeft] =
     useState(false);
-
-  const [userOverlap, setUserOverlap] = useState<
-    { userId: string; name: string }[]
-  >([]);
+  const [overlapIndices, setOverlapIndices] = useState<number[]>([]);
 
   useEffect(() => {
     if (wantsToInitiatePSI && otherUserWantsToInitiatePSI) {
@@ -64,13 +73,16 @@ const InteractivePSI: React.FC = () => {
     }
   }, [wantsToInitiatePSI, otherUserWantsToInitiatePSI]);
 
-  // set up channel for PSI
-  const setupChannel = () => {
-    if (!selfEncPk || !otherEncPk || !channelName) return;
+  const getChannelName = () => {
+    return [selfSigPK, otherSigPK].sort().join("-");
+  };
 
-    const channel = supabase.channel(channelName, {
+  // set up channel for PSI
+  // TODO: Load in previous overlap indices if available
+  const setupChannel = () => {
+    const channel = supabase.channel(getChannelName(), {
       config: {
-        presence: { key: selfEncPk },
+        presence: { key: selfSigPK },
       },
     });
 
@@ -78,15 +90,15 @@ const InteractivePSI: React.FC = () => {
       .on("presence", { event: "sync" }, () => {
         setCurrentUserInChannel(true);
         const newState = channel.presenceState();
-        if (Object.keys(newState).includes(otherEncPk)) {
-          console.log("Other user in channel ", otherEncPk);
+        if (Object.keys(newState).includes(otherSigPK)) {
+          console.log("Other user in channel ", otherSigPK);
           setOtherUserInChannel(true);
           setOtherUserTemporarilyLeft(false);
         }
       })
-      .on("presence", { event: "leave" }, async ({ key }) => {
-        if (key === otherEncPk) {
-          console.log("Other user left channel ", otherEncPk);
+      .on("presence", { event: "leave" }, async ({ key }: { key: string }) => {
+        if (key === otherSigPK) {
+          console.log("Other user left channel ", otherSigPK);
           setOtherUserTemporarilyLeft(true);
           setOtherUserInChannel(false);
         } else {
@@ -95,8 +107,8 @@ const InteractivePSI: React.FC = () => {
       })
       .on("broadcast", { event: "initiatePSI" }, async (event: any) => {
         // only respond to initiatePSI if it's for this user
-        if (event.payload.to !== selfEncPk) return;
-        console.log("Other user wants to initiate psi", otherEncPk);
+        if (event.payload.to !== selfSigPK) return;
+        console.log("Other user wants to initiate psi", otherSigPK);
         setOtherUserWantsToInitiatePSI(true);
       })
       .on("broadcast", { event: "message" }, (event: any) => {
@@ -105,46 +117,18 @@ const InteractivePSI: React.FC = () => {
       .subscribe(async (status: any) => {
         if (status === "SUBSCRIBED") {
           await channel.track({
-            user: selfEncPk,
+            user: selfSigPK,
           });
         }
       });
   };
 
+  useEffect(() => {
+    setupChannel();
+  }, []);
+
   const closeChannel = async () => {
-    if (!channelName) return;
-    await supabase.removeChannel(supabase.channel(channelName));
-  };
-
-  const processOverlap = (overlap: number[]) => {
-    const users = getUsers();
-    const locations = getLocationSignatures();
-    let locationOverlapIds = [];
-    let userOverlapIds = [];
-
-    for (let i = 0; i < overlap.length; i++) {
-      if (overlap[i] >= 1000) {
-        continue;
-      } else if (overlap[i] > 500) {
-        const locationId = (overlap[i] - 500).toString();
-        locationOverlapIds.push({
-          locationId,
-          name: locations[locationId].name,
-        });
-      } else {
-        for (const userId in users) {
-          if (parseInt(users[userId].pkId) === overlap[i]) {
-            userOverlapIds.push({
-              userId,
-              name: users[userId].name,
-            });
-          }
-        }
-      }
-    }
-    // console.log(userOverlapIds);
-    setUserOverlap(userOverlapIds);
-    setLocationOverlap(locationOverlapIds);
+    await supabase.removeChannel(supabase.channel(getChannelName()));
   };
 
   // process broadcast events
@@ -154,13 +138,13 @@ const InteractivePSI: React.FC = () => {
     console.log(broadcastEvent);
 
     const { payload } = broadcastEvent;
-    if (payload.state === PSIState.ROUND2 && payload.to === selfEncPk) {
+    if (payload.state === PSIState.ROUND2 && payload.to === selfSigPK) {
       setOtherRound2MessageLink(payload.data);
-      setRound2Order(parseInt(payload.otherPkId) > parseInt(user?.pkId!));
-    } else if (payload.state === PSIState.ROUND3 && payload.to === selfEncPk) {
+      setRound2Order(otherSigPK > selfSigPK);
+    } else if (payload.state === PSIState.ROUND3 && payload.to === selfSigPK) {
       setOtherRound3MessageLink(payload.data);
     }
-  }, [broadcastEvent, user?.pkId, selfEncPk]);
+  }, [broadcastEvent, selfSigPK, otherSigPK]);
 
   // process state changes
   useEffect(() => {
@@ -178,7 +162,7 @@ const InteractivePSI: React.FC = () => {
     ) {
       setPsiState(PSIState.ROUND3);
     } else if (selfRound3Output && psiState === PSIState.ROUND3) {
-      setPsiState(PSIState.JUBSIGNAL);
+      setPsiState(PSIState.COMPLETE);
     }
   }, [
     psiState,
@@ -192,27 +176,21 @@ const InteractivePSI: React.FC = () => {
 
   useEffect(() => {
     async function handleOverlapRounds() {
-      if (!selfEncPk || !otherEncPk || !channelName) return;
-
-      const keys = getKeys();
-      if (!keys) return;
-      const { psiPrivateKeys, psiPublicKeysLink } = keys;
+      const psiPrivateKey = JSON.parse(serializedPsiPrivateKey);
 
       if (psiState === PSIState.ROUND1) {
-        logClientEvent("psiRound1", {});
         const selfBitVector = generateSelfBitVector();
-        const otherPsiPublicKeysLink = user?.psiPkLink;
 
         await init();
         const round1Output = round1_js(
           {
-            psi_keys: psiPrivateKeys,
+            psi_keys: psiPrivateKey,
             message_round1: JSON.parse(
-              await fetch(psiPublicKeysLink).then((res) => res.text())
+              await fetch(selfPsiPublicKeyLink).then((res) => res.text())
             ),
           },
           JSON.parse(
-            await fetch(otherPsiPublicKeysLink!).then((res) => res.text())
+            await fetch(otherPsiPublicKeyLink).then((res) => res.text())
           ),
           selfBitVector
         );
@@ -223,24 +201,22 @@ const InteractivePSI: React.FC = () => {
           JSON.stringify(round1Output.message_round2)
         );
 
-        supabase.channel(channelName).send({
+        supabase.channel(getChannelName()).send({
           type: "broadcast",
           event: "message",
           payload: {
             state: PSIState.ROUND2,
             data: round2MessageLink,
-            to: otherEncPk,
-            otherPkId: user?.pkId, // hacky way of getting our own pkId
+            to: otherSigPK,
           },
         });
       } else if (psiState === PSIState.ROUND2) {
-        logClientEvent("psiRound2", {});
         await init();
         const round2Output = round2_js(
           {
-            psi_keys: psiPrivateKeys,
+            psi_keys: psiPrivateKey,
             message_round1: JSON.parse(
-              await fetch(psiPublicKeysLink).then((res) => res.text())
+              await fetch(selfPsiPublicKeyLink).then((res) => res.text())
             ),
           },
           selfRound1Output,
@@ -256,17 +232,16 @@ const InteractivePSI: React.FC = () => {
           JSON.stringify(round2Output.message_round3)
         );
 
-        supabase.channel(channelName).send({
+        supabase.channel(getChannelName()).send({
           type: "broadcast",
           event: "message",
           payload: {
             state: PSIState.ROUND3,
             data: round3MessageLink,
-            to: otherEncPk,
+            to: otherSigPK,
           },
         });
       } else if (psiState === PSIState.ROUND3) {
-        logClientEvent("psiRound3", {});
         await init();
         const psiOutput = round3_js(
           selfRound2Output!,
@@ -274,7 +249,8 @@ const InteractivePSI: React.FC = () => {
             await fetch(otherRound3MessageLink!).then((res) => res.text())
           )
         );
-        let overlapIndices = [];
+
+        const overlapIndices = [];
         for (let i = 0; i < psiOutput.length; i++) {
           if (psiOutput[i] === 1) {
             overlapIndices.push(i);
@@ -282,47 +258,15 @@ const InteractivePSI: React.FC = () => {
         }
 
         setSelfRound3Output(overlapIndices);
-      } else if (psiState === PSIState.JUBSIGNAL) {
-        logClientEvent("psiRoundJubsSignal", {});
+      } else if (psiState === PSIState.COMPLETE) {
         await closeChannel();
-
-        const encryptedMessage = await encryptOverlapComputedMessage(
-          selfRound3Output,
-          id?.toString()!,
-          keys.encryptionPrivateKey,
-          selfEncPk
-        );
-
-        try {
-          await loadMessages({
-            forceRefresh: false,
-            messageRequests: [
-              {
-                encryptedMessage,
-                recipientPublicKey: selfEncPk,
-              },
-            ],
-          });
-        } catch (error) {
-          console.error(
-            "Error sending encrypted location tap to server: ",
-            error
-          );
-          toast.error(
-            "An error occured while processing the tap. Please try again."
-          );
-          router.push("/");
-          return;
-        }
-
-        processOverlap(selfRound3Output || []);
-        setPsiState(PSIState.COMPLETE);
+        setOverlapIndices(selfRound3Output || []);
       }
     }
 
     handleOverlapRounds();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [psiState, selfEncPk, otherEncPk, channelName]);
+  }, [psiState, selfSigPK, otherSigPK]);
 
   useEffect(() => {
     if (otherUserTemporarilyLeft) {
@@ -351,127 +295,19 @@ const InteractivePSI: React.FC = () => {
     }
   }, [otherUserTemporarilyLeft, psiState]);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      if (typeof id === "string") {
-        const profile = getProfile();
-        const keys = getKeys();
-        if (!profile || !keys) {
-          toast.error("You must be logged in to view this page.");
-          router.push("/");
-          return;
-        }
-
-        const fetchedUser = fetchUserByUUID(id);
-        setUser(fetchedUser);
-
-        if (fetchedUser) {
-          // set psi info
-          setOtherEncPk(fetchedUser.encPk);
-          setSelfEncPk(profile.encryptionPublicKey);
-          setChannelName(
-            [fetchedUser.encPk, profile.encryptionPublicKey].sort().join("")
-          );
-          // always set up channel
-          setupChannel();
-          if (fetchedUser.oI) {
-            processOverlap(JSON.parse(fetchedUser.oI));
-            setPsiState(PSIState.COMPLETE);
-          }
-
-          // get talks info
-          const talksResponse = await fetch(
-            `/api/user/get_talks?encPk=${encodeURIComponent(fetchedUser.encPk)}`
-          );
-          if (talksResponse.ok) {
-            const talksData = await talksResponse.json();
-            setUserTalkInfo(talksData.talks);
-          }
-
-          // get github info
-          if (
-            !userGithubInfo &&
-            githubSession &&
-            (githubSession as any).accessToken &&
-            fetchedUser.ghUserId &&
-            !isNaN(parseInt(fetchedUser.ghUserId, 10))
-          ) {
-            setGithubInfoLoading(true);
-            const userGithubId = parseInt(fetchedUser.ghUserId, 10);
-            type GithubRepoData = {
-              author_id: number;
-              id: number;
-              commits: number;
-              first_commit_date: string;
-              name: string;
-              rank: number;
-            }[];
-            // type GithubData = {
-            //   "alloy-rs": GithubRepoData;
-            //   "axiom-crypto": GithubRepoData;
-            //   bluealloy: GithubRepoData;
-            //   chainbound: GithubRepoData;
-            //   "cursive-team": GithubRepoData;
-            //   "ethereum-optimism": GithubRepoData;
-            //   ethereum: GithubRepoData;
-            //   flashbots: GithubRepoData;
-            //   "foundry-rs": GithubRepoData;
-            //   paradigmxyz: GithubRepoData;
-            //   primitivefinance: GithubRepoData;
-            //   risc0: GithubRepoData;
-            //   risechain: GithubRepoData;
-            //   "shadow-hq": GithubRepoData;
-            //   sigp: GithubRepoData;
-            //   SorellaLabs: GithubRepoData;
-            //   succinctlabs: GithubRepoData;
-            //   wevm: GithubRepoData;
-            //   taikoxyz: GithubRepoData;
-            // };
-            const fetchedGithubData = githubData as Record<
-              string,
-              GithubRepoData
-            >;
-
-            const userContributions: RepoContributionData[] = [];
-            Object.keys(fetchedGithubData).forEach((repo) => {
-              const repoData = fetchedGithubData[repo];
-              repoData.forEach((entry) => {
-                if (entry.author_id === userGithubId) {
-                  userContributions.push({
-                    repo,
-                    first: new Date(entry.first_commit_date),
-                    total: entry.commits,
-                    rank: entry.rank,
-                  });
-                }
-              });
-            });
-
-            setUserGithubInfo(userContributions);
-            setGithubInfoLoading(false);
-          }
-        }
-      }
-    };
-    fetchUser();
-  }, [id, router, githubSession, userGithubInfo]);
-
   const handleInitiatePSI = () => {
-    if (!user || !channelName || !otherEncPk) return;
-
     console.log(
       "Initiating psi...",
       wantsToInitiatePSI,
       otherUserWantsToInitiatePSI
     );
 
-    logClientEvent("psiInitiatePSI", {});
     setWantsToInitiatePSI(true);
-    supabase.channel(channelName).send({
+    supabase.channel(getChannelName()).send({
       type: "broadcast",
       event: "initiatePSI",
       payload: {
-        to: otherEncPk,
+        to: otherSigPK,
       },
     });
 
@@ -485,25 +321,22 @@ const InteractivePSI: React.FC = () => {
   };
 
   const handleUpdatePSI = () => {
-    if (!user || !channelName || !otherEncPk) return;
-
     console.log(
       "Updating psi...",
       wantsToInitiatePSI,
       otherUserWantsToInitiatePSI
     );
 
-    logClientEvent("psiUpdatePSI", {});
     setSelfRound1Output(undefined);
     setOtherRound2MessageLink(undefined);
     setSelfRound2Output(undefined);
     setOtherRound3MessageLink(undefined);
     setSelfRound3Output(undefined);
-    supabase.channel(channelName).send({
+    supabase.channel(getChannelName()).send({
       type: "broadcast",
       event: "initiatePSI",
       payload: {
-        to: otherEncPk,
+        to: otherSigPK,
       },
     });
 
