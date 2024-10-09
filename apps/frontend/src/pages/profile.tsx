@@ -3,6 +3,11 @@ import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
 import { Session, User } from "@/lib/storage/types";
 import { toast } from "sonner";
+import AppLayout from "@/layouts/AppLayout";
+import { AppButton } from "@/components/ui/Button";
+import { MdOutlineModeEditOutline as IconEdit } from "react-icons/md";
+import { AppInput } from "@/components/ui/AppInput";
+import { LinkCardBox } from "@/components/ui/LinkCardBox";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -67,86 +72,101 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Your Profile
-          </h1>
-        </div>
-        <button
-          onClick={() => {
-            console.log("Session:", session);
-            console.log("User:", user);
-          }}
-          className="p-2 bg-green-500 text-white rounded hover:bg-green-600 dark:bg-green-700 dark:hover:bg-green-800"
-        >
-          Log Session and User
-        </button>
-        <div className="space-y-4">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+    <AppLayout
+      header={
+        <div className="flex items-center justify-between w-full">
+          <div className="flex flex-col pt-4">
+            <span className=" text-[30px] font-semibold tracking-[-0.22px] font-sans">{`@${user.userData.username}`}</span>
+            <span className="text-sm font-medium font-sans text-tertiary">
               {user.userData.displayName}
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              @{user.userData.username}
-            </p>
+            </span>
           </div>
-          <p className="text-gray-700 dark:text-gray-300">
-            {user.userData.bio}
-          </p>
+          <div className="size-10 bg-button-secondary rounded-full border border-quaternary/10"></div>
+        </div>
+      }
+      className="container mx-auto px-4 py-8"
+    >
+      <div className="py-4">
+        <AppButton
+          className="!rounded-full max-w-[140px] self-start"
+          variant="outline"
+          onClick={() => setIsEditingSocials(true)}
+        >
+          <IconEdit className="mr-1" />
+          <span>Edit Socials</span>
+        </AppButton>
+      </div>
+
+      <div className="flex flex-col gap-2 py-4">
+        <span className="text-sm font-semibold text-primary font-sans">
+          Socials
+        </span>
+        <div className="flex flex-col gap-4">
+          <LinkCardBox
+            label="Telegram"
+            value={user.userData.telegram?.username || "Not set"}
+          />
+          <LinkCardBox
+            label="X"
+            value={user.userData.twitter?.username || "Not set"}
+          />
+        </div>
+      </div>
+      <div className="flex flex-col gap-2 py-4">
+        <span className="text-sm font-semibold text-primary font-sans">
+          Bio
+        </span>
+        <span className="text-sm text-tertiary font-normal font-sans">
+          {user.userData.bio}
+        </span>
+      </div>
+      <div className="flex flex-col gap-2 py-4">
+        <span className="text-sm font-semibold text-primary">Interests</span>
+      </div>
+      <div>
+        <div className="space-y-4">
+          <span className="text-sm font-semibold text-primary">
+            Update socials
+          </span>
           <div className="space-y-2">
-            {isEditingSocials ? (
+            {isEditingSocials && (
               <>
-                <input
+                <AppInput
                   type="text"
                   value={twitterUsername}
                   onChange={(e) => setTwitterUsername(e.target.value)}
                   placeholder="Twitter username"
-                  className="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
-                <input
+                <AppInput
                   type="text"
                   value={telegramUsername}
                   onChange={(e) => setTelegramUsername(e.target.value)}
                   placeholder="Telegram username"
-                  className="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 />
                 <div className="flex space-x-2">
-                  <button
-                    onClick={handleUpdateSocials}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                  >
-                    Save
-                  </button>
-                  <button
+                  <AppButton onClick={handleUpdateSocials}>Save</AppButton>
+                  <AppButton
+                    variant="outline"
                     onClick={() => setIsEditingSocials(false)}
-                    className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition-colors dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500"
                   >
                     Cancel
-                  </button>
+                  </AppButton>
                 </div>
-              </>
-            ) : (
-              <>
-                <p className="text-gray-700 dark:text-gray-300">
-                  Twitter: {user.userData.twitter?.username || "Not set"}
-                </p>
-                <p className="text-gray-700 dark:text-gray-300">
-                  Telegram: {user.userData.telegram?.username || "Not set"}
-                </p>
-                <button
-                  onClick={() => setIsEditingSocials(true)}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                >
-                  Edit Socials
-                </button>
               </>
             )}
           </div>
         </div>
       </div>
-    </div>
+      <AppButton
+        className="mt-4"
+        onClick={() => {
+          console.log("Session:", session);
+          console.log("User:", user);
+        }}
+      >
+        Log Session and User
+      </AppButton>
+    </AppLayout>
   );
 };
 

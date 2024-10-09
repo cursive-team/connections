@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { storage } from "@/lib/storage";
 import { Connection } from "@/lib/storage/types";
+import AppLayout from "@/layouts/AppLayout";
+import { MdKeyboardArrowRight as ArrowRight } from "react-icons/md";
 
 const PeoplePage: React.FC = () => {
   const [connections, setConnections] = useState<Record<string, Connection>>(
@@ -22,31 +24,38 @@ const PeoplePage: React.FC = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">My Connections</h1>
-      <ul className="space-y-4">
+    <AppLayout className="mx-auto" withContainer={false}>
+      <ul className="flex flex-col ">
         {Object.values(connections).map((connection) => (
           <li
             key={connection.user.username}
-            className="bg-white dark:bg-gray-800 shadow rounded-lg p-4"
+            className="p-4"
+            style={{
+              // for some reason tailwind not applying
+              borderBottom: "0.5px solid rgba(0, 0, 0, 0.20)",
+            }}
           >
-            <Link href={`/people/${connection.user.username}`}>
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+            <Link
+              className="grid grid-cols-[1fr_20px] items-center gap-4"
+              href={`/people/${connection.user.username}`}
+            >
+              <div className="flex items-center gap-4">
+                <div className="size-10 rounded-full bg-button-secondary"></div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-medium text-primary">
+                    {connection.user.displayName}
+                  </span>
+                  <span className="text-xs text-secondary font-medium">
+                    @{connection.user.username}
+                  </span>
+                </div>
               </div>
-              <div>
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {connection.user.displayName}
-                </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  @{connection.user.username}
-                </p>
-              </div>
+              <ArrowRight className="ml-auto" />
             </Link>
           </li>
         ))}
       </ul>
-    </div>
+    </AppLayout>
   );
 };
 
