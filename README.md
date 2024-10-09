@@ -24,8 +24,7 @@ Backend:
 Testing:
 
 - Make sure you've seeded database with testing UserChip values: `pnpm run seed`
-- To mock a tap, visit: http://localhost:3000/tap#?chipId=TEST001
-
+- To mock a tap, visit: http://localhost:3000/tap?chipId=TEST001
 
 Notes:
 
