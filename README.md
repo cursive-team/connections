@@ -31,7 +31,7 @@ Testing:
   - Log out of account, visit http://localhost:3000/logout
   - Create new account, visit http://localhost:3000/tap#?chipId=TEST001 again but with a different chip 
   - To tap a connection, visit http://localhost:3000/tap#?chipId=TEST001 again, where the chipId corresponds to the other existing account
-- After a full deletion sometimes an old cookie will still be populating site, to delete in Chrome: `Settings` -> `Privacy and security` -> `Third-party cookies` -> `See all site data and permissions` -> search for localhost -> delete cookies (if a shortcut is found, please update)
+- After a full deletion sometimes an old cookie will still be populating site, visit http://localhost:3000/logout or delete the cookie corresponding to localhost:3000.
 
 Testing Secret Values: 
 
