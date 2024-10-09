@@ -8,10 +8,11 @@ import {
   TwitterDataSchema,
 } from "@/lib/storage/types";
 import { createTapActivity } from "@/lib/activity";
-import { getUserAndSession, saveBackupAndUpdateStorage } from "../../utils";
+import { saveBackupAndUpdateStorage } from "../../utils";
+import { getUserAndSession } from "..";
 
 export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
-  const { user, session } = getUserAndSession();
+  const { user, session } = await getUserAndSession();
 
   const tap = tapResponse.tap;
   if (!tap) {

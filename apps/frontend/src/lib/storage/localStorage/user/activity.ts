@@ -1,9 +1,10 @@
 import { createActivityBackup } from "@/lib/backup";
 import { Activity } from "@/lib/storage/types";
-import { getUserAndSession, saveBackupAndUpdateStorage } from "../utils";
+import { saveBackupAndUpdateStorage } from "../utils";
+import { getUserAndSession } from ".";
 
 export const addActivity = async (activity: Activity): Promise<void> => {
-  const { user, session } = getUserAndSession();
+  const { user, session } = await getUserAndSession();
 
   const activityBackup = createActivityBackup({
     email: user.email,

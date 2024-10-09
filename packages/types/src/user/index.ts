@@ -1,3 +1,4 @@
+import { ChipIssuerSchema } from "../chip";
 import { z } from "zod";
 
 // Username schema
@@ -187,4 +188,13 @@ export const VerifySigninTokenResponseSchema = z.object({
 
 export type VerifySigninTokenResponse = z.infer<
   typeof VerifySigninTokenResponseSchema
+>;
+
+export const UpdateLeaderboardEntryRequestSchema = z.object({
+  authToken: z.string(),
+  chipIssuer: ChipIssuerSchema,
+});
+
+export type UpdateLeaderboardEntryRequest = z.infer<
+  typeof UpdateLeaderboardEntryRequestSchema
 >;

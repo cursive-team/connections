@@ -166,12 +166,7 @@ const Register: React.FC = () => {
         passkeyAuthPublicKey: authPublicKey || undefined,
       });
 
-      const user = await storage.getUser();
-      const session = await storage.getSession();
-      if (!user || !session) {
-        toast.error("Error creating account! Please try again.");
-        return;
-      }
+      const { user, session } = await storage.getUserAndSession();
 
       // Register chip if saved tap is present
       if (savedTap) {
@@ -222,7 +217,6 @@ const Register: React.FC = () => {
     } catch (error) {
       console.error(error);
       toast.error("Failed to create account. Please try again");
-      router.push("/");
       return;
     }
   };

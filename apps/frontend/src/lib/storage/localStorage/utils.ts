@@ -1,7 +1,7 @@
 import { CreateBackupData } from "@types";
 import { Session, User } from "../types";
-import { getSession, saveSession } from "./session";
-import { getUser, saveUser } from "./user";
+import { saveSession } from "./session";
+import { saveUser } from "./user";
 import { appendBackupData } from "@/lib/backup";
 
 export const saveToLocalStorage = (key: string, value: string): void => {
@@ -14,20 +14,6 @@ export const getFromLocalStorage = (key: string): string | null => {
 
 export const deleteFromLocalStorage = (key: string): void => {
   localStorage.removeItem(key);
-};
-
-export const getUserAndSession = (): { user: User; session: Session } => {
-  const user = getUser();
-  const session = getSession();
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-  if (!session || session.authTokenExpiresAt < new Date()) {
-    throw new Error("Session expired");
-  }
-
-  return { user, session };
 };
 
 export interface SaveBackupAndUpdateStorageArgs {
