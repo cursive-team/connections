@@ -59,9 +59,9 @@ model Backup {
 
 model Chip {
   id                       String    @id @default(uuid())
-  chipIssuer               String // e.g., "LANNA", "DEVCON"
+  chipIssuer               String // e.g., "EDGE_CITY_LANNA", "DEVCON_2024"
   chipId                   String    @unique
-  chipVariant              String // e.g., "QR", "NTAG424", "NTAG212", "SLJ52"
+  chipVariant              String // e.g., "NTAG424", "NTAG212"
   chipIsRegistered         Boolean   @default(false)
   chipRegisteredAt         DateTime?
   chipPublicKey            String?
