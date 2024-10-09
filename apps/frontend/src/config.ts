@@ -20,13 +20,13 @@ export const ROUTER_ITEMS: RouterItem[] = [
   {
     label: "People",
     href: "/people",
-    icon: Icons.Home,
+    icon: Icons.People,
     iconSize: 20,
   },
   {
     label: "Activity",
     href: "/activity",
-    icon: Icons.Settings,
+    icon: Icons.Activity,
     iconSize: 20,
   },
   {

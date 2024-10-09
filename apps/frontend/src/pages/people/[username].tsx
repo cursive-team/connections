@@ -1,9 +1,15 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
 import { Connection } from "@/lib/storage/types";
 import { toast } from "sonner";
 import { TapParams, ChipTapResponse } from "@types";
+import { AppButton } from "@/components/ui/Button";
+import Image from "next/image";
+import AppLayout from "@/layouts/AppLayout";
+import { LinkCardBox } from "@/components/ui/LinkCardBox";
+import { AppTextarea } from "@/components/ui/Textarea";
 
 interface TapChipModalProps {
   tapResponse: ChipTapResponse;
@@ -13,7 +19,7 @@ interface TapChipModalProps {
 
 const TapChipModal: React.FC<TapChipModalProps> = ({
   tapResponse,
-  onClose,
+  // onClose,
   onSubmit,
 }) => {
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
@@ -24,55 +30,45 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto">
-        <h3 className="text-lg font-semibold mb-4">You tapped a chip!</h3>
-        <p>Chip Issuer: {tapResponse.chipIssuer}</p>
-        <p>Chip Public Key: {tapResponse.tap?.chipPublicKey}</p>
-        <p>Message: {tapResponse.tap?.message}</p>
-        <p>Signature: {tapResponse.tap?.signature}</p>
-        <p>Tap Count: {tapResponse.tap?.tapCount}</p>
-        <p>Owner Display Name: {tapResponse.tap?.ownerDisplayName}</p>
-        <p>Owner Bio: {tapResponse.tap?.ownerBio}</p>
-        <p>
-          Owner Signature Public Key: {tapResponse.tap?.ownerSignaturePublicKey}
-        </p>
-        <p>
-          Owner Encryption Public Key:{" "}
-          {tapResponse.tap?.ownerEncryptionPublicKey}
-        </p>
-        {typeof tapResponse.tap?.ownerUserData === "object" &&
-          tapResponse.tap?.ownerUserData !== null &&
-          "twitter" in tapResponse.tap.ownerUserData &&
-          typeof tapResponse.tap.ownerUserData.twitter === "object" &&
-          tapResponse.tap.ownerUserData.twitter !== null &&
-          "username" in tapResponse.tap.ownerUserData.twitter &&
-          typeof tapResponse.tap.ownerUserData.twitter.username === "string" &&
-          tapResponse.tap.ownerUserData.twitter.username !== "" && (
-            <p>Twitter: @{tapResponse.tap.ownerUserData.twitter.username}</p>
-          )}
-        {typeof tapResponse.tap?.ownerUserData === "object" &&
-          tapResponse.tap?.ownerUserData !== null &&
-          "telegram" in tapResponse.tap.ownerUserData &&
-          typeof tapResponse.tap.ownerUserData.telegram === "object" &&
-          tapResponse.tap.ownerUserData.telegram !== null &&
-          "username" in tapResponse.tap.ownerUserData.telegram &&
-          typeof tapResponse.tap.ownerUserData.telegram.username === "string" &&
-          tapResponse.tap.ownerUserData.telegram.username !== "" && (
-            <p>Telegram: @{tapResponse.tap.ownerUserData.telegram.username}</p>
-          )}
-        <p>Timestamp: {tapResponse.tap?.timestamp.toISOString()}</p>
-        <div className="mt-4">
-          <h4 className="font-semibold mb-2">Add a reaction:</h4>
-          <div className="flex space-x-2">
-            {["😊", "😢", "❤️"].map((emoji) => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="flex flex-col bg-white p-6 rounded-[50px] w-full max-w-[90vw] h-[80vh] overflow-y-auto">
+        <div className="size-[80px] relative flex mx-auto">
+          <div className="absolute -left-3 size-8 rounded-full bg-[#9DE8FF] z-0 top-[28px] border border-quaternary/10"></div>
+          <Image
+            width={80}
+            height={80}
+            alt="connection artwork"
+            src="/images/connection-artwork.svg"
+            className="relative z-[1]"
+          />
+          <div className=" absolute size-8 rounded-full bg-[#FFFF9D] -right-3 top-[28px] z-0 border border-quaternary/10"></div>
+        </div>
+        <div className="flex flex-col gap-12">
+          <div className="flex flex-col text-center">
+            <span className="text-[20px] font-semibold text-primary tracking-[-0.1px] font-sans">
+              {tapResponse.tap?.ownerUsername}
+            </span>
+            <span className=" text-secondary text-sm font-medium font-sans text-center">
+              {tapResponse.tap?.ownerDisplayName}
+            </span>
+          </div>
+          <span className="text-center text-xs text-tertiary font-medium font-sans">
+            Add details to remember this connection. <br />
+            They stay <strong className="font-bold">private to you.</strong>
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-3 mt-4">
+          <span className="text-sm font-semibold text-primary font-sans">
+            Labels
+          </span>
+          <div className="flex space-x-2 justify-around">
+            {["💼", "🪩", "😊", "🎃", "🙈"].map((emoji) => (
               <button
                 key={emoji}
                 onClick={() => handleEmojiSelect(emoji)}
-                className={`p-2 rounded ${
-                  selectedEmoji === emoji
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-gray-800"
+                className={`p-2 size-12 rounded-full bg-[#F1F1F1] border border-transparent duration-200 ${
+                  selectedEmoji === emoji ? "!border-primary" : ""
                 }`}
               >
                 {emoji}
@@ -80,28 +76,20 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
             ))}
           </div>
         </div>
-        <div className="mt-4">
-          <h4 className="font-semibold mb-2">Add a private note:</h4>
-          <textarea
+        <div className="flex flex-col gap-3 mt-4">
+          <span className="text-sm font-semibold text-primary font-sans">
+            Notes
+          </span>
+          <AppTextarea
             value={privateNote}
             onChange={(e) => setPrivateNote(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100"
             rows={3}
           />
         </div>
-        <div className="mt-4 flex justify-between">
-          <button
-            onClick={onClose}
-            className="p-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500"
-          >
-            Close
-          </button>
-          <button
-            onClick={() => onSubmit(selectedEmoji, privateNote)}
-            className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800"
-          >
-            Submit
-          </button>
+        <div className="mt-4 grid grid-cols-1 gap-4">
+          <AppButton onClick={() => onSubmit(selectedEmoji, privateNote)}>
+            Save
+          </AppButton>
         </div>
       </div>
     </div>
@@ -178,8 +166,11 @@ const UserProfilePage: React.FC = () => {
     return <div className="text-center p-4">Loading...</div>;
   }
 
+  const showSocials =
+    connection?.user?.twitter?.username && connection?.user?.telegram?.username;
+
   return (
-    <div className="container mx-auto px-4 py-8">
+    <>
       {showTapModal && tapInfo && (
         <TapChipModal
           tapResponse={tapInfo.tapResponse}
@@ -187,44 +178,74 @@ const UserProfilePage: React.FC = () => {
           onSubmit={handleSubmitComment}
         />
       )}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-        <div className="flex items-center space-x-4 mb-4">
-          <div className="w-20 h-20 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {connection.user.displayName}
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              @{connection.user.username}
-            </p>
+      <AppLayout
+        withContainer={false}
+        back={{
+          label: "Back",
+          href: "/people",
+        }}
+        header={
+          <div className="flex flex-col w-full">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex flex-col pt-4">
+                <span className=" text-[30px] font-semibold tracking-[-0.22px] font-sans">{`@${connection?.user?.username}`}</span>
+                <span className="text-sm font-medium font-sans text-tertiary">
+                  {connection?.user?.displayName}
+                </span>
+              </div>
+              <div className="size-10 bg-button-secondary rounded-full border border-quaternary/10"></div>
+            </div>
           </div>
-        </div>
-        <p className="text-gray-700 dark:text-gray-300 mb-4">
-          {connection.user.bio}
-        </p>
-        <div className="space-y-2">
-          {connection.user.twitter && (
-            <p className="text-blue-500">
-              Twitter: @{connection.user.twitter.username}
-            </p>
+        }
+      >
+        <div className="divide-y divide-y-primary pt-10">
+          {showSocials && (
+            <div className="flex flex-col gap-2 py-4 px-4">
+              <span className="text-sm font-semibold text-primary font-sans">
+                Socials
+              </span>
+              <div className="flex flex-col gap-4">
+                {connection?.user?.telegram?.username && (
+                  <LinkCardBox
+                    label="Telegram"
+                    value={`@${connection.user.telegram.username}`}
+                    href={`https://t.me/${connection.user.telegram.username}`}
+                  />
+                )}
+                {connection?.user?.twitter?.username && (
+                  <LinkCardBox
+                    label="X"
+                    value={`@${connection.user.twitter.username}`}
+                    href={`https://twitter.com/${connection.user.twitter.username}`}
+                  />
+                )}
+              </div>
+            </div>
           )}
-          {connection.user.telegram && (
-            <p className="text-blue-500">
-              Telegram: @{connection.user.telegram.username}
-            </p>
-          )}
-        </div>
-        {connection.comment && (
-          <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-            <h2 className="text-lg font-semibold mb-2">Your Note:</h2>
-            <p>{connection.comment.note}</p>
-            {connection.comment.emoji && (
-              <p className="text-2xl mt-2">{connection.comment.emoji}</p>
+
+          <div className="flex flex-col gap-2 py-4 px-4">
+            <span className="text-sm font-semibold text-primary font-sans">
+              Bio
+            </span>
+            <span className="text-sm text-secondary font-sans font-normal">
+              {connection?.user?.bio}
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-2 py-4 px-4">
+            <span className="text-sm font-semibold text-primary font-sans">
+              Your Note
+            </span>
+            <span className="text-sm text-secondary font-sans font-normal">
+              {connection?.comment?.note}
+            </span>
+            {connection?.comment?.emoji && (
+              <p className="text-2xl mt-2">{connection?.comment?.emoji}</p>
             )}
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      </AppLayout>
+    </>
   );
 };
 

@@ -11,11 +11,7 @@ interface EnterCodeProps {
   submitCode: (code: string) => Promise<void>;
 }
 
-const EnterCode: React.FC<EnterCodeProps> = ({
-  chipIssuer,
-  email,
-  submitCode,
-}) => {
+const EnterCode: React.FC<EnterCodeProps> = ({ email, submitCode }) => {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,11 +55,6 @@ const EnterCode: React.FC<EnterCodeProps> = ({
         title="Enter the 6-digit code "
         description={`Sent to ${email} - expires in 15 minutes.`}
       />
-      {chipIssuer && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Registering chip issued by: {chipIssuer}
-        </p>
-      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <div className="flex flex-col gap-2 mt-20">

@@ -14,7 +14,6 @@ interface RegisterWithPasskeyProps {
 }
 
 const RegisterWithPasskey: React.FC<RegisterWithPasskeyProps> = ({
-  chipIssuer,
   username,
   onPasskeyRegister,
   onSwitchToPassword,
@@ -47,11 +46,6 @@ const RegisterWithPasskey: React.FC<RegisterWithPasskeyProps> = ({
 
   return (
     <div className="space-y-6">
-      {chipIssuer && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Registering chip issued by: {chipIssuer}
-        </p>
-      )}
       <RegisterHeader
         title={
           <span className="font-sans text-center text-[30px] leading-[30px] font-semibold text-primary tracking-[-0.22px]">

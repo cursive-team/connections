@@ -21,10 +21,7 @@ interface EnterUserInfoProps {
   onSubmit: (userInfo: FormData) => Promise<void>;
 }
 
-const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
-  chipIssuer,
-  onSubmit,
-}) => {
+const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
   const [step, setStep] = useState(0);
   const { pageHeight } = useSettings();
   const [formData, setFormData] = useState<FormData>({
@@ -89,18 +86,6 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
     // @ts-expect-error - e is unknown
     e?.preventDefault();
     try {
-      UsernameSchema.parse(formData.username);
-      const isUnique = await verifyUsernameIsUnique(formData.username);
-      if (!isUnique) {
-        toast.error("Username is already taken");
-        return;
-      }
-
-      if (telegramHandle.includes("@") || twitterHandle.includes("@")) {
-        toast.error("Please enter handles without the '@' symbol");
-        return;
-      }
-
       await onSubmit({
         username,
         displayName: displayName.trim(),
@@ -110,11 +95,36 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
       });
     } catch (error) {
       console.error(error);
-      toast.error("Please enter a valid username");
+      toast.error("An error occurred while submitting the form");
     }
   };
 
-  const handleNext = (e: unknown) => {
+  const handleNext = async (e: unknown) => {
+    if (step === 0) {
+      // Validate username
+      try {
+        UsernameSchema.parse(formData.username);
+        const isUnique = await verifyUsernameIsUnique(formData.username);
+        if (!isUnique) {
+          toast.error("Username is already taken");
+          return;
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error(
+          "Username must be alphanumeric and between 3-20 characters"
+        );
+        return;
+      }
+    } else if (step === 2 || step === 3) {
+      // Validate Telegram and Twitter handles
+      const handle = formData[steps[step].field as keyof FormData];
+      if (handle.includes("@")) {
+        toast.error("Please enter handles without the '@' symbol");
+        return;
+      }
+    }
+
     if (step < steps.length - 1) {
       setStep(step + 1);
     } else {
@@ -152,12 +162,6 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
           share it instantly with a tap.
         </span>
       </div>
-      {chipIssuer && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Registering chip issued by: {chipIssuer}
-        </p>
-      )}
-
       <div className="relative mb-6">
         <ArrowRightIcon className="absolute size-6 left-0 top-1/2 transform -translate-y-1/2 text-primary" />
         {steps[step].field === "bio" ? (
@@ -168,6 +172,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
             onChange={(e) => handleInputChange(e.target.value)}
             onKeyDown={handleKeyDown}
             aria-label={steps[step].question}
+            autoFocus
           />
         ) : (
           <input

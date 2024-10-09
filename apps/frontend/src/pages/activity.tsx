@@ -3,10 +3,63 @@ import { storage } from "@/lib/storage";
 import { Activity } from "@/lib/storage/types";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
+import AppLayout from "@/layouts/AppLayout";
+import { FeedContent } from "@/components/ui/FeedContent";
+import { CircleCard } from "@/components/ui/CircleCard";
+import { MdKeyboardArrowRight as ArrowIcon } from "react-icons/md";
+import Link from "next/link";
+import {
+  RegisterChipActivityDataSchema,
+  TapActivityDataSchema,
+} from "@/lib/activity";
+import { ChipIssuer } from "@types";
+
+interface ActivityDisplayItem {
+  text: string;
+  link?: string;
+  timestamp: Date;
+}
+
+const parseActivity = (activity: Activity): ActivityDisplayItem => {
+  switch (activity.type) {
+    case "REGISTER":
+      return {
+        text: "You registered for Cursive Connections",
+        timestamp: activity.timestamp,
+      };
+    case "REGISTER_CHIP":
+      const { chipIssuer } = RegisterChipActivityDataSchema.parse(
+        JSON.parse(activity.serializedData)
+      );
+      const chipIssuerMap: Record<ChipIssuer, string> = {
+        EDGE_CITY_LANNA: "Edge City Lanna",
+        DEVCON_2024: "Devcon 2024",
+        TESTING: "Testing",
+      };
+      return {
+        text: `You registered a chip for ${chipIssuerMap[chipIssuer]}`,
+        timestamp: activity.timestamp,
+      };
+    case "TAP":
+      const { chipOwnerUsername } = TapActivityDataSchema.parse(
+        JSON.parse(activity.serializedData)
+      );
+      return {
+        text: `You tapped ${chipOwnerUsername}`,
+        link: `/people/${chipOwnerUsername}`,
+        timestamp: activity.timestamp,
+      };
+    default:
+      return {
+        text: activity.serializedData,
+        timestamp: activity.timestamp,
+      };
+  }
+};
 
 const ActivityPage: React.FC = () => {
   const router = useRouter();
-  const [activities, setActivities] = useState<Activity[]>([]);
+  const [activityItems, setActivityItems] = useState<ActivityDisplayItem[]>([]);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -17,38 +70,63 @@ const ActivityPage: React.FC = () => {
         return;
       }
 
-      setActivities(user.activities);
+      const parsedActivities = user.activities
+        .map(parseActivity)
+        .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+      setActivityItems(parsedActivities);
     };
 
     fetchActivities();
   }, [router]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-        Activity
-      </h1>
+    <AppLayout
+      showHeader={false}
+      header={
+        <>
+          <span className="text-primary font-medium">Activity</span>
+          <div
+            className="absolute left-0 right-0 bottom-0 h-[2px]"
+            style={{
+              background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
+            }}
+          ></div>
+        </>
+      }
+      className="container mx-auto px-4 py-8"
+    >
       <ul className="space-y-4">
-        {activities.map((activity, index) => (
-          <li
-            key={index}
-            className="bg-white dark:bg-gray-800 shadow rounded-lg p-4"
-          >
-            <div className="flex flex-col">
-              <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                Type: {activity.type}
-              </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Data: {activity.serializedData}
-              </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                Timestamp: {activity.timestamp.toLocaleString()}
-              </p>
+        {activityItems.map((item, index) => {
+          const Content = () => (
+            <FeedContent
+              title={<span>{item.text}</span>}
+              icon={<CircleCard icon="person" />}
+              description={item.timestamp.toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            />
+          );
+
+          return (
+            <div
+              key={index}
+              className="grid grid-cols-[1fr_20px] items-center gap-1"
+            >
+              {item.link ? (
+                <Link href={item.link}>
+                  <Content />
+                </Link>
+              ) : (
+                <Content />
+              )}
+              <ArrowIcon className="ml-auto" />
             </div>
-          </li>
-        ))}
+          );
+        })}
       </ul>
-    </div>
+    </AppLayout>
   );
 };
 
