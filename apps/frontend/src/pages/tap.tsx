@@ -25,6 +25,7 @@ const TapPage: React.FC = () => {
         return;
       }
 
+      const user = await storage.getUser();
       const session = await storage.getSession();
 
       try {
@@ -43,7 +44,7 @@ const TapPage: React.FC = () => {
 
           // If user is not logged in, direct them to tap a new chip to register
           // TODO: Allow users to tap without being signed in
-          if (!session) {
+          if (!user || !session) {
             toast.error("Please tap a new chip to register!");
             router.push("/");
             return;
@@ -56,14 +57,19 @@ const TapPage: React.FC = () => {
             return;
           }
 
-          // Save tap to local storage
-          await storage.addTap(response);
+          if (user.userData.username === response.tap.ownerUsername) {
+            router.push("/");
+            return;
+          }
 
           // Update leaderboard entry
           await updateLeaderboardEntry(
             response.tap.ownerUsername,
             response.chipIssuer
           );
+
+          // Save tap to local storage
+          await storage.addTap(response);
 
           // Save tap to populate modal upon redirect
           await storage.saveTapInfo({ tapParams, tapResponse: response });
@@ -98,14 +104,12 @@ const TapPage: React.FC = () => {
   }, [router]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">
+        <h1 className="text-2xl font-bold mb-4 text-black">
           Processing Tap...
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Please wait while we process your tap.
-        </p>
+        <p className="text-black">Please wait while we process your tap.</p>
       </div>
     </div>
   );

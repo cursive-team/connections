@@ -28,7 +28,13 @@ router.post(
         return res.status(401).json({ error: "Invalid authentication token" });
       }
 
-      // Check if the owner's public keys match the user's keys
+      // Check if the owner's username and public keys match the user's keys
+      if (validatedData.ownerUsername !== user.username) {
+        return res.status(400).json({
+          error: "Submitted username does not match user's key",
+        });
+      }
+
       if (
         validatedData.ownerSignaturePublicKey &&
         validatedData.ownerSignaturePublicKey !== user.signaturePublicKey
@@ -44,6 +50,15 @@ router.post(
       ) {
         return res.status(400).json({
           error: "Submitted encryption public key does not match user's key",
+        });
+      }
+
+      if (
+        validatedData.ownerPsiPublicKeyLink &&
+        validatedData.ownerPsiPublicKeyLink !== user.psiPublicKeyLink
+      ) {
+        return res.status(400).json({
+          error: "Submitted PSI public key link does not match user's key",
         });
       }
 

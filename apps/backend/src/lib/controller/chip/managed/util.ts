@@ -40,12 +40,12 @@ export async function getChipFromTapParams(
       try {
         return ChipSchema.parse(chip);
       } catch (error) {
-        console.log("error:", errorToString(error));
+        console.error("error:", errorToString(error));
         throw error;
       }
     }
   } catch (error) {
-    console.log("error:", error);
+    console.error("error:", errorToString(error));
   }
 
   // Try to parse the tapParams as an NTAG424

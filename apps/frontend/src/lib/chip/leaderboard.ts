@@ -30,10 +30,15 @@ export async function updateLeaderboardEntry(
     );
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorResponse = await response.json();
+      console.error(
+        `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+      );
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+      );
     }
 
-    await response.json();
     return;
   } catch (error) {
     console.error("Error updating leaderboard entry:", error);
