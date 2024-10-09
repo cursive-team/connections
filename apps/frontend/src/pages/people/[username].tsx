@@ -10,6 +10,7 @@ import Image from "next/image";
 import AppLayout from "@/layouts/AppLayout";
 import { LinkCardBox } from "@/components/ui/LinkCardBox";
 import { AppTextarea } from "@/components/ui/Textarea";
+import InteractivePSI from "@/features/psi/InteractivePSI";
 
 interface TapChipModalProps {
   tapResponse: ChipTapResponse;
@@ -243,6 +244,8 @@ const UserProfilePage: React.FC = () => {
               <p className="text-2xl mt-2">{connection?.comment?.emoji}</p>
             )}
           </div>
+
+          <InteractivePSI />
         </div>
       </AppLayout>
     </>
