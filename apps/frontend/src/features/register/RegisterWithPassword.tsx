@@ -11,7 +11,6 @@ interface RegisterWithPasswordProps {
 }
 
 const RegisterWithPassword: React.FC<RegisterWithPasswordProps> = ({
-  chipIssuer,
   onSubmit,
   onSwitchToPasskey,
 }) => {
@@ -33,11 +32,6 @@ const RegisterWithPassword: React.FC<RegisterWithPasswordProps> = ({
 
   return (
     <div className="space-y-6">
-      {chipIssuer && (
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-          Registering chip issued by: {chipIssuer}
-        </p>
-      )}
       <RegisterHeader title=" Register with Password" />
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

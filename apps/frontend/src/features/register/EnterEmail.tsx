@@ -11,7 +11,7 @@ interface EnterEmailProps {
   submitEmail: (email: string) => Promise<void>;
 }
 
-const EnterEmail: React.FC<EnterEmailProps> = ({ chipIssuer, submitEmail }) => {
+const EnterEmail: React.FC<EnterEmailProps> = ({ submitEmail }) => {
   const [email, setEmail] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,11 +36,6 @@ const EnterEmail: React.FC<EnterEmailProps> = ({ chipIssuer, submitEmail }) => {
         title="Ready to tap into serendipity?"
         description="Discover & deepen connections with residents while choosing what you reveal about your data. This is programmable cryptography in action!"
       />
-      {chipIssuer && (
-        <p className="text-sm text-gray-500">
-          Registering chip issued by: {chipIssuer}
-        </p>
-      )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <div className="mt-1">
