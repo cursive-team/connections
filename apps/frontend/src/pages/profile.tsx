@@ -52,8 +52,8 @@ const ProfilePage: React.FC = () => {
 
       await storage.updateUserData(updatedUserData);
 
-      const { user: newUser, session: newSession } =
-        await storage.getUserAndSession();
+      const newUser = await storage.getUser();
+      const newSession = await storage.getSession();
       if (!newUser || !newSession) {
         throw new Error("User or session not found");
       }

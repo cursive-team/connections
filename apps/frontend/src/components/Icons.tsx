@@ -13,6 +13,7 @@ export const Icons: Record<string, any> = {
   Burgher,
   Components,
   ArrowLeft,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   People: ({ size = 18, ...props }: any) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -30,6 +31,7 @@ export const Icons: Record<string, any> = {
       </g>
     </svg>
   ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Activity: ({ size = 18, ...props }: any) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -45,6 +47,7 @@ export const Icons: Record<string, any> = {
       />
     </svg>
   ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Profile: ({ size = 18, ...props }: any) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"

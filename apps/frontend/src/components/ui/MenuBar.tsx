@@ -5,7 +5,7 @@ import { cn } from "@/lib/frontend/util";
 import { classed } from "@tw-classed/react";
 
 export const MenuBarItem = ({ label, href, isActive, icon }: RouterItem) => {
-  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Icon: any = icon;
 
   const iconColor = isActive ? "text-icon-primary" : "text-icon-tertiary";
