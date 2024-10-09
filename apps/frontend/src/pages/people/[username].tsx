@@ -6,10 +6,10 @@ import { Connection } from "@/lib/storage/types";
 import { toast } from "sonner";
 import { TapParams, ChipTapResponse } from "@types";
 import { AppButton } from "@/components/ui/Button";
-import { AppTextarea } from "@/components/ui/Textarea";
 import Image from "next/image";
 import AppLayout from "@/layouts/AppLayout";
 import { LinkCardBox } from "@/components/ui/LinkCardBox";
+import { AppTextarea } from "@/components/ui/Textarea";
 
 interface TapChipModalProps {
   tapResponse: ChipTapResponse;
@@ -19,7 +19,7 @@ interface TapChipModalProps {
 
 const TapChipModal: React.FC<TapChipModalProps> = ({
   tapResponse,
-  onClose,
+  // onClose,
   onSubmit,
 }) => {
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
@@ -30,7 +30,7 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="flex flex-col bg-white p-6 rounded-[50px] w-full max-w-[90vw] h-[80vh] overflow-y-auto">
         <div className="size-[80px] relative flex mx-auto">
           <div className="absolute -left-3 size-8 rounded-full bg-[#9DE8FF] z-0 top-[28px] border border-quaternary/10"></div>
@@ -46,7 +46,7 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
         <div className="flex flex-col gap-12">
           <div className="flex flex-col text-center">
             <span className="text-[20px] font-semibold text-primary tracking-[-0.1px] font-sans">
-              {`{username}`}
+              {tapResponse.tap?.ownerUsername}
             </span>
             <span className=" text-secondary text-sm font-medium font-sans text-center">
               {tapResponse.tap?.ownerDisplayName}
@@ -86,12 +86,9 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
             rows={3}
           />
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-4">
-          <AppButton onClick={onClose} variant="outline">
-            Close
-          </AppButton>
+        <div className="mt-4 grid grid-cols-1 gap-4">
           <AppButton onClick={() => onSubmit(selectedEmoji, privateNote)}>
-            Submit
+            Save
           </AppButton>
         </div>
       </div>
@@ -208,16 +205,18 @@ const UserProfilePage: React.FC = () => {
                 Socials
               </span>
               <div className="flex flex-col gap-4">
-                {connection?.user?.twitter?.username && (
+                {connection?.user?.telegram?.username && (
                   <LinkCardBox
                     label="Telegram"
-                    value={`@${connection?.user?.twitter?.username}`}
+                    value={`@${connection.user.telegram.username}`}
+                    href={`https://t.me/${connection.user.telegram.username}`}
                   />
                 )}
                 {connection?.user?.twitter?.username && (
                   <LinkCardBox
                     label="X"
-                    value={`@${connection?.user?.twitter?.username}`}
+                    value={`@${connection.user.twitter.username}`}
+                    href={`https://twitter.com/${connection.user.twitter.username}`}
                   />
                 )}
               </div>

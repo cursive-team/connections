@@ -7,10 +7,59 @@ import AppLayout from "@/layouts/AppLayout";
 import { FeedContent } from "@/components/ui/FeedContent";
 import { CircleCard } from "@/components/ui/CircleCard";
 import { MdKeyboardArrowRight as ArrowIcon } from "react-icons/md";
+import Link from "next/link";
+import {
+  RegisterChipActivityDataSchema,
+  TapActivityDataSchema,
+} from "@/lib/activity";
+import { ChipIssuer } from "@types";
+
+interface ActivityDisplayItem {
+  text: string;
+  link?: string;
+  timestamp: Date;
+}
+
+const parseActivity = (activity: Activity): ActivityDisplayItem => {
+  switch (activity.type) {
+    case "REGISTER":
+      return {
+        text: "You registered for Cursive Connections",
+        timestamp: activity.timestamp,
+      };
+    case "REGISTER_CHIP":
+      const { chipIssuer } = RegisterChipActivityDataSchema.parse(
+        JSON.parse(activity.serializedData)
+      );
+      const chipIssuerMap: Record<ChipIssuer, string> = {
+        EDGE_CITY_LANNA: "Edge City Lanna",
+        DEVCON_2024: "Devcon 2024",
+        TESTING: "Testing",
+      };
+      return {
+        text: `You registered a chip for ${chipIssuerMap[chipIssuer]}`,
+        timestamp: activity.timestamp,
+      };
+    case "TAP":
+      const { chipOwnerUsername } = TapActivityDataSchema.parse(
+        JSON.parse(activity.serializedData)
+      );
+      return {
+        text: `You tapped ${chipOwnerUsername}`,
+        link: `/people/${chipOwnerUsername}`,
+        timestamp: activity.timestamp,
+      };
+    default:
+      return {
+        text: activity.serializedData,
+        timestamp: activity.timestamp,
+      };
+  }
+};
 
 const ActivityPage: React.FC = () => {
   const router = useRouter();
-  const [activities, setActivities] = useState<Activity[]>([]);
+  const [activityItems, setActivityItems] = useState<ActivityDisplayItem[]>([]);
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -21,7 +70,10 @@ const ActivityPage: React.FC = () => {
         return;
       }
 
-      setActivities(user.activities);
+      const parsedActivities = user.activities
+        .map(parseActivity)
+        .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+      setActivityItems(parsedActivities);
     };
 
     fetchActivities();
@@ -44,21 +96,31 @@ const ActivityPage: React.FC = () => {
       className="container mx-auto px-4 py-8"
     >
       <ul className="space-y-4">
-        {activities.map((activity, index) => {
+        {activityItems.map((item, index) => {
+          const Content = () => (
+            <FeedContent
+              title={<span>{item.text}</span>}
+              icon={<CircleCard icon="person" />}
+              description={item.timestamp.toLocaleTimeString("en-US", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            />
+          );
+
           return (
             <div
               key={index}
               className="grid grid-cols-[1fr_20px] items-center gap-1"
             >
-              <FeedContent
-                title={<span>{activity.serializedData}</span>}
-                icon={<CircleCard icon="person" />}
-                description={activity.timestamp.toLocaleTimeString("en-US", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                })}
-              />
+              {item.link ? (
+                <Link href={item.link}>
+                  <Content />
+                </Link>
+              ) : (
+                <Content />
+              )}
               <ArrowIcon className="ml-auto" />
             </div>
           );
