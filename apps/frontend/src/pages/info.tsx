@@ -19,30 +19,18 @@ export default function Home() {
       <div className="flex-grow flex px-6 center sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex flex-col grow">
           <RegisterHeader
-            title="Cursive Connections will launch soon."
-            subtitle="We will share more updates at opening ceremony on Oct 11th!"
+            title="Hold your Cursive chip to your phone until you get a notification."
             description={
-              <span>
-                In the meantime, learn about upcoming features{" "}
-                <a
-                  href="https://cursive.team/lanna"
-                  className="text-[#FF9DF8] font-bold underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  here
-                </a>{" "}
-                and follow Cursive on{" "}
-                <a
-                  href="https://x.com/cursive_team"
-                  className="text-[#FF9DF8] font-bold underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Twitter
-                </a>
-                !
-              </span>
+              <>
+                <p className="mb-4">
+                  iPhone: Hold card against the top of your phone and unlock the
+                  screen.
+                </p>
+                <p>
+                  Android: Unlock your phone and hold card against the center of
+                  your phone. Ensure NFC is turned on in your settings.
+                </p>
+              </>
             }
           />
         </div>

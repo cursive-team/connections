@@ -101,10 +101,7 @@ const TapPage: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4 text-black">
-          Processing Tap...
-        </h1>
-        <p className="text-black">Please wait while we process your tap.</p>
+        <div className="animate-spin rounded-full size-10 border-t-2 border-primary mt-10"></div>
       </div>
     </div>
   );

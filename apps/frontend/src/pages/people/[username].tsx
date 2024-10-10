@@ -33,7 +33,7 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="flex flex-col bg-white p-6 rounded-[32px] w-full max-w-[90vw] h-[80vh] overflow-y-auto">
+      <div className="flex flex-col bg-white p-6 rounded-[32px] w-full max-w-[90vw] overflow-y-auto">
         <div className="size-[80px] relative flex mx-auto">
           <div className="absolute -left-3 size-8 rounded-full bg-[#9DE8FF] z-0 top-[28px] border border-quaternary/10"></div>
           <Image
@@ -78,6 +78,7 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
             ))}
           </div>
         </div>
+
         <div className="flex flex-col gap-3 mt-4">
           <span className="text-sm font-semibold text-primary font-sans">
             Notes
@@ -88,6 +89,7 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
             rows={3}
           />
         </div>
+
         <div className="mt-4 grid grid-cols-1 gap-4">
           <AppButton onClick={() => onSubmit(selectedEmoji, privateNote)}>
             Save
@@ -242,23 +244,26 @@ const UserProfilePage: React.FC = () => {
             </div>
           )}
 
-          <div className="flex flex-col gap-2 py-4 px-4">
-            <span className="text-sm font-semibold text-primary font-sans">
-              Your Note
-            </span>
-            <span className="text-sm text-secondary font-sans font-normal">
-              {connection?.comment?.note}
-            </span>
-          </div>
+          {connection?.comment?.note && (
+            <div className="flex flex-col gap-2 py-4 px-4">
+              <span className="text-sm font-semibold text-primary font-sans">
+                Your Note
+              </span>
+              <span className="text-sm text-secondary font-sans font-normal">
+                {connection?.comment?.note}
+              </span>
+            </div>
+          )}
 
-          <div className="flex flex-col gap-2 py-4 px-4">
-            <span className="text-sm font-semibold text-primary font-sans">
-              Your Label
-            </span>
-            {connection?.comment?.emoji && (
+          {connection?.comment?.emoji && (
+            <div className="flex flex-col gap-2 py-4 px-4">
+              <span className="text-sm font-semibold text-primary font-sans">
+                Your Label
+              </span>
+
               <p className="text-2xl mt-2">{connection?.comment?.emoji}</p>
-            )}
-          </div>
+            </div>
+          )}
 
           {user.userData.lanna && (
             <InteractivePSI
