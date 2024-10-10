@@ -13,6 +13,7 @@ import { User } from "@/lib/storage/types";
 import { storage } from "@/lib/storage";
 import { createRegisterActivity } from "../activity";
 import { generatePSIKeyPair, psiBlobUploadClient } from "../psi";
+import { supabase } from "@/lib/realtime";
 
 export interface RegisterUserArgs {
   signinToken: string;
@@ -139,6 +140,14 @@ export async function registerUser({
       password,
       backupData,
     });
+
+    // Authenticate with supabase
+    const { data: authData, error: authError } =
+      await supabase.auth.signInAnonymously();
+    if (!authData) {
+      console.error("Error with realtime auth.", authError);
+      throw new Error("Failed to authenticate realtime. Please try again.");
+    }
 
     // Load the initial storage data
     await storage.loadInitialStorageData({
