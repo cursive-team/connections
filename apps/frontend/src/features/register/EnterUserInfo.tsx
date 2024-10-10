@@ -55,7 +55,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
     },
     {
       field: "twitterHandle",
-      question: "What is your X handle?",
+      question: "What is your Twitter handle?",
       required: false,
       placeholder: "Twitter",
     },
@@ -114,7 +114,22 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
     }
   };
 
-  const handleNext = (e: unknown) => {
+  const handleNext = async (e: unknown) => {
+    if (step === 0) {
+      try {
+        UsernameSchema.parse(formData.username);
+        const isUnique = await verifyUsernameIsUnique(formData.username);
+        if (!isUnique) {
+          toast.error("Username is already taken");
+          return;
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Please enter a valid username (3+ characters)");
+        return;
+      }
+    }
+
     if (step < steps.length - 1) {
       setStep(step + 1);
     } else {
@@ -138,48 +153,49 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
   return (
     <div
       onSubmit={handleSubmit}
-      className="relative h-full space-y-6 -mt-10"
+      className="relative h-full space-y-6 py-2"
       style={{
         height: `${pageHeight}px`,
       }}
     >
-      <div className="flex flex-col gap-2">
-        <span className=" text-lg font-semibold font-sans text-primary ">
+      <div className="flex flex-col gap-2 py-4">
+        <span className="text-[20px] font-semibold font-sans text-primary ">
           Link your contact info
         </span>
-        <span className=" font-sans text-sm font-normal">
+        <span className="font-sans text-sm font-normal">
           The info you enter will be saved to your Cursive chip, allowing you to
-          share it instantly with a tap.
+          share it instantly with a tap. You can always add, remove, or change
+          this data in the app.
         </span>
       </div>
-      {chipIssuer && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Registering chip issued by: {chipIssuer}
-        </p>
-      )}
 
       <div className="relative mb-6">
-        <ArrowRightIcon className="absolute size-6 left-0 top-1/2 transform -translate-y-1/2 text-primary" />
         {steps[step].field === "bio" ? (
-          <textarea
-            className="w-full pl-8 pr-4 py-2 text-lg font-semibold font-sans focus:outline-none min-h-[100px] resize-none  bg-transparent"
-            placeholder={steps[step].question}
-            value={formData.bio}
-            onChange={(e) => handleInputChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            aria-label={steps[step].question}
-          />
+          <>
+            <ArrowRightIcon className="absolute size-6 left-0 top-0 transform text-primary" />
+            <textarea
+              className="w-full pl-8 pr-4 text-[14px] font-semibold font-sans focus:outline-none min-h-[100px] resize-none  bg-transparent"
+              placeholder={steps[step].question}
+              value={formData.bio}
+              onChange={(e) => handleInputChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              aria-label={steps[step].question}
+            />
+          </>
         ) : (
-          <input
-            type="text"
-            className="w-full pl-8 pr-4 py-2 text-lg bg-transparent font-semibold font-sans focus:outline-none "
-            placeholder={steps[step].question}
-            value={formData[steps[step].field as keyof FormData]}
-            onChange={(e) => handleInputChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            aria-label={steps[step].question}
-            required={steps[step].required}
-          />
+          <>
+            <ArrowRightIcon className="absolute size-6 left-0 top-1/2 transform -translate-y-1/2 text-primary" />
+            <input
+              type="text"
+              className="w-full pl-8 pr-4 py-2 text-[14px] bg-transparent font-semibold font-sans focus:outline-none "
+              placeholder={steps[step].question}
+              value={formData[steps[step].field as keyof FormData]}
+              onChange={(e) => handleInputChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              aria-label={steps[step].question}
+              required={steps[step].required}
+            />
+          </>
         )}
       </div>
 
@@ -201,7 +217,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
                   height={24}
                 />
               )}
-              <span className="font-sans text-sm font-semibold text-quaternary">
+              <span className="font-sans text-[14px] font-semibold text-quaternary">
                 {fieldValue || s.placeholder || "-"}
               </span>
             </div>
@@ -223,7 +239,10 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
           disabled={!isStepValid()}
           className="h-12 font-bold text-primary font-sans text-lg uppercase disabled:text-tertiary duration-200"
         >
-          Next
+          {steps[step].required ||
+          formData[steps[step].field as keyof FormData] !== ""
+            ? "Next"
+            : "Skip"}
         </button>
       </div>
     </div>

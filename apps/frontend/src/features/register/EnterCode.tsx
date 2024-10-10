@@ -54,42 +54,39 @@ const EnterCode: React.FC<EnterCodeProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col grow">
       <RegisterHeader
-        title="Enter the 6-digit code "
-        description={`Sent to ${email} - expires in 15 minutes.`}
+        title="Enter the 6-digit code"
+        description={`Code sent to ${email} from hello@cursive.team. Expires in 15 minutes!`}
       />
-      {chipIssuer && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Registering chip issued by: {chipIssuer}
-        </p>
-      )}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <div className="flex flex-col gap-2 mt-20">
-            <div className="flex justify-between">
-              {code.map((digit, index) => (
-                <input
-                  key={index}
-                  id={`code-${index}`}
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleChange(index, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-12 h-12 text-2xl text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-              ))}
+      <div className="flex flex-col mt-auto">
+        <form onSubmit={handleSubmit} className="space-y-4 pb-2">
+          <div>
+            <div className="flex flex-col gap-2 mb-6">
+              <div className="flex justify-between">
+                {code.map((digit, index) => (
+                  <input
+                    key={index}
+                    id={`code-${index}`}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    className="w-12 h-12 text-2xl text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                ))}
+              </div>
+              <span className=" text-xs font-sans text-tertiary text-center">
+                Check your spam folder if you didn’t receive a code.
+              </span>
             </div>
-            <span className=" text-xs font-sans text-tertiary text-center">
-              Check your spam folder if you didn’t receive a code.
-            </span>
           </div>
-        </div>
-        <AppButton type="submit">Verify Code</AppButton>
-      </form>
-      <AppCopy className=" mt-auto mx-auto absolute bottom-5 text-center justify-center left-1/2 -translate-x-1/2" />
+          <AppButton type="submit">Verify Code</AppButton>
+        </form>
+        <AppCopy className="text-center py-4" />
+      </div>
     </div>
   );
 };
