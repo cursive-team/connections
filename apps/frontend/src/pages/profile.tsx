@@ -75,7 +75,7 @@ const ProfilePage: React.FC = () => {
       header={
         <div className="flex items-center justify-between w-full">
           <div className="flex flex-col pt-4">
-            <span className=" text-[30px] font-semibold tracking-[-0.22px] font-sans">{`@${user.userData.username}`}</span>
+            <span className=" text-[30px] font-semibold tracking-[-0.22px] font-sans">{`${user.userData.username}`}</span>
             <span className="text-sm font-medium font-sans text-tertiary">
               {user.userData.displayName}
             </span>
@@ -112,24 +112,27 @@ const ProfilePage: React.FC = () => {
           )}
           {user.userData.twitter?.username && (
             <LinkCardBox
-              label="X"
+              label="Twitter"
               value={user.userData.twitter.username}
               href={`https://twitter.com/${user.userData.twitter.username}`}
             />
           )}
         </div>
       </div>
+      {user.userData.bio !== "" && (
+        <div className="flex flex-col gap-2 py-4">
+          <span className="text-sm font-semibold text-primary font-sans">
+            Bio
+          </span>
+          <span className="text-sm text-tertiary font-normal font-sans">
+            {user.userData.bio}
+          </span>
+        </div>
+      )}
+
       <div className="flex flex-col gap-2 py-4">
         <span className="text-sm font-semibold text-primary font-sans">
-          Bio
-        </span>
-        <span className="text-sm text-tertiary font-normal font-sans">
-          {user.userData.bio}
-        </span>
-      </div>
-      <div className="flex flex-col gap-2 py-4">
-        <span className="text-sm font-semibold text-primary font-sans">
-          Desired Connections
+          Interests
         </span>
         {user.userData.lanna && (
           <div className="flex flex-wrap gap-2">
