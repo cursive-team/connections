@@ -32,6 +32,8 @@ Backend:
 
 Testing:
 
+- This is meant to be a mobile browser app. You can either test this on mobile browser by connecting it to localhost or using ngrok/similar service, or test from a desktop web browser using mobile view
+- This app does not work in incognito mode
 - Make sure you've seeded database with testing UserChip values: `pnpm run seed`
   - To register, visit: http://localhost:3000/tap?chipId=TEST001 and go through registration flow. `TEST002`- `TEST005` are also available for testing.
 - Once logged in, to tap another account there are two steps:
