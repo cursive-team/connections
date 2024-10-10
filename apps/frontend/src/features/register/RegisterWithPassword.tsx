@@ -6,13 +6,11 @@ import { AppButton } from "@/components/ui/Button";
 import { AppCopy } from "@/components/ui/AppCopy";
 
 interface RegisterWithPasswordProps {
-  chipIssuer: string | null;
   onSubmit: (password: string) => Promise<void>;
   onSwitchToPasskey: () => void;
 }
 
 const RegisterWithPassword: React.FC<RegisterWithPasswordProps> = ({
-  chipIssuer,
   onSubmit,
   onSwitchToPasskey,
 }) => {

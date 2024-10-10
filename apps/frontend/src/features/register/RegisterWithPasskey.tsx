@@ -7,14 +7,12 @@ import { RegisterHeader } from "./RegisterHeader";
 import { AppCopy } from "@/components/ui/AppCopy";
 
 interface RegisterWithPasskeyProps {
-  chipIssuer: string | null;
   username: string;
   onPasskeyRegister: (password: string, authPublicKey: string) => Promise<void>;
   onSwitchToPassword: () => void;
 }
 
 const RegisterWithPasskey: React.FC<RegisterWithPasskeyProps> = ({
-  chipIssuer,
   username,
   onPasskeyRegister,
   onSwitchToPassword,

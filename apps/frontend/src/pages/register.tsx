@@ -241,7 +241,7 @@ const Register: React.FC = () => {
     return null;
   }
 
-  const chipIssuer = savedTap?.tapResponse.chipIssuer ?? null;
+  // const chipIssuer = savedTap?.tapResponse.chipIssuer ?? null;
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {[
@@ -267,24 +267,16 @@ const Register: React.FC = () => {
 
       <div className="flex-grow flex px-6 center sm:mx-auto sm:w-full sm:max-w-md">
         {displayState === DisplayState.ENTER_EMAIL && (
-          <EnterEmail chipIssuer={chipIssuer} submitEmail={handleEmailSubmit} />
+          <EnterEmail submitEmail={handleEmailSubmit} />
         )}
         {displayState === DisplayState.ENTER_CODE && (
-          <EnterCode
-            chipIssuer={chipIssuer}
-            email={email}
-            submitCode={handleCodeSubmit}
-          />
+          <EnterCode email={email} submitCode={handleCodeSubmit} />
         )}
         {displayState === DisplayState.ENTER_USER_INFO && (
-          <EnterUserInfo
-            chipIssuer={chipIssuer}
-            onSubmit={handleUserInfoSubmit}
-          />
+          <EnterUserInfo onSubmit={handleUserInfoSubmit} />
         )}
         {displayState === DisplayState.REGISTER_WITH_PASSKEY && (
           <RegisterWithPasskey
-            chipIssuer={chipIssuer}
             username={username}
             onPasskeyRegister={handleRegisterWithPasskey}
             onSwitchToPassword={handleSwitchToRegisterWithPassword}
@@ -292,7 +284,6 @@ const Register: React.FC = () => {
         )}
         {displayState === DisplayState.REGISTER_WITH_PASSWORD && (
           <RegisterWithPassword
-            chipIssuer={chipIssuer}
             onSubmit={handleRegisterWithPassword}
             onSwitchToPasskey={handleSwitchToRegisterWithPasskey}
           />

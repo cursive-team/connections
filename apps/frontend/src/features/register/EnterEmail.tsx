@@ -7,11 +7,10 @@ import { RegisterHeader } from "./RegisterHeader";
 import { AppCopy } from "@/components/ui/AppCopy";
 
 interface EnterEmailProps {
-  chipIssuer: string | null;
   submitEmail: (email: string) => Promise<void>;
 }
 
-const EnterEmail: React.FC<EnterEmailProps> = ({ chipIssuer, submitEmail }) => {
+const EnterEmail: React.FC<EnterEmailProps> = ({ submitEmail }) => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
 

@@ -17,14 +17,10 @@ interface FormData {
 }
 
 interface EnterUserInfoProps {
-  chipIssuer: string | null;
   onSubmit: (userInfo: FormData) => Promise<void>;
 }
 
-const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
-  chipIssuer,
-  onSubmit,
-}) => {
+const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
   const [step, setStep] = useState(0);
   const { pageHeight } = useSettings();
   const [formData, setFormData] = useState<FormData>({

@@ -6,16 +6,11 @@ import { AppButton } from "@/components/ui/Button";
 import { AppCopy } from "@/components/ui/AppCopy";
 
 interface EnterCodeProps {
-  chipIssuer: string | null;
   email: string;
   submitCode: (code: string) => Promise<void>;
 }
 
-const EnterCode: React.FC<EnterCodeProps> = ({
-  chipIssuer,
-  email,
-  submitCode,
-}) => {
+const EnterCode: React.FC<EnterCodeProps> = ({ email, submitCode }) => {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
 
   const handleSubmit = async (e: React.FormEvent) => {
