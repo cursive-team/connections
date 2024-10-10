@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { generateSelfBitVector, psiBlobUploadClient } from "@/lib/psi";
 import init, { round1_js, round2_js, round3_js } from "@/lib/psi/mp_psi/mp_psi";
 import { supabase } from "@/lib/realtime";
-import { toast } from "sonner";
 import { CircleCard } from "@/components/ui/CircleCard";
 import { Card } from "@/components/cards/Card";
 import { Icons } from "@/components/Icons";
@@ -313,7 +312,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
 
     // start psi if other user is already interested
     if (otherUserWantsToInitiatePSI) {
-      console.log("Starting psi after other user initiating PSI", otherEncPk);
+      console.log("Starting psi after other user initiating PSI", otherSigPK);
       setWantsToInitiatePSI(false);
       setOtherUserWantsToInitiatePSI(false);
       setPsiState(PSIState.ROUND1);
@@ -342,12 +341,12 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
 
     // start psi if other user is already interested
     if (otherUserWantsToInitiatePSI) {
-      console.log("Starting psi after other user initiating PSI", otherEncPk);
+      console.log("Starting psi after other user initiating PSI", otherSigPK);
       setWantsToInitiatePSI(false);
       setOtherUserWantsToInitiatePSI(false);
       setPsiState(PSIState.ROUND1);
     } else {
-      console.log("Setting wants to initiate PSI after update", otherEncPk);
+      console.log("Setting wants to initiate PSI after update", otherSigPK);
       setWantsToInitiatePSI(true);
       setPsiState(PSIState.NOT_STARTED);
     }
