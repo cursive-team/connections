@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { tapChip } from "@/lib/chip/tap";
 import { TapParams, ChipTapResponse } from "@types";
 import { toast } from "sonner";
 import { storage } from "@/lib/storage";
+import { tapChip, updateLeaderboardEntry } from "@/lib/chip";
 
 const TapPage: React.FC = () => {
   const router = useRouter();
@@ -18,6 +18,7 @@ const TapPage: React.FC = () => {
         return;
       }
 
+      const user = await storage.getUser();
       const session = await storage.getSession();
 
       try {
@@ -26,7 +27,7 @@ const TapPage: React.FC = () => {
 
         if (response.chipIsRegistered) {
           // Chip is registered and tapped successfully
-          if (!response.tap) {
+          if (!response.tap || !response.tap.ownerUsername) {
             // This shouldn't happen, but handle it just in case
             console.error("Chip is registered but tap data is missing");
             toast.error("Bad tap!");
@@ -36,11 +37,29 @@ const TapPage: React.FC = () => {
 
           // If user is not logged in, direct them to tap a new chip to register
           // TODO: Allow users to tap without being signed in
-          if (!session) {
+          if (!user || !session) {
             toast.error("Please tap a new chip to register!");
             router.push("/");
             return;
           }
+
+          // If the auth token is expired, tell them to sign in again
+          if (session.authTokenExpiresAt < new Date()) {
+            toast.error("Your session has expired! Please sign in again.");
+            router.push("/");
+            return;
+          }
+
+          if (user.userData.username === response.tap.ownerUsername) {
+            router.push("/");
+            return;
+          }
+
+          // Update leaderboard entry
+          await updateLeaderboardEntry(
+            response.tap.ownerUsername,
+            response.chipIssuer
+          );
 
           // Save tap to local storage
           await storage.addTap(response);
@@ -80,14 +99,12 @@ const TapPage: React.FC = () => {
   }, [router]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">
+        <h1 className="text-2xl font-bold mb-4 text-black">
           Processing Tap...
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Please wait while we process your tap.
-        </p>
+        <p className="text-black">Please wait while we process your tap.</p>
       </div>
     </div>
   );

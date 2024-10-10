@@ -21,6 +21,7 @@ export interface InitialStorageData {
 export interface ClientStorage {
   loadInitialStorageData(initialStorageData: InitialStorageData): Promise<void>;
   deleteStorageData(): Promise<void>;
+  getUserAndSession(): Promise<{ user: User; session: Session }>;
   getUser(): Promise<User | undefined>;
   getSession(): Promise<Session | undefined>;
   saveTapInfo(tapInfo: TapInfo): Promise<void>;

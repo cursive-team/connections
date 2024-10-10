@@ -11,6 +11,7 @@ import {
 import {
   AuthToken,
   BackupData,
+  ChipIssuer,
   ChipTapResponse,
   CreateBackupData,
   RegisterChipRequest,
@@ -42,7 +43,7 @@ export class Controller {
   PostgresHealthCheck(): Promise<boolean> {
     return this.postgresClient.HealthCheck();
   }
-  
+
   GetUserByUsernameCaseInsensitive(username: string): Promise<User | null> {
     return this.postgresClient.GetUserByUsernameCaseInsensitive(username);
   }
@@ -112,6 +113,13 @@ export class Controller {
 
   GetTapFromChip(tapParams: TapParams): Promise<ChipTapResponse> {
     return this.chipClient.GetTapFromChip(tapParams);
+  }
+
+  UpdateLeaderboardEntry(
+    username: string,
+    chipIssuer: ChipIssuer
+  ): Promise<void> {
+    return this.chipClient.UpdateLeaderboardEntry(username, chipIssuer);
   }
 
   EmailSigninToken(signinToken: SigninToken): Promise<void> {

@@ -4,7 +4,12 @@ import {
   getSession,
   saveSession,
 } from "@/lib/storage/localStorage/session";
-import { deleteUser, getUser, saveUser } from "@/lib/storage/localStorage/user";
+import {
+  deleteUser,
+  getUser,
+  getUserAndSession,
+  saveUser,
+} from "@/lib/storage/localStorage/user";
 import {
   Activity,
   Chip,
@@ -45,6 +50,10 @@ export class LocalStorage implements ClientStorage {
   async deleteStorageData(): Promise<void> {
     deleteUser();
     deleteSession();
+  }
+
+  async getUserAndSession(): Promise<{ user: User; session: Session }> {
+    return getUserAndSession();
   }
 
   async getUser(): Promise<User | undefined> {

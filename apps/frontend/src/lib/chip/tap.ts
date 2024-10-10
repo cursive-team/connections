@@ -1,9 +1,8 @@
 import { BASE_API_URL } from "@/config";
 import { TapParams, ChipTapResponse, ChipTapResponseSchema } from "@types";
-import { storage } from "@/lib/storage";
 
 /**
- * Taps a chip with the given parameters and add the result to storage.
+ * Taps a chip with the given parameters and return the result.
  * @param tapParams The parameters for tapping the chip.
  * @returns A promise that resolves to the ChipTapResponse.
  */
@@ -24,10 +23,6 @@ export async function tapChip(tapParams: TapParams): Promise<ChipTapResponse> {
 
     const data = await response.json();
     const parsedData = ChipTapResponseSchema.parse(data);
-
-    if (parsedData.chipIsRegistered && parsedData.tap) {
-      await storage.addTap(parsedData);
-    }
 
     return parsedData;
   } catch (error) {

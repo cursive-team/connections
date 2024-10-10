@@ -1,12 +1,13 @@
 import { createConnectionBackup } from "@/lib/backup";
-import { getUserAndSession, saveBackupAndUpdateStorage } from "../../utils";
+import { saveBackupAndUpdateStorage } from "../../utils";
 import { CommentData, CommentDataSchema } from "@/lib/storage/types";
+import { getUserAndSession } from "..";
 
 export const updateComment = async (
   connectionUsername: string,
   commentData: CommentData
 ): Promise<void> => {
-  const { user, session } = getUserAndSession();
+  const { user, session } = await getUserAndSession();
 
   const connection = user.connections[connectionUsername];
   if (!connection) {

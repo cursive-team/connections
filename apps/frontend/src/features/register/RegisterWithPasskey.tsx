@@ -7,7 +7,6 @@ import { RegisterHeader } from "./RegisterHeader";
 import { AppCopy } from "@/components/ui/AppCopy";
 
 interface RegisterWithPasskeyProps {
-  chipIssuer: string | null;
   username: string;
   onPasskeyRegister: (password: string, authPublicKey: string) => Promise<void>;
   onSwitchToPassword: () => void;
@@ -45,28 +44,27 @@ const RegisterWithPasskey: React.FC<RegisterWithPasskeyProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col grow">
       <RegisterHeader
-        title={
-          <span className="font-sans text-center text-[30px] leading-[30px] font-semibold text-primary tracking-[-0.22px]">
-            Welcome, <br /> {`${username || "placeholder"}!`}
-          </span>
-        }
-        subtitle="Get started wielding your data"
-        description="We only host encrypted backups of your data and cannot see the contents."
+        title={`Finish securing your account`}
+        description="A passkey or password is used to securely encrypt your data as a backup. 
+        No further data you add will be stored on our servers."
       />
-      <div className="flex flex-col space-y-3">
-        <AppButton onClick={handlePasskeyRegistration}>
-          Register with passkey
-        </AppButton>
-        <span className="text-quaternary text-center text-sm font-sans ">
-          or
-        </span>
-        <AppButton onClick={onSwitchToPassword} variant="outline">
-          Choose a password
-        </AppButton>
+
+      <div className="flex flex-col mt-auto">
+        <div className="flex flex-col space-y-3 pb-2">
+          <AppButton onClick={handlePasskeyRegistration}>
+            Secure with passkey
+          </AppButton>
+          <span className="text-quaternary text-center text-sm font-sans ">
+            or
+          </span>
+          <AppButton onClick={onSwitchToPassword} variant="outline">
+            Secure with password
+          </AppButton>
+        </div>
+        <AppCopy className="text-center py-4" />
       </div>
-      <AppCopy className=" mt-auto mx-auto absolute bottom-5 text-center justify-center left-1/2 -translate-x-1/2" />
     </div>
   );
 };

@@ -10,7 +10,7 @@ import { InputWrapper, InputWrapperProps } from "./InputWrapper";
 import { cn } from "@/lib/frontend/util";
 
 const InputComponent = classed.input(
-  "rounded-[7px] min-h-5 py-2 px-3 placeholder-black/40 text-sm leading-[20px] w-full text-primary !outline-none shadow-none focus:border focus:ring-0 focus:outline-none focus:shadow-none focus:outline-offset-0 focus:ring-offset-0 disabled:opacity-50",
+  "rounded-[7px] min-h-5 py-2 px-3 placeholder-black text-sm leading-[20px] w-full text-primary !outline-none shadow-none focus:border focus:ring-0 focus:outline-none focus:shadow-none focus:outline-offset-0 focus:ring-offset-0 disabled:opacity-50",
   {
     variants: {
       variant: {

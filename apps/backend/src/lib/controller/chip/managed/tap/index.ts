@@ -12,7 +12,7 @@ ManagedChipClient.prototype.GetTapFromChip = async function (
     );
     return tapResponse;
   } catch (error) {
-    console.log(errorToString(error));
+    console.error(errorToString(error));
     throw new Error("Failed to get tap from chip");
   }
 };

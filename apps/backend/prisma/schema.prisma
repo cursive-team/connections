@@ -76,3 +76,11 @@ model Chip {
   ownerUserData            Json? // Nullable JSONB field
   createdAt                DateTime  @default(now())
 }
+
+model LeaderboardEntry {
+  id         String   @id @default(uuid())
+  username   String
+  chipIssuer String
+  tapCount   Int
+  createdAt  DateTime @default(now())
+}

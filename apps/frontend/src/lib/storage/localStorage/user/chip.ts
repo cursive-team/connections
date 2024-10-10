@@ -1,10 +1,11 @@
 import { createActivityBackup, createChipBackup } from "@/lib/backup";
 import { Chip } from "@/lib/storage/types";
 import { createRegisterChipActivity } from "@/lib/activity";
-import { getUserAndSession, saveBackupAndUpdateStorage } from "../utils";
+import { saveBackupAndUpdateStorage } from "../utils";
+import { getUserAndSession } from ".";
 
 export const addChip = async (chip: Chip): Promise<void> => {
-  const { user, session } = getUserAndSession();
+  const { user, session } = await getUserAndSession();
 
   const chipBackup = createChipBackup({
     email: user.email,

@@ -1,9 +1,10 @@
 import { UserData } from "@/lib/storage/types";
 import { createUserDataBackup } from "@/lib/backup";
-import { getUserAndSession, saveBackupAndUpdateStorage } from "../utils";
+import { saveBackupAndUpdateStorage } from "../utils";
+import { getUserAndSession } from ".";
 
 export const updateUserData = async (userData: UserData): Promise<void> => {
-  const { user, session } = getUserAndSession();
+  const { user, session } = await getUserAndSession();
 
   const userDataBackup = createUserDataBackup({
     email: user.email,

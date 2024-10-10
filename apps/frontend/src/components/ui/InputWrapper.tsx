@@ -7,14 +7,14 @@ const InputLabel = classed.div(
 );
 
 const InputDescription = classed.div(
-  "text-secondary text-sm font-inter font-normal leading-4"
+  "text-secondary text-[12px] font-inter font-normal leading-4"
 );
 
 const InputError = classed.div(
   "absolute text-error text-xs leading-4 -bottom-5 text-red-400"
 );
 
-const InputSpacing = classed.div("relative flex flex-col gap-[6px]");
+const InputSpacing = classed.div("relative flex flex-col gap-[8px]");
 
 type InputLabelVariants = Classed.VariantProps<typeof InputLabel>;
 type InputDescriptionVariants = Classed.VariantProps<typeof InputDescription>;

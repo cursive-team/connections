@@ -21,6 +21,7 @@ const config: Config = {
       },
       fontFamily: {
         base: "var(--font-base)",
+        sans: "var(--font-dm-sans)",
       },
       colors: {
         background: "#FFF",

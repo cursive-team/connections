@@ -7,18 +7,20 @@ import { RegisterHeader } from "./RegisterHeader";
 import { AppCopy } from "@/components/ui/AppCopy";
 
 interface EnterEmailProps {
-  chipIssuer: string | null;
   submitEmail: (email: string) => Promise<void>;
 }
 
 const EnterEmail: React.FC<EnterEmailProps> = ({ submitEmail }) => {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      setLoading(true);
       EmailSchema.parse(email);
       await submitEmail(email);
+      setLoading(false);
     } catch (error) {
       console.error(error);
       toast.error("Please enter a valid email address");
@@ -31,14 +33,14 @@ const EnterEmail: React.FC<EnterEmailProps> = ({ submitEmail }) => {
   };
 
   return (
-    <div className="flex flex-col space-y-6 h-full">
+    <div className="flex flex-col grow">
       <RegisterHeader
         title="Ready to tap into serendipity?"
         description="Discover & deepen connections with residents while choosing what you reveal about your data. This is programmable cryptography in action!"
       />
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <div className="mt-1">
+      <div className="flex flex-col mt-auto">
+        <form onSubmit={handleSubmit} className="space-y-4 pb-2">
+          <div className="text-center mt-1">
             <AppInput
               id="email"
               name="email"
@@ -51,12 +53,12 @@ const EnterEmail: React.FC<EnterEmailProps> = ({ submitEmail }) => {
               description="Register with the email you used for Edge City."
             />
           </div>
-        </div>
-        <div>
-          <AppButton type="submit">Next</AppButton>
-        </div>
-      </form>
-      <AppCopy className=" mt-auto mx-auto absolute bottom-5 text-center justify-center left-1/2 -translate-x-1/2" />
+          <AppButton loading={loading} type="submit">
+            Next
+          </AppButton>
+        </form>
+        <AppCopy className="text-center py-4" />
+      </div>
     </div>
   );
 };

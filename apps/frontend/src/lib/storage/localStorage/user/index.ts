@@ -2,7 +2,8 @@ import {
   saveToLocalStorage,
   getFromLocalStorage,
 } from "@/lib/storage/localStorage/utils";
-import { User, UserSchema } from "@/lib/storage/types";
+import { Session, User, UserSchema } from "@/lib/storage/types";
+import { getSession } from "../session";
 
 const USER_STORAGE_KEY = "user";
 
@@ -25,4 +26,21 @@ export const getUser = (): User | undefined => {
 
 export const deleteUser = (): void => {
   localStorage.removeItem(USER_STORAGE_KEY);
+};
+
+export const getUserAndSession = async (): Promise<{
+  user: User;
+  session: Session;
+}> => {
+  const user = getUser();
+  const session = getSession();
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+  if (!session || session.authTokenExpiresAt < new Date()) {
+    throw new Error("Session expired");
+  }
+
+  return { user, session };
 };
