@@ -1,4 +1,3 @@
-import { link } from "fs";
 import type { Config } from "tailwindcss";
 
 const config: Config = {

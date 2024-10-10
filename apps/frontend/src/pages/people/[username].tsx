@@ -10,6 +10,7 @@ import Image from "next/image";
 import AppLayout from "@/layouts/AppLayout";
 import { LinkCardBox } from "@/components/ui/LinkCardBox";
 import { AppTextarea } from "@/components/ui/Textarea";
+import { ProfileImage } from "@/components/ui/ProfileImage";
 import InteractivePSI from "@/features/psi/InteractivePSI";
 
 interface TapChipModalProps {
@@ -31,8 +32,8 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="flex flex-col bg-white p-6 rounded-[50px] w-full max-w-[90vw] h-[80vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+      <div className="flex flex-col bg-white p-6 rounded-[32px] w-full max-w-[90vw] h-[80vh] overflow-y-auto">
         <div className="size-[80px] relative flex mx-auto">
           <div className="absolute -left-3 size-8 rounded-full bg-[#9DE8FF] z-0 top-[28px] border border-quaternary/10"></div>
           <Image
@@ -44,7 +45,7 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
           />
           <div className=" absolute size-8 rounded-full bg-[#FFFF9D] -right-3 top-[28px] z-0 border border-quaternary/10"></div>
         </div>
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col text-center">
             <span className="text-[20px] font-semibold text-primary tracking-[-0.1px] font-sans">
               {tapResponse.tap?.ownerUsername}
@@ -172,9 +173,6 @@ const UserProfilePage: React.FC = () => {
     return <div className="text-center p-4">Loading...</div>;
   }
 
-  const showSocials =
-    connection?.user?.twitter?.username && connection?.user?.telegram?.username;
-
   return (
     <>
       {showTapModal && tapInfo && (
@@ -186,6 +184,7 @@ const UserProfilePage: React.FC = () => {
       )}
       <AppLayout
         withContainer={false}
+        showFooter={false}
         back={{
           label: "Back",
           href: "/people",
@@ -194,18 +193,19 @@ const UserProfilePage: React.FC = () => {
           <div className="flex flex-col w-full">
             <div className="flex items-center justify-between w-full">
               <div className="flex flex-col pt-4">
-                <span className=" text-[30px] font-semibold tracking-[-0.22px] font-sans">{`@${connection?.user?.username}`}</span>
+                <span className=" text-[30px] font-semibold tracking-[-0.22px] font-sans">{`${connection?.user?.username}`}</span>
                 <span className="text-sm font-medium font-sans text-tertiary">
                   {connection?.user?.displayName}
                 </span>
               </div>
-              <div className="size-10 bg-button-secondary rounded-full border border-quaternary/10"></div>
+              <ProfileImage user={connection.user} />
             </div>
           </div>
         }
       >
-        <div className="divide-y divide-y-primary pt-10">
-          {showSocials && (
+        <div className="divide-y divide-y-primary pt-4">
+          {(connection?.user?.twitter?.username ||
+            connection?.user?.telegram?.username) && (
             <div className="flex flex-col gap-2 py-4 px-4">
               <span className="text-sm font-semibold text-primary font-sans">
                 Socials
@@ -220,7 +220,7 @@ const UserProfilePage: React.FC = () => {
                 )}
                 {connection?.user?.twitter?.username && (
                   <LinkCardBox
-                    label="X"
+                    label="Twitter"
                     value={`@${connection.user.twitter.username}`}
                     href={`https://twitter.com/${connection.user.twitter.username}`}
                   />
@@ -229,14 +229,18 @@ const UserProfilePage: React.FC = () => {
             </div>
           )}
 
-          <div className="flex flex-col gap-2 py-4 px-4">
-            <span className="text-sm font-semibold text-primary font-sans">
-              Bio
-            </span>
-            <span className="text-sm text-secondary font-sans font-normal">
-              {connection?.user?.bio}
-            </span>
-          </div>
+          {connection?.user?.bio && (
+            <div className="flex flex-col gap-2 py-4 px-4">
+              <>
+                <span className="text-sm font-semibold text-primary font-sans">
+                  Bio
+                </span>
+                <span className="text-sm text-secondary font-sans font-normal">
+                  {connection?.user?.bio}
+                </span>
+              </>
+            </div>
+          )}
 
           <div className="flex flex-col gap-2 py-4 px-4">
             <span className="text-sm font-semibold text-primary font-sans">
@@ -244,6 +248,12 @@ const UserProfilePage: React.FC = () => {
             </span>
             <span className="text-sm text-secondary font-sans font-normal">
               {connection?.comment?.note}
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-2 py-4 px-4">
+            <span className="text-sm font-semibold text-primary font-sans">
+              Your Label
             </span>
             {connection?.comment?.emoji && (
               <p className="text-2xl mt-2">{connection?.comment?.emoji}</p>
