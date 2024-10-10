@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useEffect, useState } from "react";
-import { generateSelfBitVector, psiBlobUploadClient } from "@/lib/psi";
+import { generateBitVectorFromLannaData, psiBlobUploadClient } from "@/lib/psi";
 import init, { round1_js, round2_js, round3_js } from "@/lib/psi/mp_psi/mp_psi";
 import { supabase } from "@/lib/realtime";
-import { CircleCard } from "@/components/ui/CircleCard";
 import { Card } from "@/components/cards/Card";
 import { Icons } from "@/components/Icons";
-import { IconCircle } from "@/components/ui/FeedContent";
 import { AppButton } from "@/components/ui/Button";
+import { LannaData } from "@/lib/storage/types/user";
 
 enum PSIState {
   NOT_STARTED,
@@ -26,12 +25,13 @@ const PSIStateMapping: Record<PSIState, string> = {
   [PSIState.COMPLETE]: "Complete",
 };
 
-export interface InteractivePSIProps {
+interface InteractivePSIProps {
   selfSigPK: string;
   otherSigPK: string;
   serializedPsiPrivateKey: string;
   selfPsiPublicKeyLink: string;
   otherPsiPublicKeyLink: string;
+  selfLannaData: LannaData;
 }
 
 const InteractivePSI: React.FC<InteractivePSIProps> = ({
@@ -40,6 +40,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
   serializedPsiPrivateKey,
   selfPsiPublicKeyLink,
   otherPsiPublicKeyLink,
+  selfLannaData,
 }) => {
   const [broadcastEvent, setBroadcastEvent] = useState<any>();
 
@@ -126,9 +127,9 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
     setupChannel();
   }, []);
 
-  const closeChannel = async () => {
-    await supabase.removeChannel(supabase.channel(getChannelName()));
-  };
+  // const closeChannel = async () => {
+  //   await supabase.removeChannel(supabase.channel(getChannelName()));
+  // };
 
   // process broadcast events
   useEffect(() => {
@@ -178,7 +179,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
       const psiPrivateKey = JSON.parse(serializedPsiPrivateKey);
 
       if (psiState === PSIState.ROUND1) {
-        const selfBitVector = generateSelfBitVector();
+        const selfBitVector = generateBitVectorFromLannaData(selfLannaData);
 
         await init();
         const round1Output = round1_js(
@@ -258,7 +259,6 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
 
         setSelfRound3Output(overlapIndices);
       } else if (psiState === PSIState.COMPLETE) {
-        await closeChannel();
         setOverlapIndices(selfRound3Output || []);
       }
     }
@@ -353,17 +353,17 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
   };
 
   return (
-    <Card.Base className="flex flex-col p-4 gap-6 !bg-gray/20 !rounded-none !border-white/20 mt-4 mb-8">
+    <Card.Base className="flex flex-col p-4 gap-6 bg-white rounded-lg border border-gray-200 mt-4 mb-8 shadow-sm">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          <Icons.Cards className="text-secondary" />
-          <span className="font-medium text-white text-sm font-inter">
+          <Icons.Cards className="text-gray-600" />
+          <span className="font-medium text-gray-800 text-sm font-inter">
             What do you both have in common?
           </span>
         </div>
 
-        <span className="text-white/50 font-inter text-xs font-normal">
-          {isOverlapComputed ? (
+        <span className="text-gray-600 font-inter text-xs font-normal">
+          {psiState === PSIState.COMPLETE ? (
             "Overlap computed at the time you both opted into "
           ) : (
             <>
@@ -375,41 +375,52 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
             href="https://github.com/cursive-team/2P-PSI/tree/vivek/wasm-2p-psi"
             target="_blank"
             rel="noopener noreferrer"
+            className="text-link-primary hover:underline"
           >
             {" "}
-            <u>2PC + FHE</u>.
+            2PC + FHE
           </a>
+          .
         </span>
       </div>
-      {isOverlapComputed ? (
+      {psiState === PSIState.COMPLETE ? (
         <div className="flex flex-col gap-1">
-          {userOverlap.map(({ userId, name }, index) => {
-            return (
-              <div
-                onClick={() => {
-                  window.location.href = `/users/${userId}`;
-                }}
-                key={index}
-              >
-                <div className="flex justify-between border-b w-full border-gray-300  last-of-type:border-none first-of-type:pt-0 py-1">
-                  <div className="flex items-center gap-2">
-                    <IconCircle>
-                      <CircleCard icon="person" />
-                    </IconCircle>
-                    <Card.Title>{name}</Card.Title>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+          <div className="flex flex-wrap gap-2">
+            {overlapIndices.map((index) => {
+              const interests = [
+                "getHealthy",
+                "enjoyMeals",
+                "haveCoffee",
+                "party",
+                "attendTalks",
+              ];
+              const interest = interests[index];
+              const emoji = {
+                getHealthy: "🏃",
+                enjoyMeals: "🍲",
+                haveCoffee: "☕️",
+                party: "🎉",
+                attendTalks: "🤓",
+              }[interest];
+
+              return (
+                <span
+                  key={interest}
+                  className="px-2 py-1 text-xs font-medium bg-[#FF9DF8] text-gray-800 rounded-full flex items-center gap-1"
+                >
+                  {emoji}{" "}
+                  {interest.charAt(0).toUpperCase() +
+                    interest.slice(1).replace(/([A-Z])/g, " $1")}
+                </span>
+              );
+            })}
+          </div>
           <AppButton
             type="button"
             onClick={handleUpdatePSI}
             size="md"
             variant="outline"
-            style={{
-              marginTop: "16px",
-            }}
+            className="mt-4 text-[rgb(244,41,213)] border-[rgb(244,41,213)] hover:bg-blue-50"
           >
             Update
           </AppButton>
@@ -421,6 +432,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
           size="md"
           variant="outline"
           disabled={!otherUserInChannel}
+          className="text-[rgb(244,41,213)] border-[rgb(244,41,213)] hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {wantsToInitiatePSI
             ? "Waiting for other user to accept..."
@@ -430,15 +442,16 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
         </AppButton>
       ) : (
         <div className="flex flex-col gap-2">
-          <span className="text-white text-xs text-center">
+          <span className="text-gray-600 text-xs text-center">
             {PSIStateMapping[psiState]}
           </span>
-          <div className="relative">
-            <Card.Progress
+          <div className="relative h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="absolute top-0 left-0 h-full bg-[rgb(244,41,213)] transition-all duration-500 ease-in-out"
               style={{
                 width: `${(100 * psiState) / PSIState.COMPLETE}%`,
               }}
-            />
+            ></div>
           </div>
         </div>
       )}

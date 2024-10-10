@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { Connection } from "@/lib/storage/types";
+import { Connection, Session, User } from "@/lib/storage/types";
 import { toast } from "sonner";
 import { TapParams, ChipTapResponse } from "@types";
 import { AppButton } from "@/components/ui/Button";
@@ -100,6 +100,8 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
 const UserProfilePage: React.FC = () => {
   const router = useRouter();
   const { username } = router.query;
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [tapInfo, setTapInfo] = useState<{
     tapParams: TapParams;
@@ -111,13 +113,16 @@ const UserProfilePage: React.FC = () => {
     const fetchConnectionAndTapInfo = async () => {
       if (typeof username === "string") {
         const user = await storage.getUser();
-        if (!user || !user.connections[username]) {
+        const session = await storage.getSession();
+        if (!user || !session || !user.connections[username]) {
           console.error("User not found");
           toast.error("User not found");
           router.push("/people");
           return;
         }
 
+        setUser(user);
+        setSession(session);
         setConnection(user.connections[username]);
         const savedTapInfo = await storage.loadSavedTapInfo();
         // Delete saved tap info after fetching
@@ -163,7 +168,7 @@ const UserProfilePage: React.FC = () => {
     }
   };
 
-  if (!connection) {
+  if (!connection || !user || !session) {
     return <div className="text-center p-4">Loading...</div>;
   }
 
@@ -245,7 +250,16 @@ const UserProfilePage: React.FC = () => {
             )}
           </div>
 
-          <InteractivePSI />
+          {user.userData.lanna && (
+            <InteractivePSI
+              selfSigPK={user.userData.signaturePublicKey}
+              otherSigPK={connection.user.signaturePublicKey}
+              serializedPsiPrivateKey={user.serializedPsiPrivateKey}
+              selfPsiPublicKeyLink={user.userData.psiPublicKeyLink}
+              otherPsiPublicKeyLink={connection.user.psiPublicKeyLink}
+              selfLannaData={user.userData.lanna}
+            />
+          )}
         </div>
       </AppLayout>
     </>

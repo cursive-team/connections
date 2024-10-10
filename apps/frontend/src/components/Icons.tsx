@@ -97,4 +97,22 @@ export const Icons: Record<string, any> = {
       />
     </svg>
   ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Cards: ({ ...props }: any) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      {...props}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M0.4 8H4V11.6C4 11.8209 4.17909 12 4.4 12H11.6C11.8209 12 12 11.8209 12 11.6V4.4C12 4.17909 11.8209 4 11.6 4H8V0.4C8 0.179086 7.82091 0 7.6 0H0.4C0.179086 0 0 0.179086 0 0.4V7.6C0 7.82091 0.179086 8 0.4 8ZM1.33333 1.33333V6.66667H4V4.4C4 4.37239 4.0028 4.34543 4.00813 4.31939C4.04542 4.13711 4.2067 4 4.4 4H6.66667V1.33333H1.33333ZM8 5.33333V7.6C8 7.62761 7.9972 7.65457 7.99187 7.68061C7.95458 7.86289 7.7933 8 7.6 8H5.33333V10.6667H10.6667V5.33333H8Z"
+        fill="currentColor"
+      />
+    </svg>
+  ),
 };

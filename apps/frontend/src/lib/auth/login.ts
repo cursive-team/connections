@@ -9,6 +9,7 @@ import {
   errorToString,
 } from "@types";
 import { hashPassword } from "@/lib/crypto/backup";
+import { supabase } from "@/lib/realtime";
 
 export async function loginUser(
   email: string,
@@ -38,6 +39,14 @@ export async function loginUser(
     const computedPasswordHash = await hashPassword(password, passwordSalt);
     if (computedPasswordHash !== passwordHash) {
       throw new Error("Invalid password");
+    }
+
+    // Authenticate with supabase
+    const { data: authData, error: authError } =
+      await supabase.auth.signInAnonymously();
+    if (!authData) {
+      console.error("Error with realtime auth.", authError);
+      throw new Error("Failed to authenticate realtime. Please try again.");
     }
 
     const { user, submittedAt } = processUserBackup({

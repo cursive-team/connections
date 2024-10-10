@@ -1,4 +1,5 @@
 import { storage } from "@/lib/storage";
+import { supabase } from "@/lib/realtime";
 
 /**
  * Logs out the user by deleting all storage data.
@@ -6,6 +7,7 @@ import { storage } from "@/lib/storage";
  */
 export async function logoutUser(): Promise<void> {
   try {
+    await supabase.auth.signOut();
     await storage.deleteStorageData();
 
     return;
