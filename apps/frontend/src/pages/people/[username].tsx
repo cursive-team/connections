@@ -205,7 +205,7 @@ const UserProfilePage: React.FC = () => {
                 Socials
               </span>
               <div className="flex flex-col gap-4">
-                {connection?.user?.telegram?.username !== undefined && (
+                {connection?.user?.telegram?.username && (
                   <LinkCardBox
                     label="Telegram"
                     value={`@${connection.user.telegram.username}`}
