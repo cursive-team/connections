@@ -367,7 +367,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
             "Overlap computed at the time you both opted into "
           ) : (
             <>
-              If you both tap Discover <b>at the same time</b> we will privately
+              If you both tap discover <b>at the same time</b> we will privately
               compute any overlap using
             </>
           )}

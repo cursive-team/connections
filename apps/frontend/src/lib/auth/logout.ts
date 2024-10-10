@@ -13,6 +13,5 @@ export async function logoutUser(): Promise<void> {
     return;
   } catch (error) {
     console.error("Error during logout:", error);
-    throw new Error("Failed to logout. Please try again.");
   }
 }
