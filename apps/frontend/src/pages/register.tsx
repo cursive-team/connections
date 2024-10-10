@@ -18,7 +18,6 @@ import {
   verifyUsernameIsUnique,
 } from "@/lib/auth/util";
 import { LannaDesiredConnections, TapInfo } from "@/lib/storage/types";
-import { AppCopy } from "@/components/ui/AppCopy";
 import { registerChip } from "@/lib/chip/register";
 import { registerUser } from "@/lib/auth/register";
 
@@ -242,9 +241,9 @@ const Register: React.FC = () => {
     return null;
   }
 
-  const chipIssuer = savedTap?.tapResponse.chipIssuer ?? null;
+  // const chipIssuer = savedTap?.tapResponse.chipIssuer ?? null;
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col pb-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       {[
         DisplayState.ENTER_EMAIL,
         DisplayState.ENTER_CODE,
@@ -253,9 +252,9 @@ const Register: React.FC = () => {
         DisplayState.CREATING_ACCOUNT,
         DisplayState.LANNA_DISCOVER_CONNECTIONS,
       ].includes(displayState) && (
-        <div className="h-[200px] w-full top-0">
+        <div className="w-full top-0">
           <Image
-            src="/images/register-main.svg"
+            src="/images/register-main.png"
             alt="register main"
             layout="responsive"
             className=" object-cover"
@@ -266,26 +265,18 @@ const Register: React.FC = () => {
         </div>
       )}
 
-      <div className="container mt-16 sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="flex-grow flex px-6 center sm:mx-auto sm:w-full sm:max-w-md">
         {displayState === DisplayState.ENTER_EMAIL && (
-          <EnterEmail chipIssuer={chipIssuer} submitEmail={handleEmailSubmit} />
+          <EnterEmail submitEmail={handleEmailSubmit} />
         )}
         {displayState === DisplayState.ENTER_CODE && (
-          <EnterCode
-            chipIssuer={chipIssuer}
-            email={email}
-            submitCode={handleCodeSubmit}
-          />
+          <EnterCode email={email} submitCode={handleCodeSubmit} />
         )}
         {displayState === DisplayState.ENTER_USER_INFO && (
-          <EnterUserInfo
-            chipIssuer={chipIssuer}
-            onSubmit={handleUserInfoSubmit}
-          />
+          <EnterUserInfo onSubmit={handleUserInfoSubmit} />
         )}
         {displayState === DisplayState.REGISTER_WITH_PASSKEY && (
           <RegisterWithPasskey
-            chipIssuer={chipIssuer}
             username={username}
             onPasskeyRegister={handleRegisterWithPasskey}
             onSwitchToPassword={handleSwitchToRegisterWithPassword}
@@ -293,7 +284,6 @@ const Register: React.FC = () => {
         )}
         {displayState === DisplayState.REGISTER_WITH_PASSWORD && (
           <RegisterWithPassword
-            chipIssuer={chipIssuer}
             onSubmit={handleRegisterWithPassword}
             onSwitchToPasskey={handleSwitchToRegisterWithPasskey}
           />
@@ -305,7 +295,6 @@ const Register: React.FC = () => {
           />
         )}
       </div>
-      <AppCopy className="mt-auto mx-auto absolute bottom-5 text-center justify-center left-1/2 -translate-x-1/2" />
     </div>
   );
 };
