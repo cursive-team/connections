@@ -150,7 +150,7 @@ const ProfilePage: React.FC = () => {
 
       <div className="flex flex-col gap-2 py-4">
         <span className="text-sm font-semibold text-primary font-sans">
-          Interests
+          Desired connections
         </span>
         {user.userData.lanna && (
           <div className="flex flex-wrap gap-2">
