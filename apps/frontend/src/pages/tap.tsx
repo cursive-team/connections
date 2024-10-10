@@ -10,17 +10,10 @@ const TapPage: React.FC = () => {
 
   useEffect(() => {
     const handleTap = async () => {
-      if (!location.hash) {
+      const { chipId } = router.query;
+
+      if (!chipId || typeof chipId !== "string") {
         toast.error("Invalid tap! Please try again.");
-        router.push("/");
-        return;
-      }
-
-      const urlParams = new URLSearchParams(location.hash.slice(1));
-      const chipId = urlParams.get("chipId");
-
-      if (!chipId) {
-        toast.error("Invalid tap!");
         router.push("/");
         return;
       }
@@ -100,7 +93,9 @@ const TapPage: React.FC = () => {
       }
     };
 
-    handleTap();
+    if (router.isReady) {
+      handleTap();
+    }
   }, [router]);
 
   return (

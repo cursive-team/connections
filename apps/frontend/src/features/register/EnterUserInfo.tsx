@@ -85,18 +85,6 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
     // @ts-expect-error - e is unknown
     e?.preventDefault();
     try {
-      UsernameSchema.parse(formData.username);
-      const isUnique = await verifyUsernameIsUnique(formData.username);
-      if (!isUnique) {
-        toast.error("Username is already taken");
-        return;
-      }
-
-      if (telegramHandle.includes("@") || twitterHandle.includes("@")) {
-        toast.error("Please enter handles without the '@' symbol");
-        return;
-      }
-
       await onSubmit({
         username,
         displayName: displayName.trim(),
@@ -106,12 +94,13 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
       });
     } catch (error) {
       console.error(error);
-      toast.error("Please enter a valid username");
+      toast.error("An error occurred while submitting the form");
     }
   };
 
   const handleNext = async (e: unknown) => {
     if (step === 0) {
+      // Validate username
       try {
         UsernameSchema.parse(formData.username);
         const isUnique = await verifyUsernameIsUnique(formData.username);
@@ -121,7 +110,16 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
         }
       } catch (error) {
         console.error(error);
-        toast.error("Please enter a valid username (3+ characters)");
+        toast.error(
+          "Username must be alphanumeric and between 3-20 characters"
+        );
+        return;
+      }
+    } else if (step === 2 || step === 3) {
+      // Validate Telegram and Twitter handles
+      const handle = formData[steps[step].field as keyof FormData];
+      if (handle.includes("@")) {
+        toast.error("Please enter handles without the '@' symbol");
         return;
       }
     }
@@ -164,7 +162,6 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
           this data in the app.
         </span>
       </div>
-
       <div className="relative mb-6">
         {steps[step].field === "bio" ? (
           <>

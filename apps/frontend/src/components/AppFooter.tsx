@@ -11,7 +11,7 @@ const AppFooter = () => {
   return (
     <footer
       id="footer"
-      className="fixed border-t border-iron-50 w-full bottom-0 mt-4 z-[50] bg-surface-primary p-2"
+      className="fixed w-full bottom-0 z-[50] bg-surface-primary"
     >
       <MenuBar
         className="md:container grid bottom-0 py-3 xs:pt-[17px] xs:pb-[13px] px-4"

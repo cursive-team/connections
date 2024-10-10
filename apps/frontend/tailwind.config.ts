@@ -1,3 +1,4 @@
+import { link } from "fs";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -55,6 +56,10 @@ const config: Config = {
             primary: "#F74227",
             secondary: "#7CE514",
           },
+        },
+
+        link: {
+          primary: "#F429D5",
         },
 
         button: {
