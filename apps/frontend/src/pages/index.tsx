@@ -1,16 +1,16 @@
 import { AppCopy } from "@/components/ui/AppCopy";
 import { RegisterHeader } from "@/features/register/RegisterHeader";
-import { logoutUser } from "@/lib/auth";
+// import { logoutUser } from "@/lib/auth";
 import Image from "next/image";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 export default function Home() {
-  useEffect(() => {
-    const handleLogout = async () => {
-      await logoutUser();
-    };
-    handleLogout();
-  }, []);
+  // useEffect(() => {
+  //   const handleLogout = async () => {
+  //     await logoutUser();
+  //   };
+  //   handleLogout();
+  // }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col pb-4">
