@@ -93,7 +93,7 @@ const ActivityPage: React.FC = () => {
           ></div>
         </>
       }
-      className="container mx-auto px-4 py-8"
+      className="container mx-auto px-4 py-4"
     >
       <ul className="space-y-4">
         {activityItems.map((item, index) => {
