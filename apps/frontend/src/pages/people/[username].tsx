@@ -10,6 +10,7 @@ import Image from "next/image";
 import AppLayout from "@/layouts/AppLayout";
 import { LinkCardBox } from "@/components/ui/LinkCardBox";
 import { AppTextarea } from "@/components/ui/Textarea";
+import { ProfileImage } from "@/components/ui/ProfileImage";
 
 interface TapChipModalProps {
   tapResponse: ChipTapResponse;
@@ -177,7 +178,7 @@ const UserProfilePage: React.FC = () => {
       )}
       <AppLayout
         withContainer={false}
-        showFooter={!showTapModal}
+        showFooter={false}
         back={{
           label: "Back",
           href: "/people",
@@ -191,7 +192,7 @@ const UserProfilePage: React.FC = () => {
                   {connection?.user?.displayName}
                 </span>
               </div>
-              <div className="size-10 bg-button-secondary rounded-full border border-quaternary/10"></div>
+              <ProfileImage user={connection.user} />
             </div>
           </div>
         }

@@ -8,6 +8,9 @@ import { AppButton } from "@/components/ui/Button";
 import { MdOutlineModeEditOutline as IconEdit } from "react-icons/md";
 import { AppInput } from "@/components/ui/AppInput";
 import { LinkCardBox } from "@/components/ui/LinkCardBox";
+import { Tag } from "@/components/ui/Tag";
+import { connectionsEmojiMapping } from "@/features/register/LannaDiscoverConnections";
+import { ProfileImage } from "@/components/ui/ProfileImage";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -80,10 +83,10 @@ const ProfilePage: React.FC = () => {
               {user.userData.displayName}
             </span>
           </div>
-          <div className="size-10 bg-button-secondary rounded-full border border-quaternary/10"></div>
+          <ProfileImage user={user.userData} />
         </div>
       }
-      className="container mx-auto px-4 py-8"
+      className="container mx-auto px-4 py-4"
     >
       {enableEditing && (
         <div className="py-4">
@@ -97,6 +100,21 @@ const ProfilePage: React.FC = () => {
           </AppButton>
         </div>
       )}
+
+      <div className="flex flex-col">
+        <span className="text-sm text-primary font-sans">
+          Learn about upcoming features{" "}
+          <a
+            href="https://cursive.team/lanna"
+            className="text-[#FF9DF8] font-bold underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            here
+          </a>
+          .
+        </span>
+      </div>
 
       <div className="flex flex-col gap-2 py-4">
         <span className="text-sm font-semibold text-primary font-sans">
@@ -137,14 +155,17 @@ const ProfilePage: React.FC = () => {
         {user.userData.lanna && (
           <div className="flex flex-wrap gap-2">
             {Object.entries(user.userData.lanna.desiredConnections).map(
-              ([interest, value]) =>
+              ([key, value]) =>
                 value && (
-                  <span
-                    key={interest}
-                    className="px-2 py-1 text-xs font-medium bg-button-secondary text-primary rounded-full"
-                  >
-                    {interest}
-                  </span>
+                  <Tag
+                    key={key}
+                    variant={"selected"}
+                    emoji={connectionsEmojiMapping?.[key]}
+                    text={
+                      key.charAt(0).toUpperCase() +
+                      key.slice(1).replace(/([A-Z])/g, " $1")
+                    }
+                  />
                 )
             )}
           </div>

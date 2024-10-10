@@ -9,6 +9,14 @@ interface LannaDiscoverConnectionsProps {
   onSubmit: (desiredConnections: LannaDesiredConnections) => void;
 }
 
+export const connectionsEmojiMapping: Record<string, string> = {
+  getHealthy: "🏃",
+  enjoyMeals: "🍲",
+  haveCoffee: "☕️",
+  party: "🎉",
+  attendTalks: "🤓",
+};
+
 const LannaDiscoverConnections: React.FC<LannaDiscoverConnectionsProps> = ({
   onSubmit,
 }) => {
@@ -19,14 +27,6 @@ const LannaDiscoverConnections: React.FC<LannaDiscoverConnectionsProps> = ({
     party: false,
     attendTalks: false,
   });
-
-  const connectionsEmojiMapping: Record<string, string> = {
-    getHealthy: "🏃",
-    enjoyMeals: "🍲",
-    haveCoffee: "☕️",
-    party: "🎉",
-    attendTalks: "🤓",
-  };
 
   const handleToggle = (key: keyof LannaDesiredConnections) => {
     setConnections((prev) => ({ ...prev, [key]: !prev[key] }));
