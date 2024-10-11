@@ -149,6 +149,7 @@ export type UserRegisterResponse = z.infer<typeof UserRegisterResponseSchema>;
 // Request schema for logging in a user
 export const UserLoginRequestSchema = z.object({
   email: EmailSchema,
+  signinToken: SigninTokenSchema,
 });
 
 export type UserLoginRequest = z.infer<typeof UserLoginRequestSchema>;
@@ -159,6 +160,8 @@ export const UserLoginResponseSchema = z.object({
   backupData: z.array(BackupDataSchema),
   passwordSalt: z.string(),
   passwordHash: z.string(),
+  registeredWithPasskey: z.boolean(),
+  passkeyAuthPublicKey: z.string().optional(),
 });
 
 export type UserLoginResponse = z.infer<typeof UserLoginResponseSchema>;

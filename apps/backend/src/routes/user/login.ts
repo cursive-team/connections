@@ -23,13 +23,23 @@ router.post(
   ) => {
     try {
       const validatedData = UserLoginRequestSchema.parse(req.body);
-      const { email } = validatedData;
+      const { email, signinToken } = validatedData;
 
       // Check if the user exists
       const user = await controller.GetUserByEmail(email);
 
       if (!user) {
         return res.status(404).json({ error: "User not found" });
+      }
+
+      // Verify the signin token
+      const isValid = await controller.VerifySigninToken(
+        email,
+        signinToken,
+        true
+      );
+      if (!isValid) {
+        return res.status(401).json({ error: "Invalid signin token" });
       }
 
       // Fetch backups for the user
@@ -56,6 +66,8 @@ router.post(
         backupData,
         passwordSalt: user.passwordSalt,
         passwordHash: user.passwordHash,
+        registeredWithPasskey: user.registeredWithPasskey,
+        passkeyAuthPublicKey: user.passkeyAuthPublicKey ?? undefined,
       });
     } catch (error) {
       return res.status(500).json({

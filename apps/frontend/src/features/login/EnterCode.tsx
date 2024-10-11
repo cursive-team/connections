@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { SigninTokenSchema } from "@types";
 import { toast } from "sonner";
-import { RegisterHeader } from "./RegisterHeader";
+import { RegisterHeader } from "@/features/register/RegisterHeader";
 import { AppButton } from "@/components/ui/Button";
 import { AppCopy } from "@/components/ui/AppCopy";
 
@@ -74,7 +74,7 @@ const EnterCode: React.FC<EnterCodeProps> = ({ email, submitCode }) => {
                 ))}
               </div>
               <span className=" text-xs font-sans text-tertiary text-center">
-                {`Check your spam folder if you didn’t receive a code.`}
+                {`Check your spam folder if you didn't receive a code.`}
               </span>
             </div>
           </div>

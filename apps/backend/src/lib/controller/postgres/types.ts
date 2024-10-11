@@ -15,6 +15,7 @@ export const UserSchema = z.object({
   passwordHash: z.string(),
   registrationNumber: z.number(),
   registeredWithPasskey: z.boolean(),
+  passkeyAuthPublicKey: z.string().nullable(),
   createdAt: z.date(),
 });
 
