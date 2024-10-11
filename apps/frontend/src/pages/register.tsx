@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { Json, UsernameSchema } from "@types";
+import { errorToString, Json, UsernameSchema } from "@types";
 import EnterEmail from "@/features/register/EnterEmail";
 import EnterCode from "@/features/register/EnterCode";
 import EnterUserInfo from "@/features/register/EnterUserInfo";
@@ -22,6 +22,7 @@ import { registerChip } from "@/lib/chip/register";
 import { registerUser } from "@/lib/auth/register";
 import useSettings from "@/hooks/useSettings";
 import { HeaderCover } from "@/components/ui/HeaderCover";
+import { logClientEvent } from "@/lib/frontend/metrics";
 
 enum DisplayState {
   ENTER_EMAIL,
@@ -54,10 +55,12 @@ const Register: React.FC = () => {
       const tap = await storage.loadSavedTapInfo();
       if (!tap) {
         // TODO: Enable registration without a saved tap
+        logClientEvent("register-no-saved-tap", {});
         toast.error("No saved tap found!");
         router.push("/");
       } else {
         if (tap.tapResponse.chipIsRegistered) {
+          logClientEvent("register-chip-already-registered", {});
           toast.error("Chip is already registered!");
           router.push("/");
         }
@@ -71,6 +74,7 @@ const Register: React.FC = () => {
   }, [router]);
 
   const handleEmailSubmit = async (submittedEmail: string) => {
+    logClientEvent("register-email-submit", {});
     const isUnique = await verifyEmailIsUnique(submittedEmail);
     if (!isUnique) {
       toast.error("Email is already in use");
@@ -90,6 +94,7 @@ const Register: React.FC = () => {
   };
 
   const handleCodeSubmit = async (submittedCode: string) => {
+    logClientEvent("register-code-submit", {});
     const isValid = await verifySigninToken(email, submittedCode);
     if (!isValid) {
       toast.error("Invalid code");
@@ -107,6 +112,7 @@ const Register: React.FC = () => {
     telegramHandle: string;
     twitterHandle: string;
   }) => {
+    logClientEvent("register-user-info-submit", {});
     const parsedUsername = UsernameSchema.parse(userInfo.username);
     const usernameIsUnique = await verifyUsernameIsUnique(parsedUsername);
     if (!usernameIsUnique) {
@@ -123,6 +129,7 @@ const Register: React.FC = () => {
   };
 
   const handleSwitchToRegisterWithPassword = () => {
+    logClientEvent("register-switch-to-register-with-password", {});
     setDisplayState(DisplayState.REGISTER_WITH_PASSWORD);
   };
 
@@ -130,14 +137,17 @@ const Register: React.FC = () => {
     password: string,
     authPublicKey: string
   ) => {
+    logClientEvent("register-register-with-passkey", {});
     await handleCreateAccount(password, true, authPublicKey);
   };
 
   const handleSwitchToRegisterWithPasskey = () => {
+    logClientEvent("register-switch-to-register-with-passkey", {});
     setDisplayState(DisplayState.REGISTER_WITH_PASSKEY);
   };
 
   const handleRegisterWithPassword = async (password: string) => {
+    logClientEvent("register-register-with-password", {});
     await handleCreateAccount(password, false, undefined);
   };
 
@@ -146,6 +156,7 @@ const Register: React.FC = () => {
     registeredWithPasskey: boolean,
     authPublicKey: string | undefined
   ) => {
+    logClientEvent("register-create-account", {});
     setDisplayState(DisplayState.CREATING_ACCOUNT);
     try {
       // Register user
@@ -166,6 +177,7 @@ const Register: React.FC = () => {
 
       // Register chip if saved tap is present
       if (savedTap) {
+        logClientEvent("register-register-chip", {});
         const {
           username,
           displayName,
@@ -211,6 +223,9 @@ const Register: React.FC = () => {
       toast.success("Account created successfully!");
       router.push("/");
     } catch (error) {
+      logClientEvent("register-create-account-error", {
+        error: errorToString(error),
+      });
       console.error(error);
       toast.error("Failed to create account. Please try again");
       return;
@@ -220,6 +235,7 @@ const Register: React.FC = () => {
   const handleLannaDiscoverConnectionsSubmit = async (
     desiredConnections: LannaDesiredConnections
   ) => {
+    logClientEvent("register-lanna-discover-connections-submit", {});
     const user = await storage.getUser();
     if (!user) {
       toast.error("User not found");
@@ -230,6 +246,7 @@ const Register: React.FC = () => {
       ...user.userData,
       lanna: { desiredConnections },
     });
+    logClientEvent("register-lanna-discover-connections-success", {});
     toast.success("Successfully created your account!");
     router.push("/profile");
   };
