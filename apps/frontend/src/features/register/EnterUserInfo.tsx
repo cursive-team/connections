@@ -90,6 +90,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
     );
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSubmit = async (e: unknown) => {
     if (step < steps.length - 1) {
       return; // Don't submit if not on the last step
@@ -97,7 +98,6 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
 
     const { username, bio, telegramHandle, twitterHandle, displayName } =
       formData ?? {};
-    // @ts-expect-error - e is unknown
     try {
       await onSubmit({
         username,
