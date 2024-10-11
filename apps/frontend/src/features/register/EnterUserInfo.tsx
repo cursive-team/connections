@@ -7,6 +7,7 @@ import { IoMdCheckmark as CheckIcon } from "react-icons/io";
 import { IoCloseSharp as CloseIcon } from "react-icons/io5";
 
 import useSettings from "@/hooks/useSettings";
+import { AppButton } from "@/components/ui/Button";
 
 interface FormData {
   username: string;
@@ -97,7 +98,6 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
     const { username, bio, telegramHandle, twitterHandle, displayName } =
       formData ?? {};
     // @ts-expect-error - e is unknown
-    e?.preventDefault();
     try {
       await onSubmit({
         username,
@@ -138,7 +138,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
       }
     }
 
-    if (step < steps.length - 1) {
+    if (step < steps.length) {
       setStep(step + 1);
     } else {
       handleSubmit(e);
@@ -148,8 +148,6 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
   const handleKeyDown = (e: unknown) => {
     // @ts-expect-error - e is unknown
     if (e?.key === "Enter" && !e?.shiftKey) {
-      // @ts-expect-error - e is unknown
-      e?.preventDefault();
       if (isStepValid()) {
         handleNext(e);
       }
@@ -161,7 +159,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
   return (
     <div
       onSubmit={handleSubmit}
-      className="relative h-full space-y-6 py-2"
+      className="flex flex-col relative h-full  py-2"
       style={{
         height: `${pageHeight}px`,
       }}
@@ -176,82 +174,103 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
           this data in the app.
         </span>
       </div>
-      <div className="relative mb-6">
-        {steps[step].field === "bio" ? (
-          <>
-            <ArrowRightIcon className="absolute size-6 left-0 top-0 transform text-primary" />
-            <textarea
-              ref={textareaRef}
-              className="w-full pl-8 pr-4 text-[14px] font-semibold font-sans focus:outline-none min-h-[30px] resize-none bg-transparent"
-              placeholder={steps[step].question}
-              value={formData.bio}
-              onChange={(e) => handleInputChange(e.target.value)}
-              onKeyDown={handleKeyDown}
-              aria-label={steps[step].question}
-            />
-          </>
-        ) : (
-          <>
-            <ArrowRightIcon className="absolute size-6 left-0 top-1/2 transform -translate-y-1/2 text-primary" />
-            <input
-              type="text"
-              className="w-full pl-8 pr-4 py-2 text-[14px] bg-transparent font-semibold font-sans focus:outline-none "
-              placeholder={steps[step].question}
-              value={formData[steps[step].field as keyof FormData]}
-              onChange={(e) => handleInputChange(e.target.value)}
-              onKeyDown={handleKeyDown}
-              aria-label={steps[step].question}
-              required={steps[step].required}
-            />
-          </>
+      <div className="flex flex-col col-gap-4">
+        {steps?.[step] && (
+          <div className="relative mb-6">
+            {steps?.[step]?.field === "bio" ? (
+              <>
+                <ArrowRightIcon className="absolute size-6 left-0 top-0 transform text-primary" />
+                <div className="flex items-start gap-4">
+                  <textarea
+                    ref={textareaRef}
+                    className="w-full pl-8 pr-4 text-[14px] font-semibold font-sans focus:outline-none min-h-[30px] resize-none bg-transparent"
+                    placeholder={steps[step].question}
+                    value={formData.bio}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    aria-label={steps[step].question}
+                  />
+                  <button
+                    className="text-sm text-link-primary font-sans font-semibold mt-2"
+                    onClick={() => {
+                      handleNext({});
+                    }}
+                  >
+                    {steps[step].required ||
+                    formData[steps[step].field as keyof FormData] !== ""
+                      ? "Next"
+                      : "Skip"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <ArrowRightIcon className="absolute size-6 left-0 top-1/2 transform -translate-y-1/2 text-primary" />
+                <div className="flex items-start gap-4">
+                  <input
+                    type="text"
+                    className="w-full pl-8 pr-4 py-2 text-[14px] bg-transparent font-semibold font-sans focus:outline-none "
+                    placeholder={steps[step].question}
+                    value={formData[steps[step].field as keyof FormData]}
+                    onChange={(e) => handleInputChange(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    aria-label={steps[step].question}
+                    required={steps[step].required}
+                  />
+                  <button
+                    className="text-sm text-link-primary font-semibold font-sans mt-2"
+                    onClick={() => {
+                      handleNext({});
+                    }}
+                  >
+                    {steps[step].required ||
+                    formData[steps[step].field as keyof FormData] !== ""
+                      ? "Next"
+                      : "Skip"}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         )}
+
+        <div className="flex flex-col gap-4">
+          {previewList.map((s, index) => {
+            const fieldValue = formData[s.field as keyof FormData];
+            return (
+              index < step && (
+                <div key={s.field} className="flex items-center   gap-1">
+                  {fieldValue ? (
+                    <CheckIcon
+                      className="size-5 text-quaternary"
+                      width={24}
+                      height={24}
+                    />
+                  ) : (
+                    <CloseIcon
+                      className="size-5 text-quaternary"
+                      width={24}
+                      height={24}
+                    />
+                  )}
+                  <span className="font-sans text-[14px] font-semibold text-quaternary">
+                    {fieldValue || s.placeholder || "-"}
+                  </span>
+                </div>
+              )
+            );
+          })}
+        </div>
       </div>
 
-      {previewList.map((s, index) => {
-        const fieldValue = formData[s.field as keyof FormData];
-        return (
-          index < step && (
-            <div key={s.field} className="flex items-center   gap-1">
-              {fieldValue ? (
-                <CheckIcon
-                  className="size-5 text-quaternary"
-                  width={24}
-                  height={24}
-                />
-              ) : (
-                <CloseIcon
-                  className="size-5 text-quaternary"
-                  width={24}
-                  height={24}
-                />
-              )}
-              <span className="font-sans text-[14px] font-semibold text-quaternary">
-                {fieldValue || s.placeholder || "-"}
-              </span>
-            </div>
-          )
-        );
-      })}
-
-      <div className="flex flex-col w-full fixed bottom-0 left-0 right-0">
-        <div
-          className="h-[2px] w-full"
-          style={{
-            background:
-              "linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)",
-          }}
-        ></div>
-        <button
+      <div className="flex flex-col mt-auto w-full">
+        <AppButton
           type="button"
           onClick={handleNext}
-          disabled={!isStepValid()}
-          className="h-12 font-bold text-primary font-sans text-lg uppercase disabled:text-tertiary duration-200"
+          disabled={steps?.length > step}
         >
-          {steps[step].required ||
-          formData[steps[step].field as keyof FormData] !== ""
-            ? "Next"
-            : "Skip"}
-        </button>
+          Done
+        </AppButton>
       </div>
     </div>
   );
