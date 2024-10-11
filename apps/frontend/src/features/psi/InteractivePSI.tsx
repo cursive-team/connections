@@ -81,7 +81,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
 
   // set up channel for PSI
   // TODO: Load in previous overlap indices if available
-  const setupChannel = () => {
+  useEffect(() => {
     const channel = supabase.channel(getChannelName(), {
       config: {
         presence: { key: selfSigPK },
@@ -123,10 +123,10 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
           });
         }
       });
-  };
 
-  useEffect(() => {
-    setupChannel();
+    return () => {
+      channel.unsubscribe();
+    };
   }, []);
 
   // const closeChannel = async () => {
@@ -294,7 +294,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
           setWantsToInitiatePSI(false);
           setOtherUserWantsToInitiatePSI(false);
         }
-      }, 10000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
@@ -397,19 +397,25 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
             {overlapIndices?.map((index) => {
               const interests = [
                 "getHealthy",
+                "cowork",
                 "enjoyMeals",
-                "haveCoffee",
+                "learnFrontierTopics",
+                "findCollaborators",
+                "goExploring",
                 "party",
-                "attendTalks",
+                "doMentalWorkouts",
               ];
 
               const interest = interests[index];
               const emoji = {
                 getHealthy: "🏃",
+                cowork: "💻",
                 enjoyMeals: "🍲",
-                haveCoffee: "☕️",
+                learnFrontierTopics: "🤓",
+                findCollaborators: "🤝",
+                goExploring: "👀",
                 party: "🎉",
-                attendTalks: "🤓",
+                doMentalWorkouts: "🧠",
               }[interest];
 
               return (

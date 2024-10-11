@@ -27,12 +27,15 @@ export const generateBitVectorFromLannaData = (
 ): Uint32Array => {
   const bitVector = new Uint32Array(1000).fill(0);
 
-  // 0-4 reserved for desired connections
+  // 0-7 reserved for desired connections
   bitVector[0] = data.desiredConnections.getHealthy ? 1 : 0;
-  bitVector[1] = data.desiredConnections.enjoyMeals ? 1 : 0;
-  bitVector[2] = data.desiredConnections.haveCoffee ? 1 : 0;
-  bitVector[3] = data.desiredConnections.party ? 1 : 0;
-  bitVector[4] = data.desiredConnections.attendTalks ? 1 : 0;
+  bitVector[1] = data.desiredConnections.cowork ? 1 : 0;
+  bitVector[2] = data.desiredConnections.enjoyMeals ? 1 : 0;
+  bitVector[3] = data.desiredConnections.learnFrontierTopics ? 1 : 0;
+  bitVector[4] = data.desiredConnections.findCollaborators ? 1 : 0;
+  bitVector[5] = data.desiredConnections.goExploring ? 1 : 0;
+  bitVector[6] = data.desiredConnections.party ? 1 : 0;
+  bitVector[7] = data.desiredConnections.doMentalWorkouts ? 1 : 0;
 
   return bitVector;
 };

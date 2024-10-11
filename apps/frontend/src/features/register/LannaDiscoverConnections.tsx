@@ -11,10 +11,13 @@ interface LannaDiscoverConnectionsProps {
 
 export const connectionsEmojiMapping: Record<string, string> = {
   getHealthy: "🏃",
+  cowork: "💻",
   enjoyMeals: "🍲",
-  haveCoffee: "☕️",
+  learnFrontierTopics: "🤓",
+  findCollaborators: "🤝",
+  goExploring: "👀",
   party: "🎉",
-  attendTalks: "🤓",
+  doMentalWorkouts: "🧠",
 };
 
 const LannaDiscoverConnections: React.FC<LannaDiscoverConnectionsProps> = ({
@@ -22,10 +25,13 @@ const LannaDiscoverConnections: React.FC<LannaDiscoverConnectionsProps> = ({
 }) => {
   const [connections, setConnections] = useState<LannaDesiredConnections>({
     getHealthy: false,
+    cowork: false,
     enjoyMeals: false,
-    haveCoffee: false,
+    learnFrontierTopics: false,
+    findCollaborators: false,
+    goExploring: false,
     party: false,
-    attendTalks: false,
+    doMentalWorkouts: false,
   });
 
   const handleToggle = (key: keyof LannaDesiredConnections) => {
