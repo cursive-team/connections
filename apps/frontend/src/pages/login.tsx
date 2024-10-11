@@ -38,9 +38,10 @@ const LoginPage: React.FC = () => {
   };
 
   const handleCodeSubmit = async (submittedCode: string) => {
-    setCode(submittedCode);
     // TODO: Verify the code and check if the user has a password or passkey
     const hasPassword = true; // Replace with actual check
+
+    setCode(submittedCode);
     setStep(hasPassword ? LoginState.PASSWORD : LoginState.PASSKEY);
   };
 

@@ -48,11 +48,6 @@ const Register: React.FC = () => {
   const [bio, setBio] = useState("");
   const [telegramHandle, setTelegramHandle] = useState("");
   const [twitterHandle, setTwitterHandle] = useState("");
-  const [backupPassword, setBackupPassword] = useState("");
-  const [authPublicKey, setAuthPublicKey] = useState<string | null>(null);
-  const [registeredWithPasskey, setRegisteredWithPasskey] = useState<
-    boolean | null
-  >(null);
 
   useEffect(() => {
     const loadSavedTap = async () => {
@@ -135,10 +130,7 @@ const Register: React.FC = () => {
     password: string,
     authPublicKey: string
   ) => {
-    setBackupPassword(password);
-    setRegisteredWithPasskey(true);
-    setAuthPublicKey(authPublicKey);
-    await handleCreateAccount();
+    await handleCreateAccount(password, true, authPublicKey);
   };
 
   const handleSwitchToRegisterWithPasskey = () => {
@@ -146,12 +138,14 @@ const Register: React.FC = () => {
   };
 
   const handleRegisterWithPassword = async (password: string) => {
-    setBackupPassword(password);
-    setRegisteredWithPasskey(false);
-    await handleCreateAccount();
+    await handleCreateAccount(password, false, undefined);
   };
 
-  const handleCreateAccount = async () => {
+  const handleCreateAccount = async (
+    backupPassword: string,
+    registeredWithPasskey: boolean,
+    authPublicKey: string | undefined
+  ) => {
     setDisplayState(DisplayState.CREATING_ACCOUNT);
     try {
       // Register user
@@ -164,8 +158,8 @@ const Register: React.FC = () => {
         bio,
         telegramHandle,
         twitterHandle,
-        registeredWithPasskey: registeredWithPasskey || false,
-        passkeyAuthPublicKey: authPublicKey || undefined,
+        registeredWithPasskey: registeredWithPasskey,
+        passkeyAuthPublicKey: authPublicKey,
       });
 
       const { user, session } = await storage.getUserAndSession();

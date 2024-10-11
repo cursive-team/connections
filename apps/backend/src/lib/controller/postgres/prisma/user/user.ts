@@ -6,19 +6,20 @@ import {
   UserCreateRequest,
 } from "@/lib/controller/postgres/types";
 
-PrismaPostgresClient.prototype.HealthCheck = async function (): Promise<boolean> {
-  try {
-    await this.prismaClient.$queryRaw`SELECT 1`;
-    console.log('Database connection successful');
-    return true
-  } catch (error) {
-    console.error('Database connection failed:', error);
-  } finally {
-    await this.prismaClient.$disconnect();
-  }
+PrismaPostgresClient.prototype.HealthCheck =
+  async function (): Promise<boolean> {
+    try {
+      await this.prismaClient.$queryRaw`SELECT 1`;
+      console.log("Database connection successful");
+      return true;
+    } catch (error) {
+      console.error("Database connection failed:", error);
+    } finally {
+      await this.prismaClient.$disconnect();
+    }
 
-  return false;
-};
+    return false;
+  };
 
 PrismaPostgresClient.prototype.GetUserByUsernameCaseInsensitive =
   async function (username: string): Promise<User | null> {
