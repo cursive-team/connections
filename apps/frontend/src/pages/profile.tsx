@@ -80,6 +80,8 @@ const ProfilePage: React.FC = () => {
 
   return (
     <AppLayout
+      withContainer={false}
+      headerDivider
       header={
         <div className="flex items-center justify-between w-full py-4">
           <div className="flex flex-col">
@@ -91,7 +93,7 @@ const ProfilePage: React.FC = () => {
           <ProfileImage user={user.userData} />
         </div>
       }
-      className="container mx-auto px-4 py-4"
+      className="mx-auto py-4"
     >
       {enableEditing && (
         <div className="py-4">
@@ -106,7 +108,7 @@ const ProfilePage: React.FC = () => {
         </div>
       )}
 
-      <div className="flex flex-col">
+      <div className="flex flex-col px-4">
         <span className="text-sm text-primary font-sans">
           Learn about upcoming features{" "}
           <a
@@ -121,96 +123,98 @@ const ProfilePage: React.FC = () => {
         </span>
       </div>
 
-      <div className="flex flex-col gap-2 py-4">
-        <span className="text-sm font-semibold text-primary font-sans">
-          Socials
-        </span>
-        <div className="flex flex-col gap-4">
-          {user.userData.telegram?.username && (
-            <LinkCardBox
-              label="Telegram"
-              value={user.userData.telegram.username}
-              href={`https://t.me/${user.userData.telegram.username}`}
-            />
-          )}
-          {user.userData.twitter?.username && (
-            <LinkCardBox
-              label="Twitter"
-              value={user.userData.twitter.username}
-              href={`https://twitter.com/${user.userData.twitter.username}`}
-            />
-          )}
-        </div>
-      </div>
-      {user.userData.bio !== "" && (
-        <div className="flex flex-col gap-2 py-4">
+      <div className="!divide-y !divide-quaternary/20 flex flex-col">
+        <div className="flex flex-col gap-2 py-4 px-4">
           <span className="text-sm font-semibold text-primary font-sans">
-            Bio
+            Socials
           </span>
-          <span className="text-sm text-tertiary font-normal font-sans">
-            {user.userData.bio}
-          </span>
-        </div>
-      )}
-
-      <div className="flex flex-col gap-2 py-4">
-        <span className="text-sm font-semibold text-primary font-sans">
-          Interests
-        </span>
-        {user.userData.lanna && (
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(user.userData.lanna.desiredConnections).map(
-              ([key, value]) =>
-                value && (
-                  <Tag
-                    key={key}
-                    variant={"active"}
-                    closable={false}
-                    emoji={connectionsEmojiMapping?.[key]}
-                    text={
-                      key.charAt(0).toUpperCase() +
-                      key.slice(1).replace(/([A-Z])/g, " $1")
-                    }
-                  />
-                )
+          <div className="flex flex-col gap-4">
+            {user.userData.telegram?.username && (
+              <LinkCardBox
+                label="Telegram"
+                value={user.userData.telegram.username}
+                href={`https://t.me/${user.userData.telegram.username}`}
+              />
             )}
+            {user.userData.twitter?.username && (
+              <LinkCardBox
+                label="Twitter"
+                value={user.userData.twitter.username}
+                href={`https://twitter.com/${user.userData.twitter.username}`}
+              />
+            )}
+          </div>
+        </div>
+        {user.userData.bio !== "" && (
+          <div className="flex flex-col gap-2 py-4 px-4">
+            <span className="text-sm font-semibold text-primary font-sans">
+              Bio
+            </span>
+            <span className="text-sm text-tertiary font-normal font-sans">
+              {user.userData.bio}
+            </span>
+          </div>
+        )}
+
+        <div className="flex flex-col gap-2 py-4 px-4">
+          <span className="text-sm font-semibold text-primary font-sans">
+            Interests
+          </span>
+          {user.userData.lanna && (
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(user.userData.lanna.desiredConnections).map(
+                ([key, value]) =>
+                  value && (
+                    <Tag
+                      key={key}
+                      variant={"active"}
+                      closable={false}
+                      emoji={connectionsEmojiMapping?.[key]}
+                      text={
+                        key.charAt(0).toUpperCase() +
+                        key.slice(1).replace(/([A-Z])/g, " $1")
+                      }
+                    />
+                  )
+              )}
+            </div>
+          )}
+        </div>
+        {enableEditing && (
+          <div className="space-y-4 px-4">
+            <span className="text-sm font-semibold text-primary">
+              Update socials
+            </span>
+            <div className="space-y-2">
+              {isEditingSocials && (
+                <>
+                  <AppInput
+                    type="text"
+                    value={twitterUsername}
+                    onChange={(e) => setTwitterUsername(e.target.value)}
+                    placeholder="Twitter username"
+                  />
+                  <AppInput
+                    type="text"
+                    value={telegramUsername}
+                    onChange={(e) => setTelegramUsername(e.target.value)}
+                    placeholder="Telegram username"
+                  />
+                  <div className="flex space-x-2">
+                    <AppButton onClick={handleUpdateSocials}>Save</AppButton>
+                    <AppButton
+                      variant="outline"
+                      onClick={() => setIsEditingSocials(false)}
+                    >
+                      Cancel
+                    </AppButton>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         )}
       </div>
-      {enableEditing && (
-        <div className="space-y-4">
-          <span className="text-sm font-semibold text-primary">
-            Update socials
-          </span>
-          <div className="space-y-2">
-            {isEditingSocials && (
-              <>
-                <AppInput
-                  type="text"
-                  value={twitterUsername}
-                  onChange={(e) => setTwitterUsername(e.target.value)}
-                  placeholder="Twitter username"
-                />
-                <AppInput
-                  type="text"
-                  value={telegramUsername}
-                  onChange={(e) => setTelegramUsername(e.target.value)}
-                  placeholder="Telegram username"
-                />
-                <div className="flex space-x-2">
-                  <AppButton onClick={handleUpdateSocials}>Save</AppButton>
-                  <AppButton
-                    variant="outline"
-                    onClick={() => setIsEditingSocials(false)}
-                  >
-                    Cancel
-                  </AppButton>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
     </AppLayout>
   );
 };
