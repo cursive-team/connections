@@ -2,10 +2,13 @@ import { z } from "zod";
 
 export const LannaDesiredConnectionsSchema = z.object({
   getHealthy: z.boolean(),
+  cowork: z.boolean(),
   enjoyMeals: z.boolean(),
-  haveCoffee: z.boolean(),
+  learnFrontierTopics: z.boolean(),
+  findCollaborators: z.boolean(),
+  goExploring: z.boolean(),
   party: z.boolean(),
-  attendTalks: z.boolean(),
+  doMentalWorkouts: z.boolean(),
 });
 
 export type LannaDesiredConnections = z.infer<
