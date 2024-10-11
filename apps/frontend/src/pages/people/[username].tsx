@@ -12,6 +12,7 @@ import { LinkCardBox } from "@/components/ui/LinkCardBox";
 import { AppTextarea } from "@/components/ui/Textarea";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import InteractivePSI from "@/features/psi/InteractivePSI";
+import { CursiveLogo } from "@/components/ui/HeaderCover";
 
 interface TapChipModalProps {
   tapResponse: ChipTapResponse;
@@ -33,7 +34,7 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="flex flex-col bg-white p-6 rounded-[32px] w-full max-w-[90vw] max-h-[90vh] overflow-y-auto">
+      <div className="flex flex-col bg-white p-6 rounded-[32px] w-full max-w-[90vw] h-full max-h-[90vh] overflow-y-auto">
         <div className="size-[80px] relative flex mx-auto">
           <div className="absolute -left-3 size-8 rounded-full bg-[#9DE8FF] z-0 top-[28px] border border-quaternary/10"></div>
           <Image
@@ -172,7 +173,11 @@ const UserProfilePage: React.FC = () => {
   };
 
   if (!connection || !user || !session) {
-    return <div className="text-center p-4">Loading...</div>;
+    return (
+      <div className="flex min-h-screen justify-center items-center text-center">
+        <CursiveLogo isLoading />
+      </div>
+    );
   }
 
   return (

@@ -11,6 +11,7 @@ import { LinkCardBox } from "@/components/ui/LinkCardBox";
 import { Tag } from "@/components/ui/Tag";
 import { connectionsEmojiMapping } from "@/features/register/LannaDiscoverConnections";
 import { ProfileImage } from "@/components/ui/ProfileImage";
+import { CursiveLogo } from "@/components/ui/HeaderCover";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -70,7 +71,11 @@ const ProfilePage: React.FC = () => {
   };
 
   if (!user) {
-    return <div className="text-center p-4">Loading...</div>;
+    return (
+      <div className="flex min-h-screen justify-center items-center text-center">
+        <CursiveLogo isLoading />
+      </div>
+    );
   }
 
   return (
