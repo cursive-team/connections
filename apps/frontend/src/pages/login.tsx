@@ -1,14 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
-import { EnterEmail } from "@/features/login/EnterEmail";
-import { EnterCode } from "@/features/login/EnterCode";
-import { EnterPassword } from "@/features/login/EnterPassword";
-import { UsePasskey } from "@/features/login/UsePasskey";
-import { storage } from "@/lib/storage";
-import { loginUser, requestSigninToken } from "@/lib/auth";
+import EnterEmail from "@/features/login/EnterEmail";
+import EnterCode from "@/features/login/EnterCode";
+import LoginWithPassword from "@/features/login/LoginWithPassword";
+import LoginWithPasskey from "@/features/login/LoginWithPasskey";
+import {
+  loginUser,
+  processLoginResponse,
+  requestSigninToken,
+} from "@/lib/auth";
 import { HeaderCover } from "@/components/ui/HeaderCover";
 import useSettings from "@/hooks/useSettings";
+import { UserLoginResponse } from "@types";
+import { storage } from "@/lib/storage";
 
 enum LoginState {
   EMAIL = "email",
@@ -20,9 +25,22 @@ enum LoginState {
 const LoginPage: React.FC = () => {
   const router = useRouter();
   const { pageHeight } = useSettings();
-  const [email, setEmail] = useState("");
   const [step, setStep] = useState<LoginState>(LoginState.EMAIL);
-  const [code, setCode] = useState("");
+  const [email, setEmail] = useState("");
+  const [loginResponse, setLoginResponse] = useState<UserLoginResponse | null>(
+    null
+  );
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const user = await storage.getUser();
+      const session = await storage.getSession();
+      if (user && session && session.authTokenExpiresAt > new Date()) {
+        router.push("/profile");
+      }
+    };
+    checkLoginStatus();
+  }, [router]);
 
   const handleEmailSubmit = async (submittedEmail: string) => {
     try {
@@ -38,34 +56,50 @@ const LoginPage: React.FC = () => {
   };
 
   const handleCodeSubmit = async (submittedCode: string) => {
-    // TODO: Verify the code and check if the user has a password or passkey
-    const hasPassword = true; // Replace with actual check
-
-    setCode(submittedCode);
-    setStep(hasPassword ? LoginState.PASSWORD : LoginState.PASSKEY);
-  };
-
-  const handlePasswordSubmit = async (password: string) => {
     try {
-      const response = await loginUser(email, password);
-      if (response.success) {
-        await storage.setSession(response.session);
-        await storage.setUser(response.user);
-        toast.success("Login successful!");
-        router.push("/");
-      } else {
-        toast.error("Login failed. Please try again.");
-      }
+      const response = await loginUser(email, submittedCode);
+      setLoginResponse(response);
+      setStep(
+        response.registeredWithPasskey
+          ? LoginState.PASSKEY
+          : LoginState.PASSWORD
+      );
     } catch (error) {
-      console.error("Login error:", error);
-      toast.error("An error occurred during login. Please try again.");
+      console.error(error);
+      toast.error("Invalid code");
     }
   };
 
-  const handlePasskeySubmit = async () => {
-    // TODO: Implement passkey authentication
-    toast.success("Passkey authentication successful!");
-    router.push("/");
+  const handlePasswordSubmit = async (password: string) => {
+    if (!loginResponse) {
+      toast.error("No login found!");
+      return;
+    }
+
+    try {
+      await processLoginResponse(loginResponse, email, password);
+      toast.success("Successfully logged in!");
+      router.push("/profile");
+    } catch (error) {
+      console.error("Password authentication error:", error);
+      toast.error("Invalid password. Please try again.");
+    }
+  };
+
+  const handlePasskeySubmit = async (password: string) => {
+    if (!loginResponse) {
+      toast.error("No login found!");
+      return;
+    }
+
+    try {
+      await processLoginResponse(loginResponse, email, password);
+      toast.success("Successfully logged in!");
+      router.push("/profile");
+    } catch (error) {
+      console.error("Passkey authentication error:", error);
+      toast.error("Passkey authentication failed. Please try again.");
+    }
   };
 
   return (
@@ -90,10 +124,10 @@ const LoginPage: React.FC = () => {
           <EnterCode email={email} submitCode={handleCodeSubmit} />
         )}
         {step === LoginState.PASSWORD && (
-          <EnterPassword onSubmit={handlePasswordSubmit} />
+          <LoginWithPassword onPasswordLogin={handlePasswordSubmit} />
         )}
         {step === LoginState.PASSKEY && (
-          <UsePasskey onSubmit={handlePasskeySubmit} />
+          <LoginWithPasskey onPasskeyLogin={handlePasskeySubmit} />
         )}
       </div>
     </div>
