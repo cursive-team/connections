@@ -33,7 +33,7 @@ export const AccordionItem = ({ label, children }: AccordionProps) => {
           isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <p className="py-4 pt-0 text-tertiary font-inter text-sm">{children}</p>
+        <p className="py-4 pt-0 text-tertiary font-sans text-sm">{children}</p>
       </div>
     </div>
   );

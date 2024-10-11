@@ -1,3 +1,4 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/router";
@@ -10,7 +11,6 @@ import RegisterWithPasskey from "@/features/register/RegisterWithPasskey";
 import RegisterWithPassword from "@/features/register/RegisterWithPassword";
 import CreatingAccount from "@/features/register/CreatingAccount";
 import LannaDiscoverConnections from "@/features/register/LannaDiscoverConnections";
-import Image from "next/image";
 import {
   requestSigninToken,
   verifyEmailIsUnique,
@@ -20,6 +20,8 @@ import {
 import { LannaDesiredConnections, TapInfo } from "@/lib/storage/types";
 import { registerChip } from "@/lib/chip/register";
 import { registerUser } from "@/lib/auth/register";
+import useSettings from "@/hooks/useSettings";
+import { HeaderCover } from "@/components/ui/HeaderCover";
 
 enum DisplayState {
   ENTER_EMAIL,
@@ -33,6 +35,7 @@ enum DisplayState {
 
 const Register: React.FC = () => {
   const router = useRouter();
+  const { pageHeight } = useSettings();
   const [displayState, setDisplayState] = useState<DisplayState>(
     DisplayState.ENTER_EMAIL
   );
@@ -243,7 +246,12 @@ const Register: React.FC = () => {
 
   // const chipIssuer = savedTap?.tapResponse.chipIssuer ?? null;
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div
+      className="min-h-screen bg-gray-100 flex flex-col"
+      style={{
+        minHeight: `${pageHeight}px`,
+      }}
+    >
       {[
         DisplayState.ENTER_EMAIL,
         DisplayState.ENTER_CODE,
@@ -252,17 +260,9 @@ const Register: React.FC = () => {
         DisplayState.CREATING_ACCOUNT,
         DisplayState.LANNA_DISCOVER_CONNECTIONS,
       ].includes(displayState) && (
-        <div className="w-full top-0">
-          <Image
-            src="/images/register-main.png"
-            alt="register main"
-            layout="responsive"
-            className=" object-cover"
-            sizes="(max-width: 600px) 100vw, (max-width: 900px) 50vw, 33vw"
-            width={100}
-            height={375}
-          />
-        </div>
+        <HeaderCover
+          isLoading={[DisplayState.CREATING_ACCOUNT].includes(displayState)}
+        />
       )}
 
       <div className="flex-grow flex px-6 center sm:mx-auto sm:w-full sm:max-w-md">

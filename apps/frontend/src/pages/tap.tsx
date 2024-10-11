@@ -4,6 +4,7 @@ import { TapParams, ChipTapResponse } from "@types";
 import { toast } from "sonner";
 import { storage } from "@/lib/storage";
 import { tapChip, updateLeaderboardEntry } from "@/lib/chip";
+import { CursiveLogo } from "@/components/ui/HeaderCover";
 
 const TapPage: React.FC = () => {
   const router = useRouter();
@@ -101,7 +102,7 @@ const TapPage: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="text-center">
-        <div className="animate-spin rounded-full size-10 border-t-2 border-primary mt-10"></div>
+        <CursiveLogo isLoading />
       </div>
     </div>
   );

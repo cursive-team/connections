@@ -8,6 +8,7 @@ import { Card } from "@/components/cards/Card";
 import { Icons } from "@/components/Icons";
 import { AppButton } from "@/components/ui/Button";
 import { LannaData } from "@/lib/storage/types/user";
+import { Tag } from "@/components/ui/Tag";
 
 enum PSIState {
   NOT_STARTED,
@@ -353,16 +354,16 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
   };
 
   return (
-    <Card.Base className="flex flex-col p-4 gap-6 bg-white rounded-lg border border-gray-200 mt-4 mb-8 shadow-sm">
+    <Card.Base className="relative flex flex-col !border-none p-4 gap-6 !bg-[#F1F1F1] rounded-lg border mb-8">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          <Icons.Cards className="text-gray-600" />
-          <span className="font-medium text-gray-800 text-sm font-inter">
+          <Icons.Cards className="text-tertiary" />
+          <span className="font-medium text-primary text-sm font-sans">
             What do you both have in common?
           </span>
         </div>
 
-        <span className="text-gray-600 font-inter text-xs font-normal">
+        <span className="text-tertiary font-sans text-xs font-medium">
           {psiState === PSIState.COMPLETE ? (
             "Overlap computed at the time you both opted into "
           ) : (
@@ -386,7 +387,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
       {psiState === PSIState.COMPLETE ? (
         <div className="flex flex-col gap-1">
           <div className="flex flex-wrap gap-2">
-            {overlapIndices.map((index) => {
+            {overlapIndices?.map((index) => {
               const interests = [
                 "getHealthy",
                 "enjoyMeals",
@@ -394,6 +395,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
                 "party",
                 "attendTalks",
               ];
+
               const interest = interests[index];
               const emoji = {
                 getHealthy: "🏃",
@@ -404,14 +406,16 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
               }[interest];
 
               return (
-                <span
+                <Tag
                   key={interest}
-                  className="px-2 py-1 text-xs font-medium bg-[#FF9DF8] text-gray-800 rounded-full flex items-center gap-1"
-                >
-                  {emoji}{" "}
-                  {interest.charAt(0).toUpperCase() +
-                    interest.slice(1).replace(/([A-Z])/g, " $1")}
-                </span>
+                  emoji={emoji}
+                  variant="active"
+                  closable={false}
+                  text={
+                    interest.charAt(0).toUpperCase() +
+                    interest.slice(1).replace(/([A-Z])/g, " $1")
+                  }
+                />
               );
             })}
           </div>
@@ -441,11 +445,13 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
             : "Waiting for other user to connect..."}
         </AppButton>
       ) : (
-        <div className="flex flex-col gap-2">
-          <span className="text-gray-600 text-xs text-center">
-            {PSIStateMapping[psiState]}
-          </span>
-          <div className="relative h-2 bg-gray-200 rounded-full overflow-hidden">
+        <>
+          <div className="flex flex-col gap-2">
+            <span className="text-tertiary text-xs text-center font-sans">
+              {PSIStateMapping[psiState]}
+            </span>
+          </div>
+          <div className="absolute left-0 bottom-0 right-0 h-1 bg-black/15 rounded-full overflow-hidden">
             <div
               className="absolute top-0 left-0 h-full bg-[rgb(244,41,213)] transition-all duration-500 ease-in-out"
               style={{
@@ -453,7 +459,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
               }}
             ></div>
           </div>
-        </div>
+        </>
       )}
     </Card.Base>
   );

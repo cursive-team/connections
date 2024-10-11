@@ -121,7 +121,7 @@ const ActivityPage: React.FC = () => {
               ) : (
                 <Content />
               )}
-              <ArrowIcon className="ml-auto" />
+              {item?.link && <ArrowIcon className="ml-auto" />}
             </div>
           );
         })}

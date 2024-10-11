@@ -7,6 +7,7 @@ type TagProps = {
   emoji?: ReactNode;
   variant?: "default" | "active" | "selected";
   onClick?: () => void;
+  closable?: boolean;
 };
 
 export const Tag = ({
@@ -14,6 +15,7 @@ export const Tag = ({
   emoji = null,
   variant = "default",
   onClick,
+  closable = true,
 }: TagProps) => {
   return (
     <span
@@ -31,7 +33,7 @@ export const Tag = ({
     >
       <span className="mr-1">{emoji}</span>
       {text}
-      {variant === "active" && (
+      {variant === "active" && closable && (
         <>
           <CloseIcon className="ml-1" />
         </>

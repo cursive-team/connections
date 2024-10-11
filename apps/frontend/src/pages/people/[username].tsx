@@ -33,7 +33,7 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="flex flex-col bg-white p-6 rounded-[32px] w-full max-w-[90vw] overflow-y-auto">
+      <div className="flex flex-col bg-white p-6 rounded-[32px] w-full max-w-[90vw] max-h-[90vh] overflow-y-auto">
         <div className="size-[80px] relative flex mx-auto">
           <div className="absolute -left-3 size-8 rounded-full bg-[#9DE8FF] z-0 top-[28px] border border-quaternary/10"></div>
           <Image
@@ -191,12 +191,13 @@ const UserProfilePage: React.FC = () => {
           label: "Back",
           href: "/people",
         }}
+        headerDivider
         header={
           <div className="flex flex-col w-full">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex flex-col pt-4">
-                <span className=" text-[30px] font-semibold tracking-[-0.22px] font-sans">{`${connection?.user?.username}`}</span>
-                <span className="text-sm font-medium font-sans text-tertiary">
+            <div className="flex items-center justify-between w-full pb-4">
+              <div className="flex flex-col gap-1 pt-4">
+                <span className=" text-[30px] font-semibold tracking-[-0.22px] font-sans leading-none">{`${connection?.user?.username}`}</span>
+                <span className="text-sm font-medium font-sans text-tertiary leading-none">
                   {connection?.user?.displayName}
                 </span>
               </div>
@@ -205,7 +206,7 @@ const UserProfilePage: React.FC = () => {
           </div>
         }
       >
-        <div className="divide-y divide-y-primary pt-4">
+        <div className="!divide-y !divide-quaternary/20 pt-4">
           {(connection?.user?.twitter?.username ||
             connection?.user?.telegram?.username) && (
             <div className="flex flex-col gap-2 py-4 px-4">
@@ -266,14 +267,22 @@ const UserProfilePage: React.FC = () => {
           )}
 
           {user.userData.lanna && (
-            <InteractivePSI
-              selfSigPK={user.userData.signaturePublicKey}
-              otherSigPK={connection.user.signaturePublicKey}
-              serializedPsiPrivateKey={user.serializedPsiPrivateKey}
-              selfPsiPublicKeyLink={user.userData.psiPublicKeyLink}
-              otherPsiPublicKeyLink={connection.user.psiPublicKeyLink}
-              selfLannaData={user.userData.lanna}
-            />
+            <div className="flex flex-col gap-2 py-4 px-4">
+              <span className="text-sm font-semibold text-primary font-sans">
+                Connections{" "}
+                <span className="font-normal text-tertiary">
+                  where your encrypted data overlaps
+                </span>
+              </span>
+              <InteractivePSI
+                selfSigPK={user.userData.signaturePublicKey}
+                otherSigPK={connection.user.signaturePublicKey}
+                serializedPsiPrivateKey={user.serializedPsiPrivateKey}
+                selfPsiPublicKeyLink={user.userData.psiPublicKeyLink}
+                otherPsiPublicKeyLink={connection.user.psiPublicKeyLink}
+                selfLannaData={user.userData.lanna}
+              />
+            </div>
           )}
         </div>
       </AppLayout>

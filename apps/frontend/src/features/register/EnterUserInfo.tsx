@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { UsernameSchema } from "@types";
 import { verifyUsernameIsUnique } from "@/lib/auth/util";
 import { toast } from "sonner";
@@ -22,6 +22,7 @@ interface EnterUserInfoProps {
 
 const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
   const [step, setStep] = useState(0);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const { pageHeight } = useSettings();
   const [formData, setFormData] = useState<FormData>({
     username: "",
@@ -63,8 +64,21 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
     },
   ];
 
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+  };
+
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, []);
+
   const handleInputChange = (value: string) => {
     setFormData((prev) => ({ ...prev, [steps[step].field]: value }));
+    adjustTextareaHeight();
   };
 
   const isStepValid = () => {
@@ -167,7 +181,8 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
           <>
             <ArrowRightIcon className="absolute size-6 left-0 top-0 transform text-primary" />
             <textarea
-              className="w-full pl-8 pr-4 text-[14px] font-semibold font-sans focus:outline-none min-h-[100px] resize-none  bg-transparent"
+              ref={textareaRef}
+              className="w-full pl-8 pr-4 text-[14px] font-semibold font-sans focus:outline-none min-h-[30px] resize-none bg-transparent"
               placeholder={steps[step].question}
               value={formData.bio}
               onChange={(e) => handleInputChange(e.target.value)}

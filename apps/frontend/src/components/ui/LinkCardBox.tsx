@@ -5,7 +5,7 @@ export const LinkCardBox = ({ label, value, href }: any) => {
   return (
     <Link href={href ?? "#"} target="_blank">
       <div className="grid items-center grid-cols-[auto_1fr_auto] gap-1">
-        <span className="text-sm text-tertiary font-inter font-normal leading-6">
+        <span className="text-sm text-tertiary font-sans font-normal leading-6">
           {label}
         </span>
         <div className="h-[1px] bg-stroke-quaternary w-full"></div>

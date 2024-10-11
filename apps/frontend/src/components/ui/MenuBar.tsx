@@ -14,11 +14,18 @@ export const MenuBarItem = ({ label, href, isActive, icon }: RouterItem) => {
     <Link href={href}>
       <div
         className={cn(
-          "flex flex-col text-center gap-1 justify-center text-sm font-inter font-medium text-primary mt-auto leading-5 py-1 px-3 rounded-[4px] opacity-50",
+          "flex flex-col text-center gap-1 justify-center text-sm font-sans font-medium text-primary mt-auto leading-5 py-1 px-3 rounded-[4px] opacity-50",
           isActive && "!opacity-100"
         )}
       >
-        <Icon size={24} className={cn("duration-200 mx-auto", iconColor)} />
+        <Icon
+          size={24}
+          className={cn(
+            "duration-200 mx-auto opacity-50",
+            iconColor,
+            isActive && "!opacity-100"
+          )}
+        />
         <span className="text-center text-xs font-medium leading-4">
           {label}
         </span>

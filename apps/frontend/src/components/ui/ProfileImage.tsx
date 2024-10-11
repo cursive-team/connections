@@ -1,30 +1,39 @@
 import { UserData } from "@/lib/storage/types";
 
 export const ProfileImage = ({ user }: { user: UserData }) => {
-  const backgroundColor = `#${user.username
-    .split("")
-    .reduce((acc, char) => acc + char.charCodeAt(0), 0)
-    .toString(16)
-    .slice(0, 6)}`;
+  const colorPalette = [
+    "#FF9DF8", // Light Pinkish Purple
+    "#FFF59D", // Light Yellow
+    "#9DFFB3", // Light Green
+    "#FFC69D", // Light Orange
+    "#FF9DAF", // Light Pink
+    "#9DE8FF", // Light Blue
+    "#D49DF5", // Light Purple
+    "#FFF59D", // Light Yellow
+    "#F5D49D", // Light Beige Orange
+    "#F59DFF", // Soft Magenta
+    "#9DF5E8", // Light Aqua
+    "#9DAFFF", // Soft Lavender Blue
+    "#F5A89D", // Soft Coral
+  ];
 
-  const isDarkColor = (color: string): boolean => {
-    const hex = color.replace(/^#/, "");
-    const rgb = parseInt(hex, 16);
-    const r = (rgb >> 16) & 0xff;
-    const g = (rgb >> 8) & 0xff;
-    const b = (rgb >> 0) & 0xff;
-    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    return luma < 128;
-  };
+  const colorIndex =
+    user.username.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %
+    colorPalette.length;
 
-  const textColor = isDarkColor(backgroundColor) ? "white" : "black";
+  const backgroundColor = colorPalette[colorIndex];
 
   return (
     <div
       className={`size-10 rounded-full border border-quaternary/10 flex items-center justify-center`}
       style={{ backgroundColor }}
     >
-      <span className={`text-lg font-semibold text-${textColor}`}>
+      <span
+        className={`text-lg font-normal text-primary`}
+        style={{
+          fontFamily: `"Times New Roman", Times, serif`,
+        }}
+      >
         {(() => {
           const nameParts = user.displayName.split(" ");
           if (nameParts.length >= 2) {

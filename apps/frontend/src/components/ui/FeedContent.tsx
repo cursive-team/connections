@@ -36,7 +36,7 @@ export const FeedContent = ({
       <div className="grid grid-cols-[24px_1fr] items-center gap-2 truncate">
         <IconCircle>{icon}</IconCircle>
         {titleOverride === true ? (
-          <CardTitleOverride className="truncate text-primary font-inter font-normal">
+          <CardTitleOverride className="truncate text-primary font-sans font-normal">
             {title}
           </CardTitleOverride>
         ) : (

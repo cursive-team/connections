@@ -21,6 +21,7 @@ interface AppLayoutProps {
     href: string;
   };
   header?: React.ReactNode;
+  headerDivider?: boolean;
 }
 
 export default function AppLayout({
@@ -28,6 +29,7 @@ export default function AppLayout({
   showFooter = true,
   showHeader = false,
   header = null,
+  headerDivider = false,
   className = "",
   back = undefined,
   withContainer = true,
@@ -43,17 +45,24 @@ export default function AppLayout({
   return (
     <OnlyMobileLayout>
       {back && (
-        <div className="sticky top-0 h-12 flex items-center border-b border-b-quaternary/50">
+        <div className="sticky top-0 h-12 flex items-center border-b border-b-quaternary/20 bg-white z-20">
           <div className="px-4">
             <Link className="flex gap-1 items-center" href={back?.href ?? "/"}>
-              <BackIcon />
-              <span>{back?.label}</span>
+              <BackIcon size={12} />
+              <span className="text-sm">{back?.label}</span>
             </Link>
           </div>
         </div>
       )}
       {header && (
-        <div className="flex items-center relative min-h-12 px-3">{header}</div>
+        <div
+          className={cn(
+            "flex items-center relative min-h-12 px-3",
+            headerDivider && "border-b border-b-quaternary/20"
+          )}
+        >
+          {header}
+        </div>
       )}
       {showHeader && (
         <AppHeader isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />

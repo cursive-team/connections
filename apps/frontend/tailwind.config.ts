@@ -9,6 +9,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        "pulse-scale": {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.15)" },
+        },
+      },
+      animation: {
+        "pulse-scale": "pulse-scale 1s ease-in-out infinite",
+      },
       container: {
         padding: "24px",
         center: true,

@@ -76,9 +76,9 @@ const ProfilePage: React.FC = () => {
   return (
     <AppLayout
       header={
-        <div className="flex items-center justify-between w-full">
-          <div className="flex flex-col pt-4">
-            <span className=" text-[30px] font-semibold tracking-[-0.22px] font-sans">{`${user.userData.username}`}</span>
+        <div className="flex items-center justify-between w-full py-4">
+          <div className="flex flex-col">
+            <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans">{`${user.userData.username}`}</span>
             <span className="text-sm font-medium font-sans text-tertiary">
               {user.userData.displayName}
             </span>
@@ -159,7 +159,8 @@ const ProfilePage: React.FC = () => {
                 value && (
                   <Tag
                     key={key}
-                    variant={"selected"}
+                    variant={"active"}
+                    closable={false}
                     emoji={connectionsEmojiMapping?.[key]}
                     text={
                       key.charAt(0).toUpperCase() +
