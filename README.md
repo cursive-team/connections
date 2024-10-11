@@ -40,7 +40,7 @@ Testing:
   - Create new account, visit http://localhost:3000/tap?chipId=TEST002 in a different browser
   - To tap a connection, visit http://localhost:3000/tap?chipId=TEST002 from your first browser, where the chipId corresponds to the other existing account
 - After a full deletion sometimes old local storage values will still be populating site, visit http://localhost:3000/logout to logout or delete the local storage corresponding to localhost:3000.
-- To clear the database, run `npx prisma migrate reset` from apps/backend. NOTE THIS WILL WIPE YOUR POSTGRES.
+- To clear the database, run `npx prisma migrate reset` from apps/backend. NOTE THIS WILL WIPE YOUR POSTGRES
 
 Testing Secret Values:
 
