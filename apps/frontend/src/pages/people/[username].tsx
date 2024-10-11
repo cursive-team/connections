@@ -13,6 +13,7 @@ import { AppTextarea } from "@/components/ui/Textarea";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import InteractivePSI from "@/features/psi/InteractivePSI";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
+import { logClientEvent } from "@/lib/frontend/metrics";
 
 interface TapChipModalProps {
   tapResponse: ChipTapResponse;
@@ -69,7 +70,12 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
             {["💼", "🪩", "😊", "🎃", "🙈"].map((emoji) => (
               <button
                 key={emoji}
-                onClick={() => handleEmojiSelect(emoji)}
+                onClick={() => {
+                  logClientEvent("user-profile-tap-chip-label-selected", {
+                    label: emoji,
+                  });
+                  handleEmojiSelect(emoji);
+                }}
                 className={`p-2 size-12 rounded-full bg-[#F1F1F1] border border-transparent duration-200 ${
                   selectedEmoji === emoji ? "!border-primary" : ""
                 }`}
@@ -136,6 +142,7 @@ const UserProfilePage: React.FC = () => {
           savedTapInfo &&
           savedTapInfo.tapResponse.tap?.ownerUsername === username
         ) {
+          logClientEvent("user-profile-tap-chip-modal-shown", {});
           setTapInfo(savedTapInfo);
           setShowTapModal(true);
         }
@@ -146,11 +153,16 @@ const UserProfilePage: React.FC = () => {
   }, [username, router]);
 
   const handleCloseTapModal = async () => {
+    logClientEvent("user-profile-tap-chip-modal-closed", {});
     setShowTapModal(false);
     await storage.deleteSavedTapInfo();
   };
 
   const handleSubmitComment = async (emoji: string | null, note: string) => {
+    logClientEvent("user-profile-tap-chip-save-clicked", {
+      label: emoji,
+      privateNoteSet: note !== "",
+    });
     if (!connection) return;
 
     try {

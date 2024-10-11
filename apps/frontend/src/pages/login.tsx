@@ -14,6 +14,7 @@ import { HeaderCover } from "@/components/ui/HeaderCover";
 import useSettings from "@/hooks/useSettings";
 import { UserLoginResponse } from "@types";
 import { storage } from "@/lib/storage";
+import { logClientEvent } from "@/lib/frontend/metrics";
 
 enum LoginState {
   EMAIL = "email",
@@ -36,6 +37,7 @@ const LoginPage: React.FC = () => {
       const user = await storage.getUser();
       const session = await storage.getSession();
       if (user && session && session.authTokenExpiresAt > new Date()) {
+        logClientEvent("login-already-logged-in", {});
         router.push("/profile");
       }
     };
@@ -43,6 +45,7 @@ const LoginPage: React.FC = () => {
   }, [router]);
 
   const handleEmailSubmit = async (submittedEmail: string) => {
+    logClientEvent("login-email-submit", {});
     try {
       await requestSigninToken(submittedEmail);
     } catch (error) {
@@ -56,6 +59,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handleCodeSubmit = async (submittedCode: string) => {
+    logClientEvent("login-code-submit", {});
     try {
       const response = await loginUser(email, submittedCode);
       setLoginResponse(response);
@@ -71,6 +75,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handlePasswordSubmit = async (password: string) => {
+    logClientEvent("login-password-submit", {});
     if (!loginResponse) {
       toast.error("No login found!");
       return;
@@ -87,6 +92,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handlePasskeySubmit = async (password: string) => {
+    logClientEvent("login-passkey-submit", {});
     if (!loginResponse) {
       toast.error("No login found!");
       return;

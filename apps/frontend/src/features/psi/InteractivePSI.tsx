@@ -9,6 +9,7 @@ import { Icons } from "@/components/Icons";
 import { AppButton } from "@/components/ui/Button";
 import { LannaData } from "@/lib/storage/types/user";
 import { Tag } from "@/components/ui/Tag";
+import { logClientEvent } from "@/lib/frontend/metrics";
 
 enum PSIState {
   NOT_STARTED,
@@ -180,6 +181,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
       const psiPrivateKey = JSON.parse(serializedPsiPrivateKey);
 
       if (psiState === PSIState.ROUND1) {
+        logClientEvent("interactive-psi-round1", {});
         const selfBitVector = generateBitVectorFromLannaData(selfLannaData);
 
         await init();
@@ -212,6 +214,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
           },
         });
       } else if (psiState === PSIState.ROUND2) {
+        logClientEvent("interactive-psi-round2", {});
         await init();
         const round2Output = round2_js(
           {
@@ -243,6 +246,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
           },
         });
       } else if (psiState === PSIState.ROUND3) {
+        logClientEvent("interactive-psi-round3", {});
         await init();
         const psiOutput = round3_js(
           selfRound2Output!,
@@ -260,6 +264,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
 
         setSelfRound3Output(overlapIndices);
       } else if (psiState === PSIState.COMPLETE) {
+        logClientEvent("interactive-psi-complete", {});
         setOverlapIndices(selfRound3Output || []);
       }
     }
@@ -296,6 +301,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
   }, [otherUserTemporarilyLeft, psiState]);
 
   const handleInitiatePSI = () => {
+    logClientEvent("interactive-psi-initiate", {});
     console.log(
       "Initiating psi...",
       wantsToInitiatePSI,
@@ -321,6 +327,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
   };
 
   const handleUpdatePSI = () => {
+    logClientEvent("interactive-psi-update", {});
     console.log(
       "Updating psi...",
       wantsToInitiatePSI,

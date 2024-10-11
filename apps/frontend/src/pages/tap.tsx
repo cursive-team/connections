@@ -5,15 +5,18 @@ import { toast } from "sonner";
 import { storage } from "@/lib/storage";
 import { tapChip, updateLeaderboardEntry } from "@/lib/chip";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
+import { logClientEvent } from "@/lib/frontend/metrics";
 
 const TapPage: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
     const handleTap = async () => {
+      logClientEvent("tap-chip", {});
       const { chipId } = router.query;
 
       if (!chipId || typeof chipId !== "string") {
+        logClientEvent("tap-chip-invalid-chip-id", {});
         toast.error("Invalid tap! Please try again.");
         router.push("/");
         return;
@@ -27,9 +30,11 @@ const TapPage: React.FC = () => {
         const response: ChipTapResponse = await tapChip(tapParams);
 
         if (response.chipIsRegistered) {
+          logClientEvent("tap-chip-registered", {});
           // Chip is registered and tapped successfully
           if (!response.tap || !response.tap.ownerUsername) {
             // This shouldn't happen, but handle it just in case
+            logClientEvent("tap-chip-missing-tap-data", {});
             console.error("Chip is registered but tap data is missing");
             toast.error("Bad tap!");
             router.push("/");
@@ -39,6 +44,7 @@ const TapPage: React.FC = () => {
           // If user is not logged in, direct them to tap a new chip to register
           // TODO: Allow users to tap without being signed in
           if (!user || !session) {
+            logClientEvent("tap-chip-not-logged-in", {});
             toast.error("Please tap a new chip to register!");
             router.push("/");
             return;
@@ -46,12 +52,14 @@ const TapPage: React.FC = () => {
 
           // If the auth token is expired, tell them to sign in again
           if (session.authTokenExpiresAt < new Date()) {
+            logClientEvent("tap-chip-session-expired", {});
             toast.error("Your session has expired! Please sign in again.");
             router.push("/");
             return;
           }
 
           if (user.userData.username === response.tap.ownerUsername) {
+            logClientEvent("tap-chip-same-user", {});
             router.push("/");
             return;
           }
@@ -71,15 +79,18 @@ const TapPage: React.FC = () => {
           return;
         } else {
           // Chip is not registered
+          logClientEvent("tap-chip-not-registered", {});
           // If user is not logged in, direct them to registration
           if (!session) {
             // Save tap to populate registration flow data
+            logClientEvent("tap-chip-not-registered-not-logged-in", {});
             await storage.saveTapInfo({ tapParams, tapResponse: response });
             router.push("/register");
             return;
           } else {
             // For now, we do not allow users to register chips after account creation
             // TODO: Allow users to register chips after account creation
+            logClientEvent("tap-chip-not-registered-logged-in", {});
             toast.error(
               "This chip is not registered yet. Please tell your friend to register it first!"
             );
