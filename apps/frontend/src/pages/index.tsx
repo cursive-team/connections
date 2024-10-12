@@ -4,6 +4,7 @@ import { AppCopy } from "@/components/ui/AppCopy";
 import { HeaderCover } from "@/components/ui/HeaderCover";
 import { RegisterHeader } from "@/features/register/RegisterHeader";
 import { storage } from "@/lib/storage";
+import {AppButton} from "@/components/ui/Button";
 
 export default function Home() {
   const router = useRouter();
@@ -40,6 +41,9 @@ export default function Home() {
               </>
             }
           />
+          <AppButton onClick={() => router.push("/login")}>
+            If you have an account already, login
+          </AppButton>
         </div>
       </div>
       <AppCopy className="mt-auto mx-auto" />
