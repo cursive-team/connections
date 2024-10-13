@@ -61,9 +61,10 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
 
   // NOTE: For now, tapping a connection's chip will overwrite the existing connection data
   const ownerBio = tap.ownerBio === null ? "" : tap.ownerBio;
+  const ownerDisplayName = tap.ownerDisplayName ?? "";
   const newConnectionUserData = {
     username: tap.ownerUsername,
-    displayName: tap.ownerDisplayName,
+    displayName: ownerDisplayName,
     bio: ownerBio,
     signaturePublicKey: tap.ownerSignaturePublicKey,
     encryptionPublicKey: tap.ownerEncryptionPublicKey,
@@ -101,7 +102,7 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
   // Create activity for tapping a chip
   const tapActivity = createTapActivity(
     tapResponse.chipIssuer,
-    tap.ownerDisplayName,
+    ownerDisplayName,
     tap.ownerUsername
   );
   const tapActivityBackup = createActivityBackup({
