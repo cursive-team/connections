@@ -21,7 +21,6 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
 
   if (
     !tap.ownerUsername ||
-    !tap.ownerDisplayName ||
     !tap.ownerSignaturePublicKey ||
     !tap.ownerEncryptionPublicKey ||
     !tap.ownerPsiPublicKeyLink
