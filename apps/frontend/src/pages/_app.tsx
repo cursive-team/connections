@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import { toast, Toaster } from "sonner";
 import { DM_Sans } from "next/font/google";
 import { useRouter } from "next/router";
+import { Analytics } from "@vercel/analytics/react";
 import { logoutUser } from "@/lib/auth";
 import { storage } from "@/lib/storage";
 import { useEffect, useState } from "react";
@@ -87,6 +88,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <main className={dmSans.className}>
       <Component {...pageProps} />
+      <Analytics />
       <Toaster
         position="top-center"
         toastOptions={{
