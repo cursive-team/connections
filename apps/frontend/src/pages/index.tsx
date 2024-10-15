@@ -4,10 +4,12 @@ import { AppCopy } from "@/components/ui/AppCopy";
 import { HeaderCover } from "@/components/ui/HeaderCover";
 import { RegisterHeader } from "@/features/register/RegisterHeader";
 import { storage } from "@/lib/storage";
-import {AppButton} from "@/components/ui/Button";
+import { AppButton } from "@/components/ui/Button";
+import useSettings from "@/hooks/useSettings";
 
 export default function Home() {
   const router = useRouter();
+  const { pageHeight } = useSettings();
 
   useEffect(() => {
     const checkUserSession = async () => {
@@ -22,7 +24,12 @@ export default function Home() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col pb-4">
+    <div
+      className="min-h-screen bg-gray-100 flex flex-col"
+      style={{
+        minHeight: `${pageHeight}px`,
+      }}
+    >
       <HeaderCover />
       <div className="flex-grow flex px-6 center sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex flex-col grow">
@@ -41,12 +48,16 @@ export default function Home() {
               </>
             }
           />
-          <AppButton onClick={() => router.push("/login")}>
-            If you have an account already, login
+          <AppButton
+            variant="outline"
+            className="mt-auto"
+            onClick={() => router.push("/login")}
+          >
+            I already have an account
           </AppButton>
         </div>
       </div>
-      <AppCopy className="mt-auto mx-auto" />
+      <AppCopy className="text-center py-4" />
     </div>
   );
 }
