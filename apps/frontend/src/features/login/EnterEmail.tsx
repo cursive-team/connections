@@ -36,7 +36,7 @@ const EnterEmail: React.FC<EnterEmailProps> = ({ submitEmail }) => {
     <div className="flex flex-col grow">
       <RegisterHeader
         title="Welcome back!"
-        description="Log in to your account to continue your journey with us."
+        description="Log in to your account to continue your Cursive Connections journey. You will be able to retrieve your data from your encrypted backup."
       />
       <div className="flex flex-col mt-auto">
         <form onSubmit={handleSubmit} className="space-y-4 pb-2">
