@@ -91,7 +91,6 @@ export const ChipTapResponseSchema = z.object({
 export type ChipTapResponse = z.infer<typeof ChipTapResponseSchema>;
 
 
-// TODO: in chip or in user?
 export const UpdateLeaderboardEntryRequestSchema = z.object({
   authToken: z.string(),
   chipIssuer: ChipIssuerSchema,
