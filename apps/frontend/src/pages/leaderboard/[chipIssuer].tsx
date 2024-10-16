@@ -18,12 +18,6 @@ const communitiesEnum : { [key: string]: string } = {
   "testing": ChipIssuer.TESTING,
 };
 
-const communitiesHumanReadable : { [key: string]: string } = {
-  "edge_lanna": "Edge City Lanna",
-  "devcon": "Dev Con 2024",
-  "testing": "Testing",
-};
-
 const LeaderboardPage: React.FC = () => {
   const router = useRouter();
   const { chipIssuer } = router.query;
