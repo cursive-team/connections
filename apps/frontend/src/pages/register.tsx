@@ -289,6 +289,7 @@ const Register: React.FC = () => {
       ].includes(displayState) && (
         <div
           className={cn(
+            "hidden", // back button not needed for now
             "flex px-3 justify-between border-b border-b-primary w-full backdrop-blur-md top-0 z-50 items-center h-[50px] xs:h-[60px] bg-white"
           )}
         >

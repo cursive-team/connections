@@ -251,7 +251,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
             const fieldValue = formData[s.field as keyof FormData];
             return (
               index < step && (
-                <div key={s.field} className="flex items-center   gap-1">
+                <div key={s.field} className="flex items-center gap-1">
                   {fieldValue ? (
                     <CheckIcon
                       className="size-5 text-quaternary"
@@ -268,6 +268,14 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
                   <span className="font-sans text-[14px] font-semibold text-quaternary">
                     {fieldValue || s.placeholder || "-"}
                   </span>
+                  <button
+                    className="text-xs text-link-primary font-semibold font-sans ml-1"
+                    onClick={() => {
+                      setStep(index + 1);
+                    }}
+                  >
+                    Edit
+                  </button>
                 </div>
               )
             );
