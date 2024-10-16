@@ -5,6 +5,9 @@ import {
   ChipIssuer,
   UpdateChipRequest,
   LeaderboardEntry,
+  ChipIssuer,
+  LeaderboardEntry,
+  LeaderboardPosition,
 } from "@types";
 import { Chip } from "./types";
 
@@ -30,6 +33,10 @@ export interface iChipClient {
     username: string,
     chipIssuer: ChipIssuer
   ): Promise<number | null>;
+  GetUserLeaderboardPosition(
+    username: string,
+    chipIssuer: ChipIssuer
+  ): Promise<LeaderboardPosition | null>;
   GetTopLeaderboard(
     count: number,
     chipIssuer: ChipIssuer

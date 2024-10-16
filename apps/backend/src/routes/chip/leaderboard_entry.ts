@@ -9,7 +9,7 @@ import {
   GetLeaderboardPositionRequest,
   GetLeaderboardPositionRequestSchema,
   LeaderboardDetails,
-  LeaderboardDetailsSchema,
+  LeaderboardEntries,
   errorToString,
   LeaderboardEntries,
 } from "@types";
