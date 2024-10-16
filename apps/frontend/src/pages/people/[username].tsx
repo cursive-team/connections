@@ -311,7 +311,8 @@ const UserProfilePage: React.FC = () => {
                 serializedPsiPrivateKey={user.serializedPsiPrivateKey}
                 selfPsiPublicKeyLink={user.userData.psiPublicKeyLink}
                 otherPsiPublicKeyLink={connection.user.psiPublicKeyLink}
-                selfLannaData={user.userData.lanna}
+                userData={user.userData}
+                connections={user.connections}
               />
             </div>
           )}
