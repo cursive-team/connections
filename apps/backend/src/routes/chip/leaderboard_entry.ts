@@ -52,7 +52,7 @@ router.get(
 );
 
 /**
- * @route POST /api/user/update_leaderboard_entry
+ * @route POST /api/chip/update_leaderboard_entry
  * @desc Updates the leaderboard entry for a user
  */
 router.post(
@@ -148,7 +148,7 @@ router.get(
       const entries = await controller.GetTopLeaderboard(100, chipIssuer);
 
       if (entries) {
-        return res.status(200).json(entries);
+        return res.status(200).json({entries: entries});
       }
 
       throw new Error("Failed to get leaderboard entries");
