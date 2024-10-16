@@ -2,15 +2,27 @@ import {
   RegisterChipRequest,
   ChipTapResponse,
   TapParams,
-  ChipIssuer,
+  ChipIssuer, LeaderboardEntry, LeaderboardPosition,
 } from "@types";
 import { Chip } from "./types";
 
 export interface iChipClient {
   RegisterChip(registerChip: RegisterChipRequest): Promise<Chip>;
   GetTapFromChip(tapParams: TapParams): Promise<ChipTapResponse>;
+  GetLeaderboardEntry(
+    username: string,
+    chipIssuer: ChipIssuer
+  ): Promise<LeaderboardEntry | null>;
   UpdateLeaderboardEntry(
     username: string,
     chipIssuer: ChipIssuer
   ): Promise<void>;
+  GetUserLeaderboardPosition(
+    username: string,
+    chipIssuer: ChipIssuer
+  ): Promise<LeaderboardPosition | null>;
+  GetTopLeaderboard(
+    count: number,
+    chipIssuer: ChipIssuer
+  ): Promise<LeaderboardEntry[] | null>;
 }
