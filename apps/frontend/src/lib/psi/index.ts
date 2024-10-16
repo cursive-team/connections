@@ -1,7 +1,8 @@
 import init, { gen_keys_js } from "./mp_psi";
 import { type PutBlobResult } from "@vercel/blob";
 import { upload } from "@vercel/blob/client";
-import { LannaData } from "../storage/types";
+import { Connection, UserData } from "../storage/types";
+import { sha256 } from "js-sha256";
 
 export const psiBlobUploadClient = async (name: string, data: string) => {
   const newBlob: PutBlobResult = await upload(name, data, {
@@ -22,20 +23,81 @@ export const generatePSIKeyPair = async () => {
   };
 };
 
-export const generateBitVectorFromLannaData = (
-  data: LannaData
-): Uint32Array => {
-  const bitVector = new Uint32Array(1000).fill(0);
+const PSI_BIT_VECTOR_SIZE = 10000;
+const COMMON_CONNECTIONS_BIT_VECTOR_SIZE = 9000;
 
-  // 0-7 reserved for desired connections
-  bitVector[0] = data.desiredConnections.getHealthy ? 1 : 0;
-  bitVector[1] = data.desiredConnections.cowork ? 1 : 0;
-  bitVector[2] = data.desiredConnections.enjoyMeals ? 1 : 0;
-  bitVector[3] = data.desiredConnections.learnFrontierTopics ? 1 : 0;
-  bitVector[4] = data.desiredConnections.findCollaborators ? 1 : 0;
-  bitVector[5] = data.desiredConnections.goExploring ? 1 : 0;
-  bitVector[6] = data.desiredConnections.party ? 1 : 0;
-  bitVector[7] = data.desiredConnections.doMentalWorkouts ? 1 : 0;
+export const generateBitVectorFromUserData = (
+  userData: UserData,
+  connections: Record<string, Connection>
+): { bitVector: Uint32Array; indexMapping: Record<number, string[]> } => {
+  const bitVector = new Uint32Array(PSI_BIT_VECTOR_SIZE).fill(0);
+  const bitIndexToUsername: Record<number, string[]> = {};
 
-  return bitVector;
+  // 0-8999 reserved for common connections
+  for (const connection of Object.values(connections)) {
+    const { username, signaturePublicKey } = connection.user;
+    const hash = sha256(signaturePublicKey);
+    const bigIntHash = BigInt("0x" + hash);
+    const index = Number(
+      bigIntHash % BigInt(COMMON_CONNECTIONS_BIT_VECTOR_SIZE)
+    );
+    bitVector[index] = 1;
+
+    if (!bitIndexToUsername[index]) {
+      bitIndexToUsername[index] = [];
+    }
+    bitIndexToUsername[index].push(username);
+  }
+
+  // 9000-9999 reserved for edge city lanna data
+  const lannaDesiredConnections = userData.lanna?.desiredConnections;
+  if (lannaDesiredConnections) {
+    bitVector[9000] = lannaDesiredConnections.getHealthy ? 1 : 0;
+    bitVector[9001] = lannaDesiredConnections.cowork ? 1 : 0;
+    bitVector[9002] = lannaDesiredConnections.enjoyMeals ? 1 : 0;
+    bitVector[9003] = lannaDesiredConnections.learnFrontierTopics ? 1 : 0;
+    bitVector[9004] = lannaDesiredConnections.findCollaborators ? 1 : 0;
+    bitVector[9005] = lannaDesiredConnections.goExploring ? 1 : 0;
+    bitVector[9006] = lannaDesiredConnections.party ? 1 : 0;
+    bitVector[9007] = lannaDesiredConnections.doMentalWorkouts ? 1 : 0;
+  }
+
+  return { bitVector, indexMapping: bitIndexToUsername };
+};
+
+export const getOverlapFromPSIResult = (
+  overlapIndices: number[],
+  indexMapping: Record<number, string[]>
+): { overlapUsers: string[]; overlapLannaDesiredConnections: string[] } => {
+  const overlapUsers: string[] = [];
+  const overlapLannaDesiredConnections: string[] = [];
+
+  for (const index of overlapIndices) {
+    if (index < COMMON_CONNECTIONS_BIT_VECTOR_SIZE) {
+      if (indexMapping[index]) {
+        overlapUsers.push(...indexMapping[index]);
+      }
+    } else {
+      // Parse Lanna desired connections
+      const lannaConnections = [
+        "getHealthy",
+        "cowork",
+        "enjoyMeals",
+        "learnFrontierTopics",
+        "findCollaborators",
+        "goExploring",
+        "party",
+        "doMentalWorkouts",
+      ];
+      const lannaIndex = index - COMMON_CONNECTIONS_BIT_VECTOR_SIZE;
+      if (lannaIndex >= 0 && lannaIndex < lannaConnections.length) {
+        overlapLannaDesiredConnections.push(lannaConnections[lannaIndex]);
+      }
+    }
+  }
+
+  return {
+    overlapUsers,
+    overlapLannaDesiredConnections,
+  };
 };

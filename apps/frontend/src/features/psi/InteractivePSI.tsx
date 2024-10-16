@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useEffect, useState } from "react";
-import { generateBitVectorFromLannaData, psiBlobUploadClient } from "@/lib/psi";
+import {
+  generateBitVectorFromUserData,
+  getOverlapFromPSIResult,
+  psiBlobUploadClient,
+} from "@/lib/psi";
 import init, { round1_js, round2_js, round3_js } from "@/lib/psi/mp_psi/mp_psi";
 import { supabase } from "@/lib/realtime";
 import { Card } from "@/components/cards/Card";
 import { Icons } from "@/components/Icons";
 import { AppButton } from "@/components/ui/Button";
-import { LannaData } from "@/lib/storage/types/user";
+import { Connection, UserData } from "@/lib/storage/types/user";
 import { Tag } from "@/components/ui/Tag";
 import { logClientEvent } from "@/lib/frontend/metrics";
 
@@ -33,7 +37,8 @@ interface InteractivePSIProps {
   serializedPsiPrivateKey: string;
   selfPsiPublicKeyLink: string;
   otherPsiPublicKeyLink: string;
-  selfLannaData: LannaData;
+  userData: UserData;
+  connections: Record<string, Connection>;
 }
 
 const InteractivePSI: React.FC<InteractivePSIProps> = ({
@@ -42,11 +47,11 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
   serializedPsiPrivateKey,
   selfPsiPublicKeyLink,
   otherPsiPublicKeyLink,
-  selfLannaData,
+  userData,
+  connections,
 }) => {
-  const [broadcastEvent, setBroadcastEvent] = useState<any>();
-
   const [psiState, setPsiState] = useState<PSIState>(PSIState.NOT_STARTED);
+  const [broadcastEvent, setBroadcastEvent] = useState<any>();
   const [selfRound1Output, setSelfRound1Output] = useState<any>();
   const [otherRound2MessageLink, setOtherRound2MessageLink] =
     useState<string>();
@@ -64,7 +69,13 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
   const [otherUserInChannel, setOtherUserInChannel] = useState(false);
   const [otherUserTemporarilyLeft, setOtherUserTemporarilyLeft] =
     useState(false);
-  const [overlapIndices, setOverlapIndices] = useState<number[]>([]);
+  const [indexMapping, setIndexMapping] = useState<
+    Record<number, string[]> | undefined
+  >();
+  const [overlap, setOverlap] = useState<{
+    overlapUsers: string[];
+    overlapLannaDesiredConnections: string[];
+  }>();
 
   useEffect(() => {
     if (wantsToInitiatePSI && otherUserWantsToInitiatePSI) {
@@ -182,7 +193,9 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
 
       if (psiState === PSIState.ROUND1) {
         logClientEvent("interactive-psi-round1", {});
-        const selfBitVector = generateBitVectorFromLannaData(selfLannaData);
+        const { bitVector: selfBitVector, indexMapping: selfIndexMapping } =
+          generateBitVectorFromUserData(userData, connections);
+        setIndexMapping(selfIndexMapping);
 
         await init();
         const round1Output = round1_js(
@@ -265,7 +278,9 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
         setSelfRound3Output(overlapIndices);
       } else if (psiState === PSIState.COMPLETE) {
         logClientEvent("interactive-psi-complete", {});
-        setOverlapIndices(selfRound3Output || []);
+        setOverlap(
+          getOverlapFromPSIResult(selfRound3Output || [], indexMapping || {})
+        );
       }
     }
 
@@ -393,44 +408,60 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
       </div>
       {psiState === PSIState.COMPLETE ? (
         <div className="flex flex-col gap-1">
-          <div className="flex flex-wrap gap-2">
-            {overlapIndices?.map((index) => {
-              const interests = [
-                "getHealthy",
-                "cowork",
-                "enjoyMeals",
-                "learnFrontierTopics",
-                "findCollaborators",
-                "goExploring",
-                "party",
-                "doMentalWorkouts",
-              ];
+          <div className="flex flex-col gap-4">
+            {overlap?.overlapUsers && overlap.overlapUsers.length > 0 && (
+              <div>
+                <h3 className="font-medium text-bold text-primary text-sm font-sans mb-2">
+                  Shared Connections
+                </h3>
+                <ul className="list-disc list-inside">
+                  {overlap.overlapUsers.map((user, index) => (
+                    <li key={index} className="text-tertiary text-sm">
+                      {user}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {overlap?.overlapLannaDesiredConnections &&
+              overlap.overlapLannaDesiredConnections.length > 0 && (
+                <div>
+                  <h3 className="font-medium text-bold text-primary text-sm font-sans mb-2">
+                    Lanna Interests
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {overlap.overlapLannaDesiredConnections.map(
+                      (desiredConnection) => {
+                        const emoji = {
+                          getHealthy: "🏃",
+                          cowork: "💻",
+                          enjoyMeals: "🍲",
+                          learnFrontierTopics: "🤓",
+                          findCollaborators: "🤝",
+                          goExploring: "👀",
+                          party: "🎉",
+                          doMentalWorkouts: "🧠",
+                        }[desiredConnection];
 
-              const interest = interests[index];
-              const emoji = {
-                getHealthy: "🏃",
-                cowork: "💻",
-                enjoyMeals: "🍲",
-                learnFrontierTopics: "🤓",
-                findCollaborators: "🤝",
-                goExploring: "👀",
-                party: "🎉",
-                doMentalWorkouts: "🧠",
-              }[interest];
-
-              return (
-                <Tag
-                  key={interest}
-                  emoji={emoji}
-                  variant="active"
-                  closable={false}
-                  text={
-                    interest.charAt(0).toUpperCase() +
-                    interest.slice(1).replace(/([A-Z])/g, " $1")
-                  }
-                />
-              );
-            })}
+                        return (
+                          <Tag
+                            key={desiredConnection}
+                            emoji={emoji}
+                            variant="active"
+                            closable={false}
+                            text={
+                              desiredConnection.charAt(0).toUpperCase() +
+                              desiredConnection
+                                .slice(1)
+                                .replace(/([A-Z])/g, " $1")
+                            }
+                          />
+                        );
+                      }
+                    )}
+                  </div>
+                </div>
+              )}
           </div>
           <AppButton
             type="button"
