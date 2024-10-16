@@ -34,10 +34,11 @@ PrismaPostgresClient.prototype.GetMessagesForUser = async function (
 PrismaPostgresClient.prototype.CreateMessages = async function (
   messages: CreateMessageData[]
 ): Promise<void> {
+  const baseDate = new Date();
   await this.prismaClient.message.createMany({
-    data: messages.map((message) => ({
+    data: messages.map((message, index) => ({
       ...message,
-      createdAt: new Date(),
+      createdAt: new Date(baseDate.getTime() + index),
     })),
   });
 
