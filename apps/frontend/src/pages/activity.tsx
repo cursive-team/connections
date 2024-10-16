@@ -9,6 +9,7 @@ import { CircleCard } from "@/components/ui/CircleCard";
 import { MdKeyboardArrowRight as ArrowIcon } from "react-icons/md";
 import Link from "next/link";
 import {
+  PSIActivityDataSchema,
   RegisterChipActivityDataSchema,
   TapActivityDataSchema,
 } from "@/lib/activity";
@@ -48,6 +49,15 @@ const parseActivity = (activity: Activity): ActivityDisplayItem => {
       return {
         text: `You tapped ${chipOwnerUsername}`,
         link: `/people/${chipOwnerUsername}`,
+        timestamp: activity.timestamp,
+      };
+    case "PSI":
+      const { connectionUsername } = PSIActivityDataSchema.parse(
+        JSON.parse(activity.serializedData)
+      );
+      return {
+        text: `You ran PSI with ${connectionUsername}`,
+        link: `/people/${connectionUsername}`,
         timestamp: activity.timestamp,
       };
     default:

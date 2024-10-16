@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { Connection, Session, User } from "@/lib/storage/types";
+import { Connection, PSIData, Session, User } from "@/lib/storage/types";
 import { toast } from "sonner";
 import { TapParams, ChipTapResponse } from "@types";
 import { AppButton } from "@/components/ui/Button";
@@ -184,6 +184,24 @@ const UserProfilePage: React.FC = () => {
     }
   };
 
+  const savePSIOverlap = async (overlap: PSIData) => {
+    if (!connection) return;
+
+    logClientEvent("user-profile-psi-overlap-saved", {});
+    const connectionUsername = connection.user.username;
+    await storage.updatePSI(connectionUsername, overlap);
+
+    // Update local state
+    const user = await storage.getUser();
+    const session = await storage.getSession();
+    if (!user || !session || !user.connections[connectionUsername]) {
+      throw new Error("User not found");
+    }
+    setUser(user);
+    setSession(session);
+    setConnection(user.connections[connectionUsername]);
+  };
+
   if (!connection || !user || !session) {
     return (
       <div className="flex min-h-screen justify-center items-center text-center">
@@ -313,6 +331,8 @@ const UserProfilePage: React.FC = () => {
                 otherPsiPublicKeyLink={connection.user.psiPublicKeyLink}
                 userData={user.userData}
                 connections={user.connections}
+                existingPSIOverlap={connection.psi}
+                savePSIOverlap={savePSIOverlap}
               />
             </div>
           )}
