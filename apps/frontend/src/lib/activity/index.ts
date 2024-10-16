@@ -54,3 +54,15 @@ export const createTapActivity = (
     timestamp: new Date(),
   };
 };
+
+export const PSIActivityDataSchema = z.object({
+  connectionUsername: z.string(),
+});
+export type PSIActivityData = z.infer<typeof PSIActivityDataSchema>;
+export const createPSIActivity = (connectionUsername: string): Activity => {
+  return {
+    type: ActivityType.PSI,
+    serializedData: JSON.stringify({ connectionUsername }),
+    timestamp: new Date(),
+  };
+};
