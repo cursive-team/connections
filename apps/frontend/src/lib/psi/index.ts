@@ -1,7 +1,7 @@
 import init, { gen_keys_js } from "./mp_psi";
 import { type PutBlobResult } from "@vercel/blob";
 import { upload } from "@vercel/blob/client";
-import { Connection, UserData } from "../storage/types";
+import { Connection, PSIData, UserData } from "../storage/types";
 import { sha256 } from "js-sha256";
 
 export const psiBlobUploadClient = async (name: string, data: string) => {
@@ -68,14 +68,14 @@ export const generateBitVectorFromUserData = (
 export const getOverlapFromPSIResult = (
   overlapIndices: number[],
   indexMapping: Record<number, string[]>
-): { overlapUsers: string[]; overlapLannaDesiredConnections: string[] } => {
-  const overlapUsers: string[] = [];
-  const overlapLannaDesiredConnections: string[] = [];
+): PSIData => {
+  const sharedConnections: string[] = [];
+  const sharedLannaDesiredConnections: string[] = [];
 
   for (const index of overlapIndices) {
     if (index < COMMON_CONNECTIONS_BIT_VECTOR_SIZE) {
       if (indexMapping[index]) {
-        overlapUsers.push(...indexMapping[index]);
+        sharedConnections.push(...indexMapping[index]);
       }
     } else {
       // Parse Lanna desired connections
@@ -91,13 +91,13 @@ export const getOverlapFromPSIResult = (
       ];
       const lannaIndex = index - COMMON_CONNECTIONS_BIT_VECTOR_SIZE;
       if (lannaIndex >= 0 && lannaIndex < lannaConnections.length) {
-        overlapLannaDesiredConnections.push(lannaConnections[lannaIndex]);
+        sharedLannaDesiredConnections.push(lannaConnections[lannaIndex]);
       }
     }
   }
 
   return {
-    overlapUsers,
-    overlapLannaDesiredConnections,
+    sharedConnections,
+    sharedLannaDesiredConnections,
   };
 };

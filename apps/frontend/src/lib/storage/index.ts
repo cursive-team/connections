@@ -2,6 +2,7 @@ import {
   Activity,
   Chip,
   CommentData,
+  PSIData,
   Session,
   TapInfo,
   User,
@@ -34,6 +35,7 @@ export interface ClientStorage {
     connectionUsername: string,
     comment: CommentData
   ): Promise<void>;
+  updatePSI(connectionUsername: string, psiData: PSIData): Promise<void>;
   addActivity(activity: Activity): Promise<void>;
 }
 
