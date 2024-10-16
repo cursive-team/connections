@@ -7,6 +7,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { logoutUser } from "@/lib/auth";
 import { storage } from "@/lib/storage";
 import { useEffect, useState } from "react";
+import PlausibleProvider from "next-plausible";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -87,7 +88,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <main className={dmSans.className}>
-      <Component {...pageProps} />
+      <PlausibleProvider
+        domain={process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN!}
+        trackOutboundLinks
+      >
+        <Component {...pageProps} />
+      </PlausibleProvider>
       <Analytics />
       <Toaster
         position="top-center"
