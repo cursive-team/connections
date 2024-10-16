@@ -232,18 +232,30 @@ const UserProfilePage: React.FC = () => {
               </span>
               <div className="flex flex-col gap-4">
                 {connection?.user?.telegram?.username && (
-                  <LinkCardBox
-                    label="Telegram"
-                    value={`@${connection.user.telegram.username}`}
-                    href={`https://t.me/${connection.user.telegram.username}`}
-                  />
+                  <div
+                    onClick={() => {
+                      logClientEvent("user-profile-telegram-clicked", {});
+                    }}
+                  >
+                    <LinkCardBox
+                      label="Telegram"
+                      value={`@${connection.user.telegram.username}`}
+                      href={`https://t.me/${connection.user.telegram.username}`}
+                    />
+                  </div>
                 )}
                 {connection?.user?.twitter?.username && (
-                  <LinkCardBox
-                    label="Twitter"
-                    value={`@${connection.user.twitter.username}`}
-                    href={`https://twitter.com/${connection.user.twitter.username}`}
-                  />
+                  <div
+                    onClick={() => {
+                      logClientEvent("user-profile-twitter-clicked", {});
+                    }}
+                  >
+                    <LinkCardBox
+                      label="Twitter"
+                      value={`@${connection.user.twitter.username}`}
+                      href={`https://twitter.com/${connection.user.twitter.username}`}
+                    />
+                  </div>
                 )}
               </div>
             </div>
