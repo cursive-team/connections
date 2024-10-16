@@ -1,7 +1,6 @@
 import { BASE_API_URL } from "@/config";
 import {
   ChipIssuer,
-  ChipTapResponseSchema,
   LeaderboardEntry,
   LeaderboardEntrySchema,
   LeaderboardPosition,
