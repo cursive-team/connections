@@ -2,7 +2,9 @@ import {
   RegisterChipRequest,
   ChipTapResponse,
   TapParams,
-  ChipIssuer, LeaderboardEntry, LeaderboardPosition,
+  ChipIssuer,
+  LeaderboardEntry,
+  LeaderboardPosition,
 } from "@types";
 import { Chip } from "./types";
 
