@@ -8,10 +8,14 @@ import { AppCopy } from "@/components/ui/AppCopy";
 
 interface EnterEmailProps {
   submitEmail: (email: string) => Promise<void>;
+  defaultEmail?: string;
 }
 
-const EnterEmail: React.FC<EnterEmailProps> = ({ submitEmail }) => {
-  const [email, setEmail] = useState("");
+const EnterEmail: React.FC<EnterEmailProps> = ({
+  submitEmail,
+  defaultEmail = "",
+}) => {
+  const [email, setEmail] = useState(defaultEmail);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {

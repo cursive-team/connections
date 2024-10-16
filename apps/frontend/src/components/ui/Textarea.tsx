@@ -9,6 +9,7 @@ const TextareaComponent = classed.textarea(
     variants: {
       variant: {
         primary: "bg-surface-primary border border-stroke-secondary",
+        secondary: "bg-surface-quaternary border border-transparent",
       },
       hasError: {
         true: "!border-b-error",

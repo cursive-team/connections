@@ -13,6 +13,7 @@ import {
   TapActivityDataSchema,
 } from "@/lib/activity";
 import { ChipIssuer } from "@types";
+import { Banner } from "@/components/cards/Banner";
 
 interface ActivityDisplayItem {
   text: string;
@@ -82,16 +83,19 @@ const ActivityPage: React.FC = () => {
   return (
     <AppLayout
       showHeader={false}
+      headerDivider
       header={
-        <>
-          <span className="text-primary font-medium">Activity</span>
-          <div
-            className="absolute left-0 right-0 bottom-0 h-[2px]"
-            style={{
-              background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
-            }}
-          ></div>
-        </>
+        <div className="my-4 w-full">
+          <Banner
+            className="justify-center"
+            title={
+              <span className="!font-normal text-center">
+                Coming soon: community health dashboard, discreet job matching,
+                & more.
+              </span>
+            }
+          />
+        </div>
       }
       className="container mx-auto px-4 py-4"
     >

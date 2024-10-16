@@ -10,6 +10,7 @@ import { AppButton } from "@/components/ui/Button";
 import { LannaData } from "@/lib/storage/types/user";
 import { Tag } from "@/components/ui/Tag";
 import { logClientEvent } from "@/lib/frontend/metrics";
+import { EMOJI_MAPPING, INTERESTS_LIST } from "@/common/constants";
 
 enum PSIState {
   NOT_STARTED,
@@ -395,28 +396,8 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
         <div className="flex flex-col gap-1">
           <div className="flex flex-wrap gap-2">
             {overlapIndices?.map((index) => {
-              const interests = [
-                "getHealthy",
-                "cowork",
-                "enjoyMeals",
-                "learnFrontierTopics",
-                "findCollaborators",
-                "goExploring",
-                "party",
-                "doMentalWorkouts",
-              ];
-
-              const interest = interests[index];
-              const emoji = {
-                getHealthy: "🏃",
-                cowork: "💻",
-                enjoyMeals: "🍲",
-                learnFrontierTopics: "🤓",
-                findCollaborators: "🤝",
-                goExploring: "👀",
-                party: "🎉",
-                doMentalWorkouts: "🧠",
-              }[interest];
+              const interest = INTERESTS_LIST[index];
+              const emoji = EMOJI_MAPPING[interest];
 
               return (
                 <Tag

@@ -5,6 +5,7 @@ import { Connection } from "@/lib/storage/types";
 import AppLayout from "@/layouts/AppLayout";
 import { MdKeyboardArrowRight as ArrowRight } from "react-icons/md";
 import { ProfileImage } from "@/components/ui/ProfileImage";
+import { Banner } from "@/components/cards/Banner";
 
 const PeoplePage: React.FC = () => {
   const [connections, setConnections] = useState<Record<string, Connection>>(
@@ -27,15 +28,17 @@ const PeoplePage: React.FC = () => {
   return (
     <AppLayout
       header={
-        <>
-          <span className="text-primary font-medium">People</span>
-          <div
-            className="absolute left-0 right-0 bottom-0 h-[2px]"
-            style={{
-              background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
-            }}
-          ></div>
-        </>
+        <div className="my-4 w-full">
+          <Banner
+            className="justify-center text-center"
+            title={
+              <span className="text-center">
+                Tap wristbands -{" "}
+                <span className="!font-normal">Make connections</span>
+              </span>
+            }
+          />
+        </div>
       }
       className="mx-auto"
       withContainer={false}

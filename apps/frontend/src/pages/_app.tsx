@@ -8,6 +8,7 @@ import { logoutUser } from "@/lib/auth";
 import { storage } from "@/lib/storage";
 import { useEffect, useState } from "react";
 import PlausibleProvider from "next-plausible";
+import OnlyMobileLayout from "@/layouts/OnlyMobileLayout";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -92,7 +93,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         domain={process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN!}
         trackOutboundLinks
       >
-        <Component {...pageProps} />
+        <OnlyMobileLayout>
+          <Component {...pageProps} />
+        </OnlyMobileLayout>
       </PlausibleProvider>
       <Analytics />
       <Toaster

@@ -1,6 +1,7 @@
 import { UserData } from "@/lib/storage/types";
 
 export const ProfileImage = ({ user }: { user: UserData }) => {
+  if (!user) return null;
   const colorPalette = [
     "#FF9DF8", // Light Pinkish Purple
     "#FFF59D", // Light Yellow

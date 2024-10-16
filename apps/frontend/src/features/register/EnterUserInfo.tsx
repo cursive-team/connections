@@ -19,18 +19,30 @@ interface FormData {
 
 interface EnterUserInfoProps {
   onSubmit: (userInfo: FormData) => Promise<void>;
+  username?: string;
+  displayName?: string;
+  bio?: string;
+  telegramHandle?: string;
+  twitterHandle?: string;
 }
 
-const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
+const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
+  onSubmit,
+  username = "",
+  displayName = "",
+  bio = "",
+  telegramHandle = "",
+  twitterHandle = "",
+}) => {
   const [step, setStep] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const { pageHeight } = useSettings();
   const [formData, setFormData] = useState<FormData>({
-    username: "",
-    displayName: "",
-    bio: "",
-    telegramHandle: "",
-    twitterHandle: "",
+    username,
+    displayName,
+    bio,
+    telegramHandle,
+    twitterHandle,
   });
 
   const steps: {

@@ -9,9 +9,11 @@ import { MdOutlineModeEditOutline as IconEdit } from "react-icons/md";
 import { AppInput } from "@/components/ui/AppInput";
 import { LinkCardBox } from "@/components/ui/LinkCardBox";
 import { Tag } from "@/components/ui/Tag";
-import { connectionsEmojiMapping } from "@/features/register/LannaDiscoverConnections";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
+import { HiOutlineCog6Tooth as SettingsIcon } from "react-icons/hi2";
+import Link from "next/link";
+import { EMOJI_MAPPING } from "@/common/constants";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -83,14 +85,21 @@ const ProfilePage: React.FC = () => {
       withContainer={false}
       headerDivider
       header={
-        <div className="flex items-center justify-between w-full py-4">
-          <div className="flex flex-col">
-            <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans">{`${user.userData.username}`}</span>
-            <span className="text-sm font-medium font-sans text-tertiary">
-              {user.userData.displayName}
-            </span>
+        <div className="flex flex-col gap-2 py-4">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col">
+              <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans">{`${user?.userData.username}`}</span>
+              <span className="text-sm font-medium font-sans text-tertiary">
+                {user?.userData.displayName}
+              </span>
+            </div>
+            <ProfileImage user={user?.userData as any} />
           </div>
-          <ProfileImage user={user.userData} />
+          <Link href="/profile/edit">
+            <AppButton variant="outline" className="!p-2 max-w-[34px]">
+              <SettingsIcon />
+            </AppButton>
+          </Link>
         </div>
       }
       className="mx-auto py-4"
@@ -129,29 +138,29 @@ const ProfilePage: React.FC = () => {
             Socials
           </span>
           <div className="flex flex-col gap-4">
-            {user.userData.telegram?.username && (
+            {user?.userData.telegram?.username && (
               <LinkCardBox
                 label="Telegram"
-                value={user.userData.telegram.username}
+                value={user?.userData.telegram.username}
                 href={`https://t.me/${user.userData.telegram.username}`}
               />
             )}
-            {user.userData.twitter?.username && (
+            {user?.userData.twitter?.username && (
               <LinkCardBox
                 label="Twitter"
-                value={user.userData.twitter.username}
+                value={user?.userData.twitter.username}
                 href={`https://twitter.com/${user.userData.twitter.username}`}
               />
             )}
           </div>
         </div>
-        {user.userData.bio !== "" && (
+        {user?.userData.bio !== "" && (
           <div className="flex flex-col gap-2 py-4 px-4">
             <span className="text-sm font-semibold text-primary font-sans">
               Bio
             </span>
             <span className="text-sm text-tertiary font-normal font-sans">
-              {user.userData.bio}
+              {user?.userData.bio}
             </span>
           </div>
         )}
@@ -160,16 +169,16 @@ const ProfilePage: React.FC = () => {
           <span className="text-sm font-semibold text-primary font-sans">
             Interests
           </span>
-          {user.userData.lanna && (
+          {user?.userData.lanna && (
             <div className="flex flex-wrap gap-2">
-              {Object.entries(user.userData.lanna.desiredConnections).map(
+              {Object.entries(user?.userData.lanna.desiredConnections).map(
                 ([key, value]) =>
                   value && (
                     <Tag
                       key={key}
                       variant={"active"}
                       closable={false}
-                      emoji={connectionsEmojiMapping?.[key]}
+                      emoji={EMOJI_MAPPING?.[key]}
                       text={
                         key.charAt(0).toUpperCase() +
                         key.slice(1).replace(/([A-Z])/g, " $1")
