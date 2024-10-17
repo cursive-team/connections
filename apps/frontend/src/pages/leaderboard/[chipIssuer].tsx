@@ -1,8 +1,6 @@
-"use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
-import AppLayout from "@/layouts/AppLayout";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import {
   LeaderboardPosition,
@@ -18,11 +16,18 @@ const communitiesEnum : { [key: string]: string } = {
   "testing": ChipIssuer.TESTING,
 };
 
+const communitiesHumanReadable : { [key: string]: string } = {
+  "edge_lanna": "Edge City Lanna",
+  "devcon": "Dev Con 2014",
+  "testing": "Testing",
+};
+
 const LeaderboardPage: React.FC = () => {
   const router = useRouter();
   const { chipIssuer } = router.query;
   const [userLeaderboardPosition, setLeaderboardPosition] = useState<LeaderboardPosition | null>(null);
   const [leaderboardEntries, setLeaderboardEntries] = useState<LeaderboardEntries | null>(null);
+  const [communityName, setCommunityName] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchInfo = async() => {
@@ -44,6 +49,7 @@ const LeaderboardPage: React.FC = () => {
           return;
         }
 
+        setCommunityName(communitiesHumanReadable[chipIssuer]);
         setLeaderboardPosition(position);
         setLeaderboardEntries(entries);
       }
@@ -60,19 +66,7 @@ const LeaderboardPage: React.FC = () => {
     );
   }
 
-  return (
-    <AppLayout
-      withContainer={false}
-      showFooter={false}
-      back={{
-        label: "Back",
-        href: "/profile",
-      }}
-      headerDivider
-    >
-
-    </AppLayout>
-  );
+  return;
 };
 
 export default LeaderboardPage;

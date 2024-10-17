@@ -83,7 +83,7 @@ ManagedChipClient.prototype.GetUserLeaderboardPosition = async function (
     SELECT "leaderboardPosition" FROM (SELECT username, row_number() OVER() as "leaderboardPosition" FROM (SELECT * FROM "LeaderboardEntry" WHERE "chipIssuer"='TESTING' ORDER BY "tapCount" DESC) AS sorted_entries) AS rowed_sorted_entries WHERE "username"='pass2';
     */
 
-    const positions: Array<any> | null = await this.prismaClient.$queryRaw`SELECT "leaderboardPosition" FROM (SELECT username, row_number() OVER() as "leaderboardPosition" FROM (SELECT * FROM "LeaderboardEntry" WHERE "chipIssuer"=${chipIssuer} ORDER BY "tapCount" DESC) AS sorted_entries) AS rowed_sorted_entries WHERE "username"=${username}`;
+    const positions: Array<any> | null = await this.prismaClient.$queryRaw`SELECT username, "leaderboardPosition" FROM (SELECT username, row_number() OVER() as "leaderboardPosition" FROM (SELECT * FROM "LeaderboardEntry" WHERE "chipIssuer"=${chipIssuer} ORDER BY "tapCount" DESC) AS sorted_entries) AS rowed_sorted_entries WHERE "username"=${username}`;
 
     let length = -1;
     if (positions && positions.length == 1) {
