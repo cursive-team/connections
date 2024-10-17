@@ -66,7 +66,15 @@ export default function AppLayout({
       {showHeader && (
         <AppHeader isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
       )}
-      <div className={cn(withContainer && "px-3", className)}>{children}</div>
+      <div
+        className={cn(
+          withContainer && "px-3",
+          showFooter && "mb-20",
+          className
+        )}
+      >
+        {children}
+      </div>
       {!isMenuOpen && showFooter && <AppFooter />}
     </div>
   );
