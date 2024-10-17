@@ -159,103 +159,64 @@ const LeaderboardPage: React.FC = () => {
           // Update lastTapCount
           lastTapCount = entry.tapCount
 
-          if (position == 1) {
-            return (
-              <div className="h-6 px-4 justify-between items-center inline-flex" style={{width: "100%", marginBottom: "4px", marginTop: "4px"} as CSSProperties}>
-                <div className="grow shrink basis-0 h-6 justify-start items-center gap-3 flex">
-                  <div
-                    className="w-10 h-6 px-0.5 py-2 bg-[#090909] rounded-[67px] justify-center items-center gap-2 flex">
-                    <div className="text-center text-white text-sm font-medium font-['DM Sans'] leading-tight">1</div>
-                  </div>
-                  <div
-                    className="grow shrink basis-0 text-[#090909] text-base font-medium font-['DM Sans'] leading-snug">{entry.username}
-                  </div>
-                  <div className="justify-start items-start gap-[5px] flex">
-                    <div
-                      className="text-right text-[#090909] text-base font-medium font-['DM Sans'] leading-snug">{entry.tapCount}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )
+          let styling: any = {
+            "positionColor": "bg-black/20",
+            "positionTextColor": "",
+            "fontStyling": "text-[#090909]/60 font-sm",
+            "divider": false,
           }
+
+          let username = entry.username;
+          let tapCount = entry.tapCount;
+
+          if (position == 1) {
+            styling.positionColor = "bg-[#090909]";
+            styling.positionTextColor = "text-white"; // Done
+            styling.fontStyling = "text-[#090909] font-medium";
+          }
+
           if (entry.username == userLeaderboardPosition.username) {
+            styling.positionColor = "bg-[#f74227]";
+            styling.positionTextColor = "text-white"; // Done
+            styling.fontStyling = "text-[#090909] font-medium";
+            username += " (me)"; // Done
+
             if (userLeaderboardPosition.leaderboardPosition != tiedPosition) {
               // Update position if you're tied with another user
               setLeaderboardPosition({username: entry.username, leaderboardPosition: tiedPosition})
             }
-
-            return (
-              <div className="h-6 px-4 justify-between items-center inline-flex"
-                   style={{width: "100%", marginBottom: "4px", marginTop: "4px"} as CSSProperties}>
-                <div className="grow shrink basis-0 h-6 justify-start items-center gap-3 flex">
-                  <div
-                    className="w-10 h-6 px-0.5 py-2 bg-[#f74227] rounded-[67px] justify-center items-center gap-2 flex">
-                    <div
-                      className="text-center text-white text-sm font-medium font-['DM Sans'] leading-tight">{position}</div>
-                  </div>
-                  <div
-                    className="grow shrink basis-0 text-[#090909] text-sm font-medium font-['DM Sans'] leading-tight">{entry.username} (me)
-                  </div>
-                  <div className="justify-start items-start gap-[5px] flex">
-                    <div
-                      className="text-right text-[#090909] text-sm font-medium font-['DM Sans'] leading-tight">{entry.tapCount}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
           }
+
           if (index == 9) {
-            // Include divider only once
-            return (
-              <div>
-                <div className="h-6 px-4 justify-between items-center inline-flex"
-                  style={{width: "100%", marginBottom: "4px", marginTop: "4px"} as CSSProperties}>
-                <div className="grow shrink basis-0 h-6 justify-start items-center gap-3 flex">
-                  <div
-                    className="w-10 h-6 px-0.5 py-2 bg-black/20 rounded-[67px] justify-center items-center gap-2 flex">
-                    <div
-                      className="text-center text-[#090909] text-sm font-medium font-['DM Sans'] leading-tight">{position}
-                    </div>
-                  </div>
-                  <div
-                    className="grow shrink basis-0 text-[#090909]/60 text-sm font-normal font-['DM Sans'] leading-tight">{entry.username}
-                  </div>
-                  <div className="justify-start items-start gap-[5px] flex">
-                    <div
-                      className="text-right text-[#090909]/60 text-sm font-normal font-['DM Sans'] leading-tight">{entry.tapCount}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <div className="h-[0px] border border-black/20"></div>
-          </div>
-          )
-            ;
+            styling.divider = true;
           }
 
           return (
-            <div className="h-6 px-4 justify-between items-center inline-flex" style={{width: "100%", marginBottom: "4px", marginTop: "4px"} as CSSProperties}>
+            <div>
+            <div className="h-6 px-4 justify-between items-center inline-flex"
+                 style={{width: "100%", marginBottom: "4px", marginTop: "4px"} as CSSProperties}>
               <div className="grow shrink basis-0 h-6 justify-start items-center gap-3 flex">
-                <div className="w-10 h-6 px-0.5 py-2 bg-black/20 rounded-[67px] justify-center items-center gap-2 flex">
+                <div className={`w-10 h-6 px-0.5 py-2 ${styling.positionColor} rounded-[67px] justify-center items-center gap-2 flex`}>
                   <div
-                    className="text-center text-[#090909] text-sm font-medium font-['DM Sans'] leading-tight">{position}</div>
+                    className={`text-center ${styling.positionTextColor} text-[#090909] text-sm font-medium font-['DM Sans'] leading-tight`}>{position}</div>
                 </div>
                 <div
-                  className="grow shrink basis-0 text-[#090909]/60 text-sm font-normal font-['DM Sans'] leading-tight">{entry.username}
+                  className={`grow shrink basis-0 ${styling.fontStyling} font-['DM Sans'] leading-tight`}>{username}
                 </div>
                 <div className="justify-start items-start gap-[5px] flex">
                   <div
-                    className="text-right text-[#090909]/60 text-sm font-normal font-['DM Sans'] leading-tight">{entry.tapCount}
+                    className={`text-right ${styling.fontStyling} font-['DM Sans'] leading-tight`}>{tapCount}
                   </div>
                 </div>
               </div>
             </div>
-          )
+              {
+                styling.divider && <div className="h-[0px] border border-black/20"></div>
+              }
+            </div>
+          );
         })
       }
-
     </AppLayout>
   );
 };
