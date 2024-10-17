@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { User } from "@/lib/storage/types";
+import { User, UserData } from "@/lib/storage/types";
 import { toast } from "sonner";
 import AppLayout from "@/layouts/AppLayout";
 import { AppButton } from "@/components/ui/Button";
@@ -93,7 +93,7 @@ const ProfilePage: React.FC = () => {
                 {user?.userData.displayName}
               </span>
             </div>
-            <ProfileImage user={user?.userData as any} />
+            <ProfileImage user={user?.userData as UserData} />
           </div>
           <Link href="/profile/edit">
             <AppButton variant="outline" className="!p-2 max-w-[34px]">

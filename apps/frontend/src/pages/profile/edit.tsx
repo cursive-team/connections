@@ -47,9 +47,11 @@ const ProfileEdit = () => {
     setConnections((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const onHandleSubmit = (formData: Partial<User["userData"]>) => {
-    // TODO: implement
-  };
+  const onHandleSubmit = () => {};
+
+  // const onHandleSubmit = (formData: Partial<User["userData"]>) => {
+  //   // TODO: implement
+  // };
 
   return (
     <AppLayout

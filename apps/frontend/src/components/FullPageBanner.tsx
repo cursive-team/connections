@@ -1,6 +1,5 @@
 import { APP_CONFIG } from "@/config";
 import useSettings from "@/hooks/useSettings";
-import { Poster } from "./ui/Poster";
 import { AppButton } from "./ui/Button";
 import { useState, useRef } from "react";
 import { HeaderCover } from "./ui/HeaderCover";
