@@ -36,7 +36,11 @@ export default function AppLayout({
   return (
     <div>
       {back && (
-        <div className="sticky top-0 h-12 flex items-center border-b border-b-quaternary/20 bg-white z-20">
+        <div className={cn(
+          "sticky top-0 h-12 flex items-center bg-white z-20",
+          headerDivider && "border-b border-b-quaternary/20"
+        )}
+        >
           <div className="px-4">
             <Link className="flex gap-1 items-center" href={back?.href ?? "/"}>
               <BackIcon size={12} />
