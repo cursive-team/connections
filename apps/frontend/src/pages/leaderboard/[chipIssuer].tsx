@@ -161,9 +161,7 @@ const LeaderboardPage: React.FC = () => {
 
 
           // Default styling
-
-          // eslint-disable-line @typescript-eslint/no-explicit-any
-          const styling: any = {
+          const styling: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
             "positionColor": "bg-black/20",
             "positionTextColor": "",
             "fontStyling": "text-[#090909]/60 font-sm",
