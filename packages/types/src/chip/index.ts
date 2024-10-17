@@ -131,6 +131,7 @@ export type GetLeaderboardPositionRequest = z.infer<
 
 export const LeaderboardPositionSchema = z.object({
   leaderboardPosition: z.coerce.number(),
+  username: z.string(),
 });
 
 export type LeaderboardPosition = z.infer<
