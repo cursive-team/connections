@@ -159,7 +159,11 @@ const LeaderboardPage: React.FC = () => {
           // Update lastTapCount
           lastTapCount = entry.tapCount
 
-          let styling: any = {
+
+          // Default styling
+
+          // eslint-disable-line @typescript-eslint/no-explicit-any
+          const styling: any = {
             "positionColor": "bg-black/20",
             "positionTextColor": "",
             "fontStyling": "text-[#090909]/60 font-sm",
@@ -167,7 +171,7 @@ const LeaderboardPage: React.FC = () => {
           }
 
           let username = entry.username;
-          let tapCount = entry.tapCount;
+          const tapCount = entry.tapCount;
 
           if (position == 1) {
             styling.positionColor = "bg-[#090909]";
@@ -192,7 +196,7 @@ const LeaderboardPage: React.FC = () => {
           }
 
           return (
-            <div>
+            <div key={index}>
             <div className="h-6 px-4 justify-between items-center inline-flex"
                  style={{width: "100%", marginBottom: "4px", marginTop: "4px"} as CSSProperties}>
               <div className="grow shrink basis-0 h-6 justify-start items-center gap-3 flex">
