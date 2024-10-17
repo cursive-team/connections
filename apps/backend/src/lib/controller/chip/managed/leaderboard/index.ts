@@ -70,17 +70,20 @@ ManagedChipClient.prototype.GetUserLeaderboardPosition = async function (
   try {
 
     /*
-    1. Get ordered list of entries for chipIssuer, only return username and calculated row number
-    subquery1 = SELECT username, row_number() OVER() as "leaderboardPosition" FROM "LeaderboardEntry" WHERE "chipIssuer"='TESTING' ORDER BY "tapCount" DESC
+    1. Get list of entries for chipIssuer, ordered on descending tap count
+    subquery1 = SELECT * FROM "LeaderboardEntry" WHERE "chipIssuer"='TESTING' ORDER BY "tapCount" DESC
 
-    2. Return row number of specific user
-    SELECT "leaderboardPosition" FROM (subquery1) AS rowed_sorted_entries WHERE username=${}
+    2. Select username and calculated row number from entries
+    subquery2 = SELECT username, row_number() OVER() as "leaderboardPosition" FROM (subquery1) AS sorted_entries
+
+    3. Select row number based on username
+    query = SELECT row_number FROM (subquery2) AS filtered_entries WHERE "username"='pass2';
 
     Working query:
-    SELECT "leaderboardPosition" FROM (SELECT username, row_number() OVER() as "leaderboardPosition" FROM "LeaderboardEntry" WHERE "chipIssuer"='TESTING' ORDER BY "tapCount" DESC) AS rowed_sorted_entries WHERE "username"='pass2';
+    SELECT "leaderboardPosition" FROM (SELECT username, row_number() OVER() as "leaderboardPosition" FROM (SELECT * FROM "LeaderboardEntry" WHERE "chipIssuer"='TESTING' ORDER BY "tapCount" DESC) AS sorted_entries) AS rowed_sorted_entries WHERE "username"='pass2';
     */
 
-    const positions: Array<any> | null = await this.prismaClient.$queryRaw`SELECT "leaderboardPosition" FROM (SELECT username, row_number() OVER() as "leaderboardPosition" FROM "LeaderboardEntry" WHERE "chipIssuer"=${chipIssuer} ORDER BY "tapCount" DESC) AS rowed_sorted_entries WHERE "username"=${username}`;
+    const positions: Array<any> | null = await this.prismaClient.$queryRaw`SELECT "leaderboardPosition" FROM (SELECT username, row_number() OVER() as "leaderboardPosition" FROM (SELECT * FROM "LeaderboardEntry" WHERE "chipIssuer"=${chipIssuer} ORDER BY "tapCount" DESC) AS sorted_entries) AS rowed_sorted_entries WHERE "username"=${username}`;
 
     let length = -1;
     if (positions && positions.length == 1) {
