@@ -8,6 +8,7 @@ import { IoCloseSharp as CloseIcon } from "react-icons/io5";
 
 import useSettings from "@/hooks/useSettings";
 import { AppButton } from "@/components/ui/Button";
+import { Icons } from "@/components/Icons";
 
 interface FormData {
   username: string;
@@ -203,7 +204,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
                     aria-label={steps[step].question}
                   />
                   <button
-                    className="text-sm text-link-primary font-sans font-semibold mt-2"
+                    className="text-sm text-link-primary font-sans font-semibold"
                     onClick={() => {
                       handleNext({});
                     }}
@@ -251,7 +252,13 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
             const fieldValue = formData[s.field as keyof FormData];
             return (
               index < step && (
-                <div key={s.field} className="flex items-center gap-1">
+                <div
+                  key={s.field}
+                  className="flex items-center gap-4"
+                  onClick={() => {
+                    setStep(step - index - 1);
+                  }}
+                >
                   {fieldValue ? (
                     <CheckIcon
                       className="size-5 text-quaternary"
@@ -265,17 +272,12 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
                       height={24}
                     />
                   )}
-                  <span className="font-sans text-[14px] font-semibold text-quaternary">
+
+                  <span className="font-sans text-[14px] w-full font-semibold text-quaternary">
                     {fieldValue || s.placeholder || "-"}
                   </span>
-                  <button
-                    className="text-xs text-link-primary font-semibold font-sans ml-1"
-                    onClick={() => {
-                      setStep(index + 1);
-                    }}
-                  >
-                    Edit
-                  </button>
+
+                  <Icons.Pencil className="ml-auto text-quaternary" />
                 </div>
               )
             );
@@ -283,7 +285,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
         </div>
       </div>
 
-      <div className="flex flex-col mt-auto w-full">
+      <div className="flex flex-col mt-auto w-full py-4">
         <AppButton
           type="button"
           onClick={handleNext}

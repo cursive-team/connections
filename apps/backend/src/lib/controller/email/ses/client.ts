@@ -39,7 +39,7 @@ export class SESEmailClient implements iEmailClient {
                     body {
                       font-family: 'Helvetica Neue', Arial, sans-serif;
                       line-height: 1.6;
-                      color: #fffff;
+                      color: #000000;
                       background-color: #f4f4f4;
                       margin: 0;
                       padding: 0;
@@ -53,7 +53,7 @@ export class SESEmailClient implements iEmailClient {
                       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                     }
                     h1 {
-                      color: #ffffff;
+                      color: #000000;
                       font-size: 24px;
                       margin-bottom: 20px;
                       text-align: center;
@@ -61,7 +61,7 @@ export class SESEmailClient implements iEmailClient {
                     .code {
                       font-size: 32px;
                       font-weight: bold;
-                      color: #fffff;
+                      color: #000000;
                       text-align: center;
                       padding: 15px;
                       background-color: #f8f9fa;
@@ -72,7 +72,7 @@ export class SESEmailClient implements iEmailClient {
                     .expiry {
                       text-align: center;
                       font-size: 14px;
-                      color: #ffffff;
+                      color: #000000;
                       margin-top: 20px;
                     }
                   </style>
