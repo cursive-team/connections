@@ -58,7 +58,7 @@ const LeaderboardPage: React.FC = () => {
     fetchInfo();
   }, [chipIssuer, router]);
 
-  if (!userLeaderboardPosition || !leaderboardEntries) {
+  if (!userLeaderboardPosition || !leaderboardEntries || !communityName) {
     return (
       <div className="flex min-h-screen justify-center items-center text-center">
         <CursiveLogo isLoading />
