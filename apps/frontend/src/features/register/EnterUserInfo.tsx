@@ -56,7 +56,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
     {
       field: "displayName",
       question: "What's your full name?",
-      required: true,
+      required: false,
     },
     {
       field: "telegramHandle",
