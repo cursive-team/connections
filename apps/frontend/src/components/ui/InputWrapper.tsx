@@ -3,7 +3,7 @@ import type * as Classed from "@tw-classed/react";
 import { ReactNode } from "react";
 
 const InputLabel = classed.div(
-  "text-primary text-sm font-sans font-medium leading-5"
+  "text-primary text-[12px] font-sans font-semibold leading-5"
 );
 
 const InputDescription = classed.div(

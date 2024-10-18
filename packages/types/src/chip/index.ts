@@ -55,6 +55,16 @@ export const RegisterChipResponseSchema = z.object({
 
 export type RegisterChipResponse = z.infer<typeof RegisterChipResponseSchema>;
 
+export const UpdateChipRequestSchema = z.object({
+  authToken: z.string(),
+  tapParams: TapParamsSchema,
+  ownerDisplayName: z.string().nullable(),
+  ownerBio: z.string().nullable(),
+  ownerUserData: JsonSchema.nullable(),
+});
+
+export type UpdateChipRequest = z.infer<typeof UpdateChipRequestSchema>;
+
 export const ChipTapSchema = z.object({
   chipPublicKey: z.string(),
   message: z.string(),

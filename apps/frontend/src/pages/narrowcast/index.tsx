@@ -1,21 +1,49 @@
 import { Banner } from "@/components/cards/Banner";
-import useSettings from "@/hooks/useSettings";
 import AppLayout from "@/layouts/AppLayout";
 
 export default function NarrowcastPage() {
-  const { pageHeight } = useSettings();
   return (
-    <AppLayout>
-      <div
-        className="px-4 flex flex-col items-center justify-center"
-        style={{
-          height: `${pageHeight}px`,
-        }}
-      >
+    <AppLayout
+      header={
+        <>
+          <span className="text-primary font-medium">Narrowcasting</span>
+          <div
+            className="absolute left-0 right-0 bottom-0 h-[2px]"
+            style={{
+              background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
+            }}
+          ></div>
+        </>
+      }
+      withContainer={false}
+    >
+      <div className="flex flex-col items-center justify-center p-4">
         <Banner
           italic={false}
-          title="Narrowcasting coming soon!"
-          description="In the meantime, grow your social graph by tapping the wristband of friends and new people you meet."
+          title={
+            <div className="!font-normal flex flex-col gap-4">
+              <div>
+                <b>Coming soon</b>: Narrowcast events & opportunities to{" "}
+                <i>only your most relevant connections</i> instead of
+                broadcasting to the whole community or making dozens of group
+                chats.
+              </div>
+              <div>
+                Learn more about narrowcasting and other upcoming features like{" "}
+                <b>digital pheromones</b> and <b>superconnectors</b>{" "}
+                <a
+                  href="https://cursive.team/lanna"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  here
+                </a>
+                .
+              </div>
+            </div>
+          }
+          textCenter={false}
         />
       </div>
     </AppLayout>

@@ -16,6 +16,7 @@ import {
   CreateBackupData,
   RegisterChipRequest,
   TapParams,
+  UpdateChipRequest,
 } from "@types";
 import { Chip } from "@/lib/controller/chip/types";
 import { iChipClient } from "@/lib/controller/chip/interfaces";
@@ -109,6 +110,10 @@ export class Controller {
 
   RegisterChip(registerChip: RegisterChipRequest): Promise<Chip> {
     return this.chipClient.RegisterChip(registerChip);
+  }
+
+  UpdateChip(updateChip: UpdateChipRequest): Promise<Chip> {
+    return this.chipClient.UpdateChip(updateChip);
   }
 
   GetTapFromChip(tapParams: TapParams): Promise<ChipTapResponse> {
