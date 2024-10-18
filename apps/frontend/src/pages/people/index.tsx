@@ -19,7 +19,14 @@ const PeoplePage: React.FC = () => {
         return;
       }
 
-      setConnections(user.connections);
+      const sortedConnections = Object.entries(user.connections)
+        .sort(
+          ([, a], [, b]) =>
+            b.taps[b.taps.length - 1].timestamp.getTime() -
+            a.taps[a.taps.length - 1].timestamp.getTime()
+        )
+        .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+      setConnections(sortedConnections);
     };
 
     fetchConnections();
@@ -28,21 +35,40 @@ const PeoplePage: React.FC = () => {
   return (
     <AppLayout
       header={
-        <div className="my-4 w-full">
-          <Banner
-            className="justify-center text-center"
-            title={
-              <span className="text-center">
-                Tap wristbands -{" "}
-                <span className="!font-normal">Make connections</span>
-              </span>
-            }
-          />
-        </div>
+        <>
+          <span className="text-primary font-medium">People</span>
+          <div
+            className="absolute left-0 right-0 bottom-0 h-[2px]"
+            style={{
+              background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
+            }}
+          ></div>
+        </>
       }
       className="mx-auto"
       withContainer={false}
     >
+      <div className="w-full px-4 py-4">
+        <Banner
+          className="justify-center"
+          italic={false}
+          title={
+            <span className="!font-normal text-center">
+              <b>Tap wristbands to</b>: share socials, organize contacts, and
+              discover shared interests! Troubleshoot tapping{" "}
+              <a
+                href="https://cursive.team/tap-help"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                here
+              </a>
+              .
+            </span>
+          }
+        />
+      </div>
       {Object.keys(connections).length === 0 ? (
         <div className="p-4 text-center text-secondary px-16">
           {`No connections yet. Tap another person's wristband to get started!`}

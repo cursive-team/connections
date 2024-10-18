@@ -69,7 +69,7 @@ export default function AppLayout({
       <div
         className={cn(
           withContainer && "px-3",
-          showFooter && "mb-20",
+          showFooter && "mb-[78px]",
           className
         )}
       >
