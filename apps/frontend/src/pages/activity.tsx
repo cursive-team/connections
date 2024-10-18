@@ -90,8 +90,16 @@ const ActivityPage: React.FC = () => {
             className="justify-center"
             title={
               <span className="!font-normal text-center">
-                Coming soon: community health dashboard, discreet job matching,
-                & more.
+                <b>Coming soon</b>: digital pheromones, superconnectors and{" "}
+                <a
+                  href="https://cursive.team/lanna"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  more
+                </a>
+                .
               </span>
             }
           />
