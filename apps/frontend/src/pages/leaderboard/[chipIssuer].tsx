@@ -152,7 +152,10 @@ const LeaderboardPage: React.FC = () => {
 
             if (leaderboardDetails.userPosition != tiedPosition) {
               // Update position if you're tied with another user
-              setLeaderboardDetails({username: entry.username, leaderboardPosition: tiedPosition})
+              leaderboardDetails.username = entry.username;
+              leaderboardDetails.userPosition = tiedPosition;
+
+              setLeaderboardDetails(leaderboardDetails)
             }
           }
 
