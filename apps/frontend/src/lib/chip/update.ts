@@ -46,8 +46,6 @@ export async function updateChip(args: UpdateChipArgs): Promise<void> {
       throw new Error(errorData.error || "Failed to update chip");
     }
 
-    console.log(await response.json());
-
     const user = await storage.getUser();
 
     if (!user) {
