@@ -54,7 +54,6 @@ const ProfileEdit = () => {
   }, [router, reset]);
 
   const onHandleSubmit = async (formData: ChipEditFormData) => {
-    console.log(formData);
     setLoading(true);
     const { displayName, bio, twitterUsername, telegramUsername } = formData;
     try {
