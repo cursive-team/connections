@@ -167,9 +167,7 @@ const LeaderboardPage: React.FC = () => {
         // Update lastTapCount
         lastTapCount = entry.tapCount;
 
-        // Default styling
-        const styling: any = {
-          // eslint-disable-line @typescript-eslint/no-explicit-any
+        const styling = {
           positionColor: "bg-black/20",
           positionTextColor: "",
           fontStyling: "text-[#090909]/60 font-sm",
@@ -193,10 +191,10 @@ const LeaderboardPage: React.FC = () => {
 
           if (leaderboardDetails.userPosition != tiedPosition) {
             // Update position if you're tied with another user
-            setLeaderboardDetails({
-              username: entry.username,
-              leaderboardPosition: tiedPosition,
-            });
+            leaderboardDetails.username = entry.username;
+            leaderboardDetails.userPosition = tiedPosition;
+
+            setLeaderboardDetails(leaderboardDetails);
           }
         }
 
