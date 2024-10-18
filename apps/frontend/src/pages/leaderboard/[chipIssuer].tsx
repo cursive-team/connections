@@ -6,23 +6,12 @@ import { CursiveLogo } from "@/components/ui/HeaderCover";
 import {
   LeaderboardEntries,
   LeaderboardEntry,
-  ChipIssuer,
   ChipIssuerSchema,
   LeaderboardDetails,
 } from "@types";
+
 import {getTopLeaderboardEntries, getUserLeaderboardDetails} from "@/lib/chip";
-
-const communitiesEnum : { [key: string]: string } = {
-  "edge_lanna": ChipIssuer.EDGE_CITY_LANNA,
-  "devcon": ChipIssuer.DEVCON_2024,
-  "testing": ChipIssuer.TESTING,
-};
-
-const communitiesHumanReadable : { [key: string]: string } = {
-  "edge_lanna": "Edge City Lanna",
-  "devcon": "Dev Con 2014",
-  "testing": "Testing",
-};
+import {communitiesEnum, communitiesHumanReadable} from "../../constants";
 
 const LeaderboardPage: React.FC = () => {
   const router = useRouter();
@@ -82,9 +71,9 @@ const LeaderboardPage: React.FC = () => {
       }}
       headerDivider={false}
       header={
-        <div className="h-[84px] p-2 flex-col justify-start items-start gap-2 inline-flex" style={{width: "100%"} as CSSProperties}>
+        <div className="h-[70px] flex-col justify-start items-start gap-2 inline-flex" style={{width: "100%"} as CSSProperties}>
           <div
-            className="self-stretch p-4 bg-white/80 rounded-lg backdrop-blur-lg justify-start items-start gap-2 inline-flex" style={{background: "linear-gradient(0.25turn, #3f87a6, #ebf8e1, #f69d3c)"} as CSSProperties} >
+            className="self-stretch p-4 bg-white/80 rounded-lg backdrop-blur-lg justify-start items-start gap-2 inline-flex" style={{background: "linear-gradient(0.25turn, rgb(122, 116, 188, 0.3), rgb(255, 157, 248, 0.3), rgb(251, 93, 66, 0.3), rgb(255, 0, 0, 0.3))"} as CSSProperties} >
             <div className="grow shrink basis-0 h-5 justify-start items-center gap-3 flex">
               <div className="grow shrink basis-0 h-5 justify-start items-center gap-2 flex">
                 <div
@@ -98,7 +87,7 @@ const LeaderboardPage: React.FC = () => {
                   className="text-[#090909]/75 text-xs font-medium font-['DM Sans'] leading-none">You:&nbsp;
                 </div>
                 <div
-                  className="text-[#090909]/75 text-xs font-bold font-['DM Sans'] leading-none">{userLeaderboardPosition.leaderboardPosition}
+                  className="text-[#090909]/75 text-xs font-bold font-['DM Sans'] leading-none">{leaderboardDetails.userPosition}
                 </div>
               </div>
             </div>
@@ -107,7 +96,7 @@ const LeaderboardPage: React.FC = () => {
       }
     >
       <div className="h-[33px] px-4 py-2 bg-white items-center backdrop-blur-lg justify-between items-start inline-flex" style={{width: "100%"} as CSSProperties}>
-        <div className="justify-start items-start gap-3 flex">
+        <div className="justify-start items-start gap-3 flex" style={{width: "100%", display: "contents"} as CSSProperties}>
           <div className="w-6 flex-col justify-start items-center gap-2 inline-flex">
             <div className="text-[#090909]/40 text-xs font-medium font-['DM Sans'] leading-none">#
             </div>
@@ -138,7 +127,6 @@ const LeaderboardPage: React.FC = () => {
           // Update lastTapCount
           lastTapCount = entry.tapCount
 
-
           // Default styling
           const styling: any = { // eslint-disable-line @typescript-eslint/no-explicit-any
             "positionColor": "bg-black/20",
@@ -152,21 +140,23 @@ const LeaderboardPage: React.FC = () => {
 
           if (position == 1) {
             styling.positionColor = "bg-[#090909]";
-            styling.positionTextColor = "text-white"; // Done
+            styling.positionTextColor = "text-white";
             styling.fontStyling = "text-[#090909] font-medium";
           }
 
-          if (entry.username == userLeaderboardPosition.username) {
+          if (entry.username == leaderboardDetails.username) {
             styling.positionColor = "bg-[#f74227]";
-            styling.positionTextColor = "text-white"; // Done
+            styling.positionTextColor = "text-white";
             styling.fontStyling = "text-[#090909] font-medium";
-            username += " (me)"; // Done
+            username += " (me)";
 
-            if (userLeaderboardPosition.leaderboardPosition != tiedPosition) {
+            if (leaderboardDetails.userPosition != tiedPosition) {
               // Update position if you're tied with another user
-              setLeaderboardPosition({username: entry.username, leaderboardPosition: tiedPosition})
+              setLeaderboardDetails({username: entry.username, leaderboardPosition: tiedPosition})
             }
           }
+
+          // TODO: Add query check, if connection is selected
 
           if (index == 9) {
             styling.divider = true;
