@@ -1,6 +1,12 @@
 import type * as Classed from "@tw-classed/react";
 import { classed } from "@tw-classed/react";
-import { ForwardedRef, TextareaHTMLAttributes, forwardRef } from "react";
+import {
+  ForwardedRef,
+  TextareaHTMLAttributes,
+  forwardRef,
+  useEffect,
+  useRef,
+} from "react";
 import { InputWrapper, InputWrapperProps } from "./InputWrapper";
 
 const TextareaComponent = classed.textarea(
@@ -9,6 +15,7 @@ const TextareaComponent = classed.textarea(
     variants: {
       variant: {
         primary: "bg-surface-primary border border-stroke-secondary",
+        secondary: "bg-surface-quaternary border border-transparent",
       },
       hasError: {
         true: "!border-b-error",
@@ -30,12 +37,38 @@ interface TextareaProps
   loading?: boolean;
   icon?: React.ReactNode;
   textSize?: "xs" | "sm" | undefined;
+  autoExpand?: boolean;
 }
 
 const AppTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (props: TextareaProps, ref: ForwardedRef<HTMLTextAreaElement>) => {
-    const { label, variant, placeholder, description, icon, error, className } =
-      props;
+    const {
+      label,
+      variant,
+      placeholder,
+      description,
+      icon,
+      error,
+      className,
+      autoExpand,
+    } = props;
+
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+    useEffect(() => {
+      if (autoExpand && textareaRef.current) {
+        const textarea = textareaRef.current;
+        const adjustHeight = () => {
+          textarea.style.height = "auto";
+          textarea.style.height = `${textarea.scrollHeight}px`;
+        };
+
+        textarea.addEventListener("input", adjustHeight);
+        adjustHeight(); // Initial adjustment
+
+        return () => textarea.removeEventListener("input", adjustHeight);
+      }
+    }, [autoExpand]);
 
     return (
       <InputWrapper
@@ -52,12 +85,20 @@ const AppTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
               </div>
             )}
             <TextareaComponent
-              ref={ref}
+              ref={(node) => {
+                if (typeof ref === "function") {
+                  ref(node);
+                } else if (ref) {
+                  ref.current = node;
+                }
+                textareaRef.current = node;
+              }}
               {...props}
               placeholder={placeholder}
               variant={variant}
               hasError={!!error}
               autoComplete="off"
+              rows={1}
             />
           </div>
         </label>

@@ -13,6 +13,7 @@ import {
   TapActivityDataSchema,
 } from "@/lib/activity";
 import { ChipIssuer } from "@types";
+import { cn } from "@/lib/frontend/util";
 
 interface ActivityDisplayItem {
   text: string;
@@ -95,37 +96,59 @@ const ActivityPage: React.FC = () => {
       }
       className="container mx-auto px-4 py-4"
     >
-      <ul className="space-y-4">
-        {activityItems.map((item, index) => {
-          const Content = () => (
-            <FeedContent
-              title={<span>{item.text}</span>}
-              icon={<CircleCard icon="person" />}
-              description={item.timestamp.toLocaleTimeString("en-US", {
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-              })}
-            />
-          );
+      {Object.entries(
+        activityItems.reduce((acc, item) => {
+          const date = item.timestamp.toLocaleDateString("en-US", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+          });
+          if (!acc[date]) acc[date] = [];
+          acc[date].push(item);
+          return acc;
+        }, {} as Record<string, typeof activityItems>)
+      ).map(([date, items]) => (
+        <div className="mb-6" key={date}>
+          <div className="mb-2">
+            <span className="text-[12px] text-quaternary font-semibold">
+              {date}
+            </span>
+          </div>
+          <ul>
+            {items.map((item, index) => {
+              const Content = () => (
+                <FeedContent
+                  title={<span>{item.text}</span>}
+                  icon={<CircleCard icon="person" />}
+                  description={item.timestamp.toLocaleString("en-US", {
+                    hour: "2-digit",
+                    minute: "numeric",
+                  })}
+                />
+              );
 
-          return (
-            <div
-              key={index}
-              className="grid grid-cols-[1fr_20px] items-center gap-1"
-            >
-              {item.link ? (
-                <Link href={item.link}>
-                  <Content />
-                </Link>
-              ) : (
-                <Content />
-              )}
-              {item?.link && <ArrowIcon className="ml-auto" />}
-            </div>
-          );
-        })}
-      </ul>
+              return (
+                <div
+                  key={index}
+                  className={cn(
+                    "grid items-center gap-1 mb-4",
+                    item?.link && "grid-cols-[1fr_20px]"
+                  )}
+                >
+                  {item.link ? (
+                    <Link href={item.link}>
+                      <Content />
+                    </Link>
+                  ) : (
+                    <Content />
+                  )}
+                  {item?.link && <ArrowIcon className="ml-auto" />}
+                </div>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
     </AppLayout>
   );
 };

@@ -18,6 +18,12 @@ export const APP_CONFIG = {
 
 export const ROUTER_ITEMS: RouterItem[] = [
   {
+    label: "Narrowcast",
+    href: "/narrowcast",
+    icon: Icons.NarrowCast,
+    iconSize: 20,
+  },
+  {
     label: "People",
     href: "/people",
     icon: Icons.People,

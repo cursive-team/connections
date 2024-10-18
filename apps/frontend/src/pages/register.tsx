@@ -23,6 +23,8 @@ import { registerUser } from "@/lib/auth/register";
 import useSettings from "@/hooks/useSettings";
 import { HeaderCover } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
+import { cn } from "@/lib/frontend/util";
+import { IoIosArrowBack as BackIcon } from "react-icons/io";
 
 enum DisplayState {
   ENTER_EMAIL,
@@ -251,6 +253,23 @@ const Register: React.FC = () => {
     router.push("/profile");
   };
 
+  const onGoBack = () => {
+    if (displayState === DisplayState.ENTER_CODE) {
+      setDisplayState(DisplayState.ENTER_EMAIL);
+    }
+
+    if (displayState === DisplayState.ENTER_CODE) {
+      setDisplayState(DisplayState.ENTER_EMAIL);
+    }
+
+    if (
+      displayState === DisplayState.REGISTER_WITH_PASSKEY ||
+      displayState === DisplayState.REGISTER_WITH_PASSWORD
+    ) {
+      setDisplayState(DisplayState.ENTER_USER_INFO);
+    }
+  };
+
   if (!attemptedToLoadSavedTap) {
     return null;
   }
@@ -264,6 +283,30 @@ const Register: React.FC = () => {
       }}
     >
       {[
+        DisplayState.ENTER_CODE,
+        DisplayState.REGISTER_WITH_PASSWORD,
+        DisplayState.REGISTER_WITH_PASSKEY,
+      ].includes(displayState) && (
+        <div
+          className={cn(
+            "hidden", // back button not needed for now
+            "flex px-3 justify-between border-b border-b-primary w-full backdrop-blur-md top-0 z-50 items-center h-[50px] xs:h-[60px] bg-white"
+          )}
+        >
+          <button
+            type="button"
+            className="flex items-center gap-1 text-iron-950"
+            onClick={() => {
+              onGoBack?.();
+            }}
+          >
+            <BackIcon />
+            <span className="text-sm font-normal text-iron-950">{"Back"}</span>
+          </button>
+        </div>
+      )}
+
+      {[
         DisplayState.ENTER_EMAIL,
         DisplayState.ENTER_CODE,
         DisplayState.REGISTER_WITH_PASSKEY,
@@ -275,16 +318,22 @@ const Register: React.FC = () => {
           isLoading={[DisplayState.CREATING_ACCOUNT].includes(displayState)}
         />
       )}
-
       <div className="flex-grow flex px-6 center sm:mx-auto sm:w-full sm:max-w-md">
         {displayState === DisplayState.ENTER_EMAIL && (
-          <EnterEmail submitEmail={handleEmailSubmit} />
+          <EnterEmail defaultEmail={email} submitEmail={handleEmailSubmit} />
         )}
         {displayState === DisplayState.ENTER_CODE && (
           <EnterCode email={email} submitCode={handleCodeSubmit} />
         )}
         {displayState === DisplayState.ENTER_USER_INFO && (
-          <EnterUserInfo onSubmit={handleUserInfoSubmit} />
+          <EnterUserInfo
+            username={username}
+            displayName={displayName}
+            bio={bio}
+            telegramHandle={telegramHandle}
+            twitterHandle={twitterHandle}
+            onSubmit={handleUserInfoSubmit}
+          />
         )}
         {displayState === DisplayState.REGISTER_WITH_PASSKEY && (
           <RegisterWithPasskey

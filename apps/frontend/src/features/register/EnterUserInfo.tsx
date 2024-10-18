@@ -8,6 +8,7 @@ import { IoCloseSharp as CloseIcon } from "react-icons/io5";
 
 import useSettings from "@/hooks/useSettings";
 import { AppButton } from "@/components/ui/Button";
+import { Icons } from "@/components/Icons";
 
 interface FormData {
   username: string;
@@ -19,18 +20,30 @@ interface FormData {
 
 interface EnterUserInfoProps {
   onSubmit: (userInfo: FormData) => Promise<void>;
+  username?: string;
+  displayName?: string;
+  bio?: string;
+  telegramHandle?: string;
+  twitterHandle?: string;
 }
 
-const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
+const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
+  onSubmit,
+  username = "",
+  displayName = "",
+  bio = "",
+  telegramHandle = "",
+  twitterHandle = "",
+}) => {
   const [step, setStep] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const { pageHeight } = useSettings();
   const [formData, setFormData] = useState<FormData>({
-    username: "",
-    displayName: "",
-    bio: "",
-    telegramHandle: "",
-    twitterHandle: "",
+    username,
+    displayName,
+    bio,
+    telegramHandle,
+    twitterHandle,
   });
 
   const steps: {
@@ -43,7 +56,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
     {
       field: "displayName",
       question: "What's your full name?",
-      required: true,
+      required: false,
     },
     {
       field: "telegramHandle",
@@ -191,7 +204,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
                     aria-label={steps[step].question}
                   />
                   <button
-                    className="text-sm text-link-primary font-sans font-semibold mt-2"
+                    className="text-sm text-link-primary font-sans font-semibold"
                     onClick={() => {
                       handleNext({});
                     }}
@@ -239,7 +252,13 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
             const fieldValue = formData[s.field as keyof FormData];
             return (
               index < step && (
-                <div key={s.field} className="flex items-center   gap-1">
+                <div
+                  key={s.field}
+                  className="flex items-center gap-4"
+                  onClick={() => {
+                    setStep(step - index - 1);
+                  }}
+                >
                   {fieldValue ? (
                     <CheckIcon
                       className="size-5 text-quaternary"
@@ -253,9 +272,12 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
                       height={24}
                     />
                   )}
-                  <span className="font-sans text-[14px] font-semibold text-quaternary">
+
+                  <span className="font-sans text-[14px] w-full font-semibold text-quaternary">
                     {fieldValue || s.placeholder || "-"}
                   </span>
+
+                  <Icons.Pencil className="ml-auto text-quaternary" />
                 </div>
               )
             );
@@ -263,7 +285,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({ onSubmit }) => {
         </div>
       </div>
 
-      <div className="flex flex-col mt-auto w-full">
+      <div className="flex flex-col mt-auto w-full py-4">
         <AppButton
           type="button"
           onClick={handleNext}

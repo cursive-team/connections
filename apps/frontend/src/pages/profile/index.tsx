@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { User } from "@/lib/storage/types";
+import { User, UserData } from "@/lib/storage/types";
 import { toast } from "sonner";
 import AppLayout from "@/layouts/AppLayout";
 import { AppButton } from "@/components/ui/Button";
@@ -9,9 +9,11 @@ import { MdOutlineModeEditOutline as IconEdit } from "react-icons/md";
 import { AppInput } from "@/components/ui/AppInput";
 import { LinkCardBox } from "@/components/ui/LinkCardBox";
 import { Tag } from "@/components/ui/Tag";
-import { connectionsEmojiMapping } from "@/features/register/LannaDiscoverConnections";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
+import Link from "next/link";
+import { EMOJI_MAPPING } from "@/common/constants";
+import { Icons } from "@/components/Icons";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -83,22 +85,32 @@ const ProfilePage: React.FC = () => {
       withContainer={false}
       headerDivider
       header={
-        <div className="flex items-center justify-between w-full py-4">
-          <div className="flex flex-col">
-            <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans">{`${user.userData.username}`}</span>
-            <span className="text-sm font-medium font-sans text-tertiary">
-              {user.userData.displayName}
-            </span>
+        <div className="flex flex-col gap-2 py-4 w-full">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col">
+              <span className="text-[24px] font-semibold tracking-[-0.22px] font-sans">{`${user?.userData.username}`}</span>
+              <span className="text-[14px] font-medium font-sans text-tertiary">
+                {user?.userData.displayName}
+              </span>
+            </div>
+            <ProfileImage user={user?.userData as UserData} />
           </div>
-          <ProfileImage user={user.userData} />
+          <div>
+            <Link href="/profile/edit">
+              <AppButton variant="outline" className="w-fit">
+                <Icons.Pencil className="mr-2" />{" "}
+                <span className="text-[14px]">Edit details</span>
+              </AppButton>
+            </Link>
+          </div>
         </div>
       }
-      className="mx-auto py-4"
+      className="mx-auto pb-4"
     >
       {enableEditing && (
         <div className="py-4">
           <AppButton
-            className="!rounded-full max-w-[140px] self-start"
+            className="!rounded-full max-w-[140px] self-start "
             variant="outline"
             onClick={() => setIsEditingSocials(true)}
           >
@@ -108,50 +120,41 @@ const ProfilePage: React.FC = () => {
         </div>
       )}
 
-      <div className="flex flex-col px-4">
-        <span className="text-sm text-primary font-sans">
-          Learn about upcoming features{" "}
-          <a
-            href="https://cursive.team/lanna"
-            className="text-[#FF9DF8] font-bold underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            here
-          </a>
-          .
-        </span>
-      </div>
-
       <div className="!divide-y !divide-quaternary/20 flex flex-col">
         <div className="flex flex-col gap-2 py-4 px-4">
           <span className="text-sm font-semibold text-primary font-sans">
             Socials
           </span>
-          <div className="flex flex-col gap-4">
-            {user.userData.telegram?.username && (
+          <div className="flex flex-col gap-2">
+            {!user?.userData.telegram?.username &&
+              !user?.userData.twitter?.username && (
+                <span className="text-sm text-secondary font-sans font-normal">
+                  Add socials by editing your chip details!
+                </span>
+              )}
+            {user?.userData.telegram?.username && (
               <LinkCardBox
                 label="Telegram"
-                value={user.userData.telegram.username}
+                value={user?.userData.telegram.username}
                 href={`https://t.me/${user.userData.telegram.username}`}
               />
             )}
-            {user.userData.twitter?.username && (
+            {user?.userData.twitter?.username && (
               <LinkCardBox
                 label="Twitter"
-                value={user.userData.twitter.username}
+                value={user?.userData.twitter.username}
                 href={`https://twitter.com/${user.userData.twitter.username}`}
               />
             )}
           </div>
         </div>
-        {user.userData.bio !== "" && (
+        {user?.userData.bio !== "" && (
           <div className="flex flex-col gap-2 py-4 px-4">
             <span className="text-sm font-semibold text-primary font-sans">
               Bio
             </span>
             <span className="text-sm text-tertiary font-normal font-sans">
-              {user.userData.bio}
+              {user?.userData.bio}
             </span>
           </div>
         )}
@@ -160,16 +163,16 @@ const ProfilePage: React.FC = () => {
           <span className="text-sm font-semibold text-primary font-sans">
             Interests
           </span>
-          {user.userData.lanna && (
+          {user?.userData.lanna && (
             <div className="flex flex-wrap gap-2">
-              {Object.entries(user.userData.lanna.desiredConnections).map(
+              {Object.entries(user?.userData.lanna.desiredConnections).map(
                 ([key, value]) =>
                   value && (
                     <Tag
                       key={key}
                       variant={"active"}
                       closable={false}
-                      emoji={connectionsEmojiMapping?.[key]}
+                      emoji={EMOJI_MAPPING?.[key]}
                       text={
                         key.charAt(0).toUpperCase() +
                         key.slice(1).replace(/([A-Z])/g, " $1")

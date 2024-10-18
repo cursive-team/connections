@@ -23,7 +23,7 @@ export const Tag = ({
         onClick?.();
       }}
       className={cn(
-        "inline-flex items-center rounded-full px-4 py-2 text-sm font-medium",
+        "relative inline-flex items-center rounded-full pl-4 pr-6 py-2 text-sm font-medium",
         variant === "selected" && "border border-primary text-primary",
         variant === "default" &&
           "bg-transparent border border-quaternary text-quaternary",
@@ -35,7 +35,7 @@ export const Tag = ({
       {text}
       {variant === "active" && closable && (
         <>
-          <CloseIcon className="ml-1" />
+          <CloseIcon className="absolute right-[8px]" />
         </>
       )}
     </span>

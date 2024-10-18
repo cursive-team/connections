@@ -5,6 +5,7 @@ import { Connection } from "@/lib/storage/types";
 import AppLayout from "@/layouts/AppLayout";
 import { MdKeyboardArrowRight as ArrowRight } from "react-icons/md";
 import { ProfileImage } from "@/components/ui/ProfileImage";
+import { Banner } from "@/components/cards/Banner";
 
 const PeoplePage: React.FC = () => {
   const [connections, setConnections] = useState<Record<string, Connection>>(
@@ -18,7 +19,14 @@ const PeoplePage: React.FC = () => {
         return;
       }
 
-      setConnections(user.connections);
+      const sortedConnections = Object.entries(user.connections)
+        .sort(
+          ([, a], [, b]) =>
+            b.taps[b.taps.length - 1].timestamp.getTime() -
+            a.taps[a.taps.length - 1].timestamp.getTime()
+        )
+        .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+      setConnections(sortedConnections);
     };
 
     fetchConnections();
@@ -40,9 +48,30 @@ const PeoplePage: React.FC = () => {
       className="mx-auto"
       withContainer={false}
     >
+      <div className="w-full px-4 py-4">
+        <Banner
+          className="justify-center"
+          italic={false}
+          title={
+            <span className="!font-normal text-center">
+              <b>Tap wristbands to</b>: share socials, organize contacts, and
+              discover shared interests! Troubleshoot tapping{" "}
+              <a
+                href="https://cursive.team/tap-help"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                here
+              </a>
+              .
+            </span>
+          }
+        />
+      </div>
       {Object.keys(connections).length === 0 ? (
         <div className="p-4 text-center text-secondary px-16">
-          {`No connections yet. Tap another person's wristband to get started!`}
+          {`No connections yet.`}
         </div>
       ) : (
         <ul className="flex flex-col">

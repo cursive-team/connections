@@ -23,6 +23,8 @@ const config: Config = {
         center: true,
       },
       backgroundImage: {
+        "gradient-banner":
+          "linear-gradient(0deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.80) 100%), linear-gradient(90deg, #FF9DF8 0%, #938AFF 100%)",
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
@@ -48,7 +50,7 @@ const config: Config = {
 
         surface: {
           primary: "#FFF",
-          quaternary: "rgba(0, 0, 0, 0.03",
+          quaternary: "rgba(0, 0, 0, 0.03)",
           notice: {
             primary: "#000000",
             secondary: "rgba(0, 0, 0, 0.15)",

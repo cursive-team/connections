@@ -35,7 +35,7 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="flex flex-col bg-white p-6 rounded-[32px] w-full max-w-[90vw] h-full max-h-[90vh] overflow-y-auto">
+      <div className="flex flex-col bg-white p-6 pb-10 rounded-[32px] w-full max-w-[90vw] overflow-y-auto">
         <div className="size-[80px] relative flex mx-auto">
           <div className="absolute -left-3 size-8 rounded-full bg-[#9DE8FF] z-0 top-[28px] border border-quaternary/10"></div>
           <Image
@@ -223,43 +223,45 @@ const UserProfilePage: React.FC = () => {
           </div>
         }
       >
-        <div className="!divide-y !divide-quaternary/20 pt-4">
-          {(connection?.user?.twitter?.username ||
-            connection?.user?.telegram?.username) && (
-            <div className="flex flex-col gap-2 py-4 px-4">
-              <span className="text-sm font-semibold text-primary font-sans">
-                Socials
-              </span>
-              <div className="flex flex-col gap-4">
-                {connection?.user?.telegram?.username && (
-                  <div
-                    onClick={() => {
-                      logClientEvent("user-profile-telegram-clicked", {});
-                    }}
-                  >
-                    <LinkCardBox
-                      label="Telegram"
-                      value={`@${connection.user.telegram.username}`}
-                      href={`https://t.me/${connection.user.telegram.username}`}
-                    />
-                  </div>
-                )}
-                {connection?.user?.twitter?.username && (
-                  <div
-                    onClick={() => {
-                      logClientEvent("user-profile-twitter-clicked", {});
-                    }}
-                  >
-                    <LinkCardBox
-                      label="Twitter"
-                      value={`@${connection.user.twitter.username}`}
-                      href={`https://twitter.com/${connection.user.twitter.username}`}
-                    />
-                  </div>
-                )}
-              </div>
+        <div className="!divide-y !divide-quaternary/20">
+          <div className="flex flex-col gap-2 py-4 px-4">
+            <span className="text-sm font-semibold text-primary font-sans">
+              Socials
+            </span>
+            <div className="flex flex-col gap-4">
+              {!connection?.user?.telegram && !connection?.user?.twitter && (
+                <span className="text-sm text-secondary font-sans font-normal">
+                  No socials shared.
+                </span>
+              )}
+              {connection?.user?.telegram?.username && (
+                <div
+                  onClick={() => {
+                    logClientEvent("user-profile-telegram-clicked", {});
+                  }}
+                >
+                  <LinkCardBox
+                    label="Telegram"
+                    value={`@${connection.user.telegram.username}`}
+                    href={`https://t.me/${connection.user.telegram.username}`}
+                  />
+                </div>
+              )}
+              {connection?.user?.twitter?.username && (
+                <div
+                  onClick={() => {
+                    logClientEvent("user-profile-twitter-clicked", {});
+                  }}
+                >
+                  <LinkCardBox
+                    label="Twitter"
+                    value={`@${connection.user.twitter.username}`}
+                    href={`https://twitter.com/${connection.user.twitter.username}`}
+                  />
+                </div>
+              )}
             </div>
-          )}
+          </div>
 
           {connection?.user?.bio && (
             <div className="flex flex-col gap-2 py-4 px-4">
