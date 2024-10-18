@@ -2,12 +2,10 @@ import { AppInput } from "@/components/ui/AppInput";
 import AppLayout from "@/layouts/AppLayout";
 import { useForm } from "react-hook-form";
 import { storage } from "@/lib/storage";
-import { LannaDesiredConnections, User } from "@/lib/storage/types";
+import { Session, User } from "@/lib/storage/types";
 import { AppTextarea } from "@/components/ui/Textarea";
 import { AppButton } from "@/components/ui/Button";
 import { useEffect, useState } from "react";
-import { EMOJI_MAPPING } from "@/common/constants";
-import { Tag } from "@/components/ui/Tag";
 import { Icons } from "@/components/Icons";
 import { cn } from "@/lib/frontend/util";
 import Link from "next/link";
@@ -15,29 +13,37 @@ import {
   FaTelegram as TelegramIcon,
   FaTwitter as TwitterIcon,
 } from "react-icons/fa";
-import { ProfileImage } from "@/components/ui/ProfileImage";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
+import { Json, UpdateChipRequest } from "@types";
+import { updateChip } from "@/lib/chip/update";
+
+type ChipEditFormData = {
+  displayName?: string;
+  bio?: string;
+  twitterUsername?: string;
+  telegramUsername?: string;
+};
 
 const ProfileEdit = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const { register, handleSubmit, reset } =
-    useForm<Partial<User["userData"]>>();
+  const [session, setSession] = useState<Session | null>(null);
+  const { register, handleSubmit, reset } = useForm<ChipEditFormData>();
 
   useEffect(() => {
     const fetchUser = async () => {
-      const user = await storage.getUser();
-      if (user) {
+      const { user, session } = await storage.getUserAndSession();
+      if (user && session) {
         setUser(user);
+        setSession(session);
         reset({
-          username: user.userData?.username,
           displayName: user.userData?.displayName || "",
           bio: user.userData?.bio || "",
-          twitter: user.userData?.twitter,
-          telegram: user.userData?.telegram,
-          lanna: user.userData?.lanna,
+          twitterUsername: user.userData?.twitter?.username || "",
+          telegramUsername: user.userData?.telegram?.username || "",
         });
       } else {
         toast.error("User not found");
@@ -48,26 +54,26 @@ const ProfileEdit = () => {
     fetchUser();
   }, [router, reset]);
 
-  const [connections, setConnections] = useState<LannaDesiredConnections>({
-    getHealthy: false,
-    cowork: false,
-    enjoyMeals: false,
-    learnFrontierTopics: false,
-    findCollaborators: false,
-    goExploring: false,
-    party: false,
-    doMentalWorkouts: false,
-  });
-
-  const handleToggle = (key: keyof LannaDesiredConnections) => {
-    setConnections((prev) => ({ ...prev, [key]: !prev[key] }));
+  const onHandleSubmit = async (formData: ChipEditFormData) => {
+    console.log(formData);
+    setLoading(true);
+    const { displayName, bio, twitterUsername, telegramUsername } = formData;
+    try {
+      await updateChip({
+        authToken: session!.authTokenValue,
+        tapParams: { chipId: user!.chips[0].id },
+        ownerDisplayName: displayName ?? null,
+        ownerBio: bio ?? null,
+        ownerTwitterUsername: twitterUsername ?? null,
+        ownerTelegramUsername: telegramUsername ?? null,
+      });
+      toast.success("Chip updated successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error updating chip.");
+    }
+    setLoading(false);
   };
-
-  const onHandleSubmit = () => {};
-
-  // const onHandleSubmit = (formData: Partial<User["userData"]>) => {
-  //   // TODO: implement
-  // };
 
   return (
     <>
@@ -82,92 +88,75 @@ const ProfileEdit = () => {
         >
           <form
             onSubmit={handleSubmit(onHandleSubmit)}
-            className="flex flex-col gap-4 pt-4 pb-6"
+            className="flex flex-col gap-4 pt-4 pb-6 px-2"
           >
-            <div className="flex items-center justify-between gap-4 bg-surface-quaternary p-4">
+            {/* <div className="flex items-center justify-between gap-4 bg-surface-quaternary p-4">
               <AppButton className="max-w-[130px]">Edit image</AppButton>
               <div>
                 <ProfileImage user={user.userData} />
               </div>
+            </div> */}
+
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-col gap-2">
+                <span>
+                  <b>Editing</b> Edge City Wristband
+                </span>
+                <span className="text-[14px] text-tertiary">
+                  This information is shared when someone taps your NFC chip
+                  with their phone.
+                </span>
+              </div>
             </div>
             <AppInput
+              label="Display name"
               variant="secondary"
               placeholder="Display name"
               {...register("displayName")}
             />
             <AppInput
-              placeholder="Username"
-              variant="secondary"
-              {...register("username")}
-            />
-            <AppInput
+              label="Telegram"
               placeholder="Telegram"
               variant="secondary"
               icon={<TelegramIcon className="text-icon-primary/50" />}
-              {...register("telegram")}
+              {...register("telegramUsername")}
             />
             <AppInput
+              label="Twitter"
               placeholder="Twitter"
               variant="secondary"
               icon={<TwitterIcon className="text-icon-primary/50" />}
-              {...register("twitter")}
+              {...register("twitterUsername")}
             />
             <AppTextarea
+              label="Bio"
+              autoExpand
               placeholder="Bio"
               variant="secondary"
               {...register("bio")}
             />
-            <div className="flex flex-col gap-4 bg-surface-quaternary p-4">
-              <span className="text-sm font-semibold text-primary font-sans">
-                Interests
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {Object.entries(connections).map(([key, value]) => {
-                  return (
-                    <div key={key} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id={key}
-                        checked={value}
-                        onChange={() =>
-                          handleToggle(key as keyof LannaDesiredConnections)
-                        }
-                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
-                      />
-                      <Tag
-                        variant={value ? "active" : "default"}
-                        emoji={EMOJI_MAPPING?.[key]}
-                        onClick={() =>
-                          handleToggle(key as keyof LannaDesiredConnections)
-                        }
-                        text={
-                          key.charAt(0).toUpperCase() +
-                          key.slice(1).replace(/([A-Z])/g, " $1")
-                        }
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <AppButton>Save</AppButton>
+            <AppButton
+              type="submit"
+              loading={loading}
+              onClick={handleSubmit(onHandleSubmit)}
+            >
+              Save
+            </AppButton>
           </form>
-          <div className="flex flex-col gap-4 py-6 border-t border-t-quaternary">
-            <Icons.Cursive />
+          <div className="flex flex-col gap-4 px-4 py-6 border-t border-t-quaternary text-center">
             <span className={cn("text-tertiary text-xs font-medium font-sans")}>
-              Cursive Connections is an app experience for tapping into
-              serendipity.{" "}
+              Cursive Connections is an app experience for discovering and
+              deepening human connection.
+            </span>
+            <div className="flex flex-row justify-center items-center">
               <Link
                 href="https://www.cursive.team/"
                 target="_blank"
                 className="underline font-bold"
               >
-                Built by Cursive.
+                <Icons.Cursive />
               </Link>
-            </span>
-            <AppButton className="max-w-[120px] self-start" variant="outline">
-              Sign Out
-            </AppButton>
+            </div>
           </div>
         </AppLayout>
       ) : (
