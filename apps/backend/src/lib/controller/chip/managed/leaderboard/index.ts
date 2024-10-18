@@ -109,7 +109,6 @@ ManagedChipClient.prototype.GetLeaderboardTotalTaps = async function (
     const totalTaps: Array<{ sum: number } | null> = await this.prismaClient
       .$queryRaw`SELECT SUM("tapCount") FROM "LeaderboardEntry" WHERE "chipIssuer"=${chipIssuer}`;
 
-    // TODO: simplify this somehow?
     let length = -1;
     if (totalTaps && totalTaps.length == 1 && totalTaps[0] !== null) {
       // size of totalTaps should always be 1
