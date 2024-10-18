@@ -198,7 +198,7 @@ const LeaderboardPage: React.FC = () => {
           }
         }
 
-        // TODO: Add query check, if connection is selected
+        // TODO: Add query check for connection, if we navigated to the leaderboard from a connection's profile
 
         if (index == 9) {
           styling.divider = true;
