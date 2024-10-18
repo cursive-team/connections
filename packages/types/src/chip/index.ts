@@ -129,15 +129,6 @@ export type GetLeaderboardPositionRequest = z.infer<
   typeof GetLeaderboardPositionRequestSchema
 >;
 
-export const LeaderboardPositionSchema = z.object({
-  leaderboardPosition: z.coerce.number(),
-  username: z.string(),
-});
-
-export type LeaderboardPosition = z.infer<
-  typeof LeaderboardPositionSchema
->;
-
 export const LeaderboardEntriesSchema = z.object({
   entries: z.array(LeaderboardEntrySchema),
 });
@@ -146,3 +137,13 @@ export type LeaderboardEntries = z.infer<
   typeof LeaderboardEntriesSchema
 >;
 
+export const LeaderboardDetailsSchema = z.object({
+  username: z.string(),
+  userPosition: z.coerce.number(),
+  totalContributors: z.coerce.number(),
+  totalTaps: z.coerce.number(),
+});
+
+export type LeaderboardDetails = z.infer<
+  typeof LeaderboardDetailsSchema
+>;

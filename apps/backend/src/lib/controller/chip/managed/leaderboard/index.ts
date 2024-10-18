@@ -3,8 +3,6 @@ import {
   errorToString,
   LeaderboardEntry,
   LeaderboardEntrySchema,
-  LeaderboardPosition,
-  LeaderboardPositionSchema
 } from "@types";
 import { ManagedChipClient } from "../client";
 
@@ -66,7 +64,7 @@ ManagedChipClient.prototype.UpdateLeaderboardEntry = async function (
 ManagedChipClient.prototype.GetUserLeaderboardPosition = async function (
   username: string,
   chipIssuer: ChipIssuer
-): Promise<LeaderboardPosition | null> {
+): Promise<number | null> {
   try {
 
     /*
@@ -83,12 +81,12 @@ ManagedChipClient.prototype.GetUserLeaderboardPosition = async function (
     SELECT "leaderboardPosition" FROM (SELECT username, row_number() OVER() as "leaderboardPosition" FROM (SELECT * FROM "LeaderboardEntry" WHERE "chipIssuer"='TESTING' ORDER BY "tapCount" DESC) AS sorted_entries) AS rowed_sorted_entries WHERE "username"='pass2';
     */
 
-    const positions: Array<any> | null = await this.prismaClient.$queryRaw`SELECT username, "leaderboardPosition" FROM (SELECT username, row_number() OVER() as "leaderboardPosition" FROM (SELECT * FROM "LeaderboardEntry" WHERE "chipIssuer"=${chipIssuer} ORDER BY "tapCount" DESC) AS sorted_entries) AS rowed_sorted_entries WHERE "username"=${username}`;
+    const positions: Array<{leaderboardPosition: number} | null> = await this.prismaClient.$queryRaw`SELECT "leaderboardPosition" FROM (SELECT username, row_number() OVER() as "leaderboardPosition" FROM (SELECT * FROM "LeaderboardEntry" WHERE "chipIssuer"=${chipIssuer} ORDER BY "tapCount" DESC) AS sorted_entries) AS rowed_sorted_entries WHERE "username"=${username}`;
 
     let length = -1;
-    if (positions && positions.length == 1) {
+    if (positions && positions.length == 1 && positions[0] !== null) {
       // Position should always be length 1. 0 indicates the user doesn't exist, and 2 indicates multiple users with same name.
-      return LeaderboardPositionSchema.parse(positions[0]);
+      return Number(positions[0].leaderboardPosition);
     } else if (positions) {
       // I think this is overly defensive and the return value will _never_ be null, but doing it just in case -- -1 would indicate null
       length = positions.length;
@@ -96,9 +94,62 @@ ManagedChipClient.prototype.GetUserLeaderboardPosition = async function (
 
     throw new Error(`Failed to get user leaderboard position, return value of length ${length}`);
   } catch (error) {
-    console.error("Failed to get leaderboard entry:", errorToString(error));
-    throw new Error("Failed to get leaderboard entry");
+    console.error("Failed to get leaderboard position:", errorToString(error));
+    throw new Error("Failed to get leaderboard position");
   }
+};
+
+ManagedChipClient.prototype.GetLeaderboardTotalTaps = async function (
+  chipIssuer: ChipIssuer
+): Promise<number | null> {
+
+  try {
+    const totalTaps: Array<{sum: number} | null> = await this.prismaClient.$queryRaw`SELECT SUM("tapCount") FROM "LeaderboardEntry" WHERE "chipIssuer"=${chipIssuer}`;
+
+    // TODO: simplify this somehow?
+    let length = -1;
+    if (totalTaps && totalTaps.length == 1 && totalTaps[0] !== null) {
+      // Position should always be length 1. 0 indicates the user doesn't exist, and 2 indicates multiple users with same name.
+      return Number(totalTaps[0].sum);
+    } else if (totalTaps) {
+      // I think this is overly defensive and the return value will _never_ be null, but doing it just in case -- -1 would indicate null
+      length = totalTaps.length;
+    }
+    throw new Error(`Failed to get total taps of leaderboard entries, return value of length ${length}`);
+  } catch (error) {
+    console.error("Failed to get total taps of leaderboard entries:", errorToString(error));
+    throw new Error("Failed to get total taps of leaderboard entries");
+  }
+
+  return null;
+};
+
+// Get contributors from chip service rather than postgres.
+// While postgres handles user details, the chip service builds up a record of its community members through entries.
+// LeaderboardEntry count can represent the number of contributors.
+ManagedChipClient.prototype.GetLeaderboardTotalContributors = async function (
+  chipIssuer: ChipIssuer
+): Promise<number | null> {
+
+  try {
+    // There should be one distinct entry per user-leaderboard
+    const totalContributors: Array<{ count: number } | null> = await this.prismaClient.$queryRaw`SELECT COUNT(*) FROM "LeaderboardEntry" WHERE "chipIssuer"=${chipIssuer}`;
+
+    let length = -1;
+    if (totalContributors && totalContributors.length == 1 && totalContributors[0] !== null) {
+      // Position should always be length 1. 0 indicates the user doesn't exist, and 2 indicates multiple users with same name.
+      return Number(totalContributors[0].count);
+    } else if (totalContributors) {
+      // I think this is overly defensive and the return value will _never_ be null, but doing it just in case -- -1 would indicate null
+      length = totalContributors.length;
+    }
+    throw new Error(`Failed to get total taps of leaderboard entries, return value of length ${length}`);
+  } catch (error) {
+    console.error("Failed to get total contributor count of leaderboard:", errorToString(error));
+    throw new Error("Failed to get total contributor count of leaderboard");
+  }
+
+  return null;
 };
 
 ManagedChipClient.prototype.GetTopLeaderboard = async function (
@@ -106,15 +157,20 @@ ManagedChipClient.prototype.GetTopLeaderboard = async function (
   chipIssuer: ChipIssuer
 ): Promise<LeaderboardEntry[] | null> {
   try {
-    // In this scheme there's currently no way to decide ties, ie ties may change order.
     const topEntries = await this.prismaClient.leaderboardEntry.findMany({
       where: {
         chipIssuer,
       },
       take: count,
-      orderBy: {
-        tapCount: "desc",
-      },
+      orderBy: [
+        {
+          tapCount: "desc",
+        },
+        {
+          // order on username so that ties have a consistent order
+          username: "asc",
+        }
+      ],
     });
 
     topEntries.map((entry: LeaderboardEntry) => {
@@ -123,8 +179,8 @@ ManagedChipClient.prototype.GetTopLeaderboard = async function (
 
     return topEntries;
   } catch (error) {
-    console.error("Failed to get leaderboard entry:", errorToString(error));
-    throw new Error("Failed to get leaderboard entry");
+    console.error("Failed to get top leaderboard entries:", errorToString(error));
+    throw new Error("Failed to get top leaderboard entries");
   }
 };
 
