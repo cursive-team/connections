@@ -40,7 +40,8 @@ Testing:
   - Create new account, visit http://localhost:3000/tap?chipId=TEST002 in a different browser
   - To tap a connection, visit http://localhost:3000/tap?chipId=TEST002 from your first browser, where the chipId corresponds to the other existing account
 - After a full deletion sometimes old local storage values will still be populating site, visit http://localhost:3000/logout to logout or delete the local storage corresponding to localhost:3000.
-- To clear the database, run `npx prisma migrate reset` from apps/backend. NOTE THIS WILL WIPE YOUR POSTGRES
+- To clear the database, run `pnpm prisma migrate reset` from apps/backend. NOTE THIS WILL WIPE YOUR POSTGRES
+- To add fack leaderboard entries, in `apps/backend` run `ts-node -r tsconfig-paths/register prisma/testing/leaderboardEntries.ts`.
 
 Testing Secret Values:
 
@@ -50,7 +51,9 @@ Testing Secret Values:
 Testing Utilities:
 
 - For dropping test DB: `psql`, `DROP DATABASE connections_test WITH (FORCE);`
+- `\l` to list dbs, `\c $dbname` to connect, `\d` to list tables. 
 - To filter requests in Chrome Inspect, use negative filter `-.png -.jpg -.jpeg -.gif -.json -.js` in Network tab.
+- After a full deletion sometimes an old cookie will still be populating site, to delete in Chrome: `Settings` -> `Privacy and security` -> `Third-party cookies` -> `See all site data and permissions` -> search for localhost -> delete cookies
 
 Notes:
 
