@@ -15,6 +15,7 @@ import {
   FaTelegram as TelegramIcon,
   FaTwitter as TwitterIcon,
 } from "react-icons/fa";
+import { ProfileImage } from "@/components/ui/ProfileImage";
 
 const ProfileEdit = () => {
   const { register, handleSubmit } = useForm<Partial<User["userData"]>>({
@@ -63,6 +64,12 @@ const ProfileEdit = () => {
         onSubmit={handleSubmit(onHandleSubmit)}
         className="flex flex-col gap-4 pt-4 pb-6"
       >
+        <div className="flex items-center justify-between gap-4 bg-surface-quaternary p-4">
+          <AppButton className="max-w-[130px]">Edit image</AppButton>
+          <div>
+            <ProfileImage user={null as any} />
+          </div>
+        </div>
         <AppInput
           variant="secondary"
           placeholder="Display name"

@@ -19,8 +19,9 @@ export const ProfileImage = ({ user }: { user: UserData }) => {
   ];
 
   const colorIndex =
-    user.username.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) %
-    colorPalette.length;
+    user?.username
+      .split("")
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0) % colorPalette.length;
 
   const backgroundColor = colorPalette[colorIndex];
 
@@ -36,13 +37,13 @@ export const ProfileImage = ({ user }: { user: UserData }) => {
         }}
       >
         {(() => {
-          const nameParts = user.displayName.split(" ");
+          const nameParts = user?.displayName?.split(" ");
           if (nameParts.length >= 2) {
             return (
               nameParts[0][0] + nameParts[nameParts.length - 1][0]
             ).toUpperCase();
           } else {
-            return user.displayName.slice(0, 2).toUpperCase();
+            return user?.displayName?.slice(0, 2).toUpperCase();
           }
         })()}
       </span>
