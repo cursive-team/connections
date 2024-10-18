@@ -35,7 +35,7 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="flex flex-col bg-white p-6 rounded-[32px] w-full max-w-[90vw] h-full max-h-[90vh] overflow-y-auto">
+      <div className="flex flex-col bg-white p-6 pb-10 rounded-[32px] w-full max-w-[90vw] overflow-y-auto">
         <div className="size-[80px] relative flex mx-auto">
           <div className="absolute -left-3 size-8 rounded-full bg-[#9DE8FF] z-0 top-[28px] border border-quaternary/10"></div>
           <Image
