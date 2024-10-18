@@ -141,21 +141,6 @@ const ProfileEdit = () => {
               Save
             </AppButton>
           </form>
-          <div className="flex flex-col gap-4 px-4 py-6 border-t border-t-quaternary text-center">
-            <span className={cn("text-tertiary text-xs font-medium font-sans")}>
-              Cursive Connections is an app experience for discovering and
-              deepening human connection.
-            </span>
-            <div className="flex flex-row justify-center items-center">
-              <Link
-                href="https://www.cursive.team/"
-                target="_blank"
-                className="underline font-bold"
-              >
-                <Icons.Cursive />
-              </Link>
-            </div>
-          </div>
         </AppLayout>
       ) : (
         <div className="flex items-center justify-center min-h-screen bg-white">
