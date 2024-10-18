@@ -126,6 +126,12 @@ const ProfilePage: React.FC = () => {
             Socials
           </span>
           <div className="flex flex-col gap-2">
+            {!user?.userData.telegram?.username &&
+              !user?.userData.twitter?.username && (
+                <span className="text-sm text-secondary font-sans font-normal">
+                  Add socials by editing your chip details!
+                </span>
+              )}
             {user?.userData.telegram?.username && (
               <LinkCardBox
                 label="Telegram"

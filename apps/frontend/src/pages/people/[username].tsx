@@ -223,43 +223,45 @@ const UserProfilePage: React.FC = () => {
           </div>
         }
       >
-        <div className="!divide-y !divide-quaternary/20 pt-4">
-          {(connection?.user?.twitter?.username ||
-            connection?.user?.telegram?.username) && (
-            <div className="flex flex-col gap-2 py-4 px-4">
-              <span className="text-sm font-semibold text-primary font-sans">
-                Socials
-              </span>
-              <div className="flex flex-col gap-4">
-                {connection?.user?.telegram?.username && (
-                  <div
-                    onClick={() => {
-                      logClientEvent("user-profile-telegram-clicked", {});
-                    }}
-                  >
-                    <LinkCardBox
-                      label="Telegram"
-                      value={`@${connection.user.telegram.username}`}
-                      href={`https://t.me/${connection.user.telegram.username}`}
-                    />
-                  </div>
-                )}
-                {connection?.user?.twitter?.username && (
-                  <div
-                    onClick={() => {
-                      logClientEvent("user-profile-twitter-clicked", {});
-                    }}
-                  >
-                    <LinkCardBox
-                      label="Twitter"
-                      value={`@${connection.user.twitter.username}`}
-                      href={`https://twitter.com/${connection.user.twitter.username}`}
-                    />
-                  </div>
-                )}
-              </div>
+        <div className="!divide-y !divide-quaternary/20">
+          <div className="flex flex-col gap-2 py-4 px-4">
+            <span className="text-sm font-semibold text-primary font-sans">
+              Socials
+            </span>
+            <div className="flex flex-col gap-4">
+              {!connection?.user?.telegram && !connection?.user?.twitter && (
+                <span className="text-sm text-secondary font-sans font-normal">
+                  No socials shared.
+                </span>
+              )}
+              {connection?.user?.telegram?.username && (
+                <div
+                  onClick={() => {
+                    logClientEvent("user-profile-telegram-clicked", {});
+                  }}
+                >
+                  <LinkCardBox
+                    label="Telegram"
+                    value={`@${connection.user.telegram.username}`}
+                    href={`https://t.me/${connection.user.telegram.username}`}
+                  />
+                </div>
+              )}
+              {connection?.user?.twitter?.username && (
+                <div
+                  onClick={() => {
+                    logClientEvent("user-profile-twitter-clicked", {});
+                  }}
+                >
+                  <LinkCardBox
+                    label="Twitter"
+                    value={`@${connection.user.twitter.username}`}
+                    href={`https://twitter.com/${connection.user.twitter.username}`}
+                  />
+                </div>
+              )}
             </div>
-          )}
+          </div>
 
           {connection?.user?.bio && (
             <div className="flex flex-col gap-2 py-4 px-4">

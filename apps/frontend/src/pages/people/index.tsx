@@ -71,7 +71,7 @@ const PeoplePage: React.FC = () => {
       </div>
       {Object.keys(connections).length === 0 ? (
         <div className="p-4 text-center text-secondary px-16">
-          {`No connections yet. Tap another person's wristband to get started!`}
+          {`No connections yet.`}
         </div>
       ) : (
         <ul className="flex flex-col">
