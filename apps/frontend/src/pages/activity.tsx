@@ -97,26 +97,6 @@ const ActivityPage: React.FC = () => {
       }
       className="container mx-auto px-4 py-4"
     >
-      <div className="mb-4 w-full">
-        <Banner
-          className="justify-center"
-          italic={false}
-          title={
-            <span className="!font-normal text-center">
-              <b>Coming soon</b>: digital pheromones, superconnectors and{" "}
-              <a
-                href="https://cursive.team/lanna"
-                className="underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                more
-              </a>
-              .
-            </span>
-          }
-        />
-      </div>
       {Object.entries(
         activityItems.reduce((acc, item) => {
           const date = item.timestamp.toLocaleDateString("en-US", {
