@@ -6,9 +6,6 @@ import { Session, User } from "@/lib/storage/types";
 import { AppTextarea } from "@/components/ui/Textarea";
 import { AppButton } from "@/components/ui/Button";
 import { useEffect, useState } from "react";
-import { Icons } from "@/components/Icons";
-import { cn } from "@/lib/frontend/util";
-import Link from "next/link";
 import {
   FaTelegram as TelegramIcon,
   FaTwitter as TwitterIcon,
