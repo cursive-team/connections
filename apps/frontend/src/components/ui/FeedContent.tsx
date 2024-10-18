@@ -32,7 +32,7 @@ export const FeedContent = ({
   icon,
 }: FeedContentProps) => {
   return (
-    <div className="grid grid-cols-[1fr_80px] items-center justify-between py-1 gap-4">
+    <div className="grid grid-cols-[1fr_60px] items-center justify-between py-1 gap-4">
       <div className="grid grid-cols-[24px_1fr] items-center gap-2 truncate">
         <IconCircle>{icon}</IconCircle>
         {titleOverride === true ? (

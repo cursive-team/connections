@@ -14,6 +14,7 @@ import {
 } from "@/lib/activity";
 import { ChipIssuer } from "@types";
 import { Banner } from "@/components/cards/Banner";
+import { cn } from "@/lib/frontend/util";
 
 interface ActivityDisplayItem {
   text: string;
@@ -83,40 +84,48 @@ const ActivityPage: React.FC = () => {
   return (
     <AppLayout
       showHeader={false}
-      headerDivider
       header={
-        <div className="my-4 w-full">
-          <Banner
-            className="justify-center"
-            title={
-              <span className="!font-normal text-center">
-                <b>Coming soon</b>: digital pheromones, superconnectors and{" "}
-                <a
-                  href="https://cursive.team/lanna"
-                  className="underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  more
-                </a>
-                .
-              </span>
-            }
-          />
-        </div>
+        <>
+          <span className="text-primary font-medium">Activity</span>
+          <div
+            className="absolute left-0 right-0 bottom-0 h-[2px]"
+            style={{
+              background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
+            }}
+          ></div>
+        </>
       }
       className="container mx-auto px-4 py-4"
     >
+      <div className="mb-4 w-full">
+        <Banner
+          className="justify-center"
+          italic={false}
+          title={
+            <span className="!font-normal text-center">
+              <b>Coming soon</b>: digital pheromones, superconnectors and{" "}
+              <a
+                href="https://cursive.team/lanna"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                more
+              </a>
+              .
+            </span>
+          }
+        />
+      </div>
       <ul className="space-y-4">
         {activityItems.map((item, index) => {
           const Content = () => (
             <FeedContent
               title={<span>{item.text}</span>}
               icon={<CircleCard icon="person" />}
-              description={item.timestamp.toLocaleTimeString("en-US", {
+              description={item.timestamp.toLocaleString("en-US", {
                 hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
+                minute: "numeric",
               })}
             />
           );
@@ -124,7 +133,10 @@ const ActivityPage: React.FC = () => {
           return (
             <div
               key={index}
-              className="grid grid-cols-[1fr_20px] items-center gap-1"
+              className={cn(
+                "grid items-center gap-1",
+                item?.link && "grid-cols-[1fr_20px]"
+              )}
             >
               {item.link ? (
                 <Link href={item.link}>
