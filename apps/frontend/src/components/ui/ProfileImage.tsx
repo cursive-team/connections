@@ -37,6 +37,10 @@ export const ProfileImage = ({ user }: { user: UserData }) => {
         }}
       >
         {(() => {
+          if (!user.displayName) {
+            return user.username.slice(0, 2).toUpperCase();
+          }
+
           const nameParts = user?.displayName?.split(" ");
           if (nameParts.length >= 2) {
             return (

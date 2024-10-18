@@ -39,8 +39,15 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
   return (
     <div className="flex flex-col grow">
       <RegisterHeader
-        title="Ready to tap into serendipity?"
-        description="Discover & deepen connections with residents while choosing what you reveal about your data. This is programmable cryptography in action!"
+        title="Discover & deepen connection with residents!"
+        description={
+          <div className="flex flex-col gap-2">
+            <span>
+              {`Use programmable cryptography to safely connect & efficiently coordinate with 
+              Edge City residents. Make sure you've tapped your own chip to register it.`}
+            </span>
+          </div>
+        }
       />
       <div className="flex flex-col mt-auto">
         <form onSubmit={handleSubmit} className="space-y-4 pb-2">
@@ -54,9 +61,10 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
               required
               value={email}
               onChange={handleChange}
-              description="Register with the email you used for Edge City."
+              description="Use your Edge City email for additional features."
             />
           </div>
+
           <AppButton loading={loading} type="submit">
             Next
           </AppButton>
