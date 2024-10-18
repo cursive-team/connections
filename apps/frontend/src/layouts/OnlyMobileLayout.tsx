@@ -2,10 +2,9 @@
 
 import MobileDetect from "mobile-detect";
 import React, { useEffect, useRef } from "react";
-import { FullPageBanner } from "@/components/FullPageBanner";
+import { ErrorFullPageBanner } from "@/components/ErrorFullPageBanner";
 import { APP_CONFIG } from "@/config";
 import detectIncognito from "detectincognitojs";
-import router from "next/router";
 
 interface OnlyMobileProps {
   children?: React.ReactNode;
@@ -29,7 +28,7 @@ export default function OnlyMobileLayout({ children }: OnlyMobileProps) {
     }
 
     checkIncognitoStatus();
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -44,7 +43,6 @@ export default function OnlyMobileLayout({ children }: OnlyMobileProps) {
 
   const validMobile = APP_CONFIG.IS_MOBILE_ONLY && isMobile;
   const validIncognito = !APP_CONFIG.ALLOW_INCOGNITO && !isIncognito;
-
   const canUseApp = validMobile && validIncognito && !isVanadium;
 
   if (!isLoaded) return null;
@@ -52,9 +50,10 @@ export default function OnlyMobileLayout({ children }: OnlyMobileProps) {
   return (
     <>
       {!canUseApp ? (
-        <FullPageBanner
-          description={`${APP_CONFIG.APP_NAME} is only available on mobile devices. Please visit the website on your phone in order to take part in the experience.`}
+        <ErrorFullPageBanner
+          isIncognito={!validIncognito}
           isVanadium={isVanadium}
+          isNotMobile={!validMobile}
         />
       ) : (
         children

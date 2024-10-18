@@ -1,7 +1,5 @@
 "use client";
 
-import { FullPageBanner } from "@/components/FullPageBanner";
-import useSettings from "@/hooks/useSettings";
 import React, { useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { AppFooter } from "@/components/AppFooter";
@@ -33,13 +31,7 @@ export default function AppLayout({
   back = undefined,
   withContainer = true,
 }: AppLayoutProps) {
-  const { isIncognito } = useSettings();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  if (isIncognito) {
-    return (
-      <FullPageBanner description="You're in an incognito tab. Please copy this link into a non-incognito tab in order to take part in the experience!" />
-    );
-  }
 
   return (
     <div>
