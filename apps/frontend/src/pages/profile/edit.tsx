@@ -16,7 +16,6 @@ import {
 import { useRouter } from "next/router";
 import { toast } from "sonner";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
-import { Json, UpdateChipRequest } from "@types";
 import { updateChip } from "@/lib/chip/update";
 
 type ChipEditFormData = {

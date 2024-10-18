@@ -4,7 +4,6 @@ import {
   ErrorResponse,
   UpdateChipRequest,
   UpdateChipRequestSchema,
-  UpdateChipResponse,
 } from "@types";
 
 const router = express.Router();
@@ -18,7 +17,7 @@ router.post(
   "/update",
   async (
     req: Request<{}, {}, UpdateChipRequest>,
-    res: Response<UpdateChipResponse | ErrorResponse>
+    res: Response<{} | ErrorResponse>
   ) => {
     try {
       const validatedData = UpdateChipRequestSchema.parse(req.body);
@@ -30,9 +29,7 @@ router.post(
 
       const updatedChip = await controller.UpdateChip(validatedData);
 
-      return res.status(200).json({
-        chipId: updatedChip.chipId,
-      });
+      return res.status(200).json({});
     } catch (error) {
       console.error("Chip update error:", error);
       return res.status(400).json({

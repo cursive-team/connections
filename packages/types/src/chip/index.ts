@@ -65,12 +65,6 @@ export const UpdateChipRequestSchema = z.object({
 
 export type UpdateChipRequest = z.infer<typeof UpdateChipRequestSchema>;
 
-export const UpdateChipResponseSchema = z.object({
-  chipId: z.string(),
-});
-
-export type UpdateChipResponse = z.infer<typeof UpdateChipResponseSchema>;
-
 export const ChipTapSchema = z.object({
   chipPublicKey: z.string(),
   message: z.string(),

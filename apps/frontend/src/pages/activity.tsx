@@ -13,7 +13,6 @@ import {
   TapActivityDataSchema,
 } from "@/lib/activity";
 import { ChipIssuer } from "@types";
-import { Banner } from "@/components/cards/Banner";
 import { cn } from "@/lib/frontend/util";
 
 interface ActivityDisplayItem {
