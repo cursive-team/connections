@@ -1,12 +1,15 @@
 import express, { Request, Response } from "express";
 import {
   ErrorResponse,
+  LeaderboardEntry,
   GetLeaderboardEntryRequest,
   GetLeaderboardEntryRequestSchema,
   UpdateLeaderboardEntryRequest,
   UpdateLeaderboardEntryRequestSchema,
   GetLeaderboardPositionRequest,
   GetLeaderboardPositionRequestSchema,
+  LeaderboardDetails,
+  LeaderboardDetailsSchema,
   errorToString,
 } from "@types";
 import { Controller } from "@/lib/controller";
@@ -22,7 +25,7 @@ router.get(
   "/get_leaderboard_entry",
   async (
     req: Request<{}, {}, GetLeaderboardEntryRequest>,
-    res: Response<{} | ErrorResponse>
+    res: Response<LeaderboardEntry | ErrorResponse>
   ) => {
     try {
       const validatedData = GetLeaderboardEntryRequestSchema.parse(req.query);
@@ -85,14 +88,14 @@ router.post(
 );
 
 /**
- * @route GET /api/chip/get_leaderboard_position
- * @desc Gets the leaderboard position for a user
+ * @route GET /api/chip/get_leaderboard_details
+ * @desc Gets the leaderboard details for a user
  */
 router.get(
-  "/get_leaderboard_position",
+  "/get_leaderboard_details",
   async (
     req: Request<{}, {}, GetLeaderboardPositionRequest>,
-    res: Response<{} | ErrorResponse>
+    res: Response<LeaderboardDetails | ErrorResponse>
   ) => {
     try {
       const validatedData = GetLeaderboardPositionRequestSchema.parse(req.query);
@@ -108,11 +111,22 @@ router.get(
       // Get leaderboard position
       const position = await controller.GetUserLeaderboardPosition(user.username, chipIssuer);
 
-      if (position) {
-        return res.status(200).json(position);
+      const totalContributors = await controller.GetLeaderboardTotalContributors(chipIssuer);
+
+      const totalTaps = await controller.GetLeaderboardTotalTaps(chipIssuer);
+
+      if (!position || !totalContributors || !totalTaps) {
+        throw new Error("Missing values, failed to get leaderboard position");
       }
 
-      throw new Error("Failed to get leaderboard position");
+      const resp: LeaderboardDetails = {
+        username: user.username,
+        userPosition: position,
+        totalContributors,
+        totalTaps,
+      }
+
+      return res.status(200).json(resp);
     } catch (error) {
       return res.status(500).json({
         error: errorToString(error),

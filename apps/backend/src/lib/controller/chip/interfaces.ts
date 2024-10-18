@@ -4,7 +4,6 @@ import {
   TapParams,
   ChipIssuer,
   LeaderboardEntry,
-  LeaderboardPosition,
 } from "@types";
 import { Chip } from "./types";
 
@@ -19,10 +18,16 @@ export interface iChipClient {
     username: string,
     chipIssuer: ChipIssuer
   ): Promise<void>;
+  GetLeaderboardTotalTaps(
+    chipIssuer: ChipIssuer
+  ): Promise<number | null>;
+  GetLeaderboardTotalContributors(
+    chipIssuer: ChipIssuer
+  ): Promise<number | null>;
   GetUserLeaderboardPosition(
     username: string,
     chipIssuer: ChipIssuer
-  ): Promise<LeaderboardPosition | null>;
+  ): Promise<number | null>;
   GetTopLeaderboard(
     count: number,
     chipIssuer: ChipIssuer

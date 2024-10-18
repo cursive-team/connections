@@ -3,10 +3,10 @@ import {
   ChipIssuer,
   LeaderboardEntry,
   LeaderboardEntrySchema,
-  LeaderboardPosition,
-  LeaderboardPositionSchema,
   LeaderboardEntries,
-  LeaderboardEntriesSchema
+  LeaderboardEntriesSchema,
+  LeaderboardDetails,
+  LeaderboardDetailsSchema
 } from "@types";
 import { storage } from "@/lib/storage";
 
@@ -91,15 +91,15 @@ export async function updateLeaderboardEntry(
   }
 }
 
-export async function getUserLeaderboardPosition(
+export async function getUserLeaderboardDetails(
   chipIssuer: ChipIssuer
-): Promise<LeaderboardPosition | null> {
+): Promise<LeaderboardDetails | null> {
   const { session } = await storage.getUserAndSession();
 
   try {
 
     const response = await fetch(
-      `${BASE_API_URL}/chip/get_leaderboard_position?chipIssuer=${chipIssuer}&authToken=${session.authTokenValue}`,
+      `${BASE_API_URL}/chip/get_leaderboard_details?chipIssuer=${chipIssuer}&authToken=${session.authTokenValue}`,
       {
         method: "GET",
         headers: {
@@ -119,7 +119,7 @@ export async function getUserLeaderboardPosition(
     }
 
     const data = await response.json();
-    const parsedData = LeaderboardPositionSchema.parse(data);
+    const parsedData = LeaderboardDetailsSchema.parse(data);
 
     return parsedData;
   } catch (error) {

@@ -3,12 +3,12 @@ import { useRouter } from "next/router";
 import { toast } from "sonner";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import {
-  LeaderboardPosition,
   LeaderboardEntries,
   ChipIssuer,
   ChipIssuerSchema,
+  LeaderboardDetails,
 } from "@types";
-import {getTopLeaderboardEntries, getUserLeaderboardPosition} from "@/lib/chip";
+import {getTopLeaderboardEntries, getUserLeaderboardDetails} from "@/lib/chip";
 
 const communitiesEnum : { [key: string]: string } = {
   "edge_lanna": ChipIssuer.EDGE_CITY_LANNA,
@@ -25,7 +25,7 @@ const communitiesHumanReadable : { [key: string]: string } = {
 const LeaderboardPage: React.FC = () => {
   const router = useRouter();
   const { chipIssuer } = router.query;
-  const [userLeaderboardPosition, setLeaderboardPosition] = useState<LeaderboardPosition | null>(null);
+  const [leaderboardDetails, setLeaderboardDetails] = useState<LeaderboardDetails | null>(null);
   const [leaderboardEntries, setLeaderboardEntries] = useState<LeaderboardEntries | null>(null);
   const [communityName, setCommunityName] = useState<string | null>(null);
 
@@ -35,9 +35,9 @@ const LeaderboardPage: React.FC = () => {
         const chipIssuerMapping = communitiesEnum[chipIssuer];
         const chipIssuerEnum = ChipIssuerSchema.parse(chipIssuerMapping);
 
-        const position = await getUserLeaderboardPosition(chipIssuerEnum);
-        if (!position) {
-          toast.error("User leaderboard position not found");
+        const details = await getUserLeaderboardDetails(chipIssuerEnum);
+        if (!details) {
+          toast.error("User leaderboard details not found");
           router.push("/");
           return;
         }
@@ -50,7 +50,7 @@ const LeaderboardPage: React.FC = () => {
         }
 
         setCommunityName(communitiesHumanReadable[chipIssuer]);
-        setLeaderboardPosition(position);
+        setLeaderboardDetails(details);
         setLeaderboardEntries(entries);
       }
     }
@@ -58,7 +58,7 @@ const LeaderboardPage: React.FC = () => {
     fetchInfo();
   }, [chipIssuer, router]);
 
-  if (!userLeaderboardPosition || !leaderboardEntries || !communityName) {
+  if (!leaderboardDetails || !leaderboardEntries || !communityName) {
     return (
       <div className="flex min-h-screen justify-center items-center text-center">
         <CursiveLogo isLoading />
