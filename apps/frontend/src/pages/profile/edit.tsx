@@ -63,6 +63,7 @@ const ProfileEdit = () => {
         ownerTelegramUsername: telegramUsername ?? null,
       });
       toast.success("Chip updated successfully");
+      router.push("/profile");
     } catch (error) {
       console.error(error);
       toast.error("Error updating chip.");

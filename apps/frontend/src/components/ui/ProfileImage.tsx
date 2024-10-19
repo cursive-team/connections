@@ -20,6 +20,7 @@ export const ProfileImage = ({ user }: { user: UserData }) => {
 
   const colorIndex =
     user?.username
+      .trim()
       .split("")
       .reduce((acc, char) => acc + char.charCodeAt(0), 0) % colorPalette.length;
 
@@ -37,17 +38,21 @@ export const ProfileImage = ({ user }: { user: UserData }) => {
         }}
       >
         {(() => {
-          if (!user.displayName) {
+          if (!user.displayName || user.displayName.length <= 2) {
             return user.username.slice(0, 2).toUpperCase();
           }
 
-          const nameParts = user?.displayName?.split(" ");
+          const nameParts = user.displayName
+            .trim()
+            .split(" ")
+            .filter((part) => part.length > 0);
+
           if (nameParts.length >= 2) {
             return (
               nameParts[0][0] + nameParts[nameParts.length - 1][0]
             ).toUpperCase();
           } else {
-            return user?.displayName?.slice(0, 2).toUpperCase();
+            return user.displayName?.slice(0, 2).toUpperCase();
           }
         })()}
       </span>
