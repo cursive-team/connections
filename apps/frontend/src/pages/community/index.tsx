@@ -2,6 +2,7 @@ import {
   CommunityCard,
   CommunityCardProps,
 } from "@/components/cards/CommunityCard";
+import { Icons } from "@/components/Icons";
 import { Tag } from "@/components/ui/Tag";
 import AppLayout from "@/layouts/AppLayout";
 import { Metadata } from "next";
@@ -122,18 +123,40 @@ export default function CommunityPage() {
         }
       >
         <div className="flex  overflow-x-scroll gap-2 py-4">
-          <Link className="min-w-max" href="/">
-            <Tag emoji="👨🏾‍💻" variant="gray" text="Lorem ipsum" external />
+          <Link
+            className="min-w-max"
+            href="https://app.sola.day/event/edgecitylanna/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Tag
+              emoji={<Icons.SocialLayer size={18} />}
+              variant="gray"
+              text="Social Layer"
+              external
+            />
           </Link>
-          <Link className="min-w-max" href="/">
-            <Tag emoji="👨🏾‍💻" variant="gray" text="Lorem ipsum" external />
+          <Link
+            className="min-w-max"
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Tag
+              emoji={<span className="text-[16px]">∈</span>}
+              variant="gray"
+              text="Edges"
+              external
+            />
           </Link>
-          <Link className="min-w-max" href="/">
-            <Tag emoji="👨🏾‍💻" variant="gray" text="Lorem ipsum" external />
+          <Link
+            className="min-w-max"
+            href="https://cherry.builders/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Tag emoji="🍒" variant="gray" text="Cherry" external />
           </Link>{" "}
-          <Link className="min-w-max" href="/">
-            <Tag emoji="👨🏾‍💻" variant="gray" text="Lorem ipsum" external />
-          </Link>
         </div>
         <div className="flex flex-col gap-6 pt-2 pb-6">
           <div className="flex flex-col gap-2">

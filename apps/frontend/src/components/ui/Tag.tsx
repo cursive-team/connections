@@ -16,7 +16,7 @@ type TagProps = {
 };
 
 const TagBase = classed.div(
-  "relative inline-flex items-center rounded-full pl-4 pr-6 py-2 text-sm font-medium",
+  "relative inline-flex items-center rounded-full pl-2 pr-6 py-2 text-sm font-medium",
   {
     variants: {
       variant: {
@@ -48,7 +48,7 @@ export const Tag = ({
         onClick?.();
       }}
     >
-      <span className="mr-1">{emoji}</span>
+      <span className="mr-2">{emoji}</span>
       {text}
       {variant === "active" && closable && (
         <>

@@ -1,7 +1,5 @@
-import { EMOJI_MAPPING } from "@/common/constants";
 import { LinkCardBox } from "@/components/ui/LinkCardBox";
 import { ProfileImage } from "@/components/ui/ProfileImage";
-import { Tag } from "@/components/ui/Tag";
 import AppLayout from "@/layouts/AppLayout";
 import { storage } from "@/lib/storage";
 import { User, UserData } from "@/lib/storage/types";
@@ -24,7 +22,7 @@ export default function ProfileOverview() {
     };
 
     fetchUser();
-  }, [router]);
+  }, []);
 
   return (
     <AppLayout
@@ -83,31 +81,6 @@ export default function ProfileOverview() {
             </span>
           </div>
         )}
-
-        <div className="flex flex-col gap-2 p-4">
-          <span className="text-sm font-semibold text-primary font-sans">
-            Interests
-          </span>
-          {user?.userData.lanna && (
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(user?.userData.lanna.desiredConnections).map(
-                ([key, value]) =>
-                  value && (
-                    <Tag
-                      key={key}
-                      variant={"active"}
-                      closable={false}
-                      emoji={EMOJI_MAPPING?.[key]}
-                      text={
-                        key.charAt(0).toUpperCase() +
-                        key.slice(1).replace(/([A-Z])/g, " $1")
-                      }
-                    />
-                  )
-              )}
-            </div>
-          )}
-        </div>
       </div>
     </AppLayout>
   );

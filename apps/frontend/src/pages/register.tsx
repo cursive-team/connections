@@ -223,7 +223,7 @@ const Register: React.FC = () => {
 
       // Show success toast and redirect to home
       toast.success("Account created successfully!");
-      router.push("/");
+      router.push("/profile");
     } catch (error) {
       logClientEvent("register-create-account-error", {
         error: errorToString(error),

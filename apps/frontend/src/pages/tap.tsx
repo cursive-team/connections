@@ -60,7 +60,7 @@ const TapPage: React.FC = () => {
 
           if (user.userData.username === response.tap.ownerUsername) {
             logClientEvent("tap-chip-same-user", {});
-            router.push("/");
+            router.push("/community");
             return;
           }
 
@@ -94,7 +94,7 @@ const TapPage: React.FC = () => {
             toast.error(
               "This chip is not registered yet. Please tell your friend to register it first!"
             );
-            router.push("/");
+            router.push("/profile");
             return;
           }
         }

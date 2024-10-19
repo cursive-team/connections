@@ -33,7 +33,7 @@ export const HeaderCover = ({ isLoading = false }: HeaderCoverProps) => {
           height={57}
         />
         <Image
-          src="/images/register-main-cover-compressed.png"
+          src="/images/register-main-cover-compressed.svg"
           alt="register main"
           className=" object-cover w-full"
           width={100}

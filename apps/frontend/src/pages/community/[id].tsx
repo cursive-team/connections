@@ -14,7 +14,7 @@ export default function CommunityDetailPage() {
 
   const progressPercentage = 50;
   const totalContributors = 200;
-  const background = "/images/register-main-cover-compressed.png";
+  const background = "/images/register-main-cover-compressed.svg";
   const position = 0;
   const title = "Lorem ipsum";
   const description =
