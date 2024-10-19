@@ -88,6 +88,8 @@ ManagedChipClient.prototype.GetUserLeaderboardPosition = async function (
     if (positions && positions.length == 1 && positions[0] !== null) {
       // Position should always be length 1. 0 indicates the user doesn't exist, and 2 indicates multiple users with same name.
       return Number(positions[0].leaderboardPosition);
+    } else if (positions && positions.length == 0) {
+      return -1;
     } else if (positions) {
       // I think this is overly defensive and the return value will _never_ be null, but doing it just in case -- -1 would indicate null
       length = positions.length;

@@ -90,7 +90,11 @@ const LeaderboardPage: React.FC = () => {
   let tiedPosition = -1;
 
   const tapsMsg = `Taps (${leaderboardDetails.totalTaps})`;
-  const contributorMsg = `You are #${leaderboardDetails.userPosition} of ${leaderboardDetails.totalContributors} contributors!`;
+  let contributorMsg = `You are #${leaderboardDetails.userPosition} of ${leaderboardDetails.totalContributors} contributors!`;
+
+  if (leaderboardDetails.userPosition == -1) {
+    contributorMsg = "You are not on the leaderboard yet.";
+  }
 
   return (
     <AppLayout
