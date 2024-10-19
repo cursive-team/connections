@@ -14,7 +14,8 @@ import { AppButton } from "@/components/ui/Button";
 import { Connection, PSIData, UserData } from "@/lib/storage/types/user";
 import { Tag } from "@/components/ui/Tag";
 import { logClientEvent } from "@/lib/frontend/metrics";
-import { EMOJI_MAPPING, INTERESTS_LIST } from "@/common/constants";
+import { LANNA_INTERESTS_EMOJI_MAPPING } from "@/common/constants";
+import Link from "next/link";
 
 enum PSIState {
   NOT_STARTED,
@@ -93,7 +94,6 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
   };
 
   // set up channel for PSI
-  // TODO: Load in previous overlap indices if available
   useEffect(() => {
     if (existingPSIOverlap) {
       setOverlap(existingPSIOverlap);
@@ -405,46 +405,35 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
             <ul className="list-disc list-inside">
               {overlap.sharedConnections.map((user, index) => (
                 <li key={index} className="text-tertiary text-sm">
-                  {user}
+                  <Link href={`/people/${user}`}>{user}</Link>
                 </li>
               ))}
             </ul>
           </div>
         )}
-        {overlap?.sharedLannaDesiredConnections &&
-          overlap.sharedLannaDesiredConnections.length > 0 && (
+        {overlap?.sharedLannaInterests &&
+          overlap.sharedLannaInterests.length > 0 && (
             <div>
               <h3 className="font-medium text-bold text-primary text-sm font-sans mb-2">
                 Lanna Interests
               </h3>
               <div className="flex flex-wrap gap-2">
-                {overlap.sharedLannaDesiredConnections.map(
-                  (desiredConnection) => {
-                    const emoji = {
-                      getHealthy: "🏃",
-                      cowork: "💻",
-                      enjoyMeals: "🍲",
-                      learnFrontierTopics: "🤓",
-                      findCollaborators: "🤝",
-                      goExploring: "👀",
-                      party: "🎉",
-                      doMentalWorkouts: "🧠",
-                    }[desiredConnection];
+                {overlap.sharedLannaInterests.map((sharedInterest) => {
+                  const emoji = LANNA_INTERESTS_EMOJI_MAPPING[sharedInterest];
 
-                    return (
-                      <Tag
-                        key={desiredConnection}
-                        emoji={emoji}
-                        variant="active"
-                        closable={false}
-                        text={
-                          desiredConnection.charAt(0).toUpperCase() +
-                          desiredConnection.slice(1).replace(/([A-Z])/g, " $1")
-                        }
-                      />
-                    );
-                  }
-                )}
+                  return (
+                    <Tag
+                      key={sharedInterest}
+                      emoji={emoji}
+                      variant="active"
+                      closable={false}
+                      text={
+                        sharedInterest.charAt(0).toUpperCase() +
+                        sharedInterest.slice(1).replace(/([A-Z])/g, " $1")
+                      }
+                    />
+                  );
+                })}
               </div>
             </div>
           )}

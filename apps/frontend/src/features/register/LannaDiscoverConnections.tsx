@@ -4,7 +4,7 @@ import { AppButton } from "@/components/ui/Button";
 import { RegisterHeader } from "./RegisterHeader";
 import { Tag } from "@/components/ui/Tag";
 import { AppCopy } from "@/components/ui/AppCopy";
-import { EMOJI_MAPPING } from "@/common/constants";
+import { LANNA_INTERESTS_EMOJI_MAPPING } from "@/common/constants";
 
 interface LannaDiscoverConnectionsProps {
   onSubmit: (desiredConnections: LannaDesiredConnections) => void;
@@ -52,7 +52,7 @@ const LannaDiscoverConnections: React.FC<LannaDiscoverConnectionsProps> = ({
                 />
                 <Tag
                   variant={value ? "active" : "default"}
-                  emoji={EMOJI_MAPPING?.[key]}
+                  emoji={LANNA_INTERESTS_EMOJI_MAPPING?.[key]}
                   onClick={() =>
                     handleToggle(key as keyof LannaDesiredConnections)
                   }

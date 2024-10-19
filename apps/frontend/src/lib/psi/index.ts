@@ -3,6 +3,7 @@ import { type PutBlobResult } from "@vercel/blob";
 import { upload } from "@vercel/blob/client";
 import { Connection, PSIData, UserData } from "../storage/types";
 import { sha256 } from "js-sha256";
+import { LANNA_INTERESTS_LIST } from "@/common/constants";
 
 export const psiBlobUploadClient = async (name: string, data: string) => {
   const newBlob: PutBlobResult = await upload(name, data, {
@@ -70,7 +71,7 @@ export const getOverlapFromPSIResult = (
   indexMapping: Record<number, string[]>
 ): PSIData => {
   const sharedConnections: string[] = [];
-  const sharedLannaDesiredConnections: string[] = [];
+  const sharedLannaInterests: string[] = [];
 
   for (const index of overlapIndices) {
     if (index < COMMON_CONNECTIONS_BIT_VECTOR_SIZE) {
@@ -79,25 +80,15 @@ export const getOverlapFromPSIResult = (
       }
     } else {
       // Parse Lanna desired connections
-      const lannaConnections = [
-        "getHealthy",
-        "cowork",
-        "enjoyMeals",
-        "learnFrontierTopics",
-        "findCollaborators",
-        "goExploring",
-        "party",
-        "doMentalWorkouts",
-      ];
       const lannaIndex = index - COMMON_CONNECTIONS_BIT_VECTOR_SIZE;
-      if (lannaIndex >= 0 && lannaIndex < lannaConnections.length) {
-        sharedLannaDesiredConnections.push(lannaConnections[lannaIndex]);
+      if (lannaIndex >= 0 && lannaIndex < LANNA_INTERESTS_LIST.length) {
+        sharedLannaInterests.push(LANNA_INTERESTS_LIST[lannaIndex]);
       }
     }
   }
 
   return {
     sharedConnections,
-    sharedLannaDesiredConnections,
+    sharedLannaInterests,
   };
 };
