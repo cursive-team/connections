@@ -55,7 +55,7 @@ export const AppBackHeader = ({
     >
       <button
         type="button"
-        className="flex items-center gap-1 text-iron-950"
+        className="flex items-center gap-1 text-primary"
         onClick={() => {
           if (typeof onBackClick === "function") {
             onBackClick?.();
@@ -69,7 +69,7 @@ export const AppBackHeader = ({
         }}
       >
         <Icons.ArrowLeft />
-        <span className="text-sm font-normal text-iron-950">
+        <span className="text-sm font-normal text-primary">
           {label || "Back"}
         </span>
       </button>
@@ -118,7 +118,7 @@ const AppHeaderContent = ({
           <button
             onClick={onBack}
             type="button"
-            className="flex gap-2 items-center text-iron-950"
+            className="flex gap-2 items-center text-primary"
           >
             <Icons.ArrowLeft />
             <span>Back</span>
@@ -130,7 +130,7 @@ const AppHeaderContent = ({
             setIsMenuOpen(!isMenuOpen);
             setActiveMenuIndex(null);
           }}
-          className="flex gap-3 items-center ml-auto text-iron-950"
+          className="flex gap-3 items-center ml-auto text-primary"
         >
           <span>Close</span>
           {isMenuOpen ? <Icons.Close /> : <Icons.Burgher />}
@@ -189,7 +189,7 @@ const AppHeader = ({ isMenuOpen, setIsMenuOpen }: AppHeaderProps) => {
 
       <div className="flex gap-4 items-center ml-auto">
         <span className="text-primary">{isMenuOpen && "Close"}</span>
-        <button className="text-iron-950" onClick={toggleMenu}>
+        <button className="text-primary" onClick={toggleMenu}>
           {isMenuOpen ? (
             <Icons.Close className="text-primary" />
           ) : (

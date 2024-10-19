@@ -295,13 +295,13 @@ const Register: React.FC = () => {
         >
           <button
             type="button"
-            className="flex items-center gap-1 text-iron-950"
+            className="flex items-center gap-1 text-primary"
             onClick={() => {
               onGoBack?.();
             }}
           >
             <BackIcon />
-            <span className="text-sm font-normal text-iron-950">{"Back"}</span>
+            <span className="text-sm font-normal text-primary">{"Back"}</span>
           </button>
         </div>
       )}
