@@ -6,6 +6,7 @@ import { AppFooter } from "@/components/AppFooter";
 import { cn } from "@/lib/frontend/util";
 import Link from "next/link";
 import { IoIosArrowBack as BackIcon } from "react-icons/io";
+import { NextSeo } from "next-seo";
 
 interface AppLayoutProps {
   children?: React.ReactNode;
@@ -13,9 +14,11 @@ interface AppLayoutProps {
   showHeader?: boolean;
   withContainer?: boolean;
   className?: string;
+  seoTitle?: string;
   back?: {
     label: string;
     href: string;
+    content?: React.ReactNode;
   };
   header?: React.ReactNode;
   headerDivider?: boolean;
@@ -30,11 +33,13 @@ export default function AppLayout({
   className = "",
   back = undefined,
   withContainer = true,
+  seoTitle = undefined,
 }: AppLayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <div>
+      {seoTitle && <NextSeo title={seoTitle} />}
       {back && (
         <div className="sticky top-0 h-12 flex items-center border-b border-b-quaternary/20 bg-white z-20">
           <div className="px-4">
@@ -43,6 +48,7 @@ export default function AppLayout({
               <span className="text-sm">{back?.label}</span>
             </Link>
           </div>
+          {back?.content}
         </div>
       )}
       {header && (

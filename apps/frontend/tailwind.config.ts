@@ -28,6 +28,9 @@ const config: Config = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "active-progress": "linear-gradient(90deg, #FF9DF8 0%, #FF70E9 100%)",
+        "community-progress":
+          "linear-gradient(90deg, #C5C5C5 0%, #767676 100%)",
       },
       fontFamily: {
         base: "var(--font-base)",

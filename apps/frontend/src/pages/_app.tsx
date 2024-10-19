@@ -9,6 +9,7 @@ import { storage } from "@/lib/storage";
 import { useEffect, useState } from "react";
 import PlausibleProvider from "next-plausible";
 import OnlyMobileLayout from "@/layouts/OnlyMobileLayout";
+import { DefaultSeo } from "next-seo";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -88,7 +89,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }, [router, isPreMigrationSessionChecked]);
 
   return (
-    <main className={dmSans.className}>
+    <main className={`${dmSans.className} ${dmSans.variable}`}>
+      <DefaultSeo titleTemplate="%s | Cursive Connections" />
       <PlausibleProvider
         domain={process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN!}
         trackOutboundLinks

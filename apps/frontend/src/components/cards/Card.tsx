@@ -7,6 +7,7 @@ const CardBase = classed.div("relative rounded overflow-hidden ", {
       primary: "bg-white border border-primary",
       secondary: "bg-secondary border border-secondary",
       tertiary: "bg-secondary border border-secondary",
+      gray: "bg-[#F1F1F1]",
     },
   },
   defaultVariants: {

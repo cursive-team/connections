@@ -4,6 +4,11 @@ import { IoCloseCircleOutline as Close } from "react-icons/io5";
 import { CiMenuFries as Burgher } from "react-icons/ci";
 import { LuComponent as Components } from "react-icons/lu";
 import { BsArrowLeftCircle as ArrowLeft } from "react-icons/bs";
+import { FaRegStar as Star } from "react-icons/fa";
+import { GoArrowUpRight as ExternalLink } from "react-icons/go";
+import { IoMdAdd as Plus } from "react-icons/io";
+import { FiPaperclip as Clip } from "react-icons/fi";
+import { IoMdRemove as Remove } from "react-icons/io";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Icons: Record<string, any> = {
@@ -13,6 +18,11 @@ export const Icons: Record<string, any> = {
   Burgher,
   Components,
   ArrowLeft,
+  Star,
+  ExternalLink,
+  Plus,
+  Clip,
+  Remove,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   NarrowCast: ({ size = 18, ...props }: any) => (
     <svg

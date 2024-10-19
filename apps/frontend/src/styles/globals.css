@@ -8,6 +8,10 @@
   --background-end-rgb: 255, 255, 255;
 }
 
+html,body {
+  text-rendering: geometricPrecision !important;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

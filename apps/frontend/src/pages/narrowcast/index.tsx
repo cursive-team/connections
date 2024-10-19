@@ -4,6 +4,7 @@ import AppLayout from "@/layouts/AppLayout";
 export default function NarrowcastPage() {
   return (
     <AppLayout
+      seoTitle="Narrowcast"
       header={
         <>
           <span className="text-primary font-medium">Narrowcasting</span>
