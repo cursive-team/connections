@@ -1,4 +1,4 @@
-import React, { useState, useEffect, CSSProperties } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
 import AppLayout from "@/layouts/AppLayout";
