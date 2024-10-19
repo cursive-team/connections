@@ -1,7 +1,7 @@
 import { UserData } from "@/lib/storage/types";
 
 export const ProfileImage = ({ user }: { user: UserData }) => {
-  if (!user)
+  if (!user || Object.keys(user)?.length === 0)
     return <div className="size-10 rounded-full bg-quaternary/20"></div>;
   const colorPalette = [
     "#FF9DF8", // Light Pinkish Purple
