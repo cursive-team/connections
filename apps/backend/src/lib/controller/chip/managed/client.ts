@@ -5,6 +5,7 @@ import {
   ChipTapResponse,
   TapParams,
   ChipIssuer,
+  LeaderboardEntry,
 } from "@types";
 import { Chip } from "@/lib/controller/chip/types";
 
@@ -31,8 +32,36 @@ export class ManagedChipClient implements iChipClient {
   UpdateChip(updateChip: UpdateChipRequest): Promise<Chip>;
 
   // @ts-expect-error (ts2391)
+  GetLeaderboardEntry(
+    username: string,
+    chipIssuer: ChipIssuer
+  ): Promise<LeaderboardEntry | null>;
+
+  // @ts-expect-error (ts2391)
   UpdateLeaderboardEntry(
     username: string,
     chipIssuer: ChipIssuer
   ): Promise<void>;
+
+  // @ts-expect-error (ts2391)
+  GetLeaderboardTotalTaps(
+    chipIssuer: ChipIssuer
+  ): Promise<number | null>;
+
+  // @ts-expect-error (ts2391)
+  GetLeaderboardTotalContributors(
+    chipIssuer: ChipIssuer
+  ): Promise<number | null>;
+
+  // @ts-expect-error (ts2391)
+  GetUserLeaderboardPosition(
+    username: string,
+    chipIssuer: ChipIssuer
+  ): Promise<number | null>;
+
+  // @ts-expect-error (ts2391)
+  GetTopLeaderboard(
+    count: number,
+    chipIssuer: ChipIssuer
+  ): Promise<LeaderboardEntry[] | null>;
 }

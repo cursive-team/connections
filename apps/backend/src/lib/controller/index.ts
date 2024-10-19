@@ -17,6 +17,7 @@ import {
   RegisterChipRequest,
   TapParams,
   UpdateChipRequest,
+  LeaderboardEntry,
 } from "@types";
 import { Chip } from "@/lib/controller/chip/types";
 import { iChipClient } from "@/lib/controller/chip/interfaces";
@@ -120,11 +121,44 @@ export class Controller {
     return this.chipClient.GetTapFromChip(tapParams);
   }
 
+  GetLeaderboardEntry(
+    username: string,
+    chipIssuer: ChipIssuer
+  ): Promise<LeaderboardEntry | null> {
+    return this.chipClient.GetLeaderboardEntry(username, chipIssuer);
+  }
+
   UpdateLeaderboardEntry(
     username: string,
     chipIssuer: ChipIssuer
   ): Promise<void> {
     return this.chipClient.UpdateLeaderboardEntry(username, chipIssuer);
+  }
+
+  GetLeaderboardTotalTaps(
+    chipIssuer: ChipIssuer
+  ): Promise<number | null> {
+    return this.chipClient.GetLeaderboardTotalTaps(chipIssuer);
+  }
+
+  GetLeaderboardTotalContributors(
+    chipIssuer: ChipIssuer
+  ): Promise<number | null> {
+    return this.chipClient.GetLeaderboardTotalContributors(chipIssuer);
+  }
+
+  GetUserLeaderboardPosition(
+    username: string,
+    chipIssuer: ChipIssuer
+  ): Promise<number | null> {
+    return this.chipClient.GetUserLeaderboardPosition(username, chipIssuer)
+  }
+
+  GetTopLeaderboard(
+    count: number,
+    chipIssuer: ChipIssuer
+  ): Promise<LeaderboardEntry[] | null> {
+    return this.chipClient.GetTopLeaderboard(count, chipIssuer)
   }
 
   EmailSigninToken(signinToken: SigninToken): Promise<void> {

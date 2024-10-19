@@ -89,3 +89,61 @@ export const ChipTapResponseSchema = z.object({
 });
 
 export type ChipTapResponse = z.infer<typeof ChipTapResponseSchema>;
+
+
+export const UpdateLeaderboardEntryRequestSchema = z.object({
+  authToken: z.string(),
+  chipIssuer: ChipIssuerSchema,
+});
+
+export type UpdateLeaderboardEntryRequest = z.infer<
+  typeof UpdateLeaderboardEntryRequestSchema
+>;
+
+export const GetLeaderboardEntryRequestSchema = z.object({
+  authToken: z.string(),
+  chipIssuer: ChipIssuerSchema,
+});
+
+export type GetLeaderboardEntryRequest = z.infer<
+  typeof GetLeaderboardEntryRequestSchema
+>;
+
+export const LeaderboardEntrySchema = z.object({
+  username: z.string(),
+  chipIssuer: z.string(),
+  tapCount: z.number(),
+  // In the future could imagine name, chip fields being added to allow custom leaderboards corresponding to specific chips
+});
+
+export type LeaderboardEntry = z.infer<
+  typeof LeaderboardEntrySchema
+>;
+
+export const GetLeaderboardPositionRequestSchema = z.object({
+  authToken: z.string(),
+  chipIssuer: ChipIssuerSchema,
+});
+
+export type GetLeaderboardPositionRequest = z.infer<
+  typeof GetLeaderboardPositionRequestSchema
+>;
+
+export const LeaderboardEntriesSchema = z.object({
+  entries: z.array(LeaderboardEntrySchema),
+});
+
+export type LeaderboardEntries = z.infer<
+  typeof LeaderboardEntriesSchema
+>;
+
+export const LeaderboardDetailsSchema = z.object({
+  username: z.string(),
+  userPosition: z.coerce.number(),
+  totalContributors: z.coerce.number(),
+  totalTaps: z.coerce.number(),
+});
+
+export type LeaderboardDetails = z.infer<
+  typeof LeaderboardDetailsSchema
+>;
