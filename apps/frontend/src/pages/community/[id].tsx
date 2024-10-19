@@ -3,12 +3,13 @@ import { AppButton } from "@/components/ui/Button";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import AppLayout from "@/layouts/AppLayout";
 import { cn } from "@/lib/frontend/util";
-import { useRouter } from "next/router";
+import { UserData } from "@/lib/storage/types";
+// import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 
 export default function CommunityDetailPage() {
-  const router = useRouter();
-  const { id } = router.query;
+  // const router = useRouter();
+  // const { id } = router.query;
   const [progress, setProgress] = useState(0);
 
   const progressPercentage = 50;
@@ -99,7 +100,7 @@ export default function CommunityDetailPage() {
               Organizer
             </span>
             <div className="flex items-center gap-4 py-4">
-              <ProfileImage user={null as unknown} />
+              <ProfileImage user={{} as UserData} />
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-primary font-sans">
                   Name

@@ -1,4 +1,7 @@
-import { CommunityCard } from "@/components/cards/CommunityCard";
+import {
+  CommunityCard,
+  CommunityCardProps,
+} from "@/components/cards/CommunityCard";
 import { Tag } from "@/components/ui/Tag";
 import AppLayout from "@/layouts/AppLayout";
 import { Metadata } from "next";
@@ -10,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 const Contributions = () => {
-  const mocks: unknown[] = [
+  const mocks: CommunityCardProps[] = [
     {
       title: "Example",
       description: "2,000 of 3,000 taps",
@@ -39,7 +42,7 @@ const Contributions = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      {mocks?.map((mock: unknown, index) => {
+      {mocks?.map((mock: CommunityCardProps, index) => {
         return (
           <Link key={index} href={`/community/${index}`}>
             <CommunityCard
@@ -58,7 +61,7 @@ const Contributions = () => {
 };
 
 const ExtraCommunityGoals = () => {
-  const mocks: unknown[] = [
+  const mocks: CommunityCardProps[] = [
     {
       title: "Example",
       description: "120km",
@@ -84,7 +87,7 @@ const ExtraCommunityGoals = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      {mocks?.map((mock: unknown, index) => {
+      {mocks?.map((mock: CommunityCardProps, index) => {
         return (
           <Link key={index} href={`/community/${index}`}>
             <CommunityCard

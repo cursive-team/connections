@@ -2,7 +2,7 @@ import { cn } from "@/lib/frontend/util";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-interface CommunityCardProps {
+export interface CommunityCardProps {
   image?: string;
   title: string;
   description?: string;
@@ -11,7 +11,6 @@ interface CommunityCardProps {
   type: "active" | "community";
   progressPercentage?: number;
 }
-
 
 export const CommunityCard = ({
   image = undefined,
