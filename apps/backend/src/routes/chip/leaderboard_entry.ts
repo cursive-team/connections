@@ -11,7 +11,6 @@ import {
   LeaderboardDetails,
   LeaderboardEntries,
   errorToString,
-  LeaderboardEntries,
 } from "@types";
 import { Controller } from "@/lib/controller";
 
