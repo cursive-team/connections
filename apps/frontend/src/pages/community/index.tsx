@@ -111,7 +111,7 @@ export default function CommunityPage() {
       <AppLayout
         header={
           <>
-            <span className="text-primary font-semibold">Community</span>
+            <span className="text-primary font-medium">Community</span>
             <div
               className="absolute left-0 right-0 bottom-0 h-[2px]"
               style={{
@@ -121,7 +121,7 @@ export default function CommunityPage() {
           </>
         }
       >
-        <div className="flex  overflow-x-scroll gap-2 py-6">
+        <div className="flex  overflow-x-scroll gap-2 py-4">
           <Link className="min-w-max" href="/">
             <Tag emoji="👨🏾‍💻" variant="gray" text="Lorem ipsum" external />
           </Link>

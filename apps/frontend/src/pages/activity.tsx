@@ -93,6 +93,7 @@ const ActivityPage: React.FC = () => {
   return (
     <AppLayout
       showHeader={false}
+      showFooter={false}
       back={{
         href: "/profile",
         label: "Back",
@@ -110,9 +111,6 @@ const ActivityPage: React.FC = () => {
       <div className="flex items-center gap-0.5 pb-2">
         <span className="text-lg font-semibold leading-none text-primary">
           Your activity
-        </span>
-        <span className="text-xs text-tertiary leading-none font-medium">
-          across all events
         </span>
       </div>
       {Object.entries(
