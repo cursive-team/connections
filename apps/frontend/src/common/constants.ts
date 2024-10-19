@@ -1,4 +1,4 @@
-export const EMOJI_MAPPING: Record<string, string> = {
+export const LANNA_INTERESTS_EMOJI_MAPPING: Record<string, string> = {
   getHealthy: "🏃",
   cowork: "💻",
   enjoyMeals: "🍲",
@@ -9,7 +9,7 @@ export const EMOJI_MAPPING: Record<string, string> = {
   doMentalWorkouts: "🧠",
 };
 
-export const INTERESTS_LIST = [
+export const LANNA_INTERESTS_LIST = [
   "getHealthy",
   "cowork",
   "enjoyMeals",

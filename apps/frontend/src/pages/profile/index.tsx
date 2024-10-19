@@ -12,7 +12,7 @@ import { Tag } from "@/components/ui/Tag";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import Link from "next/link";
-import { EMOJI_MAPPING } from "@/common/constants";
+import { LANNA_INTERESTS_EMOJI_MAPPING } from "@/common/constants";
 import { Icons } from "@/components/Icons";
 
 const ProfilePage: React.FC = () => {
@@ -172,7 +172,7 @@ const ProfilePage: React.FC = () => {
                       key={key}
                       variant={"active"}
                       closable={false}
-                      emoji={EMOJI_MAPPING?.[key]}
+                      emoji={LANNA_INTERESTS_EMOJI_MAPPING?.[key]}
                       text={
                         key.charAt(0).toUpperCase() +
                         key.slice(1).replace(/([A-Z])/g, " $1")

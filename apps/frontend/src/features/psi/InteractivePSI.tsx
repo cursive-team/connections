@@ -1,16 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useEffect, useState } from "react";
-import { generateBitVectorFromLannaData, psiBlobUploadClient } from "@/lib/psi";
+import {
+  generateBitVectorFromUserData,
+  getOverlapFromPSIResult,
+  psiBlobUploadClient,
+} from "@/lib/psi";
 import init, { round1_js, round2_js, round3_js } from "@/lib/psi/mp_psi/mp_psi";
 import { supabase } from "@/lib/realtime";
 import { Card } from "@/components/cards/Card";
 import { Icons } from "@/components/Icons";
 import { AppButton } from "@/components/ui/Button";
-import { LannaData } from "@/lib/storage/types/user";
+import { Connection, PSIData, UserData } from "@/lib/storage/types/user";
 import { Tag } from "@/components/ui/Tag";
 import { logClientEvent } from "@/lib/frontend/metrics";
-import { EMOJI_MAPPING, INTERESTS_LIST } from "@/common/constants";
+import { LANNA_INTERESTS_EMOJI_MAPPING } from "@/common/constants";
+import Link from "next/link";
 
 enum PSIState {
   NOT_STARTED,
@@ -34,7 +39,10 @@ interface InteractivePSIProps {
   serializedPsiPrivateKey: string;
   selfPsiPublicKeyLink: string;
   otherPsiPublicKeyLink: string;
-  selfLannaData: LannaData;
+  userData: UserData;
+  connections: Record<string, Connection>;
+  existingPSIOverlap: PSIData | undefined;
+  savePSIOverlap: (overlap: PSIData) => Promise<void>;
 }
 
 const InteractivePSI: React.FC<InteractivePSIProps> = ({
@@ -43,11 +51,13 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
   serializedPsiPrivateKey,
   selfPsiPublicKeyLink,
   otherPsiPublicKeyLink,
-  selfLannaData,
+  userData,
+  connections,
+  existingPSIOverlap,
+  savePSIOverlap,
 }) => {
-  const [broadcastEvent, setBroadcastEvent] = useState<any>();
-
   const [psiState, setPsiState] = useState<PSIState>(PSIState.NOT_STARTED);
+  const [broadcastEvent, setBroadcastEvent] = useState<any>();
   const [selfRound1Output, setSelfRound1Output] = useState<any>();
   const [otherRound2MessageLink, setOtherRound2MessageLink] =
     useState<string>();
@@ -65,7 +75,10 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
   const [otherUserInChannel, setOtherUserInChannel] = useState(false);
   const [otherUserTemporarilyLeft, setOtherUserTemporarilyLeft] =
     useState(false);
-  const [overlapIndices, setOverlapIndices] = useState<number[]>([]);
+  const [indexMapping, setIndexMapping] = useState<
+    Record<number, string[]> | undefined
+  >();
+  const [overlap, setOverlap] = useState<PSIData>();
 
   useEffect(() => {
     if (wantsToInitiatePSI && otherUserWantsToInitiatePSI) {
@@ -81,8 +94,12 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
   };
 
   // set up channel for PSI
-  // TODO: Load in previous overlap indices if available
   useEffect(() => {
+    if (existingPSIOverlap) {
+      setOverlap(existingPSIOverlap);
+      setPsiState(PSIState.COMPLETE);
+    }
+
     const channel = supabase.channel(getChannelName(), {
       config: {
         presence: { key: selfSigPK },
@@ -183,7 +200,9 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
 
       if (psiState === PSIState.ROUND1) {
         logClientEvent("interactive-psi-round1", {});
-        const selfBitVector = generateBitVectorFromLannaData(selfLannaData);
+        const { bitVector: selfBitVector, indexMapping: selfIndexMapping } =
+          generateBitVectorFromUserData(userData, connections);
+        setIndexMapping(selfIndexMapping);
 
         await init();
         const round1Output = round1_js(
@@ -265,8 +284,20 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
 
         setSelfRound3Output(overlapIndices);
       } else if (psiState === PSIState.COMPLETE) {
-        logClientEvent("interactive-psi-complete", {});
-        setOverlapIndices(selfRound3Output || []);
+        console.log("psi entered complete state");
+        if (selfRound3Output && indexMapping) {
+          logClientEvent("interactive-psi-overlap-saved", {});
+          console.log("saving psi overlap");
+          const overlap = getOverlapFromPSIResult(
+            selfRound3Output || [],
+            indexMapping || {}
+          );
+          await savePSIOverlap(overlap);
+          setOverlap(overlap);
+        } else {
+          logClientEvent("interactive-psi-complete-cached", {});
+          console.log("psi complete cached");
+        }
       }
     }
 
@@ -361,6 +392,55 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
     }
   };
 
+  const getOverlapDisplay = () => {
+    if (!overlap) return null;
+
+    return (
+      <div className="flex flex-col gap-4">
+        {overlap?.sharedConnections && overlap.sharedConnections.length > 0 && (
+          <div>
+            <h3 className="font-medium text-bold text-primary text-sm font-sans mb-2">
+              Shared Connections
+            </h3>
+            <ul className="list-disc list-inside">
+              {overlap.sharedConnections.map((user, index) => (
+                <li key={index} className="text-tertiary text-sm">
+                  <Link href={`/people/${user}`}>{user}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {overlap?.sharedLannaInterests &&
+          overlap.sharedLannaInterests.length > 0 && (
+            <div>
+              <h3 className="font-medium text-bold text-primary text-sm font-sans mb-2">
+                Lanna Interests
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {overlap.sharedLannaInterests.map((sharedInterest) => {
+                  const emoji = LANNA_INTERESTS_EMOJI_MAPPING[sharedInterest];
+
+                  return (
+                    <Tag
+                      key={sharedInterest}
+                      emoji={emoji}
+                      variant="active"
+                      closable={false}
+                      text={
+                        sharedInterest.charAt(0).toUpperCase() +
+                        sharedInterest.slice(1).replace(/([A-Z])/g, " $1")
+                      }
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
+      </div>
+    );
+  };
+
   return (
     <Card.Base className="relative flex flex-col !border-none p-4 gap-6 !bg-[#F1F1F1] rounded-lg border mb-8">
       <div className="flex flex-col gap-1">
@@ -394,25 +474,7 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
       </div>
       {psiState === PSIState.COMPLETE ? (
         <div className="flex flex-col gap-1">
-          <div className="flex flex-wrap gap-2">
-            {overlapIndices?.map((index) => {
-              const interest = INTERESTS_LIST[index];
-              const emoji = EMOJI_MAPPING[interest];
-
-              return (
-                <Tag
-                  key={interest}
-                  emoji={emoji}
-                  variant="active"
-                  closable={false}
-                  text={
-                    interest.charAt(0).toUpperCase() +
-                    interest.slice(1).replace(/([A-Z])/g, " $1")
-                  }
-                />
-              );
-            })}
-          </div>
+          {getOverlapDisplay()}
           <AppButton
             type="button"
             onClick={handleUpdatePSI}
@@ -424,20 +486,23 @@ const InteractivePSI: React.FC<InteractivePSIProps> = ({
           </AppButton>
         </div>
       ) : psiState === PSIState.NOT_STARTED ? (
-        <AppButton
-          type="button"
-          onClick={handleInitiatePSI}
-          size="md"
-          variant="outline"
-          disabled={!otherUserInChannel}
-          className="text-[rgb(244,41,213)] border-[rgb(244,41,213)] hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {wantsToInitiatePSI
-            ? "Waiting for other user to accept..."
-            : otherUserInChannel
-            ? "Discover"
-            : "Waiting for other user to connect..."}
-        </AppButton>
+        <div className="flex flex-col gap-1">
+          {getOverlapDisplay()}
+          <AppButton
+            type="button"
+            onClick={handleInitiatePSI}
+            size="md"
+            variant="outline"
+            disabled={!otherUserInChannel}
+            className="mt-4 text-[rgb(244,41,213)] border-[rgb(244,41,213)] hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {wantsToInitiatePSI
+              ? "Waiting for other user to accept..."
+              : otherUserInChannel
+              ? "Discover"
+              : "Waiting for other user to connect..."}
+          </AppButton>
+        </div>
       ) : (
         <>
           <div className="flex flex-col gap-2">
