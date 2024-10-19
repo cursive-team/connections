@@ -82,6 +82,9 @@ const LeaderboardPage: React.FC = () => {
   let lastTapCount = -1;
   let tiedPosition = -1;
 
+  const tapsMsg = `Taps (${leaderboardDetails.totalTaps})`;
+  const contributorMsg = `You are #${leaderboardDetails.userPosition} of ${leaderboardDetails.totalContributors} contributors!`;
+
   return (
     <AppLayout
       withContainer={false}
@@ -92,35 +95,20 @@ const LeaderboardPage: React.FC = () => {
       }}
       headerDivider={false}
       header={
-        <div
-          className="h-[70px] flex-col justify-start items-start gap-2 inline-flex"
-          style={{ width: "100%" } as CSSProperties}
-        >
-          <div
-            className="self-stretch p-4 bg-white/80 rounded-lg backdrop-blur-lg justify-start items-start gap-2 inline-flex"
-            style={
-              {
-                background:
-                  "linear-gradient(0.25turn, rgb(122, 116, 188, 0.3), rgb(255, 157, 248, 0.3), rgb(251, 93, 66, 0.3), rgb(255, 0, 0, 0.3))",
-              } as CSSProperties
-            }
-          >
-            <div className="grow shrink basis-0 h-5 justify-start items-center gap-3 flex">
-              <div className="grow shrink basis-0 h-5 justify-start items-center gap-2 flex">
-                <div className="grow shrink basis-0 text-[#090909]/75 text-xl font-semibold font-['DM Sans'] leading-tight">
-                  {communityName}
-                </div>
-              </div>
+        <div>
+          <div className="h-[72px] px-3.5 pt-8 pb-4 bg-white justify-between items-center inline-flex">
+            <div className="text-[#090909] text-xl font-semibold font-['DM Sans'] leading-tight">
+              {tapsMsg}
             </div>
-            <div className="py-px flex-col justify-start items-end inline-flex">
-              <div className="text-right inline-flex">
-                <div className="text-[#090909]/75 text-xs font-medium font-['DM Sans'] leading-none">
-                  You:&nbsp;
-                </div>
-                <div className="text-[#090909]/75 text-xs font-bold font-['DM Sans'] leading-none">
-                  {leaderboardDetails.userPosition}
-                </div>
-              </div>
+            <div className="w-6 h-6 relative"></div>
+          </div>
+          <div className="h-[102px] p-4 flex-col justify-center items-start gap-2 inline-flex">
+            <div className="text-[#090909] text-base font-bold font-['DM Sans'] leading-snug">
+              {contributorMsg}
+            </div>
+            <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
+              Win an NFC ring by ranking in the top 10 this week! Winners are
+              announced at Sunday dinner.
             </div>
           </div>
         </div>
