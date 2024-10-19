@@ -15,6 +15,7 @@ import {
   getUserLeaderboardDetails,
 } from "@/lib/chip";
 import { communitiesEnum, communitiesHumanReadable } from "../../constants";
+import { Icons } from "@/components/Icons";
 
 const LeaderboardPage: React.FC = () => {
   const router = useRouter();
@@ -28,6 +29,12 @@ const LeaderboardPage: React.FC = () => {
   useEffect(() => {
     const fetchInfo = async () => {
       if (typeof chipIssuer == "string") {
+        if (!Object.keys(communitiesEnum).includes(chipIssuer)) {
+          toast.error("Invalid chip issuer.");
+          router.push("/");
+          return;
+        }
+
         const chipIssuerMapping = communitiesEnum[chipIssuer];
         const chipIssuerEnum = ChipIssuerSchema.parse(chipIssuerMapping);
 
@@ -89,20 +96,17 @@ const LeaderboardPage: React.FC = () => {
     <AppLayout
       withContainer={false}
       showFooter={false}
-      back={{
-        label: "Back",
-        href: "/profile",
-      }}
-      headerDivider={false}
       header={
         <div>
-          <div className="h-[72px] px-3.5 pt-8 pb-4 bg-white justify-between items-center inline-flex">
+          <div className="flex flex-row w-full px-1 pt-8 pb-4 bg-white justify-between items-center inline-flex">
             <div className="text-[#090909] text-xl font-semibold font-['DM Sans'] leading-tight">
               {tapsMsg}
             </div>
-            <div className="w-6 h-6 relative"></div>
+            <div className="ml-auto">
+              <Icons.XClose size={24} onClick={() => router.push("/")} />
+            </div>
           </div>
-          <div className="h-[102px] p-4 flex-col justify-center items-start gap-2 inline-flex">
+          <div className="py-4 px-1 flex-col justify-center items-start gap-2 inline-flex">
             <div className="text-[#090909] text-base font-bold font-['DM Sans'] leading-snug">
               {contributorMsg}
             </div>
@@ -113,29 +117,18 @@ const LeaderboardPage: React.FC = () => {
           </div>
         </div>
       }
+      className="pb-8"
     >
-      <div
-        className="h-[33px] px-4 py-2 bg-white items-center backdrop-blur-lg justify-between items-start inline-flex"
-        style={{ width: "100%" } as CSSProperties}
-      >
-        <div
-          className="justify-start items-start gap-3 flex"
-          style={{ width: "100%", display: "contents" } as CSSProperties}
-        >
-          <div className="w-6 flex-col justify-start items-center gap-2 inline-flex">
-            <div className="text-[#090909]/40 text-xs font-medium font-['DM Sans'] leading-none">
-              #
-            </div>
+      <div className="px-4 py-2 bg-white items-center justify-between items-start inline-flex w-full">
+        <div className="grid grid-cols-[40px_1fr_1fr] justify-start items-start gap-3 flex w-full">
+          <div className="text-[#090909]/40 text-xs text-center font-medium leading-[140%]">
+            #
           </div>
-          <div className="justify-start items-start gap-2 flex">
-            <div className="text-[#090909]/40 text-xs font-medium font-['DM Sans'] leading-none">
-              User name
-            </div>
+          <div className="text-[#090909]/40 text-xs font-medium leading-[140%]">
+            User name
           </div>
-          <div className="justify-start items-start gap-2 flex">
-            <div className="text-right text-[#090909]/40 text-xs font-medium font-['DM Sans'] leading-none">
-              Total taps
-            </div>
+          <div className="text-right text-[#090909]/40 text-xs font-medium leading-[140%]">
+            Total taps
           </div>
         </div>
       </div>
@@ -158,9 +151,13 @@ const LeaderboardPage: React.FC = () => {
         const styling = {
           positionColor: "bg-black/20",
           positionTextColor: "",
-          fontStyling: "text-[#090909]/60 font-sm",
+          fontStyling: "text-[#090909]/60 text-[14px] font-normal",
           divider: false,
         };
+
+        if (index > 9) {
+          styling.fontStyling = "text-[#090909]/40 text-[14px] font-normal";
+        }
 
         let username = entry.username;
         const tapCount = entry.tapCount;
@@ -168,13 +165,13 @@ const LeaderboardPage: React.FC = () => {
         if (position == 1) {
           styling.positionColor = "bg-[#090909]";
           styling.positionTextColor = "text-white";
-          styling.fontStyling = "text-[#090909] font-medium";
+          styling.fontStyling = "text-[#090909] text-[16px] font-medium";
         }
 
         if (entry.username == leaderboardDetails.username) {
-          styling.positionColor = "bg-[#f74227]";
-          styling.positionTextColor = "text-white";
-          styling.fontStyling = "text-[#090909] font-medium";
+          styling.positionColor = "bg-[#FF9DF8]";
+          styling.positionTextColor = "text-black";
+          styling.fontStyling = "text-[#090909] text-[16px]font-medium";
           username += " (me)";
 
           if (leaderboardDetails.userPosition != tiedPosition) {
@@ -194,34 +191,25 @@ const LeaderboardPage: React.FC = () => {
 
         return (
           <div key={index}>
-            <div
-              className="h-6 px-4 justify-between items-center inline-flex"
-              style={
-                {
-                  width: "100%",
-                  marginBottom: "4px",
-                  marginTop: "4px",
-                } as CSSProperties
-              }
-            >
-              <div className="grow shrink basis-0 h-6 justify-start items-center gap-3 flex">
+            <div className="h-6 px-4 justify-between items-center inline-flex w-full mb-1 mt-1">
+              <div className="grow shrink basis-0 justify-start items-center gap-3 flex">
                 <div
-                  className={`w-10 h-6 px-0.5 py-2 ${styling.positionColor} rounded-[67px] justify-center items-center gap-2 flex`}
+                  className={`w-10 h-6 px-1 py-2 ${styling.positionColor} rounded-[67px] justify-center items-center gap-2 flex`}
                 >
                   <div
-                    className={`text-center ${styling.positionTextColor} text-[#090909] text-sm font-medium font-['DM Sans'] leading-tight`}
+                    className={`text-center ${styling.positionTextColor} text-sm font-medium font-['DM Sans'] leading-[140%]`}
                   >
                     {position}
                   </div>
                 </div>
                 <div
-                  className={`grow shrink basis-0 ${styling.fontStyling} font-['DM Sans'] leading-tight`}
+                  className={`grow shrink basis-0 ${styling.fontStyling} font-['DM Sans'] leading-[140%]`}
                 >
                   {username}
                 </div>
                 <div className="justify-start items-start gap-[5px] flex">
                   <div
-                    className={`text-right ${styling.fontStyling} font-['DM Sans'] leading-tight`}
+                    className={`text-right ${styling.fontStyling} font-['DM Sans'] leading-[140%]`}
                   >
                     {tapCount}
                   </div>
@@ -229,7 +217,9 @@ const LeaderboardPage: React.FC = () => {
               </div>
             </div>
             {styling.divider && (
-              <div className="h-[0px] border border-black/20"></div>
+              <div className="py-2">
+                <div className="h-[0px] border border-black/20"></div>
+              </div>
             )}
           </div>
         );

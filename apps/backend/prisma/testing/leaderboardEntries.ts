@@ -1,6 +1,11 @@
 import { PrismaClient } from "@prisma/client";
-import {LeaderboardEntry, ChipIssuer} from "@types";
-const { uniqueNamesGenerator, adjectives, colors, animals } = require('unique-names-generator');
+import { LeaderboardEntry, ChipIssuer } from "@types";
+const {
+  uniqueNamesGenerator,
+  adjectives,
+  colors,
+  animals,
+} = require("unique-names-generator");
 
 const prisma = new PrismaClient();
 
@@ -11,15 +16,17 @@ const randomInt = (min: number, max: number) =>
 
 async function main() {
   // Update for number of entries to create
-  const count = 20
+  const count = 10;
 
   const mapEntries = new Array<LeaderboardEntry>(count);
 
   for (let i = 0; i < count; i++) {
     mapEntries[i] = {
-      username: uniqueNamesGenerator({ dictionaries: [adjectives, colors, animals] }),
+      username: uniqueNamesGenerator({
+        dictionaries: [adjectives, colors, animals],
+      }),
       chipIssuer: ChipIssuer.TESTING,
-      tapCount: randomInt(0, 200),
+      tapCount: randomInt(0, 300),
     };
   }
 
