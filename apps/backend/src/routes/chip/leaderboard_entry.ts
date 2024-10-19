@@ -9,9 +9,8 @@ import {
   GetLeaderboardPositionRequest,
   GetLeaderboardPositionRequestSchema,
   LeaderboardDetails,
-  LeaderboardDetailsSchema,
-  errorToString,
   LeaderboardEntries,
+  errorToString,
 } from "@types";
 import { Controller } from "@/lib/controller";
 
