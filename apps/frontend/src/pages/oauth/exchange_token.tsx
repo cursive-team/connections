@@ -1,12 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {useRouter} from "next/router";
 import {mintOAuthToken} from "@/lib/oauth";
 import {toast} from "sonner";
-import {storage} from "@/lib/storage";
 import {CursiveLogo} from "@/components/ui/HeaderCover";
 import {AccessToken} from "@types";
 import {saveAccessToken} from "@/lib/storage/localStorage/oauth";
-import {OAUTH_APP_MAPPING} from "@/config";
 
 const OAuthAccessTokenPage: React.FC = () => {
   const router = useRouter();
