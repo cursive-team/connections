@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import PlausibleProvider from "next-plausible";
 import OnlyMobileLayout from "@/layouts/OnlyMobileLayout";
 import { DefaultSeo } from "next-seo";
-import { AnimatePresence, motion } from "framer-motion";
+// import { AnimatePresence, motion } from "framer-motion";
 import { preMigrationSignaturePublicKeys } from "@/common/constants";
 
 const dmSans = DM_Sans({
@@ -18,11 +18,11 @@ const dmSans = DM_Sans({
   variable: "--font-dm-sans",
 });
 
-const pageTransitionAnimation = {
+/* const pageTransitionAnimation = {
   hidden: { opacity: 0 },
   enter: { opacity: 1 },
   exit: { opacity: 0 },
-};
+}; */
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -37,6 +37,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       const hasAlreadyChecked = localStorage.getItem(
         MIGRATION_CHECK_STORAGE_KEY
       );
+
       if (hasAlreadyChecked) {
         setIsPreMigrationSessionChecked(true);
         return;
@@ -72,35 +73,24 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }, [router, isPreMigrationSessionChecked]);
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div
-        key={router.pathname}
-        variants={pageTransitionAnimation}
-        initial="hidden"
-        animate="enter"
-        exit="exit"
-        transition={{ duration: 0.2, type: "easeIn" }}
+    <main className={`${dmSans.className} ${dmSans.variable}`}>
+      <DefaultSeo titleTemplate="%s | Cursive Connections" />
+      <PlausibleProvider
+        domain={process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN!}
+        trackOutboundLinks
       >
-        <main className={`${dmSans.className} ${dmSans.variable}`}>
-          <DefaultSeo titleTemplate="%s | Cursive Connections" />
-          <PlausibleProvider
-            domain={process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN!}
-            trackOutboundLinks
-          >
-            <OnlyMobileLayout>
-              <Component {...pageProps} />
-            </OnlyMobileLayout>
-          </PlausibleProvider>
-          <Analytics />
-          <Toaster
-            position="top-center"
-            toastOptions={{
-              duration: 5000,
-              className: "font-sans text-primary",
-            }}
-          />
-        </main>
-      </motion.div>
-    </AnimatePresence>
+        <OnlyMobileLayout>
+          <Component {...pageProps} />
+        </OnlyMobileLayout>
+      </PlausibleProvider>
+      <Analytics />
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 5000,
+          className: "font-sans text-primary",
+        }}
+      />
+    </main>
   );
 }
