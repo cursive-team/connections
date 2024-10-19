@@ -11,6 +11,7 @@ import {
   LeaderboardDetails,
   LeaderboardDetailsSchema,
   errorToString,
+  LeaderboardEntries,
 } from "@types";
 import { Controller } from "@/lib/controller";
 
@@ -39,7 +40,10 @@ router.get(
       }
 
       // Get leaderboard entry
-      const entry = await controller.GetLeaderboardEntry(user.username, chipIssuer);
+      const entry = await controller.GetLeaderboardEntry(
+        user.username,
+        chipIssuer
+      );
 
       if (entry) {
         return res.status(200).json(entry);
@@ -98,7 +102,9 @@ router.get(
     res: Response<LeaderboardDetails | ErrorResponse>
   ) => {
     try {
-      const validatedData = GetLeaderboardPositionRequestSchema.parse(req.query);
+      const validatedData = GetLeaderboardPositionRequestSchema.parse(
+        req.query
+      );
       const { authToken, chipIssuer } = validatedData;
 
       // Fetch user by auth token
@@ -109,9 +115,13 @@ router.get(
       }
 
       // Get leaderboard position
-      const position = await controller.GetUserLeaderboardPosition(user.username, chipIssuer);
+      const position = await controller.GetUserLeaderboardPosition(
+        user.username,
+        chipIssuer
+      );
 
-      const totalContributors = await controller.GetLeaderboardTotalContributors(chipIssuer);
+      const totalContributors =
+        await controller.GetLeaderboardTotalContributors(chipIssuer);
 
       const totalTaps = await controller.GetLeaderboardTotalTaps(chipIssuer);
 
@@ -124,7 +134,7 @@ router.get(
         userPosition: position,
         totalContributors,
         totalTaps,
-      }
+      };
 
       return res.status(200).json(resp);
     } catch (error) {
@@ -143,7 +153,7 @@ router.get(
   "/get_top_leaderboard_entries",
   async (
     req: Request<{}, {}, GetLeaderboardEntryRequest>,
-    res: Response<{} | ErrorResponse>
+    res: Response<LeaderboardEntries | ErrorResponse>
   ) => {
     try {
       // Use same schema as /get_leaderboard_entry
@@ -162,7 +172,7 @@ router.get(
       const entries = await controller.GetTopLeaderboard(100, chipIssuer);
 
       if (entries) {
-        return res.status(200).json({entries: entries});
+        return res.status(200).json({ entries: entries });
       }
 
       throw new Error("Failed to get leaderboard entries");
