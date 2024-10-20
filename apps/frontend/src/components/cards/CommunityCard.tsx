@@ -2,6 +2,12 @@ import { cn } from "@/lib/frontend/util";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+export enum DisplayedDashboard {
+  NONE = "none",
+  WEEKLY = "weekly",
+  TOTAL = "total",
+}
+
 export interface CommunityCardProps {
   image?: string;
   title: string;
@@ -10,6 +16,7 @@ export interface CommunityCardProps {
   position?: number;
   type: "active" | "community" | "coming-soon";
   progressPercentage?: number;
+  dashboard: DisplayedDashboard;
 }
 
 export const CommunityCard = ({

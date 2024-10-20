@@ -1,7 +1,9 @@
 import {
   CommunityCard,
   CommunityCardProps,
+  DisplayedDashboard,
 } from "@/components/cards/CommunityCard";
+import { DashboardDetail } from "@/components/dashboard/DashboardDetail";
 import { Icons } from "@/components/Icons";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { Tag } from "@/components/ui/Tag";
@@ -87,6 +89,9 @@ export default function CommunityPage() {
     useState<LeaderboardEntries | null>(null);
   const [cardProps, setCardProps] = useState<CommunityCardProps[]>([]);
 
+  const [displayedDashboard, setDisplayedDashboard] =
+    useState<DisplayedDashboard>(DisplayedDashboard.NONE);
+
   useEffect(() => {
     const fetchInfo = async () => {
       const { user, session } = await storage.getUserAndSession();
@@ -148,6 +153,7 @@ export default function CommunityPage() {
             100,
             Math.round((weeklyDetails.totalTaps / 2000) * 100)
           ),
+          dashboard: DisplayedDashboard.TOTAL,
         },
         {
           image: "/images/week.png",
@@ -160,6 +166,7 @@ export default function CommunityPage() {
             100,
             Math.round((weeklyDetails.totalTaps / 500) * 100)
           ),
+          dashboard: DisplayedDashboard.WEEKLY,
         },
       ];
       setCardProps(props);
@@ -177,6 +184,48 @@ export default function CommunityPage() {
     logClientEvent(item.label, {});
     window.open(item.href, "_blank", "noopener,noreferrer");
   };
+
+  if (
+    weeklyLeaderboardDetails &&
+    weeklyLeaderboardEntries &&
+    displayedDashboard === DisplayedDashboard.WEEKLY
+  ) {
+    return (
+      <DashboardDetail
+        image="/images/week-wide.png"
+        title="Social Graph, Week of 10/20"
+        description={`${weeklyLeaderboardDetails?.totalTaps} of 500 taps`}
+        leaderboardDetails={weeklyLeaderboardDetails}
+        leaderboardEntries={weeklyLeaderboardEntries}
+        goal={500}
+        organizer="Cursive"
+        organizerDescription="Cryptography for human connection"
+        type="active"
+        returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
+      />
+    );
+  }
+
+  if (
+    leaderboardDetails &&
+    leaderboardEntries &&
+    displayedDashboard === DisplayedDashboard.TOTAL
+  ) {
+    return (
+      <DashboardDetail
+        image="/images/social-graph-wide.png"
+        title="Lanna Social Graph"
+        description={`${leaderboardDetails?.totalTaps} of 2,000 taps`}
+        leaderboardDetails={leaderboardDetails}
+        leaderboardEntries={leaderboardEntries}
+        goal={2000}
+        organizer="Cursive"
+        organizerDescription="Cryptography for human connection"
+        type="active"
+        returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
+      />
+    );
+  }
 
   return (
     <>
@@ -240,19 +289,23 @@ export default function CommunityPage() {
               <span className="text-base font-bold text-primary font-sans">
                 {`Contribute now!`}
               </span>
-              {cardProps?.map((mock: CommunityCardProps, index) => {
+              {cardProps?.map((prop: CommunityCardProps, index) => {
                 return (
-                  <Link key={index} href={`/community/${index}`}>
+                  <div
+                    key={index}
+                    onClick={() => setDisplayedDashboard(prop?.dashboard)}
+                  >
                     <CommunityCard
-                      image={mock?.image}
+                      image={prop?.image}
                       type="active"
-                      title={mock?.title}
-                      description={mock?.description}
-                      progressPercentage={mock?.progressPercentage}
+                      title={prop?.title}
+                      description={prop?.description}
+                      progressPercentage={prop?.progressPercentage}
                       position={2}
-                      totalContributors={mock?.totalContributors}
+                      totalContributors={prop?.totalContributors}
+                      dashboard={prop?.dashboard}
                     />
-                  </Link>
+                  </div>
                 );
               })}
             </div>

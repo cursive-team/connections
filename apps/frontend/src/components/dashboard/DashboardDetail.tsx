@@ -3,59 +3,85 @@ import { AppButton } from "@/components/ui/Button";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import AppLayout from "@/layouts/AppLayout";
 import { cn } from "@/lib/frontend/util";
-// import { useRouter } from "next/router";
+import { LeaderboardDetails, LeaderboardEntries } from "@types";
 import { useState, useEffect } from "react";
+import { Leaderboard } from "./Leaderboard";
+import { IoIosArrowBack as BackIcon } from "react-icons/io";
 
-export default function CommunityDetailPage() {
-  // const router = useRouter();
-  // const { id } = router.query;
+interface DashboardDetailProps {
+  image: string;
+  title: string;
+  description: string;
+  leaderboardEntries: LeaderboardEntries;
+  leaderboardDetails: LeaderboardDetails;
+  goal: number;
+  organizer: string;
+  organizerDescription: string;
+  type?: "active" | "community";
+  returnToHome: () => void;
+}
+
+export function DashboardDetail({
+  image,
+  title,
+  description,
+  leaderboardEntries,
+  leaderboardDetails,
+  goal,
+  organizer,
+  organizerDescription,
+  type = "active",
+  returnToHome,
+}: DashboardDetailProps) {
   const [progress, setProgress] = useState(0);
-
-  const progressPercentage = 50;
-  const totalContributors = 200;
-  const background = "/images/social-graph-wide.png";
-  const position = 0;
-  const title = "Lorem ipsum";
-  const description =
-    "Feugiat elit ut consectetur sit sollicitudin felis posuere dolor id. Faucibus amet egestas sed elementum nulla mattis ornare.";
-  const type = "active"; // 'active' for purple progress bar or 'community' for gray one
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setProgress(progressPercentage);
+      setProgress(
+        Math.min(100, Math.round((leaderboardDetails.totalTaps / goal) * 100))
+      );
     }, 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [leaderboardDetails, goal]);
 
   return (
     <AppLayout
       seoTitle=""
       showFooter={false}
       withContainer={false}
-      back={{
-        href: "/community",
-        label: "Back",
-      }}
+      headerDivider
+      header={
+        <div className="sticky top-0 h-12 flex items-center bg-white z-20">
+          <div className="px-1">
+            <div className="flex gap-1 items-center" onClick={returnToHome}>
+              <BackIcon size={12} />
+              <span className="text-sm">Back</span>
+            </div>
+          </div>
+        </div>
+      }
     >
       <div className="flex flex-col divide-y divide-y-quaternary">
         <div className="flex flex-col gap-4 p-4">
           <div
             className="rounded-lg overflow-hidden h-[135px] w-full bg-gray-200"
             style={
-              background
+              image
                 ? {
                     backgroundSize: "100% auto",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",
-                    backgroundImage: `url(${background})`,
+                    backgroundImage: `url(${image})`,
                   }
                 : {}
             }
           ></div>
           <div className="flex flex-col flex-1 gap-2">
             <p className="text-xs font-normal text-quaternary">{`${
-              (position ?? 0) > 0 ? `#${position} of ` : ""
-            } ${totalContributors} contributors`}</p>
+              (leaderboardDetails.userPosition ?? 0) > 0
+                ? `#${leaderboardDetails.userPosition} of `
+                : ""
+            } ${leaderboardDetails.totalContributors} contributors`}</p>
             <h2 className="text-xl font-bold leading-none text-primary">
               {title}
             </h2>
@@ -78,8 +104,8 @@ export default function CommunityDetailPage() {
           </div>
         )}
 
-        <div className="p-4">
-          <div className="flex flex-col gap-2">
+        <div className="pb-6">
+          <div className="flex flex-col gap-2 p-4">
             <div className=" items-center flex justify-between">
               <span className="text-base font-bold text-primary font-sans">
                 Top 5 contributors
@@ -92,9 +118,17 @@ export default function CommunityDetailPage() {
                 See all
               </AppButton>
             </div>
-            <div></div>
+          </div>
+          <div>
+            <Leaderboard
+              leaderboardEntries={{
+                entries: leaderboardEntries.entries.slice(0, 5),
+              }}
+              leaderboardDetails={leaderboardDetails}
+            />
           </div>
         </div>
+
         <div className="p-4">
           <div className="flex flex-col gap-2">
             <span className="text-base font-bold text-primary font-sans">
@@ -104,10 +138,10 @@ export default function CommunityDetailPage() {
               <CursiveLogo size={48} />
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-primary font-sans">
-                  Cursive
+                  {organizer}
                 </span>
                 <span className="text-xs font-medium text-secondary font-sans">
-                  The app builders
+                  {organizerDescription}
                 </span>
               </div>
             </div>
