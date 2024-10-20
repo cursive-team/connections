@@ -123,9 +123,7 @@ export type GetLeaderboardEntryRequest = z.infer<
 
 export const LeaderboardEntrySchema = z.object({
   username: z.string(),
-  chipIssuer: z.string(),
-  tapCount: z.number(),
-  // In the future could imagine name, chip fields being added to allow custom leaderboards corresponding to specific chips
+  entryValue: z.coerce.number(),
 });
 
 export type LeaderboardEntry = z.infer<typeof LeaderboardEntrySchema>;
@@ -133,6 +131,7 @@ export type LeaderboardEntry = z.infer<typeof LeaderboardEntrySchema>;
 export const GetLeaderboardPositionRequestSchema = z.object({
   authToken: z.string(),
   chipIssuer: ChipIssuerSchema,
+  entryType: LeaderboardEntryTypeSchema,
 });
 
 export type GetLeaderboardPositionRequest = z.infer<
@@ -149,7 +148,7 @@ export const LeaderboardDetailsSchema = z.object({
   username: z.string(),
   userPosition: z.coerce.number(),
   totalContributors: z.coerce.number(),
-  totalTaps: z.coerce.number(),
+  totalValue: z.coerce.number(),
 });
 
 export type LeaderboardDetails = z.infer<typeof LeaderboardDetailsSchema>;

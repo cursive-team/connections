@@ -41,7 +41,7 @@ export function DashboardDetail({
   useEffect(() => {
     const timer = setTimeout(() => {
       setProgress(
-        Math.min(100, Math.round((leaderboardDetails.totalTaps / goal) * 100))
+        Math.min(100, Math.round((leaderboardDetails.totalValue / goal) * 100))
       );
     }, 500);
     return () => clearTimeout(timer);
@@ -62,7 +62,7 @@ export function DashboardDetail({
           <div>
             <div className="flex flex-row w-full px-1 pt-8 pb-4 bg-white justify-between items-center inline-flex">
               <div className="text-[#090909] text-xl font-semibold font-['DM Sans'] leading-tight">
-                {`Taps (${leaderboardDetails.totalTaps})`}
+                {`Taps (${leaderboardDetails.totalValue})`}
               </div>
               <div className="ml-auto">
                 <Icons.XClose

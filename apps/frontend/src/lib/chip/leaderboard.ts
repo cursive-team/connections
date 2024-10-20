@@ -1,55 +1,14 @@
 import { BASE_API_URL } from "@/config";
 import {
   ChipIssuer,
-  LeaderboardEntry,
-  LeaderboardEntrySchema,
   LeaderboardEntries,
   LeaderboardEntriesSchema,
   LeaderboardDetails,
   LeaderboardDetailsSchema,
-<<<<<<< HEAD
-=======
   UpdateLeaderboardEntryRequest,
   LeaderboardEntryType,
->>>>>>> b564cfa (add new leaderboard entry schema)
 } from "@types";
 import { storage } from "@/lib/storage";
-
-export async function getLeaderboardEntry(
-  chipIssuer: ChipIssuer
-): Promise<LeaderboardEntry | null> {
-  const { session } = await storage.getUserAndSession();
-
-  try {
-    const response = await fetch(
-      `${BASE_API_URL}/chip/get_leaderboard_entry?chipIssuer=${chipIssuer}&authToken=${session.authTokenValue}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      console.error(
-        `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
-      );
-      throw new Error(
-        `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
-      );
-    }
-
-    const data = await response.json();
-    const parsedData = LeaderboardEntrySchema.parse(data);
-
-    return parsedData;
-  } catch (error) {
-    console.error("Error getting leaderboard entry:", error);
-    throw error;
-  }
-}
 
 export async function updateTapLeaderboardEntry(
   chipIssuer: ChipIssuer
@@ -120,13 +79,14 @@ export async function updateTapLeaderboardEntry(
 }
 
 export async function getUserLeaderboardDetails(
-  chipIssuer: ChipIssuer
+  chipIssuer: ChipIssuer,
+  entryType: LeaderboardEntryType
 ): Promise<LeaderboardDetails | null> {
   const { session } = await storage.getUserAndSession();
 
   try {
     const response = await fetch(
-      `${BASE_API_URL}/chip/get_leaderboard_details?chipIssuer=${chipIssuer}&authToken=${session.authTokenValue}`,
+      `${BASE_API_URL}/chip/get_leaderboard_details?authToken=${session.authTokenValue}&chipIssuer=${chipIssuer}&entryType=${entryType}`,
       {
         method: "GET",
         headers: {
@@ -157,13 +117,14 @@ export async function getUserLeaderboardDetails(
 
 export async function getTopLeaderboardEntries(
   chipIssuer: ChipIssuer,
+  entryType: LeaderboardEntryType,
   count?: number
 ): Promise<LeaderboardEntries | null> {
   const { session } = await storage.getUserAndSession();
 
   try {
     const response = await fetch(
-      `${BASE_API_URL}/chip/get_top_leaderboard_entries?chipIssuer=${chipIssuer}&authToken=${
+      `${BASE_API_URL}/chip/get_top_leaderboard_entries?chipIssuer=${chipIssuer}&entryType=${entryType}&authToken=${
         session.authTokenValue
       }${count ? `&count=${count}` : ""}`,
       {

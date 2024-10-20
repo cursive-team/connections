@@ -23,7 +23,7 @@ export function Leaderboard({
   leaderboardDetails,
   prize = false,
 }: LeaderboardProps) {
-  let lastTapCount = -1;
+  let lastEntryValue = -1;
   let tiedPosition = -1;
   let cursiveCount = 0;
 
@@ -38,7 +38,7 @@ export function Leaderboard({
             User name
           </div>
           <div className="text-right text-[#090909]/40 text-xs font-medium leading-[140%]">
-            Total taps
+            Entry
           </div>
         </div>
       </div>
@@ -47,7 +47,7 @@ export function Leaderboard({
         let position = index + 1;
 
         // Handle ties
-        if (entry.tapCount == lastTapCount) {
+        if (entry.entryValue == lastEntryValue) {
           // If equal, use tiedPosition (which is the first position, not last, of the tied entries)
           position = tiedPosition;
         } else {
@@ -55,8 +55,8 @@ export function Leaderboard({
           tiedPosition = position;
         }
 
-        // Update lastTapCount
-        lastTapCount = entry.tapCount;
+        // Update lastEntryValue
+        lastEntryValue = entry.entryValue;
 
         const styling = {
           positionColor: "bg-black/20",
@@ -78,7 +78,7 @@ export function Leaderboard({
         if (CURSIVE_USERNAMES.includes(entry.username)) {
           cursiveCount++;
         }
-        const tapCount = entry.tapCount;
+        const entryValue = entry.entryValue;
 
         if (position == 1) {
           styling.positionColor = "bg-[#090909]";
@@ -124,7 +124,7 @@ export function Leaderboard({
                   <div
                     className={`text-right ${styling.fontStyling} font-['DM Sans'] leading-[140%]`}
                   >
-                    {tapCount}
+                    {entryValue}
                   </div>
                 </div>
               </div>
