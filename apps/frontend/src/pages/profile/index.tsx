@@ -13,6 +13,7 @@ import { Icons } from "@/components/Icons";
 import { NextSeo } from "next-seo";
 import { Card } from "@/components/cards/Card";
 import { logoutUser } from "@/lib/auth";
+import { logClientEvent } from "@/lib/frontend/metrics";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -25,13 +26,13 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const user = await storage.getUser();
-      if (user) {
-        setUser(user);
-      } else {
-        toast.error("User not found");
+      const { user, session } = await storage.getUserAndSession();
+      if (!user || !session || session.authTokenExpiresAt < new Date()) {
+        toast.error("Please log in to view your profile.");
         router.push("/");
+        return;
       }
+      setUser(user);
     };
 
     fetchUser();
@@ -108,7 +109,7 @@ const ProfilePage: React.FC = () => {
                   />
                 </div>
               </div>
-              <Card.Base
+              {/* <Card.Base
                 variant="gray"
                 className="p-4 !rounded-lg"
                 onClick={() => toast.info("Coming soon!")}
@@ -128,29 +129,34 @@ const ProfilePage: React.FC = () => {
                     who have similar interests or qualms.
                   </span>
                 </div>
-              </Card.Base>
-              <Card.Base
-                variant="gray"
-                className="p-4 !rounded-lg"
-                onClick={() => toast.info("Coming soon!")}
-              >
-                <div className="flex flex-col gap-[10px]">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <Icons.Clip />
-                      <span className="text-sm text-primary font-medium">
-                        Tensions 🪢
-                      </span>
+              </Card.Base> */}
+              {!user.userData.tensionsRating && (
+                <Card.Base
+                  variant="gray"
+                  className="p-4 !rounded-lg"
+                  onClick={() => {
+                    logClientEvent("start_tensions", {});
+                    router.push("/tensions");
+                  }}
+                >
+                  <div className="flex flex-col gap-[10px]">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <Icons.Clip />
+                        <span className="text-sm text-primary font-medium">
+                          Tensions 🪢
+                        </span>
+                      </div>
+                      <Icons.Plus />
                     </div>
-                    <Icons.Plus />
+                    <span className="text-xs font-medium text-tertiary">
+                      Practice your decision making skills by playing the
+                      Tensions game, match with residents who hold opposing
+                      views to learn new perspectives.
+                    </span>
                   </div>
-                  <span className="text-xs font-medium text-tertiary">
-                    Practice your decision making skills by playing the Tensions
-                    game, match with residents who hold opposing views to learn
-                    new perspectives.
-                  </span>
-                </div>
-              </Card.Base>
+                </Card.Base>
+              )}
             </div>
           </div>
 
@@ -163,6 +169,33 @@ const ProfilePage: React.FC = () => {
                 {`Change which features use your data or remove your data altogether.`}
               </span>
             </div>
+            {user.userData.tensionsRating && (
+              <Card.Base
+                variant="gray"
+                className="p-4 !rounded-lg"
+                onClick={() => {
+                  logClientEvent("edit_tensions", {});
+                  router.push("/tensions");
+                }}
+              >
+                <div className="flex flex-col gap-[10px]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                      <Icons.Clip />
+                      <span className="text-sm text-primary font-medium">
+                        Tensions 🪢
+                      </span>
+                    </div>
+                    <Icons.Pencil />
+                  </div>
+                  <span className="text-xs font-medium text-tertiary">
+                    Practice your decision making skills by playing the Tensions
+                    game, match with residents who hold opposing views to learn
+                    new perspectives.
+                  </span>
+                </div>
+              </Card.Base>
+            )}
             <Card.Base
               variant="gray"
               className="p-4 !rounded-lg"
