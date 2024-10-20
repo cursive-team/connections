@@ -6,7 +6,7 @@ import {
   LeaderboardEntries,
   LeaderboardEntriesSchema,
   LeaderboardDetails,
-  LeaderboardDetailsSchema
+  LeaderboardDetailsSchema,
 } from "@types";
 import { storage } from "@/lib/storage";
 
@@ -16,7 +16,6 @@ export async function getLeaderboardEntry(
   const { session } = await storage.getUserAndSession();
 
   try {
-
     const response = await fetch(
       `${BASE_API_URL}/chip/get_leaderboard_entry?chipIssuer=${chipIssuer}&authToken=${session.authTokenValue}`,
       {
@@ -97,7 +96,6 @@ export async function getUserLeaderboardDetails(
   const { session } = await storage.getUserAndSession();
 
   try {
-
     const response = await fetch(
       `${BASE_API_URL}/chip/get_leaderboard_details?chipIssuer=${chipIssuer}&authToken=${session.authTokenValue}`,
       {
@@ -129,14 +127,16 @@ export async function getUserLeaderboardDetails(
 }
 
 export async function getTopLeaderboardEntries(
-  chipIssuer: ChipIssuer
+  chipIssuer: ChipIssuer,
+  count?: number
 ): Promise<LeaderboardEntries | null> {
   const { session } = await storage.getUserAndSession();
 
   try {
-
     const response = await fetch(
-      `${BASE_API_URL}/chip/get_top_leaderboard_entries?chipIssuer=${chipIssuer}&authToken=${session.authTokenValue}`,
+      `${BASE_API_URL}/chip/get_top_leaderboard_entries?chipIssuer=${chipIssuer}&authToken=${
+        session.authTokenValue
+      }${count ? `&count=${count}` : ""}`,
       {
         method: "GET",
         headers: {

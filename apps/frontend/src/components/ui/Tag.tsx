@@ -62,7 +62,7 @@ export const Tag = ({
       )}
       {addElement && (
         <>
-          <Icons.Plus className="absolute right-[8px]" />
+          <Icons.Plus size={16} className="absolute right-[8px]" />
         </>
       )}
       {remove && (

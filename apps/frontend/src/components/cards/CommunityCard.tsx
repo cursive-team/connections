@@ -2,14 +2,21 @@ import { cn } from "@/lib/frontend/util";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+export enum DisplayedDashboard {
+  NONE = "none",
+  WEEKLY = "weekly",
+  TOTAL = "total",
+}
+
 export interface CommunityCardProps {
   image?: string;
   title: string;
   description?: string;
   totalContributors?: number;
   position?: number;
-  type: "active" | "community";
+  type: "active" | "community" | "coming-soon";
   progressPercentage?: number;
+  dashboard?: DisplayedDashboard;
 }
 
 export const CommunityCard = ({
@@ -28,16 +35,23 @@ export const CommunityCard = ({
       setProgress(progressPercentage);
     }, 500);
     return () => clearTimeout(timer);
-  }, []);
+  }, [progressPercentage]);
 
   return (
-    <div className="w-full bg-white rounded-lg border border-primary">
+    <div
+      className={cn(
+        "w-full bg-white rounded-lg border border-primary",
+        type === "coming-soon" && "bg-gray-100 border-gray-200"
+      )}
+    >
       <div className="p-2 flex items-center gap-[10px]">
         <div className="flex-shrink-0">
           {image ? (
             <Image
               src={image}
               alt={`${image} ${title}`}
+              width={80}
+              height={80}
               className="w-20 h-20 rounded-lg object-cover"
             />
           ) : (

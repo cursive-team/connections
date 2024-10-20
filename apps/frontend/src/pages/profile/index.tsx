@@ -88,7 +88,7 @@ const ProfilePage: React.FC = () => {
           <div className="flex flex-col gap-2 p-4">
             <div className="flex flex-col gap-1">
               <span className="text-lg font-semibold text-primary font-sans">
-                Add data for connection
+                Share data for connection
               </span>
               <span className="text-sm font-normal text-tertiary">
                 Your data is private to you & you have full control over how it
@@ -99,55 +99,66 @@ const ProfilePage: React.FC = () => {
               <div className="py-2">
                 <div className="w-full flex gap-2 overflow-x-auto">
                   <Tag
-                    emoji="👨🏾‍💻"
-                    variant="gray"
-                    text="Lorem ipsum"
-                    className="min-w-max"
+                    emoji={<Icons.Strava />}
+                    variant="transparent"
+                    text="Strava"
+                    className="!bg-[#FC4C01] !text-white self-start min-w-max pl-4 pr-8"
                     addElement
+                    onClick={() => toast.info("Coming soon!")}
                   />
                   <Tag
-                    emoji="👨🏾‍💻"
+                    emoji={<Icons.GitHub />}
                     variant="gray"
-                    text="Lorem ipsum"
-                    className="min-w-max"
+                    text="GitHub"
+                    className="min-w-max pl-4 pr-8"
                     addElement
-                  />
-                  <Tag
-                    emoji="👨🏾‍💻"
-                    variant="gray"
-                    text="Lorem ipsum"
-                    className="min-w-max"
-                    addElement
-                  />
-                  <Tag
-                    emoji="👨🏾‍💻"
-                    variant="gray"
-                    text="Lorem ipsum"
-                    className="min-w-max"
-                    addElement
+                    onClick={() => toast.info("Coming soon!")}
                   />
                 </div>
               </div>
-              <Link href={`#`}>
-                <Card.Base variant="gray" className="p-4 !rounded-lg">
-                  <div className="flex flex-col gap-[10px]">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1">
-                        <Icons.Clip />
-                        <span className="text-sm text-primary font-medium">
-                          Edge City Application
-                        </span>
-                      </div>
-                      <Icons.Plus />
+              <Card.Base
+                variant="gray"
+                className="p-4 !rounded-lg"
+                onClick={() => toast.info("Coming soon!")}
+              >
+                <div className="flex flex-col gap-[10px]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                      <Icons.Clip />
+                      <span className="text-sm text-primary font-medium">
+                        Frontier tech: over or underrated 🧪
+                      </span>
                     </div>
-                    <span className="text-xs font-medium text-tertiary">
-                      Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                      Doloribus dolorum deleniti maxime molestiae vitae ducimus,
-                      quasi at fugit obcaecati cupiditate.
-                    </span>
+                    <Icons.Plus />
                   </div>
-                </Card.Base>
-              </Link>
+                  <span className="text-xs font-medium text-tertiary">
+                    Share your hot takes on frontier tech to discover residents
+                    who have similar interests or qualms.
+                  </span>
+                </div>
+              </Card.Base>
+              <Card.Base
+                variant="gray"
+                className="p-4 !rounded-lg"
+                onClick={() => toast.info("Coming soon!")}
+              >
+                <div className="flex flex-col gap-[10px]">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1">
+                      <Icons.Clip />
+                      <span className="text-sm text-primary font-medium">
+                        Tensions 🪢
+                      </span>
+                    </div>
+                    <Icons.Plus />
+                  </div>
+                  <span className="text-xs font-medium text-tertiary">
+                    Practice your decision making skills by playing the Tensions
+                    game, match with residents who hold opposing views to learn
+                    new perspectives.
+                  </span>
+                </div>
+              </Card.Base>
             </div>
           </div>
 
@@ -159,16 +170,28 @@ const ProfilePage: React.FC = () => {
               <span className="text-sm font-normal text-tertiary">
                 {`Change which features use your data or remove your data altogether.`}
               </span>
-              <div className="py-2">
-                <Tag
-                  emoji="👨🏾‍💻"
-                  variant="transparent"
-                  text="Lorem ipsum"
-                  className="!bg-[#FC4C01] !text-white self-start"
-                  remove
-                />
-              </div>
             </div>
+            <Card.Base
+              variant="gray"
+              className="p-4 !rounded-lg"
+              onClick={() => toast.info("Coming soon!")}
+            >
+              <div className="flex flex-col gap-[10px]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    <Icons.Clip />
+                    <span className="text-sm text-primary font-medium">
+                      How you want to connect 👥
+                    </span>
+                  </div>
+                  <Icons.Pencil />
+                </div>
+                <span className="text-xs font-medium text-tertiary">
+                  Interests shared during registration, used to seed private
+                  overlap computation with other attendees.
+                </span>
+              </div>
+            </Card.Base>
           </div>
         </div>
         <div className="p-4">
