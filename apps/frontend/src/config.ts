@@ -7,6 +7,14 @@ export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
 export const BASE_API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
+export const OAUTH_APP_MAPPING: Record<string, {id: string | undefined, secret: string | undefined, token_url: string }> = {
+  "strava": {
+    token_url: "https://www.strava.com/api/v3/oauth/token",
+    id: process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_ID || "",
+    secret: process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_SECRET || "",
+  }
+}
+
 export const APP_CONFIG = {
   APP_NAME: "Cursive Connections",
   APP_DESCRIPTION: "Cursive Connections",

@@ -1,4 +1,3 @@
-import { ChipIssuerSchema } from "../chip";
 import { z } from "zod";
 
 // Username schema

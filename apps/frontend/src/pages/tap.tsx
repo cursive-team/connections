@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { TapParams, ChipTapResponse } from "@types";
 import { toast } from "sonner";
 import { storage } from "@/lib/storage";
-import { tapChip, updateLeaderboardEntry } from "@/lib/chip";
+import { tapChip, updateTapLeaderboardEntry } from "@/lib/chip";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
 
@@ -64,14 +64,11 @@ const TapPage: React.FC = () => {
             return;
           }
 
-          // Update leaderboard entry
-          await updateLeaderboardEntry(
-            response.tap.ownerUsername,
-            response.chipIssuer
-          );
-
           // Save tap to local storage
           await storage.addTap(response);
+
+          // Update leaderboard entry
+          await updateTapLeaderboardEntry(response.chipIssuer);
 
           // Save tap to populate modal upon redirect
           await storage.saveTapInfo({ tapParams, tapResponse: response });

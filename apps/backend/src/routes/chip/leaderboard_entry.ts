@@ -18,46 +18,6 @@ const router = express.Router();
 const controller = new Controller();
 
 /**
- * @route GET /api/chip/get_leaderboard_entry
- * @desc Gets the leaderboard entry for a user
- */
-router.get(
-  "/get_leaderboard_entry",
-  async (
-    req: Request<{}, {}, GetLeaderboardEntryRequest>,
-    res: Response<LeaderboardEntry | ErrorResponse>
-  ) => {
-    try {
-      const validatedData = GetLeaderboardEntryRequestSchema.parse(req.query);
-      const { authToken, chipIssuer } = validatedData;
-
-      // Fetch user by auth token
-      const user = await controller.GetUserByAuthToken(authToken);
-
-      if (!user) {
-        return res.status(401).json({ error: "Invalid auth token" });
-      }
-
-      // Get leaderboard entry
-      const entry = await controller.GetLeaderboardEntry(
-        user.username,
-        chipIssuer
-      );
-
-      if (entry) {
-        return res.status(200).json(entry);
-      }
-
-      throw new Error("Failed to get leaderboard entry");
-    } catch (error) {
-      return res.status(500).json({
-        error: errorToString(error),
-      });
-    }
-  }
-);
-
-/**
  * @route POST /api/chip/update_leaderboard_entry
  * @desc Updates the leaderboard entry for a user
  */
@@ -69,7 +29,7 @@ router.post(
   ) => {
     try {
       const validatedData = UpdateLeaderboardEntryRequestSchema.parse(req.body);
-      const { authToken, chipIssuer } = validatedData;
+      const { authToken, chipIssuer, entryType, entryValue } = validatedData;
 
       // Fetch user by auth token
       const user = await controller.GetUserByAuthToken(authToken);
@@ -79,7 +39,12 @@ router.post(
       }
 
       // Update leaderboard entry
-      await controller.UpdateLeaderboardEntry(user.username, chipIssuer);
+      await controller.UpdateLeaderboardEntry(
+        user.username,
+        chipIssuer,
+        entryType,
+        entryValue
+      );
 
       return res.status(200).json({});
     } catch (error) {
@@ -104,7 +69,7 @@ router.get(
       const validatedData = GetLeaderboardPositionRequestSchema.parse(
         req.query
       );
-      const { authToken, chipIssuer } = validatedData;
+      const { authToken, chipIssuer, entryType } = validatedData;
 
       // Fetch user by auth token
       const user = await controller.GetUserByAuthToken(authToken);
@@ -116,15 +81,23 @@ router.get(
       // Get leaderboard position
       const position = await controller.GetUserLeaderboardPosition(
         user.username,
-        chipIssuer
+        chipIssuer,
+        entryType
       );
 
       const totalContributors =
-        await controller.GetLeaderboardTotalContributors(chipIssuer);
+        await controller.GetLeaderboardTotalContributors(chipIssuer, entryType);
 
-      const totalTaps = await controller.GetLeaderboardTotalTaps(chipIssuer);
+      const totalValue = await controller.GetLeaderboardTotalValue(
+        chipIssuer,
+        entryType
+      );
 
-      if (!position || !totalContributors || !totalTaps) {
+      if (
+        position === null ||
+        totalContributors === null ||
+        totalValue === null
+      ) {
         throw new Error("Missing values, failed to get leaderboard position");
       }
 
@@ -132,7 +105,7 @@ router.get(
         username: user.username,
         userPosition: position,
         totalContributors,
-        totalTaps,
+        totalValue,
       };
 
       return res.status(200).json(resp);
@@ -157,7 +130,7 @@ router.get(
     try {
       // Use same schema as /get_leaderboard_entry
       const validatedData = GetLeaderboardEntryRequestSchema.parse(req.query);
-      const { authToken, chipIssuer, count } = validatedData;
+      const { authToken, chipIssuer, entryType, count } = validatedData;
 
       // Fetch user by auth token
       // While the user isn't specifically required, it ensures the request is from an authenticated user
@@ -167,7 +140,11 @@ router.get(
         return res.status(401).json({ error: "Invalid auth token" });
       }
 
-      const entries = await controller.GetTopLeaderboard(count, chipIssuer);
+      const entries = await controller.GetTopLeaderboardEntries(
+        chipIssuer,
+        entryType,
+        count
+      );
 
       if (entries) {
         return res.status(200).json({ entries: entries });

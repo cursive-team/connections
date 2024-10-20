@@ -18,6 +18,7 @@ import {
   TapParams,
   UpdateChipRequest,
   LeaderboardEntry,
+  LeaderboardEntryType,
 } from "@types";
 import { Chip } from "@/lib/controller/chip/types";
 import { iChipClient } from "@/lib/controller/chip/interfaces";
@@ -121,42 +122,59 @@ export class Controller {
     return this.chipClient.GetTapFromChip(tapParams);
   }
 
-  GetLeaderboardEntry(
-    username: string,
-    chipIssuer: ChipIssuer
-  ): Promise<LeaderboardEntry | null> {
-    return this.chipClient.GetLeaderboardEntry(username, chipIssuer);
-  }
-
   UpdateLeaderboardEntry(
     username: string,
-    chipIssuer: ChipIssuer
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType,
+    entryValue: number
   ): Promise<void> {
-    return this.chipClient.UpdateLeaderboardEntry(username, chipIssuer);
+    return this.chipClient.UpdateLeaderboardEntry(
+      username,
+      chipIssuer,
+      entryType,
+      entryValue
+    );
   }
 
-  GetLeaderboardTotalTaps(chipIssuer: ChipIssuer): Promise<number | null> {
-    return this.chipClient.GetLeaderboardTotalTaps(chipIssuer);
+  GetLeaderboardTotalValue(
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType
+  ): Promise<number | null> {
+    return this.chipClient.GetLeaderboardTotalValue(chipIssuer, entryType);
   }
 
   GetLeaderboardTotalContributors(
-    chipIssuer: ChipIssuer
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType
   ): Promise<number | null> {
-    return this.chipClient.GetLeaderboardTotalContributors(chipIssuer);
+    return this.chipClient.GetLeaderboardTotalContributors(
+      chipIssuer,
+      entryType
+    );
   }
 
   GetUserLeaderboardPosition(
     username: string,
-    chipIssuer: ChipIssuer
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType
   ): Promise<number | null> {
-    return this.chipClient.GetUserLeaderboardPosition(username, chipIssuer);
+    return this.chipClient.GetUserLeaderboardPosition(
+      username,
+      chipIssuer,
+      entryType
+    );
   }
 
-  GetTopLeaderboard(
-    count: number | undefined,
-    chipIssuer: ChipIssuer
+  GetTopLeaderboardEntries(
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType,
+    count: number | undefined
   ): Promise<LeaderboardEntry[] | null> {
-    return this.chipClient.GetTopLeaderboard(count, chipIssuer);
+    return this.chipClient.GetTopLeaderboardEntries(
+      chipIssuer,
+      entryType,
+      count
+    );
   }
 
   EmailSigninToken(signinToken: SigninToken): Promise<void> {

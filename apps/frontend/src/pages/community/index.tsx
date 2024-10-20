@@ -11,12 +11,15 @@ import AppLayout from "@/layouts/AppLayout";
 import {
   getTopLeaderboardEntries,
   getUserLeaderboardDetails,
-  lannaWeek1Leaderboard,
-  retrieveWeeklyLeaderboard,
 } from "@/lib/chip";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { storage } from "@/lib/storage";
-import { ChipIssuer, LeaderboardDetails, LeaderboardEntries } from "@types";
+import {
+  ChipIssuer,
+  LeaderboardDetails,
+  LeaderboardEntries,
+  LeaderboardEntryType,
+} from "@types";
 import { Metadata } from "next";
 import { NextSeo } from "next-seo";
 import Link from "next/link";
@@ -30,14 +33,6 @@ export const metadata: Metadata = {
 
 const ComingSoonCommunityGoals = () => {
   const mocks: CommunityCardProps[] = [
-    {
-      image: "/images/runclub.png",
-      title: "Lanna Run Club (Strava)",
-      description: "100km",
-      type: "community",
-      totalContributors: 75,
-      progressPercentage: 24,
-    },
     {
       image: "/images/build.png",
       title: "Lanna Build Club (GitHub)",
@@ -101,42 +96,40 @@ export default function CommunityPage() {
       const communityIssuer: ChipIssuer = user.chips[0].issuer;
 
       let details: LeaderboardDetails | null = null;
-      try {
-        details = await getUserLeaderboardDetails(communityIssuer);
-      } catch (error) {
-        console.error("Error getting user leaderboard details:", error);
-        toast.error("Error getting user leaderboard details.");
-        router.push("/profile");
-        return;
-      }
-      if (!details) {
-        toast.error("User leaderboard details not found.");
-        router.push("/profile");
-        return;
-      }
-
       let entries: LeaderboardEntries | null = null;
+      let weeklyDetails: LeaderboardDetails | null = null;
+      let weeklyEntries: LeaderboardEntries | null = null;
       try {
-        entries = await getTopLeaderboardEntries(communityIssuer);
+        details = await getUserLeaderboardDetails(
+          communityIssuer,
+          LeaderboardEntryType.TOTAL_TAP_COUNT
+        );
+        entries = await getTopLeaderboardEntries(
+          communityIssuer,
+          LeaderboardEntryType.TOTAL_TAP_COUNT
+        );
+        weeklyDetails = await getUserLeaderboardDetails(
+          communityIssuer,
+          LeaderboardEntryType.WEEK_OCT_20_TAP_COUNT
+        );
+        weeklyEntries = await getTopLeaderboardEntries(
+          communityIssuer,
+          LeaderboardEntryType.WEEK_OCT_20_TAP_COUNT
+        );
       } catch (error) {
-        console.error("Error getting top leaderboard entries:", error);
-        toast.error("Error getting top leaderboard entries.");
+        console.error("Error getting user leaderboard info:", error);
+        toast.error("Error getting user leaderboard info.");
         router.push("/profile");
         return;
       }
-      if (!entries) {
-        toast.error("Top leaderboard entries not found.");
+      if (!details || !entries || !weeklyDetails || !weeklyEntries) {
+        toast.error("User leaderboard info not found.");
         router.push("/profile");
         return;
       }
 
       setLeaderboardDetails(details);
       setLeaderboardEntries(entries);
-
-      // get weekly leaderboard
-      const { details: weeklyDetails, entries: weeklyEntries } =
-        retrieveWeeklyLeaderboard(lannaWeek1Leaderboard, details, entries);
-
       setWeeklyLeaderboardDetails(weeklyDetails);
       setWeeklyLeaderboardEntries(weeklyEntries);
 
@@ -144,26 +137,26 @@ export default function CommunityPage() {
         {
           image: "/images/hand.png",
           title: "Lanna Social Graph",
-          description: `${details.totalTaps} of 2000 taps`,
+          description: `${details.totalValue} of 2000 taps`,
           type: "active",
           position: details.userPosition,
           totalContributors: details.totalContributors,
           progressPercentage: Math.min(
             100,
-            Math.round((details.totalTaps / 2000) * 100)
+            Math.round((details.totalValue / 2000) * 100)
           ),
           dashboard: DisplayedDashboard.TOTAL,
         },
         {
           image: "/images/week.png",
           title: "Social Graph, Week of 10/20",
-          description: `${weeklyDetails.totalTaps} of 500 taps`,
+          description: `${weeklyDetails.totalValue} of 500 taps`,
           type: "active",
           position: weeklyDetails.userPosition,
           totalContributors: weeklyDetails.totalContributors,
           progressPercentage: Math.min(
             100,
-            Math.round((weeklyDetails.totalTaps / 500) * 100)
+            Math.round((weeklyDetails.totalValue / 500) * 100)
           ),
           dashboard: DisplayedDashboard.WEEKLY,
         },
@@ -263,19 +256,19 @@ export default function CommunityPage() {
               href: "https://app.sola.day/event/edgecitylanna/",
               emoji: <Icons.SocialLayer size={18} />,
               text: "Social Layer",
-              label: "social-layer-link",
+              label: "community-social-layer-link",
             },
             {
               href: "https://lannaedges.radicalxchange.org/",
               emoji: <span className="text-[16px]">∈</span>,
               text: "Edges",
-              label: "edges-link",
+              label: "community-edges-link",
             },
             {
               href: "https://cherry.builders/",
               emoji: "🍒",
               text: "Cherry",
-              label: "cherry-link",
+              label: "community-cherry-link",
             },
           ].map((item, index) => (
             <Link

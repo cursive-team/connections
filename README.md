@@ -50,6 +50,7 @@ Testing Secret Values:
 
 Testing Utilities:
 
+- For accessing local DB: `psql postgresql://postgres:postgres@localhost:5432/connections_test`
 - For dropping test DB: `psql`, `DROP DATABASE connections_test WITH (FORCE);`
 - `\l` to list dbs, `\c $dbname` to connect, `\d` to list tables.
 - To filter requests in Chrome Inspect, use negative filter `-.png -.jpg -.jpeg -.gif -.json -.js` in Network tab.
