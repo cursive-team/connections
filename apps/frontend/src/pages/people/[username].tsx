@@ -266,8 +266,17 @@ const UserProfilePage: React.FC = () => {
           contacts: translatedContacts,
           tensions: data.verifiedIntersectionState.tensions,
         });
+        logClientEvent("user-finished-psi", {});
+        if (!waitingForOtherUser) {
+          toast.info(
+            `Ask ${connection.user.username} to refresh to see results!`
+          );
+        }
         setWaitingForOtherUser(false);
       } else {
+        toast.info(
+          `Ask ${connection.user.username} to press "Discover" after tapping!`
+        );
         setWaitingForOtherUser(true);
       }
     } catch (error) {
@@ -432,17 +441,24 @@ const UserProfilePage: React.FC = () => {
             )}
 
             <AppButton
-              onClick={updatePSIOverlap}
+              onClick={() => {
+                logClientEvent("user-started-psi", {});
+                updatePSIOverlap();
+              }}
               variant="outline"
               loading={refreshLoading}
             >
-              {verifiedIntersection
+              {verifiedIntersection || waitingForOtherUser
                 ? "Refresh"
-                : waitingForOtherUser
-                ? `Ask ${connection.user.username} to refresh after tap!`
                 : "Discover"}
               {}
             </AppButton>
+            {waitingForOtherUser && (
+              <div className="text-[12px] text-center text-primary font-sans font-normal">
+                Waiting for {connection.user.username} to press discover after
+                tapping...
+              </div>
+            )}
           </div>
 
           {connection?.user?.bio && (
