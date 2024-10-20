@@ -34,14 +34,6 @@ export const metadata: Metadata = {
 const ComingSoonCommunityGoals = () => {
   const mocks: CommunityCardProps[] = [
     {
-      image: "/images/runclub.png",
-      title: "Lanna Run Club (Strava)",
-      description: "100km",
-      type: "community",
-      totalContributors: 75,
-      progressPercentage: 24,
-    },
-    {
       image: "/images/build.png",
       title: "Lanna Build Club (GitHub)",
       description: "500 commits",

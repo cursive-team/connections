@@ -99,14 +99,6 @@ const ProfilePage: React.FC = () => {
               <div className="py-2">
                 <div className="w-full flex gap-2 overflow-x-auto">
                   <Tag
-                    emoji={<Icons.Strava />}
-                    variant="transparent"
-                    text="Strava"
-                    className="!bg-[#FC4C01] !text-white self-start min-w-max pl-4 pr-8"
-                    addElement
-                    onClick={() => toast.info("Coming soon!")}
-                  />
-                  <Tag
                     emoji={<Icons.GitHub />}
                     variant="gray"
                     text="GitHub"
