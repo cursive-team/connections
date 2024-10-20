@@ -16,7 +16,8 @@ export const metadata: Metadata = {
 const Contributions = () => {
   const mocks: CommunityCardProps[] = [
     {
-      title: "Example",
+      image: "/images/hand.png",
+      title: "Lanna Social Graph",
       description: "2,000 of 3,000 taps",
       type: "active",
       position: 1,
@@ -24,20 +25,13 @@ const Contributions = () => {
       progressPercentage: 88,
     },
     {
-      title: "Example",
+      image: "/images/week.png",
+      title: "Social Graph, Week of 10/20",
       description: "2,000 of 3,000 taps",
       type: "active",
       position: 2,
       totalContributors: 10,
       progressPercentage: 10,
-    },
-    {
-      title: "Example",
-      description: "2,000 of 3,000 taps",
-      type: "active",
-      position: 3,
-      totalContributors: 10,
-      progressPercentage: 24,
     },
   ];
 
@@ -47,6 +41,7 @@ const Contributions = () => {
         return (
           <Link key={index} href={`/community/${index}`}>
             <CommunityCard
+              image={mock?.image}
               type="active"
               title={mock?.title}
               description={mock?.description}
@@ -61,28 +56,31 @@ const Contributions = () => {
   );
 };
 
-const ExtraCommunityGoals = () => {
+const ComingSoonCommunityGoals = () => {
   const mocks: CommunityCardProps[] = [
     {
-      title: "Example",
-      description: "120km",
+      image: "/images/runclub.png",
+      title: "Lanna Run Club (Strava)",
+      description: "100km",
       type: "community",
-      totalContributors: 10,
+      totalContributors: 75,
       progressPercentage: 24,
     },
     {
-      title: "Example",
-      description: "120km",
+      image: "/images/build.png",
+      title: "Lanna Build Club (GitHub)",
+      description: "500 commits",
       type: "community",
-      totalContributors: 10,
+      totalContributors: 50,
       progressPercentage: 89,
     },
     {
-      title: "Example",
-      description: "120km",
+      image: "/images/yoga.png",
+      title: "Yoga With Sophie",
+      description: "100 hours",
       type: "community",
       totalContributors: 10,
-      progressPercentage: 100,
+      progressPercentage: 50,
     },
   ];
 
@@ -90,15 +88,15 @@ const ExtraCommunityGoals = () => {
     <div className="flex flex-col gap-4">
       {mocks?.map((mock: CommunityCardProps, index) => {
         return (
-          <Link key={index} href={`/community/${index}`}>
-            <CommunityCard
-              type="community"
-              title={mock?.title}
-              description={mock?.description}
-              progressPercentage={mock?.progressPercentage}
-              totalContributors={mock?.totalContributors}
-            />
-          </Link>
+          <CommunityCard
+            image={mock?.image}
+            key={index}
+            type="coming-soon"
+            title={mock?.title}
+            description={mock?.description}
+            progressPercentage={mock?.progressPercentage}
+            totalContributors={mock?.totalContributors}
+          />
         );
       })}
     </div>
@@ -161,15 +159,15 @@ export default function CommunityPage() {
         <div className="flex flex-col gap-6 pt-2 pb-6">
           <div className="flex flex-col gap-2">
             <span className="text-base font-bold text-primary font-sans">
-              {`You're contributing!`}
+              {`Contribute now!`}
             </span>
             <Contributions />
           </div>
           <div className="flex flex-col gap-2">
             <span className="text-base font-bold text-primary font-sans">
-              Contribute to more community goals
+              Coming soon!
             </span>
-            <ExtraCommunityGoals />
+            <ComingSoonCommunityGoals />
           </div>
         </div>
       </AppLayout>

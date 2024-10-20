@@ -1,9 +1,8 @@
 import { Icons } from "@/components/Icons";
 import { AppButton } from "@/components/ui/Button";
-import { ProfileImage } from "@/components/ui/ProfileImage";
+import { CursiveLogo } from "@/components/ui/HeaderCover";
 import AppLayout from "@/layouts/AppLayout";
 import { cn } from "@/lib/frontend/util";
-import { UserData } from "@/lib/storage/types";
 // import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 
@@ -14,7 +13,7 @@ export default function CommunityDetailPage() {
 
   const progressPercentage = 50;
   const totalContributors = 200;
-  const background = "/images/register-main-cover-compressed.svg";
+  const background = "/images/social-graph-wide.png";
   const position = 0;
   const title = "Lorem ipsum";
   const description =
@@ -45,13 +44,15 @@ export default function CommunityDetailPage() {
             style={
               background
                 ? {
-                    backgroundSize: "cover",
-                    background: `url(${background})`,
+                    backgroundSize: "100% auto",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    backgroundImage: `url(${background})`,
                   }
                 : {}
             }
           ></div>
-          <div className="flex flex-col flex-1">
+          <div className="flex flex-col flex-1 gap-2">
             <p className="text-xs font-normal text-quaternary">{`${
               (position ?? 0) > 0 ? `#${position} of ` : ""
             } ${totalContributors} contributors`}</p>
@@ -100,10 +101,10 @@ export default function CommunityDetailPage() {
               Organizer
             </span>
             <div className="flex items-center gap-4 py-4">
-              <ProfileImage user={{} as UserData} />
+              <CursiveLogo size={48} />
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-primary font-sans">
-                  Name
+                  Cursive
                 </span>
                 <span className="text-xs font-medium text-secondary font-sans">
                   User
