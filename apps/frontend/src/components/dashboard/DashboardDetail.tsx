@@ -48,6 +48,12 @@ export function DashboardDetail({
   }, [leaderboardDetails, goal]);
 
   if (seeFullLeaderboard) {
+    let contributorMsg = `You are #${leaderboardDetails.userPosition} of ${leaderboardDetails.totalContributors} contributors!`;
+
+    if (leaderboardDetails.userPosition == -1) {
+      contributorMsg = "You are not on the leaderboard yet.";
+    }
+
     return (
       <AppLayout
         withContainer={false}
@@ -67,7 +73,7 @@ export function DashboardDetail({
             </div>
             <div className="py-4 px-1 flex-col justify-center items-start gap-2 inline-flex">
               <div className="text-[#090909] text-base font-bold font-['DM Sans'] leading-snug">
-                {`You are #${leaderboardDetails.userPosition} of ${leaderboardDetails.totalContributors} contributors!`}
+                {contributorMsg}
               </div>
               {prize && (
                 <>

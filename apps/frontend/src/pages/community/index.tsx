@@ -150,7 +150,7 @@ export default function CommunityPage() {
           totalContributors: details.totalContributors,
           progressPercentage: Math.min(
             100,
-            Math.round((weeklyDetails.totalTaps / 2000) * 100)
+            Math.round((details.totalTaps / 2000) * 100)
           ),
           dashboard: DisplayedDashboard.TOTAL,
         },
@@ -319,7 +319,7 @@ export default function CommunityPage() {
                       title={prop?.title}
                       description={prop?.description}
                       progressPercentage={prop?.progressPercentage}
-                      position={2}
+                      position={prop?.position}
                       totalContributors={prop?.totalContributors}
                       dashboard={prop?.dashboard}
                     />
