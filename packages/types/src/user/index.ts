@@ -193,4 +193,45 @@ export type VerifySigninTokenResponse = z.infer<
   typeof VerifySigninTokenResponseSchema
 >;
 
+/**
+ * hash of shared secret ->
+ *   0: first user, sorted by username ->
+ *   1: second user, sorted by username ->
+ *     tensions: array of hash commitments
+ *     contacts: array of hash commitments
+ */
+export const IntersectionStateSchema = z.record(
+  z.string(),
+  z.record(
+    z.number().int(),
+    z.object({ tensions: z.array(z.string()), contacts: z.array(z.string()) })
+  )
+);
 
+export type IntersectionState = z.infer<typeof IntersectionStateSchema>;
+
+// Request schema for refreshing the intersection state
+export const RefreshIntersectionRequestSchema = z.object({
+  secretHash: z.string(),
+  index: z.number().int(),
+  intersectionState: z.object({
+    tensions: z.array(z.string()),
+    contacts: z.array(z.string()),
+  }),
+});
+
+export type RefreshIntersectionRequest = z.infer<
+  typeof RefreshIntersectionRequestSchema
+>;
+
+export const RefreshIntersectionResponseSchema = z.object({
+  success: z.boolean(),
+  verifiedIntersectionState: z.object({
+    tensions: z.array(z.string()),
+    contacts: z.array(z.string()),
+  }),
+});
+
+export type RefreshIntersectionResponse = z.infer<
+  typeof RefreshIntersectionResponseSchema
+>;
