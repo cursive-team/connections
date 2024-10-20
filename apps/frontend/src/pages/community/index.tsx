@@ -89,8 +89,6 @@ export default function CommunityPage() {
   const [displayedDashboard, setDisplayedDashboard] =
     useState<DisplayedDashboard>(DisplayedDashboard.NONE);
 
-  const communityIssuer = ChipIssuer.TESTING;
-
   useEffect(() => {
     const fetchInfo = async () => {
       const { user, session } = await storage.getUserAndSession();
@@ -99,6 +97,8 @@ export default function CommunityPage() {
         router.push("/");
         return;
       }
+
+      const communityIssuer: ChipIssuer = user.chips[0].issuer;
 
       let details: LeaderboardDetails | null = null;
       try {
