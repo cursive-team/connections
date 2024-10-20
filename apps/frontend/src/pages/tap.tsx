@@ -64,11 +64,11 @@ const TapPage: React.FC = () => {
             return;
           }
 
-          // Update leaderboard entry
-          await updateTapLeaderboardEntry(response.chipIssuer);
-
           // Save tap to local storage
           await storage.addTap(response);
+
+          // Update leaderboard entry
+          await updateTapLeaderboardEntry(response.chipIssuer);
 
           // Save tap to populate modal upon redirect
           await storage.saveTapInfo({ tapParams, tapResponse: response });

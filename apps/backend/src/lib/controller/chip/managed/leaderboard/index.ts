@@ -120,7 +120,7 @@ ManagedChipClient.prototype.GetLeaderboardTotalValue = async function (
       },
     });
 
-    return totalValue._sum.tapCount ?? null;
+    return totalValue._sum.tapCount ?? 0;
   }
 
   const totalValue = await this.prismaClient.leaderboardEntry.aggregate({
@@ -133,7 +133,7 @@ ManagedChipClient.prototype.GetLeaderboardTotalValue = async function (
     },
   });
 
-  return totalValue._sum.entryValue?.toNumber() ?? null;
+  return totalValue._sum.entryValue?.toNumber() ?? 0;
 };
 
 // Get contributors from chip service rather than postgres.

@@ -93,7 +93,11 @@ router.get(
         entryType
       );
 
-      if (!position || !totalContributors || !totalValue) {
+      if (
+        position === null ||
+        totalContributors === null ||
+        totalValue === null
+      ) {
         throw new Error("Missing values, failed to get leaderboard position");
       }
 
