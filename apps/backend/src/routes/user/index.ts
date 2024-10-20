@@ -18,4 +18,5 @@ router.use(verifyEmailUniqueRoute);
 router.use(verifySigninTokenRoute);
 router.use(verifyUsernameUniqueRoute);
 router.use(refreshIntersectionRoute);
+
 export default router;

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { Connection, PSIData, Session, User } from "@/lib/storage/types";
+import { Connection, Session, User } from "@/lib/storage/types";
 import { toast } from "sonner";
 import { TapParams, ChipTapResponse } from "@types";
 import { AppButton } from "@/components/ui/Button";
@@ -11,9 +11,13 @@ import AppLayout from "@/layouts/AppLayout";
 import { LinkCardBox } from "@/components/ui/LinkCardBox";
 import { AppTextarea } from "@/components/ui/Textarea";
 import { ProfileImage } from "@/components/ui/ProfileImage";
-import InteractivePSI from "@/features/psi/InteractivePSI";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
+import { tensionPairs } from "@/common/constants";
+import { hashCommit } from "@/lib/psi/hash";
+import { BASE_API_URL } from "@/config";
+import Link from "next/link";
+import { TensionSlider } from "../tensions";
 
 interface TapChipModalProps {
   tapResponse: ChipTapResponse;
@@ -118,6 +122,12 @@ const UserProfilePage: React.FC = () => {
     tapResponse: ChipTapResponse;
   } | null>(null);
   const [showTapModal, setShowTapModal] = useState(false);
+  const [refreshLoading, setRefreshLoading] = useState(false);
+  const [waitingForOtherUser, setWaitingForOtherUser] = useState(false);
+  const [verifiedIntersection, setVerifiedIntersection] = useState<{
+    tensions: string[];
+    contacts: string[];
+  } | null>(null);
 
   useEffect(() => {
     const fetchConnectionAndTapInfo = async () => {
@@ -184,22 +194,88 @@ const UserProfilePage: React.FC = () => {
     }
   };
 
-  const savePSIOverlap = async (overlap: PSIData) => {
-    if (!connection) return;
-
-    logClientEvent("user-profile-psi-overlap-saved", {});
-    const connectionUsername = connection.user.username;
-    await storage.updatePSI(connectionUsername, overlap);
-
-    // Update local state
-    const user = await storage.getUser();
-    const session = await storage.getSession();
-    if (!user || !session || !user.connections[connectionUsername]) {
-      throw new Error("User not found");
+  const updatePSIOverlap = async () => {
+    setRefreshLoading(true);
+    if (!connection || !user) {
+      setRefreshLoading(false);
+      return;
     }
-    setUser(user);
-    setSession(session);
-    setConnection(user.connections[connectionUsername]);
+
+    try {
+      let tensions: string[] = [];
+      if (user.userData.tensionsRating?.revealAnswers) {
+        const tensionData = tensionPairs.map((tension, index) =>
+          user.userData.tensionsRating!.tensionRating[index] < 50
+            ? tension[0]
+            : tension[1]
+        );
+        tensions = await hashCommit(
+          user.encryptionPrivateKey,
+          connection.user.encryptionPublicKey,
+          tensionData
+        );
+      }
+
+      const contactData = Object.keys(user.connections);
+      const contacts = await hashCommit(
+        user.encryptionPrivateKey,
+        connection.user.encryptionPublicKey,
+        contactData
+      );
+
+      const [secretHash] = await hashCommit(
+        user.encryptionPrivateKey,
+        connection.user.encryptionPublicKey,
+        [""]
+      );
+
+      const response = await fetch(
+        `${BASE_API_URL}/user/refresh_intersection`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            secretHash,
+            index: user.userData.username < connection.user.username ? 0 : 1,
+            intersectionState: { tensions, contacts },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`HTTP error! status: ${errorData.error}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        const translatedContacts = [];
+        for (const hashContact of data.verifiedIntersectionState.contacts) {
+          const index = contacts.findIndex(
+            (contact) => contact === hashContact
+          );
+          if (index !== -1) {
+            translatedContacts.push(contactData[index]);
+          }
+        }
+
+        setVerifiedIntersection({
+          contacts: translatedContacts,
+          tensions: data.verifiedIntersectionState.tensions,
+        });
+        setWaitingForOtherUser(false);
+      } else {
+        setWaitingForOtherUser(true);
+      }
+    } catch (error) {
+      console.error("Error updating PSI overlap:", error);
+      toast.error("Failed to update overlap. Please try again.");
+    } finally {
+      setRefreshLoading(false);
+    }
   };
 
   if (!connection || !user || !session) {
@@ -281,6 +357,94 @@ const UserProfilePage: React.FC = () => {
             </div>
           </div>
 
+          <div className="flex flex-col gap-4 py-4 px-4">
+            <span className="text-sm font-semibold text-primary font-sans">
+              Overlap icebreaker{" "}
+              <span className="font-normal text-tertiary">
+                Find common contacts & opposing tensions to spark conversation
+              </span>
+            </span>
+
+            {verifiedIntersection && (
+              <>
+                <div className="px-2 pt-2 pb-4 bg-white rounded-lg border border-black/80 flex-col justify-start items-start gap-2 inline-flex">
+                  <div className="text-sm font-semibold text-primary font-sans">
+                    📇 Common contacts
+                  </div>
+                  {verifiedIntersection.contacts.length === 0 ? (
+                    <div className="text-sm text-primary font-sans font-normal">
+                      No common contacts.
+                    </div>
+                  ) : (
+                    <div className="text-sm text-link-primary font-sans font-normal">
+                      {verifiedIntersection.contacts.map((contact, index) => (
+                        <>
+                          <span className="text-primary">
+                            {index !== 0 && " | "}
+                          </span>
+                          <Link href={`/people/${contact}`}>{contact}</Link>
+                        </>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="w-full px-2 pt-2 pb-4 bg-white rounded-lg border border-black/80 flex flex-col gap-2">
+                  <div className="text-sm font-semibold text-primary font-sans">
+                    🪢 Your Tension disagreements
+                  </div>
+
+                  {verifiedIntersection.tensions.length === 0 ? (
+                    <div className="text-sm text-primary font-sans font-normal">
+                      Play the tensions game and refresh to see results!
+                    </div>
+                  ) : verifiedIntersection.tensions.every(
+                      (tension) => tension === "0"
+                    ) ? (
+                    <div className="text-sm text-primary font-sans font-normal">
+                      No tension disagreements!
+                    </div>
+                  ) : (
+                    <>
+                      <div className="text-sm font-normal text-primary font-sans">
+                        {connection.user.username} leaned towards the opposite
+                        side on these tensions. Below is what you picked.
+                      </div>
+                      {verifiedIntersection.tensions.map(
+                        (tension, index) =>
+                          tension === "1" && (
+                            <TensionSlider
+                              key={index}
+                              leftOption={tensionPairs[index][0]}
+                              rightOption={tensionPairs[index][1]}
+                              value={
+                                user.userData.tensionsRating?.tensionRating[
+                                  index
+                                ] ?? 50
+                              }
+                              onChange={() => {}}
+                            />
+                          )
+                      )}
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+
+            <AppButton
+              onClick={updatePSIOverlap}
+              variant="outline"
+              loading={refreshLoading}
+            >
+              {verifiedIntersection
+                ? "Refresh"
+                : waitingForOtherUser
+                ? `Ask ${connection.user.username} to refresh after tap!`
+                : "Discover"}
+              {}
+            </AppButton>
+          </div>
+
           {connection?.user?.bio && (
             <div className="flex flex-col gap-2 py-4 px-4">
               <>
@@ -312,28 +476,6 @@ const UserProfilePage: React.FC = () => {
               </span>
 
               <p className="text-2xl mt-2">{connection?.comment?.emoji}</p>
-            </div>
-          )}
-
-          {user.userData.lanna && (
-            <div className="flex flex-col gap-2 py-4 px-4">
-              <span className="text-sm font-semibold text-primary font-sans">
-                Connections{" "}
-                <span className="font-normal text-tertiary">
-                  where your encrypted data overlaps
-                </span>
-              </span>
-              <InteractivePSI
-                selfSigPK={user.userData.signaturePublicKey}
-                otherSigPK={connection.user.signaturePublicKey}
-                serializedPsiPrivateKey={user.serializedPsiPrivateKey}
-                selfPsiPublicKeyLink={user.userData.psiPublicKeyLink}
-                otherPsiPublicKeyLink={connection.user.psiPublicKeyLink}
-                userData={user.userData}
-                connections={user.connections}
-                existingPSIOverlap={connection.psi}
-                savePSIOverlap={savePSIOverlap}
-              />
             </div>
           )}
         </div>

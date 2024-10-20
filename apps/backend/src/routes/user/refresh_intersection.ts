@@ -19,6 +19,10 @@ router.post(
       const validatedData = RefreshIntersectionRequestSchema.parse(req.body);
       const { secretHash, index, intersectionState } = validatedData;
 
+      if (!req.app.locals.intersectionState[secretHash]) {
+        req.app.locals.intersectionState[secretHash] = {};
+      }
+
       req.app.locals.intersectionState[secretHash][index] = intersectionState;
       const { tensions: tensions0, contacts: contacts0 } = intersectionState;
 
@@ -29,13 +33,19 @@ router.post(
         const newTensions: string[] = [];
         const newContacts: string[] = [];
 
-        for (let i = 0; i < tensions0.length; i++) {
-          const tension0 = tensions0[i];
-          const tension1 = tensions1[i];
-          if (tension0 !== tension1) {
-            newTensions.push("1");
-          } else {
-            newTensions.push("0");
+        if (
+          tensions0.length !== 0 &&
+          tensions1.length !== 0 &&
+          tensions0.length === tensions1.length
+        ) {
+          for (let i = 0; i < tensions0.length; i++) {
+            const tension0 = tensions0[i];
+            const tension1 = tensions1[i];
+            if (tension0 !== tension1) {
+              newTensions.push("1");
+            } else {
+              newTensions.push("0");
+            }
           }
         }
 
@@ -66,7 +76,7 @@ router.post(
         },
       });
     } catch (error) {
-      console.error("Error in verify signin token route:", error);
+      console.error("Error in refresh intersection route:", error);
       return res.status(400).json({ error: errorToString(error) });
     }
   }

@@ -124,7 +124,7 @@ export default function TensionsPage() {
               className="form-checkbox h-5 w-5 text-primary"
             />
             <span className="text-sm text-primary">
-              Reveal my answers when running PSI with someone else.
+              Match with residents who hold opposing views upon tapping.
             </span>
           </label>
           <label className="flex items-start gap-2">
@@ -154,7 +154,7 @@ export default function TensionsPage() {
   );
 }
 
-function TensionSlider({
+export function TensionSlider({
   leftOption,
   rightOption,
   value,
