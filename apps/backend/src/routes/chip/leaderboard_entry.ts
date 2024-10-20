@@ -137,9 +137,9 @@ router.get(
       }
 
       const entries = await controller.GetTopLeaderboardEntries(
-        count,
         chipIssuer,
-        entryType
+        entryType,
+        count
       );
 
       if (entries) {

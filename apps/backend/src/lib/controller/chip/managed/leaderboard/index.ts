@@ -7,26 +7,6 @@ import {
 } from "@types";
 import { ManagedChipClient } from "../client";
 
-ManagedChipClient.prototype.GetLeaderboardEntry = async function (
-  username: string,
-  chipIssuer: ChipIssuer
-): Promise<LeaderboardEntry | null> {
-  try {
-    // Find the existing leaderboard entry for the user and chip issuer
-    const existingEntry = await this.prismaClient.leaderboardEntry.findFirst({
-      where: {
-        username,
-        chipIssuer,
-      },
-    });
-
-    return LeaderboardEntrySchema.parse(existingEntry);
-  } catch (error) {
-    console.error("Failed to get leaderboard entry:", errorToString(error));
-    throw new Error("Failed to get leaderboard entry");
-  }
-};
-
 ManagedChipClient.prototype.UpdateLeaderboardEntry = async function (
   username: string,
   chipIssuer: ChipIssuer,
@@ -102,127 +82,140 @@ ManagedChipClient.prototype.UpdateLeaderboardEntry = async function (
 
 ManagedChipClient.prototype.GetUserLeaderboardPosition = async function (
   username: string,
-  chipIssuer: ChipIssuer
+  chipIssuer: ChipIssuer,
+  entryType: LeaderboardEntryType
 ): Promise<number | null> {
-  try {
-    /*
-    1. Get list of entries for chipIssuer, ordered on descending tap count
-    subquery1 = SELECT * FROM "LeaderboardEntry" WHERE "chipIssuer"='TESTING' ORDER BY "tapCount" DESC
+  const leaderboardEntries = await this.GetTopLeaderboardEntries(
+    chipIssuer,
+    entryType,
+    undefined
+  );
 
-    2. Select username and calculated row number from entries
-    subquery2 = SELECT username, row_number() OVER() as "leaderboardPosition" FROM (subquery1) AS sorted_entries
-
-    3. Select row number based on username
-    query = SELECT row_number FROM (subquery2) AS filtered_entries WHERE "username"='pass2';
-
-    Working query:
-    SELECT "leaderboardPosition" FROM (SELECT username, row_number() OVER() as "leaderboardPosition" FROM (SELECT * FROM "LeaderboardEntry" WHERE "chipIssuer"='TESTING' ORDER BY "tapCount" DESC) AS sorted_entries) AS rowed_sorted_entries WHERE "username"='pass2';
-    */
-
-    const positions: Array<{ leaderboardPosition: number } | null> = await this
-      .prismaClient
-      .$queryRaw`SELECT "leaderboardPosition" FROM (SELECT username, row_number() OVER() as "leaderboardPosition" FROM (SELECT * FROM "LeaderboardEntry" WHERE "chipIssuer"=${chipIssuer} ORDER BY "tapCount" DESC) AS sorted_entries) AS rowed_sorted_entries WHERE "username"=${username}`;
-
-    let length = -1;
-    if (positions && positions.length == 1 && positions[0] !== null) {
-      // Position should always be length 1. 0 indicates the user doesn't exist, and 2 indicates multiple users with same name.
-      return Number(positions[0].leaderboardPosition);
-    } else if (positions && positions.length == 0) {
-      return -1;
-    } else if (positions) {
-      // I think this is overly defensive and the return value will _never_ be null, but doing it just in case -- -1 would indicate null
-      length = positions.length;
-    }
-
-    throw new Error(
-      `Failed to get user leaderboard position, return value of length ${length}`
-    );
-  } catch (error) {
-    console.error("Failed to get leaderboard position:", errorToString(error));
-    throw new Error("Failed to get leaderboard position");
+  if (!leaderboardEntries) {
+    return null;
   }
+
+  return (
+    leaderboardEntries.findIndex((entry) => entry.username === username) + 1
+  );
 };
 
-ManagedChipClient.prototype.GetLeaderboardTotalTaps = async function (
-  chipIssuer: ChipIssuer
+ManagedChipClient.prototype.GetLeaderboardTotalValue = async function (
+  chipIssuer: ChipIssuer,
+  entryType: LeaderboardEntryType
 ): Promise<number | null> {
-  try {
-    const totalTaps: Array<{ sum: number } | null> = await this.prismaClient
-      .$queryRaw`SELECT SUM("tapCount") FROM "LeaderboardEntry" WHERE "chipIssuer"=${chipIssuer}`;
+  // TODO: This is a temporary solution to handle the lanna total tap count.
+  // In the future, we will migrate this to the general leaderboard entry update.
+  if (
+    chipIssuer === ChipIssuer.EDGE_CITY_LANNA &&
+    entryType === LeaderboardEntryType.TOTAL_TAP_COUNT
+  ) {
+    const totalValue = await this.prismaClient.leaderboardEntry.aggregate({
+      _sum: {
+        tapCount: true,
+      },
+      where: {
+        chipIssuer,
+        entryType: null,
+      },
+    });
 
-    let length = -1;
-    if (totalTaps && totalTaps.length == 1 && totalTaps[0] !== null) {
-      // size of totalTaps should always be 1
-      return Number(totalTaps[0].sum);
-    } else if (totalTaps) {
-      // in case the query returns an unexpected result
-      length = totalTaps.length;
-    }
-    throw new Error(
-      `Failed to get total taps of leaderboard entries, return value of length ${length}`
-    );
-  } catch (error) {
-    console.error(
-      "Failed to get total taps of leaderboard entries:",
-      errorToString(error)
-    );
-    throw new Error("Failed to get total taps of leaderboard entries");
+    return totalValue._sum.tapCount ?? null;
   }
 
-  return null;
+  const totalValue = await this.prismaClient.leaderboardEntry.aggregate({
+    _sum: {
+      entryValue: true,
+    },
+    where: {
+      chipIssuer,
+      entryType,
+    },
+  });
+
+  return totalValue._sum.entryValue?.toNumber() ?? null;
 };
 
 // Get contributors from chip service rather than postgres.
 // While postgres handles user details, the chip service builds up a record of its community members through entries.
 // LeaderboardEntry count can represent the number of contributors.
 ManagedChipClient.prototype.GetLeaderboardTotalContributors = async function (
-  chipIssuer: ChipIssuer
+  chipIssuer: ChipIssuer,
+  entryType: LeaderboardEntryType
 ): Promise<number | null> {
-  try {
-    // There should be one distinct entry per user-leaderboard
-    const totalContributors: Array<{ count: number } | null> = await this
-      .prismaClient
-      .$queryRaw`SELECT COUNT(*) FROM "LeaderboardEntry" WHERE "chipIssuer"=${chipIssuer}`;
-
-    let length = -1;
-    if (
-      totalContributors &&
-      totalContributors.length == 1 &&
-      totalContributors[0] !== null
-    ) {
-      // List of total contributors should always be length 1
-      return Number(totalContributors[0].count);
-    } else if (totalContributors) {
-      // in case the query returns an unexpected result
-      length = totalContributors.length;
-    }
-    throw new Error(
-      `Failed to get total taps of leaderboard entries, return value of length ${length}`
-    );
-  } catch (error) {
-    console.error(
-      "Failed to get total contributor count of leaderboard:",
-      errorToString(error)
-    );
-    throw new Error("Failed to get total contributor count of leaderboard");
+  // TODO: This is a temporary solution to handle the lanna total tap count.
+  // In the future, we will migrate this to the general leaderboard entry update.
+  if (
+    chipIssuer === ChipIssuer.EDGE_CITY_LANNA &&
+    entryType === LeaderboardEntryType.TOTAL_TAP_COUNT
+  ) {
+    const totalContributors = await this.prismaClient.leaderboardEntry.count({
+      where: {
+        chipIssuer,
+        entryType: null,
+      },
+    });
+    return totalContributors;
   }
 
-  return null;
+  const totalContributors = await this.prismaClient.leaderboardEntry.count({
+    where: {
+      chipIssuer,
+      entryType,
+    },
+  });
+
+  return totalContributors;
 };
 
-ManagedChipClient.prototype.GetTopLeaderboard = async function (
-  count: number | undefined,
-  chipIssuer: ChipIssuer
+ManagedChipClient.prototype.GetTopLeaderboardEntries = async function (
+  chipIssuer: ChipIssuer,
+  entryType: LeaderboardEntryType,
+  count: number | undefined
 ): Promise<LeaderboardEntry[] | null> {
   try {
+    // TODO: This is a temporary solution to handle the lanna total tap count.
+    // In the future, we will migrate this to the general leaderboard entry update.
+    if (
+      chipIssuer === ChipIssuer.EDGE_CITY_LANNA &&
+      entryType === LeaderboardEntryType.TOTAL_TAP_COUNT
+    ) {
+      const topEntries = await this.prismaClient.leaderboardEntry.findMany({
+        where: {
+          chipIssuer,
+          entryType: null,
+        },
+        take: count,
+        orderBy: [
+          {
+            tapCount: "desc",
+          },
+          {
+            // order on username so that ties have a consistent order
+            username: "asc",
+          },
+        ],
+      });
+
+      const results: LeaderboardEntry[] = topEntries.map((entry) => {
+        return LeaderboardEntrySchema.parse({
+          username: entry.username,
+          entryValue: entry.tapCount ? Number(entry.tapCount) : 0,
+        });
+      });
+
+      return results;
+    }
+
     const topEntries = await this.prismaClient.leaderboardEntry.findMany({
       where: {
         chipIssuer,
+        entryType,
       },
       take: count,
       orderBy: [
         {
-          tapCount: "desc",
+          entryValue: "desc",
         },
         {
           // order on username so that ties have a consistent order
@@ -231,11 +224,14 @@ ManagedChipClient.prototype.GetTopLeaderboard = async function (
       ],
     });
 
-    topEntries.map((entry: LeaderboardEntry) => {
-      LeaderboardEntrySchema.parse(entry);
+    const results: LeaderboardEntry[] = topEntries.map((entry) => {
+      return LeaderboardEntrySchema.parse({
+        username: entry.username,
+        entryValue: entry.entryValue ? Number(entry.entryValue) : 0,
+      });
     });
 
-    return topEntries;
+    return results;
   } catch (error) {
     console.error(
       "Failed to get top leaderboard entries:",
