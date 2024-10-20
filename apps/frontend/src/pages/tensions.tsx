@@ -166,29 +166,18 @@ export function TensionSlider({
   onChange: (value: number) => void;
 }) {
   return (
-    <div className="px-4 py-4 bg-gray-100 rounded-lg flex flex-col justify-between">
+    <div className="px-4 py-4 bg-gray-100 rounded-lg flex flex-col gap-4">
       <div className="text-right text-gray-700 text-xs font-medium">
         {rightOption}
       </div>
-      <div className="w-full h-8 relative flex items-center">
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={value}
-          onChange={(e) => onChange(parseInt(e.target.value))}
-          className="w-full h-2 appearance-none bg-black/20 rounded-full"
-          style={{
-            WebkitAppearance: "none",
-            appearance: "none",
-            outline: "none",
-          }}
-        />
-        <div
-          className="w-5 h-5 absolute top-1/2 -translate-y-1/2 bg-white rounded-full border-2 border-gray-700 shadow pointer-events-none"
-          style={{ left: `calc(${value}% - 8px)` }}
-        ></div>
-      </div>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={value}
+        onChange={(e) => onChange(parseInt(e.target.value))}
+        className="w-full h-2 bg-blue-500 rounded-lg appearance-none cursor-pointer"
+      />
       <div className="text-left text-gray-700 text-xs font-medium">
         {leftOption}
       </div>
