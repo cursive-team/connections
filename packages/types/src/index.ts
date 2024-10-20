@@ -19,4 +19,5 @@ export function errorToString(error: unknown): string {
 
 export * from "./chip";
 export * from "./user";
+export * from "./oauth";
 export * from "./util";
