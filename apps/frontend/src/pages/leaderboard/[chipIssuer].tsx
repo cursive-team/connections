@@ -122,10 +122,6 @@ const LeaderboardPage: React.FC = () => {
             <div className="text-[#090909] text-base font-bold font-['DM Sans'] leading-snug">
               {contributorMsg}
             </div>
-            <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
-              Win an NFC ring by ranking in the top 10 this week! Winners are
-              announced at Sunday dinner.
-            </div>
           </div>
         </div>
       }
