@@ -10,8 +10,8 @@ export const BASE_API_URL =
 export const OAUTH_APP_MAPPING: Record<string, {id: string | undefined, secret: string | undefined, token_url: string }> = {
   "strava": {
     token_url: "https://www.strava.com/api/v3/oauth/token",
-    id: process.env.OAUTH_STRAVA_CLIENT_ID,
-    secret: process.env.OAUTH_STRAVA_CLIENT_SECRET,
+    id: process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_ID || "",
+    secret: process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_SECRET || "",
   }
 }
 
