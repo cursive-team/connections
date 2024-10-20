@@ -307,7 +307,11 @@ export default function CommunityPage() {
                 return (
                   <div
                     key={index}
-                    onClick={() => setDisplayedDashboard(prop?.dashboard)}
+                    onClick={() =>
+                      setDisplayedDashboard(
+                        prop?.dashboard || DisplayedDashboard.NONE
+                      )
+                    }
                   >
                     <CommunityCard
                       image={prop?.image}
