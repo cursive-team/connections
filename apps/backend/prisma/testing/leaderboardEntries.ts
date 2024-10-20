@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { LeaderboardEntry, ChipIssuer } from "@types";
+import { ChipIssuer, LeaderboardEntryType } from "@types";
 const {
   uniqueNamesGenerator,
   adjectives,
@@ -32,7 +32,7 @@ async function main() {
         dictionaries: [adjectives, colors, animals],
       }),
       chipIssuer: ChipIssuer.TESTING,
-      entryType: null,
+      entryType: LeaderboardEntryType.TOTAL_TAP_COUNT,
       entryValue: randomInt(0, 300),
       tapCount: randomInt(0, 300),
     };
