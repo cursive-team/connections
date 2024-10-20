@@ -30,8 +30,8 @@ export const ROUTER_ITEMS: RouterItem[] = [
     iconSize: 20,
   },
   {
-    label: "Activity",
-    href: "/activity",
+    label: "Community",
+    href: "/community",
     icon: Icons.Activity,
     iconSize: 20,
   },

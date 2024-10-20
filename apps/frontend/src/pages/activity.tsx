@@ -93,19 +93,26 @@ const ActivityPage: React.FC = () => {
   return (
     <AppLayout
       showHeader={false}
-      header={
-        <>
-          <span className="text-primary font-medium">Activity</span>
+      showFooter={false}
+      back={{
+        href: "/profile",
+        label: "Back",
+        content: (
           <div
             className="absolute left-0 right-0 bottom-0 h-[2px]"
             style={{
               background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
             }}
           ></div>
-        </>
-      }
+        ),
+      }}
       className="container mx-auto px-4 py-4"
     >
+      <div className="flex items-center gap-0.5 pb-2">
+        <span className="text-lg font-semibold leading-none text-primary">
+          Your activity
+        </span>
+      </div>
       {Object.entries(
         activityItems.reduce((acc, item) => {
           const date = item.timestamp.toLocaleDateString("en-US", {

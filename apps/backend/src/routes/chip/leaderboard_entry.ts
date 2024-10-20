@@ -157,7 +157,7 @@ router.get(
     try {
       // Use same schema as /get_leaderboard_entry
       const validatedData = GetLeaderboardEntryRequestSchema.parse(req.query);
-      const { authToken, chipIssuer } = validatedData;
+      const { authToken, chipIssuer, count } = validatedData;
 
       // Fetch user by auth token
       // While the user isn't specifically required, it ensures the request is from an authenticated user
@@ -167,8 +167,7 @@ router.get(
         return res.status(401).json({ error: "Invalid auth token" });
       }
 
-      // Get leaderboard entries
-      const entries = await controller.GetTopLeaderboard(100, chipIssuer);
+      const entries = await controller.GetTopLeaderboard(count, chipIssuer);
 
       if (entries) {
         return res.status(200).json({ entries: entries });

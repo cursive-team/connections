@@ -1,0 +1,207 @@
+import { Icons } from "@/components/Icons";
+import { AppButton } from "@/components/ui/Button";
+import { CursiveLogo } from "@/components/ui/HeaderCover";
+import AppLayout from "@/layouts/AppLayout";
+import { cn } from "@/lib/frontend/util";
+import { LeaderboardDetails, LeaderboardEntries } from "@types";
+import { useState, useEffect } from "react";
+import { Leaderboard } from "./Leaderboard";
+import { IoIosArrowBack as BackIcon } from "react-icons/io";
+
+interface DashboardDetailProps {
+  image: string;
+  title: string;
+  description: React.ReactNode;
+  leaderboardEntries: LeaderboardEntries;
+  leaderboardDetails: LeaderboardDetails;
+  goal: number;
+  organizer: string;
+  organizerDescription: string;
+  type?: "active" | "community";
+  prize?: boolean;
+  returnToHome: () => void;
+}
+
+export function DashboardDetail({
+  image,
+  title,
+  description,
+  leaderboardEntries,
+  leaderboardDetails,
+  goal,
+  organizer,
+  organizerDescription,
+  type = "active",
+  prize = false,
+  returnToHome,
+}: DashboardDetailProps) {
+  const [progress, setProgress] = useState(0);
+  const [seeFullLeaderboard, setSeeFullLeaderboard] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setProgress(
+        Math.min(100, Math.round((leaderboardDetails.totalTaps / goal) * 100))
+      );
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [leaderboardDetails, goal]);
+
+  if (seeFullLeaderboard) {
+    return (
+      <AppLayout
+        withContainer={false}
+        showFooter={false}
+        header={
+          <div>
+            <div className="flex flex-row w-full px-1 pt-8 pb-4 bg-white justify-between items-center inline-flex">
+              <div className="text-[#090909] text-xl font-semibold font-['DM Sans'] leading-tight">
+                {`Taps (${leaderboardDetails.totalTaps})`}
+              </div>
+              <div className="ml-auto">
+                <Icons.XClose
+                  size={24}
+                  onClick={() => setSeeFullLeaderboard(false)}
+                />
+              </div>
+            </div>
+            <div className="py-4 px-1 flex-col justify-center items-start gap-2 inline-flex">
+              <div className="text-[#090909] text-base font-bold font-['DM Sans'] leading-snug">
+                {`You are #${leaderboardDetails.userPosition} of ${leaderboardDetails.totalContributors} contributors!`}
+              </div>
+              {prize && (
+                <>
+                  <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
+                    Win an NFC ring by ranking in the top 10 this week! Winners
+                    are announced at Sunday dinner.
+                  </div>
+                  <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
+                    Cursive team members are marked with a 💍.
+                    {prize && " They do not count in the top 10."}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        }
+        className="pb-8"
+      >
+        <Leaderboard
+          leaderboardEntries={{
+            entries: leaderboardEntries.entries.slice(0, 100),
+          }}
+          leaderboardDetails={leaderboardDetails}
+          prize={prize}
+        />
+      </AppLayout>
+    );
+  }
+
+  return (
+    <AppLayout
+      seoTitle=""
+      showFooter={false}
+      withContainer={false}
+      headerDivider
+      header={
+        <div className="sticky top-0 h-12 flex items-center bg-white z-20">
+          <div className="px-1">
+            <div className="flex gap-1 items-center" onClick={returnToHome}>
+              <BackIcon size={12} />
+              <span className="text-sm">Back</span>
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <div className="flex flex-col divide-y divide-y-quaternary">
+        <div className="flex flex-col gap-4 p-4">
+          <div
+            className="rounded-lg overflow-hidden h-[135px] w-full bg-gray-200"
+            style={
+              image
+                ? {
+                    backgroundSize: "100% auto",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    backgroundImage: `url(${image})`,
+                  }
+                : {}
+            }
+          ></div>
+          <div className="flex flex-col flex-1 gap-2">
+            <p className="text-xs font-normal text-quaternary">{`${
+              (leaderboardDetails.userPosition ?? 0) > 0
+                ? `#${leaderboardDetails.userPosition} of `
+                : ""
+            } ${leaderboardDetails.totalContributors} contributors`}</p>
+            <h2 className="text-xl font-bold leading-none text-primary">
+              {title}
+            </h2>
+            <div className="w-full bg-[#f1f1f1] rounded-full h-[7px] mt-2 mb-1 overflow-hidden">
+              <div
+                className={cn(
+                  "h-[7px] rounded-full transition-all duration-1000 ease-out",
+                  type === "active"
+                    ? "bg-active-progress"
+                    : "bg-community-progress"
+                )}
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+        {description && (
+          <div className="p-4">
+            <p className="text-sm font-normal text-primary">{description}</p>
+          </div>
+        )}
+
+        <div className="pb-6">
+          <div className="flex flex-col gap-2 p-4">
+            <div className=" items-center flex justify-between">
+              <span className="text-base font-bold text-primary font-sans">
+                Top 5 contributors
+              </span>
+              <AppButton
+                variant="outline"
+                className="rounded-full max-w-[120px]"
+                icon={<Icons.Star className="mr-2" />}
+                onClick={() => setSeeFullLeaderboard(true)}
+              >
+                See more
+              </AppButton>
+            </div>
+          </div>
+          <div>
+            <Leaderboard
+              leaderboardEntries={{
+                entries: leaderboardEntries.entries.slice(0, 5),
+              }}
+              leaderboardDetails={leaderboardDetails}
+            />
+          </div>
+        </div>
+
+        <div className="p-4">
+          <div className="flex flex-col gap-2">
+            <span className="text-base font-bold text-primary font-sans">
+              Organizer
+            </span>
+            <div className="flex items-start gap-4 py-4">
+              <CursiveLogo size={48} />
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-primary font-sans">
+                  {organizer}
+                </span>
+                <span className="text-xs font-medium text-secondary font-sans">
+                  {organizerDescription}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </AppLayout>
+  );
+}

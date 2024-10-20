@@ -34,6 +34,7 @@ const PeoplePage: React.FC = () => {
 
   return (
     <AppLayout
+      seoTitle="People"
       header={
         <>
           <span className="text-primary font-medium">People</span>

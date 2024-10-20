@@ -135,9 +135,7 @@ export class Controller {
     return this.chipClient.UpdateLeaderboardEntry(username, chipIssuer);
   }
 
-  GetLeaderboardTotalTaps(
-    chipIssuer: ChipIssuer
-  ): Promise<number | null> {
+  GetLeaderboardTotalTaps(chipIssuer: ChipIssuer): Promise<number | null> {
     return this.chipClient.GetLeaderboardTotalTaps(chipIssuer);
   }
 
@@ -151,14 +149,14 @@ export class Controller {
     username: string,
     chipIssuer: ChipIssuer
   ): Promise<number | null> {
-    return this.chipClient.GetUserLeaderboardPosition(username, chipIssuer)
+    return this.chipClient.GetUserLeaderboardPosition(username, chipIssuer);
   }
 
   GetTopLeaderboard(
-    count: number,
+    count: number | undefined,
     chipIssuer: ChipIssuer
   ): Promise<LeaderboardEntry[] | null> {
-    return this.chipClient.GetTopLeaderboard(count, chipIssuer)
+    return this.chipClient.GetTopLeaderboard(count, chipIssuer);
   }
 
   EmailSigninToken(signinToken: SigninToken): Promise<void> {

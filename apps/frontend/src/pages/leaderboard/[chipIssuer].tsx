@@ -16,6 +16,7 @@ import {
 } from "@/lib/chip";
 import { communitiesEnum, communitiesHumanReadable } from "../../constants";
 import { Icons } from "@/components/Icons";
+import { storage } from "@/lib/storage";
 
 const LeaderboardPage: React.FC = () => {
   const router = useRouter();
@@ -29,9 +30,16 @@ const LeaderboardPage: React.FC = () => {
   useEffect(() => {
     const fetchInfo = async () => {
       if (typeof chipIssuer == "string") {
+        const { user, session } = await storage.getUserAndSession();
+        if (!user || !session || session.authTokenExpiresAt < new Date()) {
+          toast.error("Please log in to view the leaderboard.");
+          router.push("/");
+          return;
+        }
+
         if (!Object.keys(communitiesEnum).includes(chipIssuer)) {
           toast.error("Invalid chip issuer.");
-          router.push("/");
+          router.push("/profile");
           return;
         }
 
@@ -44,12 +52,12 @@ const LeaderboardPage: React.FC = () => {
         } catch (error) {
           console.error("Error getting user leaderboard details:", error);
           toast.error("Error getting user leaderboard details.");
-          router.push("/");
+          router.push("/profile");
           return;
         }
         if (!details) {
           toast.error("User leaderboard details not found.");
-          router.push("/");
+          router.push("/profile");
           return;
         }
 
@@ -59,12 +67,12 @@ const LeaderboardPage: React.FC = () => {
         } catch (error) {
           console.error("Error getting top leaderboard entries:", error);
           toast.error("Error getting top leaderboard entries.");
-          router.push("/");
+          router.push("/profile");
           return;
         }
         if (!entries) {
           toast.error("Top leaderboard entries not found.");
-          router.push("/");
+          router.push("/profile");
           return;
         }
 
@@ -113,10 +121,6 @@ const LeaderboardPage: React.FC = () => {
           <div className="py-4 px-1 flex-col justify-center items-start gap-2 inline-flex">
             <div className="text-[#090909] text-base font-bold font-['DM Sans'] leading-snug">
               {contributorMsg}
-            </div>
-            <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
-              Win an NFC ring by ranking in the top 10 this week! Winners are
-              announced at Sunday dinner.
             </div>
           </div>
         </div>

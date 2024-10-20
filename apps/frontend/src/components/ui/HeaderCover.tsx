@@ -4,19 +4,21 @@ import Image from "next/image";
 interface HeaderCoverProps {
   isLoading?: boolean;
   className?: string;
+  size?: number;
 }
 
 export const CursiveLogo = ({
   isLoading = false,
   className = "",
+  size = 68,
 }: HeaderCoverProps) => {
   return (
     <Image
       src="/images/cursive-logo.png"
       alt="cursive logo"
       className={cn(className, isLoading && "animate-pulse-scale")}
-      width={68}
-      height={68}
+      width={size}
+      height={size}
     />
   );
 };
@@ -33,7 +35,7 @@ export const HeaderCover = ({ isLoading = false }: HeaderCoverProps) => {
           height={57}
         />
         <Image
-          src="/images/register-main-cover-compressed.png"
+          src="/images/register-main-cover-compressed.svg"
           alt="register main"
           className=" object-cover w-full"
           width={100}
