@@ -3,6 +3,7 @@ import {
   errorToString,
   LeaderboardEntry,
   LeaderboardEntrySchema,
+  LeaderboardEntryType,
 } from "@types";
 import { ManagedChipClient } from "../client";
 
@@ -28,30 +29,68 @@ ManagedChipClient.prototype.GetLeaderboardEntry = async function (
 
 ManagedChipClient.prototype.UpdateLeaderboardEntry = async function (
   username: string,
-  chipIssuer: ChipIssuer
+  chipIssuer: ChipIssuer,
+  entryType: LeaderboardEntryType,
+  entryValue: number
 ): Promise<void> {
   try {
+    // TODO: This is a temporary solution to handle the lanna total tap count.
+    // In the future, we will migrate this to the general leaderboard entry update.
+    if (
+      chipIssuer === ChipIssuer.EDGE_CITY_LANNA &&
+      entryType === LeaderboardEntryType.TOTAL_TAP_COUNT
+    ) {
+      // Find the existing leaderboard entry for the user and chip issuer
+      const existingEntry = await this.prismaClient.leaderboardEntry.findFirst({
+        where: {
+          username,
+          chipIssuer: ChipIssuer.EDGE_CITY_LANNA,
+        },
+      });
+
+      if (existingEntry) {
+        // If an entry exists, update the tap count
+        await this.prismaClient.leaderboardEntry.update({
+          where: { id: existingEntry.id },
+          data: { tapCount: entryValue },
+        });
+      } else {
+        // If no entry exists, create a new one
+        await this.prismaClient.leaderboardEntry.create({
+          data: {
+            username,
+            chipIssuer: ChipIssuer.EDGE_CITY_LANNA,
+            tapCount: entryValue,
+          },
+        });
+      }
+
+      return;
+    }
+
     // Find the existing leaderboard entry for the user and chip issuer
     const existingEntry = await this.prismaClient.leaderboardEntry.findFirst({
       where: {
         username,
         chipIssuer,
+        entryType,
       },
     });
 
     if (existingEntry) {
-      // If an entry exists, increment the tap count
+      // If an entry exists, update with the new value
       await this.prismaClient.leaderboardEntry.update({
         where: { id: existingEntry.id },
-        data: { tapCount: { increment: 1 } },
+        data: { entryValue },
       });
     } else {
-      // If no entry exists, create a new one with tap count 1
+      // If no entry exists, create a new one with the provided value
       await this.prismaClient.leaderboardEntry.create({
         data: {
           username,
           chipIssuer,
-          tapCount: 1,
+          entryType,
+          entryValue,
         },
       });
     }

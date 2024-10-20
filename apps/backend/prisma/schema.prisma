@@ -81,6 +81,8 @@ model LeaderboardEntry {
   id         String   @id @default(uuid())
   username   String
   chipIssuer String
-  tapCount   Int
+  entryType  String?
+  entryValue Decimal?
+  tapCount   Int?
   createdAt  DateTime @default(now())
 }

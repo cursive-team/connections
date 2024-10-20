@@ -69,7 +69,7 @@ router.post(
   ) => {
     try {
       const validatedData = UpdateLeaderboardEntryRequestSchema.parse(req.body);
-      const { authToken, chipIssuer } = validatedData;
+      const { authToken, chipIssuer, entryType, entryValue } = validatedData;
 
       // Fetch user by auth token
       const user = await controller.GetUserByAuthToken(authToken);
@@ -79,7 +79,12 @@ router.post(
       }
 
       // Update leaderboard entry
-      await controller.UpdateLeaderboardEntry(user.username, chipIssuer);
+      await controller.UpdateLeaderboardEntry(
+        user.username,
+        chipIssuer,
+        entryType,
+        entryValue
+      );
 
       return res.status(200).json({});
     } catch (error) {

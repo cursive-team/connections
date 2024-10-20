@@ -6,6 +6,7 @@ import {
   TapParams,
   ChipIssuer,
   LeaderboardEntry,
+  LeaderboardEntryType,
 } from "@types";
 import { Chip } from "@/lib/controller/chip/types";
 
@@ -40,13 +41,13 @@ export class ManagedChipClient implements iChipClient {
   // @ts-expect-error (ts2391)
   UpdateLeaderboardEntry(
     username: string,
-    chipIssuer: ChipIssuer
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType,
+    entryValue: number
   ): Promise<void>;
 
   // @ts-expect-error (ts2391)
-  GetLeaderboardTotalTaps(
-    chipIssuer: ChipIssuer
-  ): Promise<number | null>;
+  GetLeaderboardTotalTaps(chipIssuer: ChipIssuer): Promise<number | null>;
 
   // @ts-expect-error (ts2391)
   GetLeaderboardTotalContributors(

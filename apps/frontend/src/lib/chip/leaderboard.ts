@@ -7,6 +7,11 @@ import {
   LeaderboardEntriesSchema,
   LeaderboardDetails,
   LeaderboardDetailsSchema,
+<<<<<<< HEAD
+=======
+  UpdateLeaderboardEntryRequest,
+  LeaderboardEntryType,
+>>>>>>> b564cfa (add new leaderboard entry schema)
 } from "@types";
 import { storage } from "@/lib/storage";
 
@@ -46,46 +51,70 @@ export async function getLeaderboardEntry(
   }
 }
 
-export async function updateLeaderboardEntry(
-  connectionUsername: string,
+export async function updateTapLeaderboardEntry(
   chipIssuer: ChipIssuer
 ): Promise<void> {
   const { user, session } = await storage.getUserAndSession();
 
-  // If existing connection with same chip issuer, do nothing
-  const existingConnection = user.connections[connectionUsername];
-  if (
-    existingConnection &&
-    existingConnection.taps.some((tap) => tap.chipIssuer === chipIssuer)
-  ) {
-    return;
-  }
+  // Count total taps and taps for the week starting October 20th
+  const weekOct20StartDate = new Date("2024-10-20T00:00:00Z");
+  let totalTapCount = 0;
+  let weekOct20TapCount = 0;
+
+  Object.values(user.connections).forEach((connection) => {
+    connection.taps.forEach((tap) => {
+      if (tap.chipIssuer === chipIssuer) {
+        totalTapCount++;
+        if (new Date(tap.timestamp) >= weekOct20StartDate) {
+          weekOct20TapCount++;
+        }
+      }
+    });
+  });
 
   try {
-    const response = await fetch(
-      `${BASE_API_URL}/chip/update_leaderboard_entry`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ authToken: session.authTokenValue, chipIssuer }),
-      }
-    );
+    const updateTotalTapsRequest: UpdateLeaderboardEntryRequest = {
+      authToken: session.authTokenValue,
+      chipIssuer,
+      entryType: LeaderboardEntryType.TOTAL_TAP_COUNT,
+      entryValue: totalTapCount,
+    };
 
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      console.error(
-        `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+    const updateWeekTapsRequest: UpdateLeaderboardEntryRequest = {
+      authToken: session.authTokenValue,
+      chipIssuer,
+      entryType: LeaderboardEntryType.WEEK_OCT_20_TAP_COUNT,
+      entryValue: weekOct20TapCount,
+    };
+
+    const requests = [updateTotalTapsRequest, updateWeekTapsRequest];
+
+    for (const request of requests) {
+      const response = await fetch(
+        `${BASE_API_URL}/chip/update_leaderboard_entry`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(request),
+        }
       );
-      throw new Error(
-        `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
-      );
+
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        console.error(
+          `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+        );
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+        );
+      }
     }
 
     return;
   } catch (error) {
-    console.error("Error updating leaderboard entry:", error);
+    console.error("Error updating leaderboard entries:", error);
     throw error;
   }
 }

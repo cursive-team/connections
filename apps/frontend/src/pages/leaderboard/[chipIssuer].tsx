@@ -14,7 +14,7 @@ import {
   getTopLeaderboardEntries,
   getUserLeaderboardDetails,
 } from "@/lib/chip";
-import { communitiesEnum, communitiesHumanReadable } from "../../constants";
+import { communitiesEnum, communitiesHumanReadable } from "@/constants";
 import { Icons } from "@/components/Icons";
 import { storage } from "@/lib/storage";
 

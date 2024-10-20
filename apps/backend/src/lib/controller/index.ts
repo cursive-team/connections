@@ -18,6 +18,7 @@ import {
   TapParams,
   UpdateChipRequest,
   LeaderboardEntry,
+  LeaderboardEntryType,
 } from "@types";
 import { Chip } from "@/lib/controller/chip/types";
 import { iChipClient } from "@/lib/controller/chip/interfaces";
@@ -130,9 +131,16 @@ export class Controller {
 
   UpdateLeaderboardEntry(
     username: string,
-    chipIssuer: ChipIssuer
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType,
+    entryValue: number
   ): Promise<void> {
-    return this.chipClient.UpdateLeaderboardEntry(username, chipIssuer);
+    return this.chipClient.UpdateLeaderboardEntry(
+      username,
+      chipIssuer,
+      entryType,
+      entryValue
+    );
   }
 
   GetLeaderboardTotalTaps(chipIssuer: ChipIssuer): Promise<number | null> {

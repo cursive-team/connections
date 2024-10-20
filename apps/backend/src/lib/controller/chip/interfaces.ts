@@ -5,6 +5,7 @@ import {
   ChipIssuer,
   UpdateChipRequest,
   LeaderboardEntry,
+  LeaderboardEntryType,
 } from "@types";
 import { Chip } from "./types";
 
@@ -18,7 +19,9 @@ export interface iChipClient {
   ): Promise<LeaderboardEntry | null>;
   UpdateLeaderboardEntry(
     username: string,
-    chipIssuer: ChipIssuer
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType,
+    entryValue: number
   ): Promise<void>;
   GetLeaderboardTotalTaps(chipIssuer: ChipIssuer): Promise<number | null>;
   GetLeaderboardTotalContributors(

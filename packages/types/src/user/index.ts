@@ -1,4 +1,3 @@
-import { ChipIssuerSchema } from "../chip";
 import { z } from "zod";
 
 // Username schema
@@ -192,5 +191,3 @@ export const VerifySigninTokenResponseSchema = z.object({
 export type VerifySigninTokenResponse = z.infer<
   typeof VerifySigninTokenResponseSchema
 >;
-
-
