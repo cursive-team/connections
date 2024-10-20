@@ -18,7 +18,13 @@ async function main() {
   // Update for number of entries to create
   const count = 10;
 
-  const mapEntries = new Array<LeaderboardEntry>(count);
+  const mapEntries = new Array<{
+    username: string;
+    chipIssuer: ChipIssuer;
+    entryType: string | null;
+    entryValue: number | null;
+    tapCount: number | null;
+  }>(count);
 
   for (let i = 0; i < count; i++) {
     mapEntries[i] = {
@@ -26,6 +32,8 @@ async function main() {
         dictionaries: [adjectives, colors, animals],
       }),
       chipIssuer: ChipIssuer.TESTING,
+      entryType: null,
+      entryValue: randomInt(0, 300),
       tapCount: randomInt(0, 300),
     };
   }
