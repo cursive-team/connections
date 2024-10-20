@@ -34,6 +34,7 @@ export function DashboardDetail({
   returnToHome,
 }: DashboardDetailProps) {
   const [progress, setProgress] = useState(0);
+  const [seeFullLeaderboard, setSeeFullLeaderboard] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -43,6 +44,47 @@ export function DashboardDetail({
     }, 500);
     return () => clearTimeout(timer);
   }, [leaderboardDetails, goal]);
+
+  if (seeFullLeaderboard) {
+    return (
+      <AppLayout
+        withContainer={false}
+        showFooter={false}
+        header={
+          <div>
+            <div className="flex flex-row w-full px-1 pt-8 pb-4 bg-white justify-between items-center inline-flex">
+              <div className="text-[#090909] text-xl font-semibold font-['DM Sans'] leading-tight">
+                {`Taps (${leaderboardDetails.totalTaps})`}
+              </div>
+              <div className="ml-auto">
+                <Icons.XClose
+                  size={24}
+                  onClick={() => setSeeFullLeaderboard(false)}
+                />
+              </div>
+            </div>
+            <div className="py-4 px-1 flex-col justify-center items-start gap-2 inline-flex">
+              <div className="text-[#090909] text-base font-bold font-['DM Sans'] leading-snug">
+                {`You are #${leaderboardDetails.userPosition} of ${leaderboardDetails.totalContributors} contributors!`}
+              </div>
+              <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
+                Win an NFC ring by ranking in the top 10 this week! Winners are
+                announced at Sunday dinner.
+              </div>
+            </div>
+          </div>
+        }
+        className="pb-8"
+      >
+        <Leaderboard
+          leaderboardEntries={{
+            entries: leaderboardEntries.entries.slice(0, 100),
+          }}
+          leaderboardDetails={leaderboardDetails}
+        />
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout
@@ -114,8 +156,9 @@ export function DashboardDetail({
                 variant="outline"
                 className="rounded-full max-w-[120px]"
                 icon={<Icons.Star className="mr-2" />}
+                onClick={() => setSeeFullLeaderboard(true)}
               >
-                See all
+                See more
               </AppButton>
             </div>
           </div>
