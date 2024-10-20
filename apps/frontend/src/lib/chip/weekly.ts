@@ -1,3 +1,5 @@
+import { LeaderboardDetails, LeaderboardEntries } from "@types";
+
 export const lannaWeek1Leaderboard = {
   andrew: 2,
   daryashakh: 1,
@@ -115,4 +117,47 @@ export const lannaWeek1Leaderboard = {
   L0visa: 1,
   River: 1,
   BellaVE: 3,
+};
+
+export const retrieveWeeklyLeaderboard = (
+  lastWeekLeaderboard: Record<string, number>,
+  currentDetails: LeaderboardDetails,
+  currentEntries: LeaderboardEntries
+): { details: LeaderboardDetails; entries: LeaderboardEntries } => {
+  const weeklyEntries: LeaderboardEntries = { entries: [] };
+  const weeklyDetails: LeaderboardDetails = {
+    username: currentDetails.username,
+    userPosition: -1,
+    totalContributors: 0,
+    totalTaps: 0,
+  };
+
+  // Calculate weekly taps for each entry
+  currentEntries.entries.forEach((entry) => {
+    const lastWeekTaps = lastWeekLeaderboard[entry.username] || 0;
+    const weeklyTaps = entry.tapCount - lastWeekTaps;
+
+    if (weeklyTaps > 0) {
+      weeklyEntries.entries.push({
+        username: entry.username,
+        chipIssuer: entry.chipIssuer,
+        tapCount: weeklyTaps,
+      });
+      weeklyDetails.totalTaps += weeklyTaps;
+      weeklyDetails.totalContributors++;
+    }
+  });
+
+  // Sort entries by tap count in descending order
+  weeklyEntries.entries.sort((a, b) => b.tapCount - a.tapCount);
+
+  // Update user position and details
+  for (let i = 0; i < weeklyEntries.entries.length; i++) {
+    if (weeklyEntries.entries[i].username === currentDetails.username) {
+      weeklyDetails.userPosition = i + 1;
+      break;
+    }
+  }
+
+  return { details: weeklyDetails, entries: weeklyEntries };
 };

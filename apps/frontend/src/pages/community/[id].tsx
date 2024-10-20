@@ -100,14 +100,14 @@ export default function CommunityDetailPage() {
             <span className="text-base font-bold text-primary font-sans">
               Organizer
             </span>
-            <div className="flex items-center gap-4 py-4">
+            <div className="flex items-start gap-4 py-4">
               <CursiveLogo size={48} />
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-primary font-sans">
                   Cursive
                 </span>
                 <span className="text-xs font-medium text-secondary font-sans">
-                  User
+                  The app builders
                 </span>
               </div>
             </div>

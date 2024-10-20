@@ -172,7 +172,7 @@ ManagedChipClient.prototype.GetLeaderboardTotalContributors = async function (
 };
 
 ManagedChipClient.prototype.GetTopLeaderboard = async function (
-  count: number,
+  count: number | undefined,
   chipIssuer: ChipIssuer
 ): Promise<LeaderboardEntry[] | null> {
   try {
