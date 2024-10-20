@@ -2,7 +2,7 @@ import { z } from "zod";
 import { nullToUndefined } from "@types";
 import { TwitterDataSchema } from "./twitterData";
 import { TelegramDataSchema } from "./telegramData";
-import { LannaDataSchema } from "./lannaData";
+import { LannaDataSchema, TensionsRatingSchema } from "./lannaData";
 
 export const UserDataSchema = z.object({
   username: z.string(),
@@ -14,6 +14,7 @@ export const UserDataSchema = z.object({
   twitter: nullToUndefined(TwitterDataSchema),
   telegram: nullToUndefined(TelegramDataSchema),
   lanna: nullToUndefined(LannaDataSchema),
+  tensionsRating: nullToUndefined(TensionsRatingSchema),
 });
 
 export type UserData = z.infer<typeof UserDataSchema>;

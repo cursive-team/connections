@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+export const TensionsRatingSchema = z.object({
+  tensionRating: z.array(z.number()),
+  revealAnswers: z.boolean(),
+  contributeAnonymously: z.boolean(),
+});
+
+export type TensionsRating = z.infer<typeof TensionsRatingSchema>;
+
 export const LannaDesiredConnectionsSchema = z.object({
   getHealthy: z.boolean(),
   cowork: z.boolean(),

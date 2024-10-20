@@ -20,6 +20,16 @@ export const LANNA_INTERESTS_LIST = [
   "doMentalWorkouts",
 ];
 
+export const tensionPairs = [
+  ["💵 Paid content", "Free content with ads 🧃"],
+  [`😈 Devil's advocacy`, "Yes-and protocol 🧐"],
+  ["🪟 Open boundary communities", "Closed boundary communities 🚪"],
+  ["‍‍🧘‍♂️ Being present", "Being strategic ♟"],
+  ["🐉 Mythological thinking", "First principles thinking 🪜"],
+  ["🌍🚀 World expansion", "Deep play opportunities 🎮🌀"],
+  ["🌳 Evolutionary roots", "Scientific progress 🧪"],
+];
+
 // Signature public keys for pre-migration users
 export const preMigrationSignaturePublicKeys: string[] = [
   "0404849088a1bfca2742634aede380f1cf47eac2158d32b1c253ef9746889ac7c4065ad6155273268dccf40cc4f668ac40dfd9850142700a75108ae3729548dcc6",
