@@ -5,8 +5,15 @@ import healthRoutes from "./routes/health";
 import { FRONTEND_URL } from "./constants";
 import { IntersectionState } from "@types";
 const cors = require("cors");
+const dotenv = require('dotenv');
 
 const app = express();
+
+// Load environment variables
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
+
 const corsOptions = {
   origin: `${FRONTEND_URL}`,
 };
@@ -24,3 +31,5 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+

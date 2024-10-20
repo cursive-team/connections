@@ -4,6 +4,11 @@ import { Icons } from "@/components/Icons";
 
 export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
 
+// Load environment variables
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 export const BASE_API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
