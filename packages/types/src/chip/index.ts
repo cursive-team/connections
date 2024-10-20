@@ -109,6 +109,12 @@ export type GetLeaderboardEntryRequest = z.infer<
   typeof GetLeaderboardEntryRequestSchema
 >;
 
+export enum LeaderboardType {
+  STRAVA_MONTHLY_RUN = "STRAVA_MONTHLY_RUN_DISTANCE",
+}
+
+export const LeaderboardTypeSchema = z.nativeEnum(LeaderboardType);
+
 export const LeaderboardEntrySchema = z.object({
   username: z.string(),
   chipIssuer: z.string(),

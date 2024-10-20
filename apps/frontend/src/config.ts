@@ -1,17 +1,24 @@
 import { Inter } from "next/font/google";
 import { RouterItem } from "@/lib/frontend/types";
 import { Icons } from "@/components/Icons";
+import {LeaderboardType, OAuthMapping} from "@types";
 
 export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
 
 export const BASE_API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
-export const OAUTH_APP_MAPPING: Record<string, {id: string | undefined, secret: string | undefined, token_url: string }> = {
+export const OAUTH_APP_MAPPING: Record<string, OAuthMapping> = {
   "strava": {
     token_url: "https://www.strava.com/api/v3/oauth/token",
     id: process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_ID || "",
     secret: process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_SECRET || "",
+    data_options: [
+      {
+        type: LeaderboardType.STRAVA_MONTHLY_RUN,
+        endpoint: "https://www.strava.com/api/v3/athletes/${user_id}/stats",
+      }
+    ],
   }
 }
 
