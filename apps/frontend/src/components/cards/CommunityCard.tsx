@@ -16,7 +16,7 @@ export interface CommunityCardProps {
   position?: number;
   type: "active" | "community" | "coming-soon";
   progressPercentage?: number;
-  dashboard: DisplayedDashboard;
+  dashboard?: DisplayedDashboard;
 }
 
 export const CommunityCard = ({

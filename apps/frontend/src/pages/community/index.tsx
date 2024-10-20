@@ -75,8 +75,6 @@ const ComingSoonCommunityGoals = () => {
   );
 };
 
-const communityIssuer = ChipIssuer.TESTING;
-
 export default function CommunityPage() {
   const router = useRouter();
   const [leaderboardDetails, setLeaderboardDetails] =
@@ -88,9 +86,10 @@ export default function CommunityPage() {
   const [weeklyLeaderboardEntries, setWeeklyLeaderboardEntries] =
     useState<LeaderboardEntries | null>(null);
   const [cardProps, setCardProps] = useState<CommunityCardProps[]>([]);
-
   const [displayedDashboard, setDisplayedDashboard] =
     useState<DisplayedDashboard>(DisplayedDashboard.NONE);
+
+  const communityIssuer = ChipIssuer.TESTING;
 
   useEffect(() => {
     const fetchInfo = async () => {
@@ -145,7 +144,7 @@ export default function CommunityPage() {
         {
           image: "/images/hand.png",
           title: "Lanna Social Graph",
-          description: `${details.totalTaps} of 2,000 taps`,
+          description: `${details.totalTaps} of 2000 taps`,
           type: "active",
           position: details.userPosition,
           totalContributors: details.totalContributors,
@@ -194,7 +193,21 @@ export default function CommunityPage() {
       <DashboardDetail
         image="/images/week-wide.png"
         title="Social Graph, Week of 10/20"
-        description={`${weeklyLeaderboardDetails?.totalTaps} of 500 taps`}
+        description={
+          <div className="flex flex-col gap-4">
+            <span>
+              Weekly tapping challenge to grow the Lanna Social Graph.{" "}
+              <b>
+                The top 10 contributors will win an exclusive Cursive NFC ring!
+              </b>
+            </span>
+            <span>
+              Make sure your tapping is natural, we want to incentive evangelism
+              of the app experience and genuine connection. Not just tapping for
+              the sake of tapping.
+            </span>
+          </div>
+        }
         leaderboardDetails={weeklyLeaderboardDetails}
         leaderboardEntries={weeklyLeaderboardEntries}
         goal={500}
@@ -202,6 +215,7 @@ export default function CommunityPage() {
         organizerDescription="Cryptography for human connection"
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
+        prize={true}
       />
     );
   }
@@ -215,7 +229,7 @@ export default function CommunityPage() {
       <DashboardDetail
         image="/images/social-graph-wide.png"
         title="Lanna Social Graph"
-        description={`${leaderboardDetails?.totalTaps} of 2,000 taps`}
+        description={`Grow the Lanna Social Graph by tapping NFC wristbands to share socials, organize your contacts, and discover common and complimentary interests!`}
         leaderboardDetails={leaderboardDetails}
         leaderboardEntries={leaderboardEntries}
         goal={2000}

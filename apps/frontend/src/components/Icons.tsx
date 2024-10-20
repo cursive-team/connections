@@ -76,11 +76,11 @@ export const Icons: Record<string, any> = {
       </g>
     </svg>
   ),
-  Cursive: () => (
+  Cursive: ({ size = 30 }) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="98"
-      height="30"
+      height={size}
       viewBox="0 0 98 30"
       fill="none"
     >

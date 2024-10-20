@@ -7,14 +7,25 @@ import {
 interface LeaderboardProps {
   leaderboardEntries: LeaderboardEntries;
   leaderboardDetails: LeaderboardDetails;
+  prize?: boolean;
 }
+
+const CURSIVE_USERNAMES = [
+  "vivek",
+  "rachel",
+  "Tessla",
+  "stevenelleman",
+  "andrew",
+];
 
 export function Leaderboard({
   leaderboardEntries,
   leaderboardDetails,
+  prize = false,
 }: LeaderboardProps) {
   let lastTapCount = -1;
   let tiedPosition = -1;
+  let cursiveCount = 0;
 
   return (
     <div>
@@ -54,11 +65,19 @@ export function Leaderboard({
           divider: false,
         };
 
-        if (index > 9) {
+        const adjustedIndex = prize ? index - cursiveCount : index;
+
+        if (adjustedIndex > 9) {
           styling.fontStyling = "text-[#090909]/40 text-[14px] font-normal";
+        }
+        if (adjustedIndex == 9) {
+          styling.divider = true;
         }
 
         let username = entry.username;
+        if (CURSIVE_USERNAMES.includes(entry.username)) {
+          cursiveCount++;
+        }
         const tapCount = entry.tapCount;
 
         if (position == 1) {
@@ -80,12 +99,6 @@ export function Leaderboard({
           }
         }
 
-        // TODO: Add query check for connection, if we navigated to the leaderboard from a connection's profile
-
-        if (index == 9) {
-          styling.divider = true;
-        }
-
         return (
           <div key={index}>
             <div className="h-6 px-4 justify-between items-center inline-flex w-full mb-1 mt-1">
@@ -94,15 +107,18 @@ export function Leaderboard({
                   className={`w-10 h-6 px-1 py-2 ${styling.positionColor} rounded-[67px] justify-center items-center gap-2 flex`}
                 >
                   <div
-                    className={`text-center ${styling.positionTextColor} text-sm font-medium font-['DM Sans'] leading-[140%]`}
+                    className={`text-center ${styling.positionTextColor} text-sm font-medium leading-[140%]`}
                   >
                     {position}
                   </div>
                 </div>
                 <div
-                  className={`grow shrink basis-0 ${styling.fontStyling} font-['DM Sans'] leading-[140%]`}
+                  className={`flex flex-row grow shrink basis-0 ${styling.fontStyling} leading-[140%]`}
                 >
                   {username}
+                  {prize && CURSIVE_USERNAMES.includes(username) && (
+                    <>{" 💍"}</>
+                  )}
                 </div>
                 <div className="justify-start items-start gap-[5px] flex">
                   <div

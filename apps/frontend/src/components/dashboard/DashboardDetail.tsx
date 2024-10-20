@@ -11,13 +11,14 @@ import { IoIosArrowBack as BackIcon } from "react-icons/io";
 interface DashboardDetailProps {
   image: string;
   title: string;
-  description: string;
+  description: React.ReactNode;
   leaderboardEntries: LeaderboardEntries;
   leaderboardDetails: LeaderboardDetails;
   goal: number;
   organizer: string;
   organizerDescription: string;
   type?: "active" | "community";
+  prize?: boolean;
   returnToHome: () => void;
 }
 
@@ -31,6 +32,7 @@ export function DashboardDetail({
   organizer,
   organizerDescription,
   type = "active",
+  prize = false,
   returnToHome,
 }: DashboardDetailProps) {
   const [progress, setProgress] = useState(0);
@@ -67,10 +69,18 @@ export function DashboardDetail({
               <div className="text-[#090909] text-base font-bold font-['DM Sans'] leading-snug">
                 {`You are #${leaderboardDetails.userPosition} of ${leaderboardDetails.totalContributors} contributors!`}
               </div>
-              <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
-                Win an NFC ring by ranking in the top 10 this week! Winners are
-                announced at Sunday dinner.
-              </div>
+              {prize && (
+                <>
+                  <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
+                    Win an NFC ring by ranking in the top 10 this week! Winners
+                    are announced at Sunday dinner.
+                  </div>
+                  <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
+                    Cursive team members are marked with a 💍.
+                    {prize && " They do not count in the top 10."}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         }
@@ -81,6 +91,7 @@ export function DashboardDetail({
             entries: leaderboardEntries.entries.slice(0, 100),
           }}
           leaderboardDetails={leaderboardDetails}
+          prize={prize}
         />
       </AppLayout>
     );
