@@ -38,6 +38,7 @@ interface TextareaProps
   icon?: React.ReactNode;
   textSize?: "xs" | "sm" | undefined;
   autoExpand?: boolean;
+  rows?: number;
 }
 
 const AppTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
@@ -51,6 +52,7 @@ const AppTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       error,
       className,
       autoExpand,
+      rows,
     } = props;
 
     const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -98,7 +100,7 @@ const AppTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
               variant={variant}
               hasError={!!error}
               autoComplete="off"
-              rows={1}
+              rows={rows}
             />
           </div>
         </label>
