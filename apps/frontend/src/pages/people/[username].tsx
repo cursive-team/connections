@@ -18,20 +18,37 @@ import { hashCommit } from "@/lib/psi/hash";
 import { BASE_API_URL } from "@/config";
 import Link from "next/link";
 import { TensionSlider } from "../tensions";
+import { Icons } from "@/components/Icons";
 
-interface TapChipModalProps {
-  tapResponse: ChipTapResponse;
+interface CommentModalProps {
+  username: string;
+  displayName: string;
+  previousEmoji: string | undefined;
+  previousNote: string | undefined;
+  tapResponse: ChipTapResponse | undefined;
   onClose: () => void;
   onSubmit: (emoji: string | null, note: string) => void;
 }
 
-const TapChipModal: React.FC<TapChipModalProps> = ({
-  tapResponse,
-  // onClose,
+const CommentModal: React.FC<CommentModalProps> = ({
+  username,
+  displayName,
+  previousEmoji,
+  previousNote,
+  onClose,
   onSubmit,
 }) => {
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
   const [privateNote, setPrivateNote] = useState("");
+
+  useEffect(() => {
+    if (previousEmoji) {
+      setSelectedEmoji(previousEmoji);
+    }
+    if (previousNote) {
+      setPrivateNote(previousNote);
+    }
+  }, [previousEmoji, previousNote]);
 
   const handleEmojiSelect = (emoji: string) => {
     setSelectedEmoji(selectedEmoji === emoji ? null : emoji);
@@ -39,7 +56,13 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="flex flex-col bg-white p-6 pb-10 rounded-[32px] w-full max-w-[90vw] overflow-y-auto">
+      <div className="flex flex-col bg-white p-6 pb-10 rounded-[32px] w-full max-w-[90vw] overflow-y-auto relative">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-tertiary hover:text-primary transition-colors"
+        >
+          <Icons.XClose size={24} />
+        </button>
         <div className="size-[80px] relative flex mx-auto">
           <div className="absolute -left-3 size-8 rounded-full bg-[#9DE8FF] z-0 top-[28px] border border-quaternary/10"></div>
           <Image
@@ -54,10 +77,10 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
         <div className="flex flex-col gap-4">
           <div className="flex flex-col text-center">
             <span className="text-[20px] font-semibold text-primary tracking-[-0.1px] font-sans">
-              {tapResponse.tap?.ownerUsername}
+              {username}
             </span>
             <span className=" text-secondary text-sm font-medium font-sans text-center">
-              {tapResponse.tap?.ownerDisplayName}
+              {displayName}
             </span>
           </div>
           <span className="text-center text-xs text-tertiary font-medium font-sans">
@@ -75,7 +98,7 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
               <button
                 key={emoji}
                 onClick={() => {
-                  logClientEvent("user-profile-tap-chip-label-selected", {
+                  logClientEvent("user-profile-emoji-selected", {
                     label: emoji,
                   });
                   handleEmojiSelect(emoji);
@@ -96,13 +119,20 @@ const TapChipModal: React.FC<TapChipModalProps> = ({
           </span>
           <AppTextarea
             value={privateNote}
+            placeholder="Add details about when you connected now or later!"
             onChange={(e) => setPrivateNote(e.target.value)}
             rows={3}
           />
         </div>
 
         <div className="mt-4 grid grid-cols-1 gap-4">
-          <AppButton onClick={() => onSubmit(selectedEmoji, privateNote)}>
+          <AppButton
+            disabled={
+              (selectedEmoji ?? "") === (previousEmoji ?? "") &&
+              privateNote === (previousNote ?? "")
+            }
+            onClick={() => onSubmit(selectedEmoji, privateNote)}
+          >
             Save
           </AppButton>
         </div>
@@ -121,7 +151,7 @@ const UserProfilePage: React.FC = () => {
     tapParams: TapParams;
     tapResponse: ChipTapResponse;
   } | null>(null);
-  const [showTapModal, setShowTapModal] = useState(false);
+  const [showCommentModal, setShowCommentModal] = useState(false);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [waitingForOtherUser, setWaitingForOtherUser] = useState(false);
   const [verifiedIntersection, setVerifiedIntersection] = useState<{
@@ -154,7 +184,7 @@ const UserProfilePage: React.FC = () => {
         ) {
           logClientEvent("user-profile-tap-chip-modal-shown", {});
           setTapInfo(savedTapInfo);
-          setShowTapModal(true);
+          setShowCommentModal(true);
         }
       }
     };
@@ -162,14 +192,14 @@ const UserProfilePage: React.FC = () => {
     fetchConnectionAndTapInfo();
   }, [username, router]);
 
-  const handleCloseTapModal = async () => {
-    logClientEvent("user-profile-tap-chip-modal-closed", {});
-    setShowTapModal(false);
+  const handleCloseCommentModal = async () => {
+    logClientEvent("user-profile-comment-modal-closed", {});
+    setShowCommentModal(false);
     await storage.deleteSavedTapInfo();
   };
 
   const handleSubmitComment = async (emoji: string | null, note: string) => {
-    logClientEvent("user-profile-tap-chip-save-clicked", {
+    logClientEvent("user-profile-comment-modal-saved", {
       label: emoji,
       privateNoteSet: note !== "",
     });
@@ -186,7 +216,8 @@ const UserProfilePage: React.FC = () => {
       }
 
       setConnection(user.connections[connection.user.username]);
-      handleCloseTapModal();
+      setShowCommentModal(false);
+      await storage.deleteSavedTapInfo();
       toast.success("Comment added successfully!");
     } catch (error) {
       console.error("Error adding comment:", error);
@@ -297,10 +328,14 @@ const UserProfilePage: React.FC = () => {
 
   return (
     <>
-      {showTapModal && tapInfo && (
-        <TapChipModal
-          tapResponse={tapInfo.tapResponse}
-          onClose={handleCloseTapModal}
+      {showCommentModal && (
+        <CommentModal
+          username={connection.user.username}
+          displayName={connection.user.displayName}
+          previousEmoji={connection.comment?.emoji}
+          previousNote={connection.comment?.note}
+          tapResponse={tapInfo?.tapResponse}
+          onClose={handleCloseCommentModal}
           onSubmit={handleSubmitComment}
         />
       )}
@@ -322,6 +357,22 @@ const UserProfilePage: React.FC = () => {
                 </span>
               </div>
               <ProfileImage user={connection.user} />
+            </div>
+            <div className="flex flex-row gap-2 mb-2">
+              <div className="w-2/5">
+                <AppButton
+                  variant="outline"
+                  onClick={() => {
+                    logClientEvent("user-profile-begin-edit-comment", {});
+                    setShowCommentModal(true);
+                  }}
+                >
+                  {<Icons.Pencil />}{" "}
+                  {connection?.comment?.emoji || connection?.comment?.note
+                    ? "Edit Notes"
+                    : "Add Notes"}
+                </AppButton>
+              </div>
             </div>
           </div>
         }
@@ -471,27 +522,6 @@ const UserProfilePage: React.FC = () => {
                   {connection?.user?.bio}
                 </span>
               </>
-            </div>
-          )}
-
-          {connection?.comment?.note && (
-            <div className="flex flex-col gap-2 py-4 px-4">
-              <span className="text-sm font-semibold text-primary font-sans">
-                Your Note
-              </span>
-              <span className="text-sm text-secondary font-sans font-normal">
-                {connection?.comment?.note}
-              </span>
-            </div>
-          )}
-
-          {connection?.comment?.emoji && (
-            <div className="flex flex-col gap-2 py-4 px-4">
-              <span className="text-sm font-semibold text-primary font-sans">
-                Your Label
-              </span>
-
-              <p className="text-2xl mt-2">{connection?.comment?.emoji}</p>
             </div>
           )}
         </div>
