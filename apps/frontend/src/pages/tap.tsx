@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { TapParams, ChipTapResponse } from "@types";
+import {TapParams, ChipTapResponse, errorToString} from "@types";
 import { toast } from "sonner";
 import { storage } from "@/lib/storage";
 import { tapChip, updateTapLeaderboardEntry } from "@/lib/chip";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
+import {SupportToast} from "@/components/ui/SupportToast";
 
 const TapPage: React.FC = () => {
   const router = useRouter();
@@ -97,7 +98,7 @@ const TapPage: React.FC = () => {
         }
       } catch (error) {
         console.error("Error tapping chip:", error);
-        toast.error("Error tapping chip");
+        toast(SupportToast("", true, "Error tapping chip", "https://t.me/stevenelleman", errorToString(error)));
         router.push("/");
       }
     };

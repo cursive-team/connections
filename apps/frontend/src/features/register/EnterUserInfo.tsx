@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { UsernameSchema } from "@types";
+import {errorToString, UsernameSchema} from "@types";
 import { verifyUsernameIsUnique } from "@/lib/auth/util";
 import { toast } from "sonner";
 import { MdKeyboardArrowRight as ArrowRightIcon } from "react-icons/md";
@@ -9,6 +9,7 @@ import { IoCloseSharp as CloseIcon } from "react-icons/io5";
 import useSettings from "@/hooks/useSettings";
 import { AppButton } from "@/components/ui/Button";
 import { Icons } from "@/components/Icons";
+import {SupportToast} from "@/components/ui/SupportToast";
 
 interface FormData {
   username: string;
@@ -121,7 +122,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
       });
     } catch (error) {
       console.error(error);
-      toast.error("An error occurred while submitting the form");
+      toast(SupportToast("", true, "An error occurred while submitting the form", "https://t.me/stevenelleman", errorToString(error)));
     }
   };
 
@@ -137,9 +138,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
         }
       } catch (error) {
         console.error(error);
-        toast.error(
-          "Username must be alphanumeric and between 3-20 characters"
-        );
+        toast(SupportToast("", true, "Username must be alphanumeric and between 3-20 characters", "https://t.me/stevenelleman", errorToString(error)));
         return;
       }
     } else if (step === 2 || step === 3) {

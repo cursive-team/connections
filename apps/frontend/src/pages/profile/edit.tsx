@@ -14,6 +14,8 @@ import { useRouter } from "next/router";
 import { toast } from "sonner";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { updateChip } from "@/lib/chip/update";
+import {SupportToast} from "@/components/ui/SupportToast";
+import {errorToString} from "@types";
 
 type ChipEditFormData = {
   displayName?: string;
@@ -66,7 +68,7 @@ const ProfileEdit = () => {
       router.push("/profile");
     } catch (error) {
       console.error(error);
-      toast.error("Error updating chip.");
+      toast(SupportToast("", true, "Error updating chip", "https://t.me/stevenelleman", errorToString(error)));
     }
     setLoading(false);
   };

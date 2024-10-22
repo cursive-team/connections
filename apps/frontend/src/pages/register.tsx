@@ -25,6 +25,7 @@ import { HeaderCover } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { cn } from "@/lib/frontend/util";
 import { IoIosArrowBack as BackIcon } from "react-icons/io";
+import { SupportToast } from "@/components/ui/SupportToast";
 
 enum DisplayState {
   ENTER_EMAIL,
@@ -87,7 +88,7 @@ const Register: React.FC = () => {
       await requestSigninToken(submittedEmail);
     } catch (error) {
       console.error(error);
-      toast.error("Error requesting signin token");
+      toast(SupportToast("", true, "Error requesting signin token", "https://t.me/stevenelleman", errorToString(error)));
       return;
     }
 
@@ -229,7 +230,7 @@ const Register: React.FC = () => {
         error: errorToString(error),
       });
       console.error(error);
-      toast.error("Failed to create account. Please try again");
+      toast(SupportToast("", true, "Failed to create account. Please try again", "https://t.me/stevenelleman", errorToString(error)));
       return;
     }
   };
