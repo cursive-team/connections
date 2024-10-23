@@ -74,8 +74,6 @@ const ProfileEdit = () => {
     setLoading(false);
   };
 
-  toast(SupportToast("", true, "Error updating chip", ERROR_SUPPORT_CONTACT, errorToString("")));
-
   return (
     <>
       {user ? (
