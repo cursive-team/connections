@@ -48,6 +48,21 @@ const EnterCode: React.FC<EnterCodeProps> = ({ email, submitCode }) => {
     }
   };
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData("text").slice(0, 6);
+    const newCode = [...code];
+    for (let i = 0; i < pastedData.length; i++) {
+      newCode[i] = pastedData[i];
+    }
+    setCode(newCode);
+
+    const nextEmptyIndex = newCode.findIndex((digit) => digit === "");
+    const nextInputId =
+      nextEmptyIndex === -1 ? "code-5" : `code-${nextEmptyIndex}`;
+    document.getElementById(nextInputId)?.focus();
+  };
+
   return (
     <div className="flex flex-col grow">
       <RegisterHeader
@@ -69,6 +84,7 @@ const EnterCode: React.FC<EnterCodeProps> = ({ email, submitCode }) => {
                     value={digit}
                     onChange={(e) => handleChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
+                    onPaste={handlePaste}
                     className="w-12 h-12 text-2xl text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 ))}
