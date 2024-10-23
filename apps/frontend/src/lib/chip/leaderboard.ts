@@ -21,14 +21,19 @@ export async function updateTapLeaderboardEntry(
   let weekOct20TapCount = 0;
 
   Object.values(user.connections).forEach((connection) => {
-    connection.taps.forEach((tap) => {
-      if (tap.chipIssuer === chipIssuer) {
-        totalTapCount++;
-        if (new Date(tap.timestamp) >= weekOct20StartDate) {
-          weekOct20TapCount++;
-        }
+    const tapsFromIssuer = connection.taps.filter(
+      (tap) => tap.chipIssuer === chipIssuer
+    );
+    if (tapsFromIssuer.length > 0) {
+      totalTapCount++;
+      if (
+        tapsFromIssuer.some(
+          (tap) => new Date(tap.timestamp) >= weekOct20StartDate
+        )
+      ) {
+        weekOct20TapCount++;
       }
-    });
+    }
   });
 
   try {
