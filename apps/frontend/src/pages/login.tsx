@@ -106,7 +106,7 @@ const LoginPage: React.FC = () => {
       router.push("/profile");
     } catch (error) {
       console.error("Passkey authentication error:", error);
-      toast(SupportToast("", true, "Passkey authentication failed. Please try again", ERROR_SUPPORT_CONTACT, errorToString(error)));
+      toast(SupportToast("", true, "Passkey authentication failed. Please try password instead", ERROR_SUPPORT_CONTACT, errorToString(error)));
     }
   };
 
