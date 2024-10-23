@@ -17,7 +17,7 @@ export async function updateTapLeaderboardEntry(
 
   // Count total taps and taps for the week starting October 20th
   const weekOct20StartDate = new Date("2024-10-20T00:00:00Z");
-  const weeklyCutoffDate = new Date(1729698923);
+  const retapCloseDate = new Date("2024-10-24T00:00:00+07:00");
   let totalTapCount = 0;
   let weekOct20TapCount = 0;
 
@@ -30,15 +30,13 @@ export async function updateTapLeaderboardEntry(
 
       const validWeeklyTaps = tapsFromIssuer.filter((tap) => {
         const tapDate = new Date(tap.timestamp);
-        return tapDate >= weekOct20StartDate && tapDate < weeklyCutoffDate;
+        return tapDate >= weekOct20StartDate && tapDate < retapCloseDate;
       });
 
       if (validWeeklyTaps.length > 0) {
         weekOct20TapCount += validWeeklyTaps.length;
       } else if (
-        tapsFromIssuer.some(
-          (tap) => new Date(tap.timestamp) >= weeklyCutoffDate
-        )
+        tapsFromIssuer.some((tap) => new Date(tap.timestamp) >= retapCloseDate)
       ) {
         weekOct20TapCount++;
       }
