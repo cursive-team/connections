@@ -5,7 +5,8 @@ import {
 } from "@/lib/crypto/encrypt";
 import { sign, verify } from "@/lib/crypto/sign";
 import { CreateMessageData, MessageData } from "@types";
-import { MessageLog } from "@/lib/storage/types";
+
+export * from "./tapBack";
 
 interface CreateMessageArgs {
   receiverSignaturePublicKey: string;
@@ -21,10 +22,7 @@ export const createEncryptedMessage = async ({
   serializedData,
   senderSignaturePublicKey,
   senderSignaturePrivateKey,
-}: CreateMessageArgs): Promise<{
-  messageData: CreateMessageData;
-  messageLog: MessageLog;
-}> => {
+}: CreateMessageArgs): Promise<CreateMessageData> => {
   // Generate ephemeral encryption key pair
   const {
     publicKey: senderEphemeralEncryptionPublicKey,
@@ -56,19 +54,11 @@ export const createEncryptedMessage = async ({
   );
 
   return {
-    messageData: {
-      receiverSignaturePublicKey,
-      senderEphemeralEncryptionPublicKey,
-      encryptedData,
-      senderEncryptedSignaturePublicKey,
-      senderEncryptedSignature,
-    },
-    messageLog: {
-      senderEphemeralEncryptionPublicKey,
-      senderEphemeralEncryptionPrivateKey,
-      receiverEncryptionPublicKey,
-      timestamp: new Date(),
-    },
+    receiverSignaturePublicKey,
+    senderEphemeralEncryptionPublicKey,
+    encryptedData,
+    senderEncryptedSignaturePublicKey,
+    senderEncryptedSignature,
   };
 };
 
@@ -106,57 +96,6 @@ export const decryptReceivedMessage = async ({
   const serializedData = await decrypt(
     encryptionPrivateKey,
     senderEphemeralEncryptionPublicKey,
-    encryptedData
-  );
-
-  // Verify the signature
-  const isValid = verify(senderSignaturePublicKey, serializedData, signature);
-
-  if (!isValid) {
-    throw new Error("Invalid signature");
-  }
-
-  return {
-    serializedData,
-    senderSignaturePublicKey,
-  };
-};
-
-export const decryptSentMessage = async ({
-  messageData,
-  messageLog,
-}: {
-  messageData: MessageData;
-  messageLog: MessageLog;
-}): Promise<{
-  serializedData: string;
-  senderSignaturePublicKey: string;
-}> => {
-  const {
-    encryptedData,
-    senderEncryptedSignaturePublicKey,
-    senderEncryptedSignature,
-  } = messageData;
-  const { senderEphemeralEncryptionPrivateKey, receiverEncryptionPublicKey } =
-    messageLog;
-
-  // Decrypt the sender's signature public key
-  const senderSignaturePublicKey = await decrypt(
-    senderEphemeralEncryptionPrivateKey,
-    receiverEncryptionPublicKey,
-    senderEncryptedSignaturePublicKey
-  );
-
-  // Decrypt the signature
-  const signature = await decrypt(
-    senderEphemeralEncryptionPrivateKey,
-    receiverEncryptionPublicKey,
-    senderEncryptedSignature
-  );
-
-  const serializedData = await decrypt(
-    senderEphemeralEncryptionPrivateKey,
-    receiverEncryptionPublicKey,
     encryptedData
   );
 
