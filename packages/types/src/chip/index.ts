@@ -121,16 +121,11 @@ export type GetLeaderboardEntryRequest = z.infer<
   typeof GetLeaderboardEntryRequestSchema
 >;
 
-export enum LeaderboardType {
-  STRAVA_MONTHLY_RUN = "STRAVA_MONTHLY_RUN_DISTANCE",
-  GITHUB_MONTHLY_PROJECT_COMMITS = "GITHUB_MONTHLY_PROJECT_COMMITS",
-}
-
-export const LeaderboardTypeSchema = z.nativeEnum(LeaderboardType);
-
 export const LeaderboardEntrySchema = z.object({
   username: z.string(),
+  chipIssuer: ChipIssuerSchema,
   entryValue: z.coerce.number(),
+  entryType: LeaderboardEntryTypeSchema,
 });
 
 export type LeaderboardEntry = z.infer<typeof LeaderboardEntrySchema>;
@@ -139,6 +134,7 @@ export const GetLeaderboardPositionRequestSchema = z.object({
   authToken: z.string(),
   chipIssuer: ChipIssuerSchema,
   entryType: LeaderboardEntryTypeSchema,
+  entryValue: z.number(),
 });
 
 export type GetLeaderboardPositionRequest = z.infer<

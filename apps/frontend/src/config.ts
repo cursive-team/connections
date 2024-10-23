@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import { RouterItem } from "@/lib/frontend/types";
 import { Icons } from "@/components/Icons";
 import {
-  LeaderboardType,
+  LeaderboardEntryType,
   OAuthMapping
 } from "@types";
 
@@ -20,7 +20,7 @@ export const OAUTH_APP_MAPPING: Record<string, OAuthMapping> = {
     secret: process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_SECRET || "",
     data_options: [
       {
-        type: LeaderboardType.STRAVA_MONTHLY_RUN,
+        type: LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
         endpoint: "https://www.strava.com/api/v3/athletes/${user_id}/stats", // TODO: move within function?
       }
     ],
@@ -33,7 +33,7 @@ export const OAUTH_APP_MAPPING: Record<string, OAuthMapping> = {
     secret: process.env.NEXT_PUBLIC_OAUTH_GITHUB_CLIENT_SECRET || "",
     data_options: [
       {
-        type: LeaderboardType.GITHUB_MONTHLY_PROJECT_COMMITS,
+        type: LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS,
         endpoint: "",
       }
     ],

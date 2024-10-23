@@ -1,5 +1,5 @@
 import {z} from "zod";
-import {ChipIssuer, LeaderboardType, LeaderboardTypeSchema} from "../chip";
+import {ChipIssuer, LeaderboardEntrySchema, LeaderboardEntryType, LeaderboardEntryTypeSchema} from "../chip";
 import {LeaderboardEntry} from "../chip";
 
 export const StravaAtheleteSchema = z.object({
@@ -36,7 +36,7 @@ export const AccessTokenSchema = z.object({
 export type AccessToken = z.infer<typeof AccessTokenSchema>;
 
 export const DataOptionSchema = z.object({
-  type: LeaderboardTypeSchema,
+  type: LeaderboardEntryTypeSchema,
   endpoint: z.string(),
 });
 
@@ -130,15 +130,14 @@ export function MapStravaActivityStatsToLeaderboardEntry(username: string, chipI
   return {
     username: username,
     chipIssuer: chipIssuer,
-    value: parsed.recent_run_totals.distance,
-    type: LeaderboardType.STRAVA_MONTHLY_RUN,
-    tapCount: 0,
+    entryValue: parsed.recent_run_totals.distance,
+    entryType: LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
   }
 }
 
-export function MapResponseToLeaderboardEntry(username: string, type: LeaderboardType, chipIssuer: ChipIssuer, resp: any): LeaderboardEntry | null {
+export function MapResponseToLeaderboardEntry(username: string, type: LeaderboardEntryType, chipIssuer: ChipIssuer, resp: any): LeaderboardEntry | null {
   switch(type) {
-    case LeaderboardType.STRAVA_MONTHLY_RUN:
+    case LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
       return MapStravaActivityStatsToLeaderboardEntry(username, chipIssuer, resp);
     default:
       // Probably should throw error
