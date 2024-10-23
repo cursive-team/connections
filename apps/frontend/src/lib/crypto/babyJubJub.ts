@@ -404,3 +404,38 @@ export type Signature = {
   r: bigint;
   s: bigint;
 };
+
+/**
+ * Returns the incrementing nonce string that is actually signed by HaLo chips
+ * https://github.com/arx-research/libhalo/blob/master/docs/halo-command-set.md#command-sign_random
+ * @param msgNonce incrementing counter
+ * @param msgRand rng string added to end
+ * @returns hex-encoded string of data to be signed
+ */
+export const getCounterMessage = (
+  msgNonce: number,
+  msgRand: string
+): string => {
+  // Nonce occupies the first 4 bytes of the message
+  const nonceString = extendHexString(msgNonce.toString(16), 8);
+  // Randomness occupies the next 28 bytes of the message
+  const randString = extendHexString(msgRand, 56);
+  const msgString = nonceString + randString;
+  const counterMessageBuffer = Buffer.concat([
+    Buffer.from("\x19Attest counter pk62:\n", "utf8"),
+    Buffer.from(msgString, "hex"),
+  ]);
+
+  return counterMessageBuffer.toString("hex");
+};
+
+/**
+ * Extends a hex string to a desired length by padding with zeros
+ * @param hex the hex string to extend
+ * @param desiredLength the desired length of the hex string
+ * @returns the extended hex string
+ */
+export const extendHexString = (hex: string, desiredLength: number): string => {
+  const zeros = "0".repeat(desiredLength - hex.length);
+  return zeros + hex;
+};
