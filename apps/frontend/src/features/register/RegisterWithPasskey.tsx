@@ -5,8 +5,9 @@ import { generateRegistrationOptions } from "@simplewebauthn/server";
 import { AppButton } from "@/components/ui/Button";
 import { RegisterHeader } from "./RegisterHeader";
 import { AppCopy } from "@/components/ui/AppCopy";
-import {SupportToast} from "@/components/ui/SupportToast";
-import {errorToString} from "@types";
+import { SupportToast } from "@/components/ui/SupportToast";
+import { errorToString } from "@types";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 interface RegisterWithPasskeyProps {
   username: string;
@@ -40,7 +41,7 @@ const RegisterWithPasskey: React.FC<RegisterWithPasskeyProps> = ({
       await onPasskeyRegister(id, authPublicKey);
     } catch (error) {
       console.error("Error creating account: ", error);
-      toast(SupportToast("", true, "Authentication failed! Please try again.", "https://t.me/stevenelleman", errorToString(error)));
+      toast(SupportToast("", true, "Authentication failed! Please try again.", ERROR_SUPPORT_CONTACT, errorToString(error)));
       return;
     }
   };

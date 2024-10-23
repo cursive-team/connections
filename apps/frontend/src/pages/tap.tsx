@@ -6,7 +6,8 @@ import { storage } from "@/lib/storage";
 import { tapChip, updateTapLeaderboardEntry } from "@/lib/chip";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
-import {SupportToast} from "@/components/ui/SupportToast";
+import { SupportToast } from "@/components/ui/SupportToast";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 const TapPage: React.FC = () => {
   const router = useRouter();
@@ -98,7 +99,7 @@ const TapPage: React.FC = () => {
         }
       } catch (error) {
         console.error("Error tapping chip:", error);
-        toast(SupportToast("", true, "Error tapping chip", "https://t.me/stevenelleman", errorToString(error)));
+        toast(SupportToast("", true, "Error tapping chip", ERROR_SUPPORT_CONTACT, errorToString(error)));
         router.push("/");
       }
     };

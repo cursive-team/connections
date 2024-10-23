@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {logClientEvent} from "@/lib/frontend/metrics";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const SupportToast = ( className: string, isError: boolean, toastMessage: string, messageTarget: string, errorInfo: string): any => {
@@ -30,6 +31,7 @@ export const SupportToast = ( className: string, isError: boolean, toastMessage:
         // Open link in new tab -- turns out this is pretty important, without it errors occur in tg link
         target="_blank"
         className="underline font-bold"
+        onClick={() => {logClientEvent("error-support-link-clicked", {})}}
       >
         Click for support
       </Link>

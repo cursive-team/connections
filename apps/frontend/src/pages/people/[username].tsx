@@ -19,7 +19,8 @@ import { BASE_API_URL } from "@/config";
 import Link from "next/link";
 import { TensionSlider } from "../tensions";
 import { Icons } from "@/components/Icons";
-import {SupportToast} from "@/components/ui/SupportToast";
+import { SupportToast } from "@/components/ui/SupportToast";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 interface CommentModalProps {
   username: string;
@@ -222,7 +223,7 @@ const UserProfilePage: React.FC = () => {
       toast.success("Comment added successfully!");
     } catch (error) {
       console.error("Error adding comment:", error);
-      toast(SupportToast("", true, "Failed to add comment", "https://t.me/stevenelleman", errorToString(error)));
+      toast(SupportToast("", true, "Failed to add comment", ERROR_SUPPORT_CONTACT, errorToString(error)));
     }
   };
 
@@ -313,7 +314,7 @@ const UserProfilePage: React.FC = () => {
       }
     } catch (error) {
       console.error("Error updating PSI overlap:", error);
-      toast(SupportToast("", true, "Failed to update overlap. Please try again.", "https://t.me/stevenelleman", errorToString(error)));
+      toast(SupportToast("", true, "Failed to update overlap. Please try again.", ERROR_SUPPORT_CONTACT, errorToString(error)));
     } finally {
       setRefreshLoading(false);
     }
