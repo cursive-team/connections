@@ -17,18 +17,32 @@ export async function updateTapLeaderboardEntry(
 
   // Count total taps and taps for the week starting October 20th
   const weekOct20StartDate = new Date("2024-10-20T00:00:00Z");
+  const weeklyCutoffDate = new Date(1729698923);
   let totalTapCount = 0;
   let weekOct20TapCount = 0;
 
   Object.values(user.connections).forEach((connection) => {
-    connection.taps.forEach((tap) => {
-      if (tap.chipIssuer === chipIssuer) {
-        totalTapCount++;
-        if (new Date(tap.timestamp) >= weekOct20StartDate) {
-          weekOct20TapCount++;
-        }
+    const tapsFromIssuer = connection.taps.filter(
+      (tap) => tap.chipIssuer === chipIssuer
+    );
+    if (tapsFromIssuer.length > 0) {
+      totalTapCount++;
+
+      const validWeeklyTaps = tapsFromIssuer.filter((tap) => {
+        const tapDate = new Date(tap.timestamp);
+        return tapDate >= weekOct20StartDate && tapDate < weeklyCutoffDate;
+      });
+
+      if (validWeeklyTaps.length > 0) {
+        weekOct20TapCount += validWeeklyTaps.length;
+      } else if (
+        tapsFromIssuer.some(
+          (tap) => new Date(tap.timestamp) >= weeklyCutoffDate
+        )
+      ) {
+        weekOct20TapCount++;
       }
-    });
+    }
   });
 
   try {
