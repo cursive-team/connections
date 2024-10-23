@@ -123,6 +123,7 @@ export type GetLeaderboardEntryRequest = z.infer<
 
 export enum LeaderboardType {
   STRAVA_MONTHLY_RUN = "STRAVA_MONTHLY_RUN_DISTANCE",
+  GITHUB_MONTHLY_PROJECT_COMMITS = "GITHUB_MONTHLY_PROJECT_COMMITS",
 }
 
 export const LeaderboardTypeSchema = z.nativeEnum(LeaderboardType);

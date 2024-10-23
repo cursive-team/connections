@@ -19,17 +19,21 @@ import {
   UpdateChipRequest,
   LeaderboardEntry,
   LeaderboardEntryType,
+  AccessToken,
 } from "@types";
 import { Chip } from "@/lib/controller/chip/types";
 import { iChipClient } from "@/lib/controller/chip/interfaces";
 import { ManagedChipClient } from "@/lib/controller/chip/managed/client";
 import { SESEmailClient } from "@/lib/controller/email/ses/client";
 import { iEmailClient } from "@/lib/controller/email/interfaces";
+import {iOAuthClient} from "@/lib/controller/oauth/interfaces";
+import {BespokeOAuthClient} from "@/lib/controller/oauth/bespoke/client";
 
 export class Controller {
   postgresClient: iPostgresClient; // Use interface so that it can be mocked out
   chipClient: iChipClient;
   emailClient: iEmailClient;
+  oauthClient: iOAuthClient;
 
   constructor() {
     // Default client, could also pass through mock
@@ -39,6 +43,9 @@ export class Controller {
 
     // Email client with AWS Simple Email Service
     this.emailClient = new SESEmailClient();
+
+    // Bespoke OAuth client -- in theory could change out for mature OAuth library, if we have the need and a good candidate
+    this.oauthClient = new BespokeOAuthClient();
 
     // Over time more clients will be added (e.g. nitro enclave client)...
   }
@@ -179,5 +186,10 @@ export class Controller {
 
   EmailSigninToken(signinToken: SigninToken): Promise<void> {
     return this.emailClient.EmailSigninToken(signinToken);
+  }
+
+  // OAuth
+  MintOAuthToken(app: string, code: string): Promise<AccessToken | null> {
+    return this.oauthClient.MintOAuthToken(app, code);
   }
 }
