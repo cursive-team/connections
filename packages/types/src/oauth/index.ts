@@ -1,29 +1,22 @@
 import {z} from "zod";
-import {ChipIssuer, LeaderboardEntrySchema, LeaderboardEntryType, LeaderboardEntryTypeSchema} from "../chip";
-import {LeaderboardEntry} from "../chip";
+import {
+  ChipIssuer,
+  LeaderboardEntryType,
+  LeaderboardEntryTypeSchema,
+} from "../chip";
+import { LeaderboardEntry } from "../chip";
+import {
+  MapStravaActivityStatsToLeaderboardEntry,
+  StravaBearerTokenSchema
+} from "./strava";
+import {
+  GithubBearerTokenSchema
+} from "./github";
 
-export const StravaAtheleteSchema = z.object({
-  id: z.number(),
-});
+// Export app-specific types
+export * from "./strava";
+export * from "./github";
 
-export type StravaAthelete = z.infer<typeof StravaAtheleteSchema>;
-
-export const StravaBearerTokenSchema = z.object({
-  access_token: z.string(),
-  refresh_token: z.string(),
-  expires_at: z.number(),
-  athlete: StravaAtheleteSchema,
-});
-
-export type StravaBearerToken = z.infer<typeof StravaBearerTokenSchema>;
-
-export const GithubBearerTokenSchema = z.object({
-  access_token: z.string(),
-  scope: z.string(),
-  token_type: z.string(),
-});
-
-export type GithubBearerToken = z.infer<typeof GithubBearerTokenSchema>;
 
 export const AccessTokenSchema = z.object({
   access_token: z.string(),
@@ -42,8 +35,9 @@ export const DataOptionSchema = z.object({
 
 export type DataOption = z.infer<typeof DataOptionSchema>;
 
-export const OAuthMappingSchema = z.object({
+export const OAuthAppDetailsSchema = z.object({
   client_side_fetching: z.boolean(),
+  can_import: z.boolean(),
   redirect_uri: z.string(),
   id: z.string(),
   secret: z.string(),
@@ -51,7 +45,7 @@ export const OAuthMappingSchema = z.object({
   data_options: z.array(DataOptionSchema),
 });
 
-export type OAuthMapping = z.infer<typeof OAuthMappingSchema>;
+export type OAuthAppDetails = z.infer<typeof OAuthAppDetailsSchema>;
 
 export const OAuthExchangeTokensRequestSchema = z.object({
   code: z.string(),
@@ -63,13 +57,12 @@ export type OAuthExchangeTokensRequest = z.infer<
 >;
 
 // Mapping access token types
-
 export async function stravaMapResponseToAccessToken(resp: globalThis.Response): Promise<AccessToken> {
   const data = await resp.json();
 
   // Convert StravaBearerToken into generic AuthToken
   const parsedData = StravaBearerTokenSchema.parse(data);
-  const { access_token, refresh_token, expires_at, athlete } = parsedData;
+  const { access_token, refresh_token, expires_at, athlete, token_type } = parsedData;
   const { id } = athlete;
 
   return {
@@ -113,6 +106,16 @@ export async function mapResponseToAccessToken(app: string, resp: globalThis.Res
     case GITHUB:
       return await githubMapResponseToAccessToken(resp);
     default:
+      return null;
+  }
+}
+
+export function MapResponseToLeaderboardEntry(username: string, type: LeaderboardEntryType, chipIssuer: ChipIssuer, resp: any): LeaderboardEntry | null {
+  switch(type) {
+    case LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
+      return MapStravaActivityStatsToLeaderboardEntry(username, chipIssuer, resp);
+    default:
+      // Probably should throw error
       return null;
   }
 }

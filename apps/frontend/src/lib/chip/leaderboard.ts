@@ -7,8 +7,51 @@ import {
   LeaderboardDetailsSchema,
   UpdateLeaderboardEntryRequest,
   LeaderboardEntryType,
+  LeaderboardEntry,
 } from "@types";
 import { storage } from "@/lib/storage";
+
+export async function updateLeaderboardEntry(
+  entry: LeaderboardEntry
+): Promise<void> {
+  const { session } = await storage.getUserAndSession();
+
+  try {
+    const updateTotalTapsRequest: UpdateLeaderboardEntryRequest = {
+      authToken: session.authTokenValue,
+      chipIssuer: entry.chipIssuer,
+      entryType: entry.entryType,
+      entryValue: entry.entryValue
+    };
+
+    const response = await fetch(
+      `${BASE_API_URL}/chip/update_leaderboard_entry`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateTotalTapsRequest),
+      }
+    );
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error(
+        `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+      );
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+      );
+    }
+
+
+    return;
+  } catch (error) {
+    console.error("Error updating leaderboard entry:", error);
+    throw error;
+  }
+}
 
 export async function updateTapLeaderboardEntry(
   chipIssuer: ChipIssuer

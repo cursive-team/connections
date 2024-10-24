@@ -1,7 +1,7 @@
 import {
   AccessToken,
   AccessTokenSchema,
-  OAuthMapping,
+  OAuthAppDetails,
   mapResponseToAccessToken,
   STRAVA,
 } from "@types";
@@ -11,7 +11,7 @@ import {
 } from "@/config";
 
 
-async function fetchToken(app: string, mapping: OAuthMapping, code: string): Promise<Response | null> {
+async function fetchToken(app: string, mapping: OAuthAppDetails, code: string): Promise<Response | null> {
   // Apps that use client-side fetching
   switch(app) {
     case STRAVA:
@@ -22,7 +22,7 @@ async function fetchToken(app: string, mapping: OAuthMapping, code: string): Pro
 }
 
 
-async function stravaFetchToken(mapping: OAuthMapping, code: string): Promise<Response> {
+async function stravaFetchToken(mapping: OAuthAppDetails, code: string): Promise<Response> {
   const { id, secret, token_url } = mapping;
 
   return fetch(
@@ -43,22 +43,22 @@ async function stravaFetchToken(mapping: OAuthMapping, code: string): Promise<Re
 }
 
 export async function getOAuthTokenViaClient(
-  code: string,
   app: string,
+  code: string,
 ): Promise<AccessToken | null> {
   try {
     if (!OAUTH_APP_MAPPING[app]) {
       throw new Error("OAuth app integration details are not available");
     }
 
-    const mapping: OAuthMapping = OAUTH_APP_MAPPING[app];
+    const mapping: OAuthAppDetails = OAUTH_APP_MAPPING[app];
 
     const response = await fetchToken(app, mapping, code);
     if (!response) {
       throw new Error("OAuth access token response is null");
     }
 
-    if (!response.ok) {
+    if (!response.ok || response.type == "error") {
       const errorResponse = await response.json();
       console.error(
         `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
@@ -78,12 +78,12 @@ export async function getOAuthTokenViaClient(
 }
 
 export async function getOAuthTokenViaServer(
+  app: string,
   code: string,
-  state: string
 ): Promise<AccessToken> {
   try {
     const response = await fetch(
-      `${BASE_API_URL}/oauth/access_token?code=${code}&state=${state}`,
+      `${BASE_API_URL}/oauth/access_token?state=${app}&code=${code}`,
       {
         method: "GET",
         headers: {
