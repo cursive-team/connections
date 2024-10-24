@@ -94,7 +94,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
             Labels
           </span>
           <div className="flex space-x-2 justify-around">
-            {["💼", "🪩", "😊", "🎃", "🙈"].map((emoji) => (
+            {["💼", "🪩", "😊", "🏋", "🙈"].map((emoji) => (
               <button
                 key={emoji}
                 onClick={() => {
