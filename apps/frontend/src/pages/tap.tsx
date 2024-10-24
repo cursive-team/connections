@@ -27,6 +27,8 @@ const TapPage: React.FC = () => {
 
       try {
         const tapParams: TapParams = { chipId };
+
+        // NOTE: If it's unregistered, the tap response includes Chip attendance
         const response: ChipTapResponse = await tapChip(tapParams);
 
         if (response.chipIsRegistered) {

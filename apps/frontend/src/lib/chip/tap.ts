@@ -9,6 +9,8 @@ import { TapParams, ChipTapResponse, ChipTapResponseSchema } from "@types";
 export async function tapChip(tapParams: TapParams): Promise<ChipTapResponse> {
   try {
     const request: TapParams = tapParams;
+
+    // NOTE: Receive attendance via this endpoint, but only on registration
     const response = await fetch(`${BASE_API_URL}/chip/tap`, {
       method: "POST",
       headers: {

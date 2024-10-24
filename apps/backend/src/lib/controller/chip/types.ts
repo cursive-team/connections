@@ -11,6 +11,7 @@ export const ChipSchema = z.object({
   chipPublicKey: z.string().nullable(),
   chipPrivateKey: z.string().nullable(),
   chipTapCount: z.number().int().nonnegative(),
+  chipAttendance: z.array(z.string()).default([]), // NOTE: set default of empty list as a kind of graceful backfill
   ownerUsername: z.string().nullable(),
   ownerDisplayName: z.string().nullable(),
   ownerBio: z.string().nullable(),

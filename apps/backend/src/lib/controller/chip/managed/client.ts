@@ -32,6 +32,12 @@ export class ManagedChipClient implements iChipClient {
   // @ts-expect-error (ts2391)
   UpdateChip(updateChip: UpdateChipRequest): Promise<Chip>;
 
+
+  // TODO: Method takes UserData and checks if Chip has been updated s.g. the UserData should be updated (e.g. attendance).
+  //  If the Chip has been updated, return updated value, else null
+  // @ts-expect-error (ts2391)
+  CheckUserData(userData: UserData): Promise<UserData | null>;
+
   // @ts-expect-error (ts2391)
   UpdateLeaderboardEntry(
     username: string,

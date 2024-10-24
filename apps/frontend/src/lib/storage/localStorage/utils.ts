@@ -26,6 +26,10 @@ export const saveBackupAndUpdateStorage = async ({
   session,
   newBackupData,
 }: SaveBackupAndUpdateStorageArgs): Promise<void> => {
+
+  // TODO: Submit UserData to backend. If chip has been backfilled with new UserData (attendance), return updated UserData, else null.
+  //  If UserData returned, add to LocalStorage and Backup
+
   const { updatedUser, updatedSubmittedAt } = await appendBackupData({
     email: user.email,
     password: session.backupMasterPassword,

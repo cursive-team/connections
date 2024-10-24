@@ -3,7 +3,7 @@ import { type PutBlobResult } from "@vercel/blob";
 import { upload } from "@vercel/blob/client";
 import { Connection, PSIData, UserData } from "../storage/types";
 import { sha256 } from "js-sha256";
-import { LANNA_INTERESTS_LIST } from "@/common/constants";
+import {LANNA_ATTENDANCE, LANNA_INTERESTS_LIST} from "@/common/constants";
 
 export const psiBlobUploadClient = async (name: string, data: string) => {
   const newBlob: PutBlobResult = await upload(name, data, {
@@ -26,6 +26,7 @@ export const generatePSIKeyPair = async () => {
 
 const PSI_BIT_VECTOR_SIZE = 10000;
 const COMMON_CONNECTIONS_BIT_VECTOR_SIZE = 9000;
+const ATTENDANCE_BIT_VECTOR_START = 9996;
 
 export const generateBitVectorFromUserData = (
   userData: UserData,
@@ -63,6 +64,23 @@ export const generateBitVectorFromUserData = (
     bitVector[9007] = lannaDesiredConnections.doMentalWorkouts ? 1 : 0;
   }
 
+  // Given fixed size, start at end of lanna range
+  const attendance = userData.attendance;
+  if (attendance) {
+    for (const week of attendance) {
+      switch(week) {
+        case "WEEK1":
+          bitVector[9996] = 1;
+        case "WEEK2":
+          bitVector[9997] = 1;
+        case "WEEK3":
+          bitVector[9998] = 1;
+        case "WEEK4":
+          bitVector[9999] = 1;
+      }
+    }
+  }
+
   return { bitVector, indexMapping: bitIndexToUsername };
 };
 
@@ -72,6 +90,7 @@ export const getOverlapFromPSIResult = (
 ): PSIData => {
   const sharedConnections: string[] = [];
   const sharedLannaInterests: string[] = [];
+  const sharedAttendance: string[] = [];
 
   for (const index of overlapIndices) {
     if (index < COMMON_CONNECTIONS_BIT_VECTOR_SIZE) {
@@ -84,11 +103,17 @@ export const getOverlapFromPSIResult = (
       if (lannaIndex >= 0 && lannaIndex < LANNA_INTERESTS_LIST.length) {
         sharedLannaInterests.push(LANNA_INTERESTS_LIST[lannaIndex]);
       }
+
+      const attendanceIndex = index - ATTENDANCE_BIT_VECTOR_START;
+      if (attendanceIndex > 0) {
+        sharedAttendance.push(LANNA_ATTENDANCE[attendanceIndex]);
+      }
     }
   }
 
   return {
     sharedConnections,
     sharedLannaInterests,
+    sharedAttendance,
   };
 };

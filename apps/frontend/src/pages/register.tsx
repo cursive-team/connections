@@ -161,6 +161,14 @@ const Register: React.FC = () => {
     logClientEvent("register-create-account", {});
     setDisplayState(DisplayState.CREATING_ACCOUNT);
     try {
+
+      // NOTE: On registration tap, attendance is returned, which allows it to be set in the UserData before its first backup
+      // TODO: find cleaner way to check for existence
+      let attendance: string[] = [];
+      if (savedTap && savedTap.tapResponse && savedTap.tapResponse.tap && savedTap.tapResponse.tap.chipAttendance) {
+        attendance = savedTap.tapResponse.tap.chipAttendance
+      }
+
       // Register user
       await registerUser({
         signinToken: code,
@@ -173,6 +181,7 @@ const Register: React.FC = () => {
         twitterHandle,
         registeredWithPasskey: registeredWithPasskey,
         passkeyAuthPublicKey: authPublicKey,
+        attendance: attendance,
       });
 
       const { user, session } = await storage.getUserAndSession();
@@ -201,6 +210,11 @@ const Register: React.FC = () => {
           ownerUserData.telegram = {
             username: user.userData.telegram.username,
           };
+        }
+
+        // NOTE: The registration tap returns the chip's attendance (set by the chipIssuer), which is used to set the UserData
+        if (savedTap.tapResponse.tap && savedTap.tapResponse.tap.chipAttendance) {
+          ownerUserData.attendance = savedTap.tapResponse.tap.chipAttendance;
         }
 
         await registerChip({

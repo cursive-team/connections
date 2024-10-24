@@ -18,6 +18,7 @@ async function main() {
       chipVariant: "NTAG212",
       chipIsRegistered: false,
       chipTapCount: 0,
+      chipAttendance: ["WEEK1", "WEEK2", "WEEK3", "WEEK4"],
     })),
     skipDuplicates: true,
   });

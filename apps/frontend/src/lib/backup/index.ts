@@ -9,7 +9,7 @@ import {
   Activity,
   ActivitySchema,
   Chip,
-  ChipSchema,
+  BackupChipSchema,
   Connection,
   ConnectionSchema,
   User,
@@ -86,7 +86,7 @@ export const processUserBackup = ({
         if (!user) {
           throw new Error("CHIP backup entry found before INITIAL");
         }
-        const chip: Chip = ChipSchema.parse(JSON.parse(decryptedData));
+        const chip: Chip = BackupChipSchema.parse(JSON.parse(decryptedData));
         user.chips.push(chip);
         break;
       case BackupEntryType.CONNECTION:

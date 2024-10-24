@@ -26,6 +26,7 @@ export interface RegisterUserArgs {
   twitterHandle?: string;
   registeredWithPasskey: boolean;
   passkeyAuthPublicKey?: string;
+  attendance: string[];
 }
 
 /**
@@ -53,6 +54,7 @@ export async function registerUser({
   twitterHandle,
   registeredWithPasskey,
   passkeyAuthPublicKey,
+  attendance,
 }: RegisterUserArgs): Promise<void> {
   const { publicKey: encryptionPublicKey, privateKey: encryptionPrivateKey } =
     await generateEncryptionKeyPair();
@@ -91,6 +93,7 @@ export async function registerUser({
       telegram: {
         username: telegramHandle,
       },
+      attendance,
     },
     chips: [],
     connections: {},

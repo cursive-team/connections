@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { UserDataSchema } from "./userData";
-import { ChipSchema } from "./chip";
+import { BackupChipSchema } from "./chip";
 import { ConnectionSchema } from "./connection";
 import { ActivitySchema } from "./activity";
 import { EmailSchema } from "@types";
@@ -12,7 +12,7 @@ export const UserSchema = z.object({
   serializedPsiPrivateKey: z.string(),
   lastMessageFetchedAt: z.coerce.date(),
   userData: UserDataSchema,
-  chips: z.array(ChipSchema),
+  chips: z.array(BackupChipSchema),
   connections: z.record(z.string(), ConnectionSchema),
   activities: z.array(ActivitySchema),
 });

@@ -23,6 +23,8 @@ const crypto = require("crypto");
  * @param tapParams - Object containing tap parameters
  * @returns Promise resolving to a Chip object if found, or null if not found
  */
+
+// NOTE: This method is only place to get chip, this is origin of attendance info
 export async function getChipFromTapParams(
   prisma: PrismaClient,
   tapParams: TapParams
@@ -97,6 +99,7 @@ export const generateTapSignatureFromChip = async (
     chipPublicKey,
     chipPrivateKey,
     chipTapCount,
+    chipAttendance, // NOTE: comes from backfilled chip
     ownerUsername,
     ownerDisplayName,
     ownerBio,
@@ -111,6 +114,7 @@ export const generateTapSignatureFromChip = async (
     return ChipTapResponseSchema.parse({
       chipIssuer,
       chipIsRegistered,
+      chipAttendance, // NOTE: pass back attendance so that UserData is properly set in LocalStorage and Backup
       tap: null,
     });
   }
@@ -137,6 +141,7 @@ export const generateTapSignatureFromChip = async (
     chipIsRegistered,
     tap: {
       chipPublicKey,
+      chipAttendance: [], // NOTE: Return empty attendance so it's not leaked -- this tap belongs to a different user
       message,
       signature,
       tapCount: chipTapCount + 1,

@@ -67,6 +67,7 @@ export type UpdateChipRequest = z.infer<typeof UpdateChipRequestSchema>;
 
 export const ChipTapSchema = z.object({
   chipPublicKey: z.string(),
+  chipAttendance: z.array(z.string()).default([]),
   message: z.string(),
   signature: z.string(),
   tapCount: z.number().int().nonnegative(),

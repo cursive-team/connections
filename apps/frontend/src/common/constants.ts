@@ -20,6 +20,13 @@ export const LANNA_INTERESTS_LIST = [
   "doMentalWorkouts",
 ];
 
+export const LANNA_ATTENDANCE = [
+  "WEEK1",
+  "WEEK2",
+  "WEEK3",
+  "WEEK4",
+];
+
 export const tensionPairs = [
   ["💵 Paid content", "Free content with ads 🧃"],
   [`😈 Devil's advocacy`, "Yes-and protocol 🧐"],
