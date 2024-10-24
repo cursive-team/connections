@@ -107,6 +107,14 @@ export const processUserBackup = ({
         );
         user.activities.push(activity);
         break;
+      case BackupEntryType.LAST_MESSAGE_FETCHED_AT:
+        if (!user) {
+          throw new Error(
+            "LAST_MESSAGE_FETCHED_AT backup entry found before INITIAL"
+          );
+        }
+        user.lastMessageFetchedAt = new Date(JSON.parse(decryptedData));
+        break;
       default:
         throw new Error(`Invalid backup entry type: ${data.backupEntryType}`);
     }
@@ -318,6 +326,32 @@ export const createActivityBackup = ({
     iv,
     encryptedData,
     backupEntryType: BackupEntryType.ACTIVITY,
+    clientCreatedAt: new Date(),
+  };
+};
+
+export interface CreateLastMessageFetchedAtBackupArgs {
+  email: string;
+  password: string;
+  lastMessageFetchedAt: Date;
+}
+
+export const createLastMessageFetchedAtBackup = ({
+  email,
+  password,
+  lastMessageFetchedAt,
+}: CreateLastMessageFetchedAtBackupArgs): CreateBackupData => {
+  const { authenticationTag, iv, encryptedData } = encryptBackupString({
+    backup: JSON.stringify(lastMessageFetchedAt),
+    email,
+    password,
+  });
+
+  return {
+    authenticationTag,
+    iv,
+    encryptedData,
+    backupEntryType: BackupEntryType.LAST_MESSAGE_FETCHED_AT,
     clientCreatedAt: new Date(),
   };
 };

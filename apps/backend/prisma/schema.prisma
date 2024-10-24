@@ -57,6 +57,16 @@ model Backup {
   submittedAt       DateTime @default(now())
 }
 
+model Message {
+  id                                 String   @id @default(uuid())
+  receiverSignaturePublicKey         String
+  senderEphemeralEncryptionPublicKey String   @unique
+  encryptedData                      String
+  senderEncryptedSignaturePublicKey  String
+  senderEncryptedSignature           String
+  createdAt                          DateTime @default(now())
+}
+
 model Chip {
   id                       String    @id @default(uuid())
   chipIssuer               String // e.g., "EDGE_CITY_LANNA", "DEVCON_2024"

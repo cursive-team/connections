@@ -19,6 +19,7 @@ import { BASE_API_URL } from "@/config";
 import Link from "next/link";
 import { TensionSlider } from "../tensions";
 import { Icons } from "@/components/Icons";
+import { sendMessages } from "@/lib/message";
 
 interface CommentModalProps {
   username: string;
@@ -27,6 +28,7 @@ interface CommentModalProps {
   previousNote: string | undefined;
   tapResponse: ChipTapResponse | undefined;
   onClose: () => void;
+  onTapBack: () => Promise<void>;
   onSubmit: (emoji: string | null, note: string) => void;
 }
 
@@ -36,10 +38,12 @@ const CommentModal: React.FC<CommentModalProps> = ({
   previousEmoji,
   previousNote,
   onClose,
+  onTapBack,
   onSubmit,
 }) => {
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
   const [privateNote, setPrivateNote] = useState("");
+  const [hasTappedBack, setHasTappedBack] = useState(false);
 
   useEffect(() => {
     if (previousEmoji) {
@@ -82,6 +86,17 @@ const CommentModal: React.FC<CommentModalProps> = ({
             <span className=" text-secondary text-sm font-medium font-sans text-center">
               {displayName}
             </span>
+          </div>
+          <div className="flex flex-col mt-2">
+            <AppButton
+              onClick={async () => {
+                setHasTappedBack(true);
+                await onTapBack();
+              }}
+              disabled={hasTappedBack}
+            >
+              Share socials back
+            </AppButton>
           </div>
           <span className="text-center text-xs text-tertiary font-medium font-sans">
             Add details to remember this connection. <br />
@@ -196,6 +211,25 @@ const UserProfilePage: React.FC = () => {
     logClientEvent("user-profile-comment-modal-closed", {});
     setShowCommentModal(false);
     await storage.deleteSavedTapInfo();
+  };
+
+  const handleTapBack = async () => {
+    logClientEvent("user-profile-tap-back-clicked", {});
+    if (!session || !connection || !tapInfo?.tapResponse.chipIssuer) {
+      toast.error("Failed to tap back");
+      return;
+    }
+
+    const message = await storage.createTapBackMessage(
+      connection.user.username,
+      tapInfo.tapResponse.chipIssuer
+    );
+    await sendMessages({
+      authToken: session.authTokenValue,
+      messages: [message],
+    });
+
+    toast.success("Tap back sent successfully!");
   };
 
   const handleSubmitComment = async (emoji: string | null, note: string) => {
@@ -336,6 +370,7 @@ const UserProfilePage: React.FC = () => {
           previousNote={connection.comment?.note}
           tapResponse={tapInfo?.tapResponse}
           onClose={handleCloseCommentModal}
+          onTapBack={handleTapBack}
           onSubmit={handleSubmitComment}
         />
       )}

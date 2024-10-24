@@ -87,10 +87,14 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
   // Comment is left unchanged
   const newComment = previousConnection?.comment ?? undefined;
 
+  // Sent messages are left unchanged
+  const newSentMessages = previousConnection?.sentMessages ?? [];
+
   const newConnection = {
     user: newConnectionUserData,
     taps: newTaps,
     comment: newComment,
+    sentMessages: newSentMessages,
   };
 
   const connectionBackup = createConnectionBackup({
