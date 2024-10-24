@@ -1,19 +1,42 @@
 import { Inter } from "next/font/google";
 import { RouterItem } from "@/lib/frontend/types";
 import { Icons } from "@/components/Icons";
+import {
+  LeaderboardEntryType,
+  OAuthMapping
+} from "@types";
 
 export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
 
 export const BASE_API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
-export const OAUTH_APP_MAPPING: Record<string, {id: string | undefined, secret: string | undefined, token_url: string }> = {
+export const OAUTH_APP_MAPPING: Record<string, OAuthMapping> = {
   "strava": {
+    client_side_fetching: true,
     token_url: "https://www.strava.com/api/v3/oauth/token",
+    redirect_uri: "http://connections.cursive.team/oauth/exchange_token&approval_prompt=force&scope=read", // TODO: update for prod, set correct scopes for each service -- definitely should have app-level separation for app-specific scopes,
     id: process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_ID || "",
     secret: process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_SECRET || "",
+    data_options: [
+      {
+        type: LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
+      }
+    ],
+  },
+  "github": {
+    client_side_fetching: false,
+    token_url: "https://github.com/login/oauth/access_token",
+    redirect_uri: "http://connections.cursive.team/oauth/exchange_token&approval_prompt=force&scope=read",
+    id: process.env.NEXT_PUBLIC_OAUTH_GITHUB_CLIENT_ID || "",
+    secret: process.env.NEXT_PUBLIC_OAUTH_GITHUB_CLIENT_SECRET || "",
+    data_options: [
+      {
+        type: LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS,
+      }
+    ],
   }
-}
+};
 
 export const APP_CONFIG = {
   APP_NAME: "Cursive Connections",
