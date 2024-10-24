@@ -5,6 +5,8 @@ export enum ActivityType {
   REGISTER_CHIP = "REGISTER_CHIP",
   TAP = "TAP",
   PSI = "PSI",
+  TAP_BACK_SENT = "TAP_BACK_SENT",
+  TAP_BACK_RECEIVED = "TAP_BACK_RECEIVED",
 }
 
 export const ActivitySchema = z.object({

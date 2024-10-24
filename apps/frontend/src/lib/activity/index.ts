@@ -66,3 +66,36 @@ export const createPSIActivity = (connectionUsername: string): Activity => {
     timestamp: new Date(),
   };
 };
+
+export const TapBackSentActivityDataSchema = z.object({
+  connectionUsername: z.string(),
+});
+export type TapBackSentActivityData = z.infer<
+  typeof TapBackSentActivityDataSchema
+>;
+export const createTapBackSentActivity = (
+  connectionUsername: string
+): Activity => {
+  return {
+    type: ActivityType.TAP_BACK_SENT,
+    serializedData: JSON.stringify({ connectionUsername }),
+    timestamp: new Date(),
+  };
+};
+
+export const TapBackReceivedActivityDataSchema = z.object({
+  connectionUsername: z.string(),
+});
+export type TapBackReceivedActivityData = z.infer<
+  typeof TapBackReceivedActivityDataSchema
+>;
+export const createTapBackReceivedActivity = (
+  connectionUsername: string,
+  timestamp: Date
+): Activity => {
+  return {
+    type: ActivityType.TAP_BACK_RECEIVED,
+    serializedData: JSON.stringify({ connectionUsername }),
+    timestamp,
+  };
+};

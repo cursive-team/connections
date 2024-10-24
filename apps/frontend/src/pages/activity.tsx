@@ -12,6 +12,8 @@ import {
   PSIActivityDataSchema,
   RegisterChipActivityDataSchema,
   TapActivityDataSchema,
+  TapBackReceivedActivityDataSchema,
+  TapBackSentActivityDataSchema,
 } from "@/lib/activity";
 import { ChipIssuer } from "@types";
 import { cn } from "@/lib/frontend/util";
@@ -58,6 +60,26 @@ const parseActivity = (activity: Activity): ActivityDisplayItem => {
       return {
         text: `You ran PSI with ${connectionUsername}`,
         link: `/people/${connectionUsername}`,
+        timestamp: activity.timestamp,
+      };
+    case "TAP_BACK_SENT":
+      const { connectionUsername: tapBackSentConnectionUsername } =
+        TapBackSentActivityDataSchema.parse(
+          JSON.parse(activity.serializedData)
+        );
+      return {
+        text: `You tapped ${tapBackSentConnectionUsername} back`,
+        link: `/people/${tapBackSentConnectionUsername}`,
+        timestamp: activity.timestamp,
+      };
+    case "TAP_BACK_RECEIVED":
+      const { connectionUsername: tapBackReceivedConnectionUsername } =
+        TapBackReceivedActivityDataSchema.parse(
+          JSON.parse(activity.serializedData)
+        );
+      return {
+        text: `${tapBackReceivedConnectionUsername} tapped you back`,
+        link: `/people/${tapBackReceivedConnectionUsername}`,
         timestamp: activity.timestamp,
       };
     default:
