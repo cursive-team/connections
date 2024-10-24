@@ -67,6 +67,7 @@ model Chip {
   chipPublicKey            String?
   chipPrivateKey           String?
   chipTapCount             Int       @default(0)
+  chipAttendance           String[]
   ownerUsername            String?
   ownerDisplayName         String?
   ownerBio                 String?
