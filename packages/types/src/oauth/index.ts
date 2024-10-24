@@ -21,6 +21,7 @@ export type AccessToken = z.infer<typeof AccessTokenSchema>;
 
 export const DataOptionSchema = z.object({
   type: LeaderboardEntryTypeSchema,
+  scope: z.string(),
 });
 
 export type DataOption = z.infer<typeof DataOptionSchema>;

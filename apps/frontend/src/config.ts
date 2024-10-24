@@ -11,7 +11,7 @@ export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
 export const BASE_API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
-export const OAUTH_APP_MAPPING: Record<string, OAuthAppDetails> = {
+export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
   "strava": {
     client_side_fetching: true,
     can_import: true,
@@ -22,6 +22,7 @@ export const OAUTH_APP_MAPPING: Record<string, OAuthAppDetails> = {
     data_options: [
       {
         type: LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
+        scope: "read",
       }
     ],
   },
@@ -35,6 +36,7 @@ export const OAUTH_APP_MAPPING: Record<string, OAuthAppDetails> = {
     data_options: [
       {
         type: LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS,
+        scope: "read",
       }
     ],
   }

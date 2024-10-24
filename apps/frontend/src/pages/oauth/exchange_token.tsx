@@ -17,7 +17,7 @@ import {
   getAccessToken,
   saveAccessToken
 } from "@/lib/storage/localStorage/oauth";
-import {OAUTH_APP_MAPPING} from "@/config";
+import {OAUTH_APP_DETAILS} from "@/config";
 import {storage} from "@/lib/storage";
 import {importOAuthData} from "@/lib/oauth/imports";
 import {updateLeaderboardEntry} from "@/lib/chip";
@@ -91,12 +91,12 @@ const OAuthAccessTokenPage: React.FC = () => {
         const stateStr = String(state);
 
         // This should never happen
-        if (!OAUTH_APP_MAPPING || !OAUTH_APP_MAPPING[stateStr]) {
+        if (!OAUTH_APP_DETAILS || !OAUTH_APP_DETAILS[stateStr]) {
           throw new Error("OAuth app integration details are not available")
         }
 
         // Get app details and fetch access token
-        const details: OAuthAppDetails = OAUTH_APP_MAPPING[stateStr];
+        const details: OAuthAppDetails = OAUTH_APP_DETAILS[stateStr];
 
         const accessToken: AccessToken | null = await getOAuthAccessToken(stateStr, codeStr, details);
         if (!accessToken) {
