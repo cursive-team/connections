@@ -11,3 +11,5 @@ export const communitiesHumanReadable: { [key: string]: string } = {
   devcon: "Dev Con 2014",
   testing: "Testing",
 };
+
+export const ERROR_SUPPORT_CONTACT = "https://t.me/stevenelleman"
