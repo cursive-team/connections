@@ -21,7 +21,6 @@ export const OAUTH_APP_MAPPING: Record<string, OAuthMapping> = {
     data_options: [
       {
         type: LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
-        endpoint: "https://www.strava.com/api/v3/athletes/${user_id}/stats", // TODO: move within function?
       }
     ],
   },
@@ -34,7 +33,6 @@ export const OAUTH_APP_MAPPING: Record<string, OAuthMapping> = {
     data_options: [
       {
         type: LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS,
-        endpoint: "",
       }
     ],
   }

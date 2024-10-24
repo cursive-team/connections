@@ -27,17 +27,17 @@ export type GithubBearerToken = z.infer<typeof GithubBearerTokenSchema>;
 
 export const AccessTokenSchema = z.object({
   access_token: z.string(),
+  scope: z.string(),
+  token_type: z.string(),
   refresh_token: z.string(),
   user_id: z.number(),
-  // TODO: add username for github
-  expires_at: z.number(), // TODO change to date
+  expires_at: z.number(),
 });
 
 export type AccessToken = z.infer<typeof AccessTokenSchema>;
 
 export const DataOptionSchema = z.object({
   type: LeaderboardEntryTypeSchema,
-  endpoint: z.string(),
 });
 
 export type DataOption = z.infer<typeof DataOptionSchema>;
@@ -76,7 +76,11 @@ export async function stravaMapResponseToAccessToken(resp: globalThis.Response):
     access_token,
     refresh_token,
     expires_at,
-    user_id: id
+    user_id: id,
+
+    // Unused for now, should probably add them
+    scope: "",
+    token_type: ""
   }
 }
 
@@ -85,10 +89,14 @@ export async function githubMapResponseToAccessToken(resp: globalThis.Response):
 
   // Convert StravaBearerToken into generic AuthToken
   const parsedData = GithubBearerTokenSchema.parse(data);
-  const { access_token, } = parsedData;
+  const { access_token, scope, token_type } = parsedData;
 
   return {
-    access_token: access_token,
+    access_token,
+    scope,
+    token_type,
+
+    // Unused for now, should probably add them
     refresh_token: "",
     expires_at: 0,
     user_id: 0
@@ -105,42 +113,6 @@ export async function mapResponseToAccessToken(app: string, resp: globalThis.Res
     case GITHUB:
       return await githubMapResponseToAccessToken(resp);
     default:
-      return null;
-  }
-}
-
-// Import related types
-
-export function StravaFormatEndpoint(token: AccessToken, endpoint: string): string {
-  return endpoint.replace("${user_id}", String(token.user_id));
-}
-
-export const StravaRecentRunSchema = z.object({
-  distance: z.number(),
-});
-
-export const StravaActivityRunStatsSchema = z.object({
-  recent_run_totals: StravaRecentRunSchema,
-})
-
-export type StravaActivityRunStats = z.infer<typeof StravaActivityRunStatsSchema>;
-
-export function MapStravaActivityStatsToLeaderboardEntry(username: string, chipIssuer: ChipIssuer, resp: any): LeaderboardEntry {
-  const parsed = StravaActivityRunStatsSchema.parse(resp);
-  return {
-    username: username,
-    chipIssuer: chipIssuer,
-    entryValue: parsed.recent_run_totals.distance,
-    entryType: LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
-  }
-}
-
-export function MapResponseToLeaderboardEntry(username: string, type: LeaderboardEntryType, chipIssuer: ChipIssuer, resp: any): LeaderboardEntry | null {
-  switch(type) {
-    case LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
-      return MapStravaActivityStatsToLeaderboardEntry(username, chipIssuer, resp);
-    default:
-      // Probably should throw error
       return null;
   }
 }
