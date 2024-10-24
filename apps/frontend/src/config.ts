@@ -27,7 +27,7 @@ export const OAUTH_APP_MAPPING: Record<string, OAuthAppDetails> = {
   },
   "github": {
     client_side_fetching: false,
-    can_import: false,
+    can_import: true,
     token_url: "https://github.com/login/oauth/access_token",
     redirect_uri: "http://connections.cursive.team/oauth/exchange_token&approval_prompt=force&scope=read",
     id: process.env.NEXT_PUBLIC_OAUTH_GITHUB_CLIENT_ID || "",

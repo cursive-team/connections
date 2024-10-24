@@ -8,7 +8,9 @@ import {toast} from "sonner";
 import {CursiveLogo} from "@/components/ui/HeaderCover";
 import {
   AccessToken,
-  ChipIssuer, errorToString, GITHUB,
+  ChipIssuer,
+  errorToString,
+  GITHUB,
   OAuthAppDetails
 } from "@types";
 import {

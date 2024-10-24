@@ -3,7 +3,7 @@ import {
   getFromLocalStorage,
   saveToLocalStorage,
 } from "@/lib/storage/localStorage/utils";
-import {AccessToken, AccessTokenSchema, errorToString} from "@types";
+import {AccessToken, AccessTokenSchema} from "@types";
 
 export const OAUTH_STORAGE_KEY = "oauth_access_token";
 
