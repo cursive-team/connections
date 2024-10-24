@@ -68,8 +68,9 @@ export const processNewMessages = async (
         return;
       }
 
-      let updatedConnection: Connection =
-        user.connections[senderSignaturePublicKey];
+      const connectionUsername = tapBackMessages[0].user.username;
+      let updatedConnection: Connection = user.connections[connectionUsername];
+
       // Create new connection if it doesn't exist
       if (!updatedConnection) {
         const firstTapBackMessage = tapBackMessages[0];
@@ -83,6 +84,13 @@ export const processNewMessages = async (
 
       // Update connection with new tap back messages
       for (const tapBackMessage of tapBackMessages) {
+        // Check claimed signature public key
+        if (
+          senderSignaturePublicKey !== tapBackMessage.user.signaturePublicKey
+        ) {
+          throw new Error("Signature public key does not match");
+        }
+
         // Do not allow a connection to change username or keys
         if (
           updatedConnection.user.username !== tapBackMessage.user.username ||
