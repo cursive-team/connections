@@ -11,7 +11,7 @@ export const ConnectionSchema = z.object({
   comment: nullToUndefined(CommentDataSchema),
   taps: z.array(TapDataSchema),
   psi: nullToUndefined(PSIDataSchema),
-  sentMessages: z.array(SentMessageSchema),
+  sentMessages: nullToUndefined(z.array(SentMessageSchema)).default([]),
 });
 
 export type Connection = z.infer<typeof ConnectionSchema>;

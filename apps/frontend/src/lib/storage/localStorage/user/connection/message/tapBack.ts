@@ -81,7 +81,7 @@ export const createTapBackMessage = async (
     receiverSignaturePublicKey: connection.user.signaturePublicKey,
     receiverEncryptionPublicKey: connection.user.encryptionPublicKey,
     serializedData: serializedMessage,
-    senderSignaturePublicKey: user.signaturePrivateKey,
+    senderSignaturePublicKey: user.userData.signaturePublicKey,
     senderSignaturePrivateKey: user.signaturePrivateKey,
   });
 };

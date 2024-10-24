@@ -1,6 +1,7 @@
 import express from "express";
 import userRoutes from "./routes/user";
 import chipRoutes from "./routes/chip";
+import messageRoutes from "./routes/message";
 import healthRoutes from "./routes/health";
 import { FRONTEND_URL } from "./constants";
 import { IntersectionState } from "@types";
@@ -16,6 +17,7 @@ app.use(express.json());
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/chip", chipRoutes);
+app.use("/api/message", messageRoutes);
 app.use("/", healthRoutes);
 
 app.locals.intersectionState = {} as IntersectionState;
