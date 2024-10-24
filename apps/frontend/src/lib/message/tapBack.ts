@@ -1,27 +1,32 @@
 import { z } from "zod";
 import { randomBytes } from "crypto";
 import { getCounterMessage, sign } from "../crypto/babyJubJub";
-import { ChipIssuer, ChipIssuerSchema } from "@types";
-import { MessageType, MessageTypeSchema } from "../storage/types";
+import { ChipIssuer } from "@types";
+import {
+  TapDataSchema,
+  MessageType,
+  MessageTypeSchema,
+  UserDataSchema,
+  UserData,
+} from "../storage/types";
 
 export const TapBackMessageSchema = z.object({
   type: MessageTypeSchema,
-  message: z.string(),
-  signature: z.string(),
-  chipPublicKey: z.string(),
-  chipIssuer: ChipIssuerSchema,
-  timestamp: z.coerce.date(),
+  user: UserDataSchema,
+  tap: TapDataSchema,
 });
 
 export type TapBackMessage = z.infer<typeof TapBackMessageSchema>;
 
 export interface GenerateTapBackMessageArgs {
+  user: UserData;
   chipPrivateKey: string;
   chipPublicKey: string;
   chipIssuer: ChipIssuer;
 }
 
 export const generateSerializedTapBackMessage = async ({
+  user,
   chipPrivateKey,
   chipPublicKey,
   chipIssuer,
@@ -44,11 +49,14 @@ export const generateSerializedTapBackMessage = async ({
     serializedMessage: JSON.stringify(
       TapBackMessageSchema.parse({
         type: MessageType.TAP_BACK,
-        message,
-        signature,
-        chipPublicKey,
-        chipIssuer,
-        timestamp: messageTimestamp,
+        user,
+        tap: {
+          message,
+          signature,
+          chipPublicKey,
+          chipIssuer,
+          timestamp: messageTimestamp,
+        },
       })
     ),
     messageTimestamp,

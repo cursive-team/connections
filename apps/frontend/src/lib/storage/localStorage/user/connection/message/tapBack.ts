@@ -4,9 +4,24 @@ import {
   generateSerializedTapBackMessage,
 } from "@/lib/message";
 import { getUserAndSession } from "@/lib/storage/localStorage/user";
-import { SentMessage, SentMessageSchema } from "@/lib/storage/types";
-import { createConnectionBackup } from "@/lib/backup";
+import { SentMessage, SentMessageSchema, UserData } from "@/lib/storage/types";
+import { createActivityBackup, createConnectionBackup } from "@/lib/backup";
 import { saveBackupAndUpdateStorage } from "../../../utils";
+import { createTapBackSentActivity } from "@/lib/activity";
+
+// TODO: Generalize this based on user preferences
+export const getUserShareableData = (userData: UserData): UserData => {
+  return {
+    username: userData.username,
+    displayName: userData.displayName,
+    bio: userData.bio,
+    signaturePublicKey: userData.signaturePublicKey,
+    encryptionPublicKey: userData.encryptionPublicKey,
+    psiPublicKeyLink: userData.psiPublicKeyLink,
+    twitter: userData.twitter,
+    telegram: userData.telegram,
+  };
+};
 
 export const createTapBackMessage = async (
   connectionUsername: string,
@@ -26,6 +41,7 @@ export const createTapBackMessage = async (
 
   const { serializedMessage, messageTimestamp } =
     await generateSerializedTapBackMessage({
+      user: getUserShareableData(user.userData),
       chipPrivateKey: chip.privateKey,
       chipPublicKey: chip.publicKey,
       chipIssuer,
@@ -47,10 +63,18 @@ export const createTapBackMessage = async (
     connection: updatedConnection,
   });
 
+  // Create activity for sending tap back
+  const tapBackSentActivity = createTapBackSentActivity(connectionUsername);
+  const tapBackSentActivityBackup = createActivityBackup({
+    email: user.email,
+    password: session.backupMasterPassword,
+    activity: tapBackSentActivity,
+  });
+
   await saveBackupAndUpdateStorage({
     user,
     session,
-    newBackupData: [connectionBackup],
+    newBackupData: [connectionBackup, tapBackSentActivityBackup],
   });
 
   return createEncryptedMessage({
