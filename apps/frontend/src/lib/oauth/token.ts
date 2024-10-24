@@ -7,7 +7,7 @@ import {
 } from "@types";
 import {
   BASE_API_URL,
-  OAUTH_APP_MAPPING,
+  OAUTH_APP_DETAILS,
 } from "@/config";
 
 
@@ -47,11 +47,11 @@ export async function getOAuthTokenViaClient(
   code: string,
 ): Promise<AccessToken | null> {
   try {
-    if (!OAUTH_APP_MAPPING[app]) {
+    if (!OAUTH_APP_DETAILS[app]) {
       throw new Error("OAuth app integration details are not available");
     }
 
-    const mapping: OAuthAppDetails = OAUTH_APP_MAPPING[app];
+    const mapping: OAuthAppDetails = OAUTH_APP_DETAILS[app];
 
     const response = await fetchToken(app, mapping, code);
     if (!response) {

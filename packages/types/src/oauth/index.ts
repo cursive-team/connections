@@ -1,17 +1,7 @@
 import {z} from "zod";
-import {
-  ChipIssuer,
-  LeaderboardEntryType,
-  LeaderboardEntryTypeSchema,
-} from "../chip";
-import { LeaderboardEntry } from "../chip";
-import {
-  MapStravaActivityStatsToLeaderboardEntry,
-  StravaBearerTokenSchema
-} from "./strava";
-import {
-  GithubBearerTokenSchema
-} from "./github";
+import {ChipIssuer, LeaderboardEntry, LeaderboardEntryType, LeaderboardEntryTypeSchema,} from "../chip";
+import {MapStravaActivityStatsToLeaderboardEntry, StravaBearerTokenSchema} from "./strava";
+import {GithubBearerTokenSchema, MapGithubCommitContributionsToLeaderboardEntry} from "./github";
 
 // Export app-specific types
 export * from "./strava";
@@ -31,6 +21,7 @@ export type AccessToken = z.infer<typeof AccessTokenSchema>;
 
 export const DataOptionSchema = z.object({
   type: LeaderboardEntryTypeSchema,
+  scope: z.string(),
 });
 
 export type DataOption = z.infer<typeof DataOptionSchema>;
@@ -110,10 +101,13 @@ export async function mapResponseToAccessToken(app: string, resp: globalThis.Res
   }
 }
 
+// Import related types
 export function MapResponseToLeaderboardEntry(username: string, type: LeaderboardEntryType, chipIssuer: ChipIssuer, resp: any): LeaderboardEntry | null {
   switch(type) {
     case LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
       return MapStravaActivityStatsToLeaderboardEntry(username, chipIssuer, resp);
+    case LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS:
+      return MapGithubCommitContributionsToLeaderboardEntry(username, chipIssuer, resp);
     default:
       // Probably should throw error
       return null;
