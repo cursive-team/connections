@@ -73,11 +73,12 @@ export const processNewMessages = async (
       // Create new connection if it doesn't exist
       if (!updatedConnection) {
         const firstTapBackMessage = tapBackMessages[0];
-        updatedConnection = {
+        const newConnection: Connection = {
           user: firstTapBackMessage.user,
           taps: [],
           sentMessages: [],
         };
+        updatedConnection = newConnection;
       }
 
       // Update connection with new tap back messages
