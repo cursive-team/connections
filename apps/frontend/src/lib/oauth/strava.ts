@@ -27,15 +27,3 @@ export function MapStravaActivityStatsToLeaderboardEntryRequest(authToken: strin
     entryType: LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
   }
 }
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export function MapResponseToLeaderboardEntryRequest(authToken: string, type: LeaderboardEntryType, chipIssuer: ChipIssuer, resp: any): UpdateLeaderboardEntryRequest | null {
-  switch(type) {
-    case LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
-      return MapStravaActivityStatsToLeaderboardEntryRequest(authToken, chipIssuer, resp);
-    default:
-      // Probably should throw error
-      return null;
-  }
-}
-

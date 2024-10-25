@@ -7,8 +7,9 @@ import {
 } from "@types";
 import {
   BASE_API_URL,
-  OAUTH_APP_MAPPING,
+  OAUTH_APP_DETAILS,
 } from "@/config";
+
 
 async function fetchToken(app: string, mapping: OAuthAppDetails, code: string): Promise<Response | null> {
   // Apps that use client-side fetching
@@ -45,11 +46,11 @@ export async function getOAuthTokenViaClient(
   code: string,
 ): Promise<AccessToken | null> {
   try {
-    if (!OAUTH_APP_MAPPING[app]) {
+    if (!OAUTH_APP_DETAILS[app]) {
       throw new Error("OAuth app integration details are not available");
     }
 
-    const mapping: OAuthAppDetails = OAUTH_APP_MAPPING[app];
+    const mapping: OAuthAppDetails = OAUTH_APP_DETAILS[app];
 
     const response = await fetchToken(app, mapping, code);
     if (!response) {
@@ -66,9 +67,15 @@ export async function getOAuthTokenViaClient(
       );
     }
 
+    const data = await response.json();
+    if (data && data.error) {
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${data.error}, consider checking environment variables or redirect_uri`
+      );
+    }
+
     // Convert app-specific token format into generic AccessToken
-    const accessToken = await mapResponseToAccessToken(app, response)
-    return accessToken || null;
+    return await mapResponseToAccessToken(app, data)
   } catch (error) {
     console.error("Error fetching access token:", error);
     throw error;
