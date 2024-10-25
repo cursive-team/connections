@@ -13,7 +13,6 @@ import { storage } from "@/lib/storage";
 export async function updateLeaderboardEntry(
   entryRequest: UpdateLeaderboardEntryRequest
 ): Promise<void> {
-
   try {
     const response = await fetch(
       `${BASE_API_URL}/chip/update_leaderboard_entry`,
@@ -35,7 +34,6 @@ export async function updateLeaderboardEntry(
         `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
       );
     }
-
 
     return;
   } catch (error) {
