@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
 import { Connection, Session, User } from "@/lib/storage/types";
 import { toast } from "sonner";
-import { TapParams, ChipTapResponse } from "@types";
+import { TapParams, ChipTapResponse, errorToString } from "@types";
 import { AppButton } from "@/components/ui/Button";
 import Image from "next/image";
 import AppLayout from "@/layouts/AppLayout";
@@ -19,6 +19,8 @@ import { BASE_API_URL } from "@/config";
 import Link from "next/link";
 import { TensionSlider } from "../tensions";
 import { Icons } from "@/components/Icons";
+import { SupportToast } from "@/components/ui/SupportToast";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 interface CommentModalProps {
   username: string;
@@ -221,7 +223,15 @@ const UserProfilePage: React.FC = () => {
       toast.success("Comment added successfully!");
     } catch (error) {
       console.error("Error adding comment:", error);
-      toast.error("Failed to add comment.");
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Failed to add comment",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
     }
   };
 
@@ -312,7 +322,15 @@ const UserProfilePage: React.FC = () => {
       }
     } catch (error) {
       console.error("Error updating PSI overlap:", error);
-      toast.error("Failed to update overlap. Please try again.");
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Failed to update overlap. Please try again",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
     } finally {
       setRefreshLoading(false);
     }

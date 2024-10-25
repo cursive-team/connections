@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { EmailSchema } from "@types";
+import {EmailSchema, errorToString} from "@types";
 import { toast } from "sonner";
 import { AppButton } from "@/components/ui/Button";
 import { AppInput } from "@/components/ui/AppInput";
 import { RegisterHeader } from "./RegisterHeader";
 import { AppCopy } from "@/components/ui/AppCopy";
+import { SupportToast } from "@/components/ui/SupportToast";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 interface EnterEmailProps {
   submitEmail: (email: string) => Promise<void>;
@@ -27,7 +29,7 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
       setLoading(false);
     } catch (error) {
       console.error(error);
-      toast.error("Please enter a valid email address");
+      toast(SupportToast("", true, "Please enter a valid email address", ERROR_SUPPORT_CONTACT, errorToString(error)));
     }
   };
 

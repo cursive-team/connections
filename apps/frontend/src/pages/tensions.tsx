@@ -6,6 +6,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { tensionPairs } from "@/common/constants";
 import { logClientEvent } from "@/lib/frontend/metrics";
+import { SupportToast } from "@/components/ui/SupportToast";
+import { errorToString } from "@types";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 export default function TensionsPage() {
   const router = useRouter();
@@ -81,7 +84,15 @@ export default function TensionsPage() {
       router.push("/profile");
     } catch (error) {
       console.error(error);
-      toast.error("Failed to save tensions. Please try again.");
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Failed to save tensions. Please try again",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
     } finally {
       setLoading(false);
     }

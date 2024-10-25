@@ -5,6 +5,9 @@ import { generateAuthenticationOptions } from "@simplewebauthn/server";
 import { AppButton } from "@/components/ui/Button";
 import { RegisterHeader } from "@/features/register/RegisterHeader";
 import { AppCopy } from "@/components/ui/AppCopy";
+import { SupportToast } from "@/components/ui/SupportToast";
+import { errorToString } from "@types";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 interface LoginWithPasskeyProps {
   onPasskeyLogin: (password: string) => Promise<void>;
@@ -24,7 +27,7 @@ const LoginWithPasskey: React.FC<LoginWithPasskeyProps> = ({
       await onPasskeyLogin(id);
     } catch (error) {
       console.error("Error logging in: ", error);
-      toast.error("Authentication failed! Please try again.");
+      toast(SupportToast("", true, "Authentication failed! Please try again", ERROR_SUPPORT_CONTACT, errorToString(error)));
       return;
     }
   };

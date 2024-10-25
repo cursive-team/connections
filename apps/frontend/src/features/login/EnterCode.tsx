@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { SigninTokenSchema } from "@types";
+import {errorToString, SigninTokenSchema} from "@types";
 import { toast } from "sonner";
 import { RegisterHeader } from "@/features/register/RegisterHeader";
 import { AppButton } from "@/components/ui/Button";
 import { AppCopy } from "@/components/ui/AppCopy";
+import { SupportToast } from "@/components/ui/SupportToast";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 interface EnterCodeProps {
   email: string;
@@ -21,7 +23,7 @@ const EnterCode: React.FC<EnterCodeProps> = ({ email, submitCode }) => {
       await submitCode(normalizedCode);
     } catch (error) {
       console.error(error);
-      toast.error("Please enter a valid 6-digit code");
+      toast(SupportToast("", true, "Please enter a valid 6-digit code", ERROR_SUPPORT_CONTACT, errorToString(error)));
     }
   };
 

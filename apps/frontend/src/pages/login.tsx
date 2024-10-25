@@ -12,9 +12,11 @@ import {
 } from "@/lib/auth";
 import { HeaderCover } from "@/components/ui/HeaderCover";
 import useSettings from "@/hooks/useSettings";
-import { UserLoginResponse } from "@types";
+import { errorToString, UserLoginResponse } from "@types";
 import { storage } from "@/lib/storage";
 import { logClientEvent } from "@/lib/frontend/metrics";
+import { SupportToast } from "@/components/ui/SupportToast";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 enum LoginState {
   EMAIL = "email",
@@ -50,7 +52,15 @@ const LoginPage: React.FC = () => {
       await requestSigninToken(submittedEmail);
     } catch (error) {
       console.error(error);
-      toast.error("Error requesting signin token");
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Error requesting signin token",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
       return;
     }
 
@@ -87,7 +97,15 @@ const LoginPage: React.FC = () => {
       router.push("/profile");
     } catch (error) {
       console.error("Password authentication error:", error);
-      toast.error("Invalid password. Please try again.");
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Invalid password. Please try again",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
     }
   };
 
@@ -104,7 +122,15 @@ const LoginPage: React.FC = () => {
       router.push("/profile");
     } catch (error) {
       console.error("Passkey authentication error:", error);
-      toast.error("Passkey authentication failed. Please try again.");
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Passkey authentication failed",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
     }
   };
 
