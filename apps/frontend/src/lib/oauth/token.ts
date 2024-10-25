@@ -3,47 +3,47 @@ import {
   AccessTokenSchema,
   OAuthAppDetails,
   mapResponseToAccessToken,
-  STRAVA,
+  DATA_IMPORT_SOURCE,
 } from "@types";
-import {
-  BASE_API_URL,
-  OAUTH_APP_DETAILS,
-} from "@/config";
+import { BASE_API_URL, OAUTH_APP_DETAILS } from "@/config";
 
-
-async function fetchToken(app: string, mapping: OAuthAppDetails, code: string): Promise<Response | null> {
+async function fetchToken(
+  app: string,
+  mapping: OAuthAppDetails,
+  code: string
+): Promise<Response | null> {
   // Apps that use client-side fetching
-  switch(app) {
-    case STRAVA:
+  switch (app) {
+    case DATA_IMPORT_SOURCE.STRAVA:
       return await stravaFetchToken(mapping, code);
     default:
       return null;
   }
 }
 
-async function stravaFetchToken(mapping: OAuthAppDetails, code: string): Promise<Response> {
+async function stravaFetchToken(
+  mapping: OAuthAppDetails,
+  code: string
+): Promise<Response> {
   const { id, secret, token_url } = mapping;
 
-  return fetch(
-    token_url,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        client_id: id,
-        client_secret: secret,
-        code: code,
-        grant_type: "authorization_code"
-      }),
-    }
-  );
+  return fetch(token_url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      client_id: id,
+      client_secret: secret,
+      code: code,
+      grant_type: "authorization_code",
+    }),
+  });
 }
 
 export async function getOAuthTokenViaClient(
   app: string,
-  code: string,
+  code: string
 ): Promise<AccessToken | null> {
   try {
     if (!OAUTH_APP_DETAILS[app]) {
@@ -75,7 +75,7 @@ export async function getOAuthTokenViaClient(
     }
 
     // Convert app-specific token format into generic AccessToken
-    return await mapResponseToAccessToken(app, data)
+    return await mapResponseToAccessToken(app, data);
   } catch (error) {
     console.error("Error fetching access token:", error);
     throw error;
@@ -84,7 +84,7 @@ export async function getOAuthTokenViaClient(
 
 export async function getOAuthTokenViaServer(
   app: string,
-  code: string,
+  code: string
 ): Promise<AccessToken> {
   try {
     const response = await fetch(

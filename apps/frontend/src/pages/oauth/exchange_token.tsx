@@ -1,42 +1,43 @@
-import React, {useEffect} from "react";
-import {useRouter} from "next/router";
-import {
-  getOAuthTokenViaClient,
-  getOAuthTokenViaServer
-} from "@/lib/oauth";
-import {toast} from "sonner";
-import {CursiveLogo} from "@/components/ui/HeaderCover";
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import { getOAuthTokenViaClient, getOAuthTokenViaServer } from "@/lib/oauth";
+import { toast } from "sonner";
+import { CursiveLogo } from "@/components/ui/HeaderCover";
 import {
   AccessToken,
   ChipIssuer,
   errorToString,
-  GITHUB,
-  OAuthAppDetails
+  DATA_IMPORT_SOURCE,
+  OAuthAppDetails,
 } from "@types";
 import {
   getAccessToken,
-  saveAccessToken
+  saveAccessToken,
 } from "@/lib/storage/localStorage/oauth";
-import {OAUTH_APP_DETAILS} from "@/config";
-import {storage} from "@/lib/storage";
-import {importOAuthData} from "@/lib/oauth/imports";
-import {updateLeaderboardEntry} from "@/lib/chip";
+import { OAUTH_APP_DETAILS } from "@/config";
+import { storage } from "@/lib/storage";
+import { importOAuthData } from "@/lib/oauth/imports";
+import { updateLeaderboardEntry } from "@/lib/chip";
 
-async function getOAuthAccessToken(app: string, code: string, details: OAuthAppDetails): Promise<AccessToken | null> {
+async function getOAuthAccessToken(
+  app: string,
+  code: string,
+  details: OAuthAppDetails
+): Promise<AccessToken | null> {
   let token: AccessToken | undefined | null;
 
   // First check if access token already exists and is active in local storage
-  token = await getAccessToken(app)
+  token = await getAccessToken(app);
   if (token) {
     // NOTE: when there are more scopes, check token scope, XOR save token by $app_$scope
 
-    if (app == GITHUB) {
+    if (app === DATA_IMPORT_SOURCE.GITHUB) {
       // Github OAuth tokens do not expire, unless they have not been used for a year
       toast.success("Fetched local OAuth token");
       return token;
     }
 
-    if (token.expires_at && (token.expires_at * 1000) > Date.now()) {
+    if (token.expires_at && token.expires_at * 1000 > Date.now()) {
       // Strava expires_at is in seconds. Data.now() is in milliseconds.
       toast.success("Fetched local OAuth token");
       return token;
@@ -53,7 +54,10 @@ async function getOAuthAccessToken(app: string, code: string, details: OAuthAppD
       token = await getOAuthTokenViaServer(app, code);
     }
   } catch (error) {
-    console.error("Minting OAuth token failed, check if code has expired", errorToString(error));
+    console.error(
+      "Minting OAuth token failed, check if code has expired",
+      errorToString(error)
+    );
     toast.error("Minting OAuth token failed, check if code has expired");
     return null;
   }
@@ -93,17 +97,21 @@ const OAuthAccessTokenPage: React.FC = () => {
         if (!OAUTH_APP_DETAILS || !OAUTH_APP_DETAILS[stateStr]) {
           toast.error("OAuth app integration details are not available");
           router.push("/profile");
-          return
+          return;
         }
 
         // Get app details and fetch access token
         const details: OAuthAppDetails = OAUTH_APP_DETAILS[stateStr];
 
-        const accessToken: AccessToken | null = await getOAuthAccessToken(stateStr, codeStr, details);
+        const accessToken: AccessToken | null = await getOAuthAccessToken(
+          stateStr,
+          codeStr,
+          details
+        );
         if (!accessToken) {
           toast.error("Unable to mint OAuth access token");
           router.push("/profile");
-          return
+          return;
         }
 
         if (accessToken && details.can_import) {
@@ -114,7 +122,12 @@ const OAuthAccessTokenPage: React.FC = () => {
 
           // TODO: Better chipIssuer selection when more communities added
           // Unlike access token fetching, all data importing will be from client
-          const leaderboardEntryRequest = await importOAuthData(session.authTokenValue, ChipIssuer.EDGE_CITY_LANNA, accessToken, importOption);
+          const leaderboardEntryRequest = await importOAuthData(
+            session.authTokenValue,
+            ChipIssuer.EDGE_CITY_LANNA,
+            accessToken,
+            importOption
+          );
 
           try {
             if (!leaderboardEntryRequest) {
@@ -130,9 +143,9 @@ const OAuthAccessTokenPage: React.FC = () => {
 
         router.push("/profile");
       }
-    }
+    };
 
-   fetchAccessToken();
+    fetchAccessToken();
   }, [router]);
 
   return (
@@ -140,6 +153,6 @@ const OAuthAccessTokenPage: React.FC = () => {
       <CursiveLogo isLoading />
     </div>
   );
-}
+};
 
 export default OAuthAccessTokenPage;

@@ -1,11 +1,10 @@
-import {z} from "zod";
+import { z } from "zod";
 
 // Export app-specific types
 export * from "./strava";
 export * from "./github";
 
-
-import {LeaderboardEntryTypeSchema} from "../chip";
+import { LeaderboardEntryTypeSchema } from "../chip";
 
 export const StravaAtheleteSchema = z.object({
   id: z.number(),
@@ -70,7 +69,9 @@ export type OAuthExchangeTokensRequest = z.infer<
 >;
 
 // Mapping access token types
-export async function stravaMapResponseToAccessToken(data: any): Promise<AccessToken> {
+export async function stravaMapResponseToAccessToken(
+  data: any
+): Promise<AccessToken> {
   // Convert StravaBearerToken into generic AuthToken
   const parsedData = StravaBearerTokenSchema.parse(data);
   const { access_token, refresh_token, expires_at, athlete } = parsedData;
@@ -84,11 +85,13 @@ export async function stravaMapResponseToAccessToken(data: any): Promise<AccessT
 
     // Unused for now, should probably add them
     scope: "",
-    token_type: ""
-  }
+    token_type: "",
+  };
 }
 
-export async function githubMapResponseToAccessToken(data: any): Promise<AccessToken> {
+export async function githubMapResponseToAccessToken(
+  data: any
+): Promise<AccessToken> {
   // Convert StravaBearerToken into generic AuthToken
   const parsedData = GithubBearerTokenSchema.parse(data);
   const { access_token, scope, token_type } = parsedData;
@@ -101,18 +104,23 @@ export async function githubMapResponseToAccessToken(data: any): Promise<AccessT
     // Unused for now, should probably add them
     refresh_token: "",
     expires_at: 0,
-    user_id: 0
-  }
+    user_id: 0,
+  };
 }
 
-export const STRAVA = "strava";
-export const GITHUB = "github";
+export enum DATA_IMPORT_SOURCE {
+  STRAVA = "strava",
+  GITHUB = "github",
+}
 
-export async function mapResponseToAccessToken(app: string, data: any): Promise<AccessToken | null> {
-  switch(app) {
-    case STRAVA:
+export async function mapResponseToAccessToken(
+  app: string,
+  data: any
+): Promise<AccessToken | null> {
+  switch (app) {
+    case DATA_IMPORT_SOURCE.STRAVA:
       return await stravaMapResponseToAccessToken(data);
-    case GITHUB:
+    case DATA_IMPORT_SOURCE.GITHUB:
       return await githubMapResponseToAccessToken(data);
     default:
       return null;
