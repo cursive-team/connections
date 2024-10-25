@@ -7,6 +7,8 @@ import { DashboardDetail } from "@/components/dashboard/DashboardDetail";
 import { Icons } from "@/components/Icons";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { Tag } from "@/components/ui/Tag";
+import ImportGithubButton from "@/features/oauth/ImportGithubButton";
+import ImportStravaButton from "@/features/oauth/ImportStravaButton";
 import AppLayout from "@/layouts/AppLayout";
 import {
   getTopLeaderboardEntries,
@@ -168,6 +170,34 @@ export default function CommunityPage() {
 
       const props: CommunityCardProps[] = [
         {
+          image: "/images/runclub.png",
+          title: "Lanna Run Club",
+          description: `${(stravaDetails.totalValue / 1000).toFixed(
+            2
+          )} of 1000km`,
+          type: "active",
+          position: stravaDetails.userPosition,
+          totalContributors: stravaDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((stravaDetails.totalValue / (1000 * 1000)) * 100)
+          ),
+          dashboard: DisplayedDashboard.STRAVA,
+        },
+        {
+          image: "/images/buildclub.png",
+          title: "Lanna Builders",
+          description: `${githubDetails.totalValue} of 1000 contributions`,
+          type: "active",
+          position: githubDetails.userPosition,
+          totalContributors: githubDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((githubDetails.totalValue / 1000) * 100)
+          ),
+          dashboard: DisplayedDashboard.GITHUB,
+        },
+        {
           image: "/images/hand.png",
           title: "Lanna Social Graph",
           description: `${details.totalValue} of 2000 taps`,
@@ -192,32 +222,6 @@ export default function CommunityPage() {
             Math.round((weeklyDetails.totalValue / 500) * 100)
           ),
           dashboard: DisplayedDashboard.WEEKLY,
-        },
-        {
-          image: "/images/runclub.png",
-          title: "Strava Running Distance",
-          description: `${stravaDetails.totalValue / 1000} of 1000km`,
-          type: "active",
-          position: stravaDetails.userPosition,
-          totalContributors: stravaDetails.totalContributors,
-          progressPercentage: Math.min(
-            100,
-            Math.round((stravaDetails.totalValue / (1000 * 1000)) * 100)
-          ),
-          dashboard: DisplayedDashboard.STRAVA,
-        },
-        {
-          image: "/images/buildclub.png",
-          title: "Open Source GitHub Contributions",
-          description: `${githubDetails.totalValue} of 1000 contributions`,
-          type: "active",
-          position: githubDetails.userPosition,
-          totalContributors: githubDetails.totalContributors,
-          progressPercentage: Math.min(
-            100,
-            Math.round((githubDetails.totalValue / 1000) * 100)
-          ),
-          dashboard: DisplayedDashboard.GITHUB,
         },
       ];
       setCardProps(props);
@@ -316,6 +320,7 @@ export default function CommunityPage() {
         goal={1000}
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
+        actionItem={<ImportStravaButton />}
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
       />
@@ -337,6 +342,7 @@ export default function CommunityPage() {
         goal={1000}
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
+        actionItem={<ImportGithubButton />}
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
       />

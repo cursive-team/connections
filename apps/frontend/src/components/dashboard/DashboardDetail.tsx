@@ -17,6 +17,7 @@ interface DashboardDetailProps {
   goal: number;
   organizer: string;
   organizerDescription: string;
+  actionItem?: React.ReactNode;
   type?: "active" | "community";
   prize?: boolean;
   returnToHome: () => void;
@@ -31,6 +32,7 @@ export function DashboardDetail({
   goal,
   organizer,
   organizerDescription,
+  actionItem,
   type = "active",
   prize = false,
   returnToHome,
@@ -62,7 +64,11 @@ export function DashboardDetail({
           <div>
             <div className="flex flex-row w-full px-1 pt-8 pb-4 bg-white justify-between items-center inline-flex">
               <div className="text-[#090909] text-xl font-semibold font-['DM Sans'] leading-tight">
-                {`Total (${leaderboardDetails.totalValue})`}
+                {`Total (${
+                  Number.isInteger(leaderboardDetails.totalValue)
+                    ? leaderboardDetails.totalValue
+                    : leaderboardDetails.totalValue.toFixed(2)
+                })`}
               </div>
               <div className="ml-auto">
                 <Icons.XClose
@@ -159,10 +165,14 @@ export function DashboardDetail({
         </div>
         {description && (
           <div className="p-4">
-            <p className="text-sm font-normal text-primary">{description}</p>
+            <p className="text-sm font-normal text-primary text-left">
+              {description}
+            </p>
+            {actionItem && (
+              <div className="flex justify-center mt-4">{actionItem}</div>
+            )}
           </div>
         )}
-
         <div className="pb-6">
           <div className="flex flex-col gap-2 p-4">
             <div className=" items-center flex justify-between">
