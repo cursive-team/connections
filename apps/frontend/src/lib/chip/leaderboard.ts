@@ -7,6 +7,7 @@ import {
   LeaderboardDetailsSchema,
   UpdateLeaderboardEntryRequest,
   LeaderboardEntryType,
+  LeaderboardEntry,
 } from "@types";
 import { storage } from "@/lib/storage";
 

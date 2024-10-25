@@ -17,7 +17,7 @@ import {
   getAccessToken,
   saveAccessToken
 } from "@/lib/storage/localStorage/oauth";
-import {OAUTH_APP_MAPPING} from "@/config";
+import {OAUTH_APP_DETAILS} from "@/config";
 import {storage} from "@/lib/storage";
 import {importOAuthData} from "@/lib/oauth/imports";
 import {updateLeaderboardEntry} from "@/lib/chip";
@@ -54,13 +54,13 @@ async function getOAuthAccessToken(app: string, code: string, details: OAuthAppD
     }
   } catch (error) {
     console.error("Minting OAuth token failed, check if code has expired", errorToString(error));
-    throw new Error("Minting OAuth token failed, check if code has expired")
+    toast.error("Minting OAuth token failed, check if code has expired");
+    return null;
   }
 
   if (!token) {
     toast.error("Unable to get OAuth access token");
     console.error("Minting OAuth token failed, check if code has expired");
-    throw new Error("Unable to get OAuth access token");
     return null;
   }
 
@@ -90,17 +90,20 @@ const OAuthAccessTokenPage: React.FC = () => {
         const stateStr = String(state);
 
         // This should never happen
-        if (!OAUTH_APP_MAPPING || !OAUTH_APP_MAPPING[stateStr]) {
-          throw new Error("OAuth app integration details are not available")
+        if (!OAUTH_APP_DETAILS || !OAUTH_APP_DETAILS[stateStr]) {
+          toast.error("OAuth app integration details are not available");
+          router.push("/profile");
+          return
         }
 
         // Get app details and fetch access token
-        const details: OAuthAppDetails = OAUTH_APP_MAPPING[stateStr];
+        const details: OAuthAppDetails = OAUTH_APP_DETAILS[stateStr];
 
         const accessToken: AccessToken | null = await getOAuthAccessToken(stateStr, codeStr, details);
         if (!accessToken) {
           toast.error("Unable to mint OAuth access token");
-          throw new Error("Unable to mint OAuth access token");
+          router.push("/profile");
+          return
         }
 
         if (accessToken && details.can_import) {
@@ -112,6 +115,8 @@ const OAuthAccessTokenPage: React.FC = () => {
           // TODO: Better chipIssuer selection when more communities added
           // Unlike access token fetching, all data importing will be from client
           const leaderboardEntryRequest = await importOAuthData(session.authTokenValue, ChipIssuer.EDGE_CITY_LANNA, accessToken, importOption);
+
+          console.log("Check req:", leaderboardEntryRequest)
 
           try {
             if (!leaderboardEntryRequest) {

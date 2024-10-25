@@ -1,5 +1,10 @@
 import {z} from "zod";
 
+// Export app-specific types
+export * from "./strava";
+export * from "./github";
+
+
 import {LeaderboardEntryTypeSchema} from "../chip";
 
 export const StravaAtheleteSchema = z.object({
@@ -38,6 +43,7 @@ export type AccessToken = z.infer<typeof AccessTokenSchema>;
 
 export const DataOptionSchema = z.object({
   type: LeaderboardEntryTypeSchema,
+  scope: z.string(),
 });
 
 export type DataOption = z.infer<typeof DataOptionSchema>;
@@ -64,9 +70,7 @@ export type OAuthExchangeTokensRequest = z.infer<
 >;
 
 // Mapping access token types
-export async function stravaMapResponseToAccessToken(resp: globalThis.Response): Promise<AccessToken> {
-  const data = await resp.json();
-
+export async function stravaMapResponseToAccessToken(data: any): Promise<AccessToken> {
   // Convert StravaBearerToken into generic AuthToken
   const parsedData = StravaBearerTokenSchema.parse(data);
   const { access_token, refresh_token, expires_at, athlete } = parsedData;
@@ -84,9 +88,7 @@ export async function stravaMapResponseToAccessToken(resp: globalThis.Response):
   }
 }
 
-export async function githubMapResponseToAccessToken(resp: globalThis.Response): Promise<AccessToken> {
-  const data = await resp.json();
-
+export async function githubMapResponseToAccessToken(data: any): Promise<AccessToken> {
   // Convert StravaBearerToken into generic AuthToken
   const parsedData = GithubBearerTokenSchema.parse(data);
   const { access_token, scope, token_type } = parsedData;
@@ -106,12 +108,12 @@ export async function githubMapResponseToAccessToken(resp: globalThis.Response):
 export const STRAVA = "strava";
 export const GITHUB = "github";
 
-export async function mapResponseToAccessToken(app: string, resp: globalThis.Response): Promise<AccessToken | null> {
+export async function mapResponseToAccessToken(app: string, data: any): Promise<AccessToken | null> {
   switch(app) {
     case STRAVA:
-      return await stravaMapResponseToAccessToken(resp);
+      return await stravaMapResponseToAccessToken(data);
     case GITHUB:
-      return await githubMapResponseToAccessToken(resp);
+      return await githubMapResponseToAccessToken(data);
     default:
       return null;
   }
