@@ -174,7 +174,7 @@ export default function CommunityPage() {
           title: "Lanna Run Club",
           description: `${(stravaDetails.totalValue / 1000).toFixed(
             2
-          )} of 1000km`,
+          )} of 1000 km`,
           type: "active",
           position: stravaDetails.userPosition,
           totalContributors: stravaDetails.totalContributors,
