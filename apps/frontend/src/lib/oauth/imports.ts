@@ -125,9 +125,7 @@ export async function importOAuthData(
     if (!response) {
       throw new Error("No response from OAuth import");
     }
-
-    console.log("Response", response)
-
+    
     if (!response.ok) {
       const errorResponse = await response.json();
       console.error(

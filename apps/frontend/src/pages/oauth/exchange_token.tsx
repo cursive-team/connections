@@ -116,8 +116,6 @@ const OAuthAccessTokenPage: React.FC = () => {
           // Unlike access token fetching, all data importing will be from client
           const leaderboardEntryRequest = await importOAuthData(session.authTokenValue, ChipIssuer.EDGE_CITY_LANNA, accessToken, importOption);
 
-          console.log("Check req:", leaderboardEntryRequest)
-
           try {
             if (!leaderboardEntryRequest) {
               throw new Error("Imported leaderboard entry is null");
