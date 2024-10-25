@@ -82,34 +82,6 @@ const ProfilePage: React.FC = () => {
                   <span className="text-[14px]">Activity</span>
                 </AppButton>
               </Link>
-              <AppButton
-                variant="outline"
-                className="w-fit"
-                onClick={async () => {
-                  const { user, session } = await storage.getUserAndSession();
-                  console.log(user);
-                  console.log(session);
-                }}
-              >
-                <span className="text-[14px]">Get User</span>
-              </AppButton>
-              <AppButton
-                variant="outline"
-                className="w-fit"
-                onClick={async () => {
-                  const session = await storage.getSession();
-                  if (!session) {
-                    return;
-                  }
-                  const messages = await fetchMessages({
-                    authToken: session.authTokenValue,
-                    lastMessageFetchedAt: user.lastMessageFetchedAt,
-                  });
-                  await storage.processNewMessages(messages);
-                }}
-              >
-                <span className="text-[14px]">Update Messages</span>
-              </AppButton>
             </div>
           </div>
         }
