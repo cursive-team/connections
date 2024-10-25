@@ -1,8 +1,8 @@
 import {iOAuthClient} from "@/lib/controller/oauth/interfaces";
 import {
   AccessToken,
-  mapResponseToAccessToken,
-  OAuthMapping
+  OAuthAppDetails,
+  mapResponseToAccessToken
 } from "@types";
 import { OAUTH_APP_MAPPING } from "@/constants";
 import { fetchToken } from "@/lib/controller/oauth/bespoke/token";
@@ -18,14 +18,15 @@ export class BespokeOAuthClient implements iOAuthClient {
       }
 
       // Get app details and fetch access token
-      const details: OAuthMapping = OAUTH_APP_MAPPING[app];
+      const details: OAuthAppDetails = OAUTH_APP_MAPPING[app];
 
       const response = await fetchToken(app, details, code);
+
       if (!response) {
         throw new Error("OAuth access token response is null");
       }
 
-      if (!response.ok) {
+      if (!response.ok || response.type == "error") {
         const errorResponse = await response.json();
         console.error(
           `HTTP error! status: ${response.status}, message: ${errorResponse.error}, consider checking environment variables`

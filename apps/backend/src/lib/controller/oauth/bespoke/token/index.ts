@@ -1,10 +1,10 @@
 import {
+  OAuthAppDetails,
+  STRAVA,
   GITHUB,
-  OAuthMapping,
-  STRAVA
 } from "@types";
 
-export async function stravaFetchToken(mapping: OAuthMapping, code: string): Promise<globalThis.Response> {
+export async function stravaFetchToken(mapping: OAuthAppDetails, code: string): Promise<globalThis.Response> {
   const { id, secret, token_url } = mapping;
 
   return fetch(
@@ -24,7 +24,7 @@ export async function stravaFetchToken(mapping: OAuthMapping, code: string): Pro
   );
 }
 
-export async function ghFetchToken(mapping: OAuthMapping, code: string): Promise<globalThis.Response> {
+export async function ghFetchToken(mapping: OAuthAppDetails, code: string): Promise<globalThis.Response> {
   const { id, secret, token_url, redirect_uri } = mapping;
 
   return fetch(
@@ -45,7 +45,7 @@ export async function ghFetchToken(mapping: OAuthMapping, code: string): Promise
   );
 }
 
-export async function fetchToken(app: string, mapping: OAuthMapping, code: string): Promise<globalThis.Response | null> {
+export async function fetchToken(app: string, mapping: OAuthAppDetails, code: string): Promise<globalThis.Response | null> {
   // Apps that can use server-side fetching
   switch(app) {
     case STRAVA:

@@ -1,18 +1,74 @@
 import React, {useEffect} from "react";
 import {useRouter} from "next/router";
 import {
-  getOAuthTokenViaServer,
-  getOAuthTokenViaClient
+  getOAuthTokenViaClient,
+  getOAuthTokenViaServer
 } from "@/lib/oauth";
 import {toast} from "sonner";
 import {CursiveLogo} from "@/components/ui/HeaderCover";
 import {
   AccessToken,
-  OAuthMapping
+  ChipIssuer,
+  errorToString,
+  GITHUB,
+  OAuthAppDetails
 } from "@types";
-import {saveAccessToken} from "@/lib/storage/localStorage/oauth";
+import {
+  getAccessToken,
+  saveAccessToken
+} from "@/lib/storage/localStorage/oauth";
 import {OAUTH_APP_MAPPING} from "@/config";
 import {storage} from "@/lib/storage";
+import {importOAuthData} from "@/lib/oauth/imports";
+import {updateLeaderboardEntry} from "@/lib/chip";
+
+async function getOAuthAccessToken(app: string, code: string, details: OAuthAppDetails): Promise<AccessToken | null> {
+  let token: AccessToken | undefined | null;
+
+  // First check if access token already exists and is active in local storage
+  token = await getAccessToken(app)
+  if (token) {
+    // NOTE: when there are more scopes, check token scope, XOR save token by $app_$scope
+
+    if (app == GITHUB) {
+      // Github OAuth tokens do not expire, unless they have not been used for a year
+      toast.success("Fetched local OAuth token");
+      return token;
+    }
+
+    if (token.expires_at && (token.expires_at * 1000) > Date.now()) {
+      // Strava expires_at is in seconds. Data.now() is in milliseconds.
+      toast.success("Fetched local OAuth token");
+      return token;
+    }
+    // NOTE: Add refresh_token support
+  }
+
+  // Client-side access token fetching is preferred -- it prevents server (which is run by Cursive) from seeing access token in plaintext.
+  // Server-side fetching will only use public scope to s
+  try {
+    if (details.client_side_fetching) {
+      token = await getOAuthTokenViaClient(app, code);
+    } else {
+      token = await getOAuthTokenViaServer(app, code);
+    }
+  } catch (error) {
+    console.error("Minting OAuth token failed, check if code has expired", errorToString(error));
+    throw new Error("Minting OAuth token failed, check if code has expired")
+  }
+
+  if (!token) {
+    toast.error("Unable to get OAuth access token");
+    console.error("Minting OAuth token failed, check if code has expired");
+    throw new Error("Unable to get OAuth access token");
+    return null;
+  }
+
+  // Save access token and continue
+  saveAccessToken(app, token);
+  toast.success("Successfully minted OAuth token");
+  return token;
+}
 
 const OAuthAccessTokenPage: React.FC = () => {
   const router = useRouter();
@@ -33,40 +89,40 @@ const OAuthAccessTokenPage: React.FC = () => {
         const codeStr = String(code);
         const stateStr = String(state);
 
-        // This should never be the case
+        // This should never happen
         if (!OAUTH_APP_MAPPING || !OAUTH_APP_MAPPING[stateStr]) {
           throw new Error("OAuth app integration details are not available")
         }
 
         // Get app details and fetch access token
-        const details: OAuthMapping = OAUTH_APP_MAPPING[stateStr];
+        const details: OAuthAppDetails = OAUTH_APP_MAPPING[stateStr];
 
-        let accessToken: AccessToken | null;
-
-        // Client-side access token fetching is preferred -- it prevents server (which is run by Cursive) from seeing access token in plaintext.
-        // Server-side fetching will only use public scope to s
-        if (details.client_side_fetching) {
-          accessToken = await getOAuthTokenViaClient(codeStr, stateStr);
-        } else {
-          accessToken = await getOAuthTokenViaServer(codeStr, stateStr);
-        }
-
+        const accessToken: AccessToken | null = await getOAuthAccessToken(stateStr, codeStr, details);
         if (!accessToken) {
           toast.error("Unable to mint OAuth access token");
           throw new Error("Unable to mint OAuth access token");
-        } else {
-          saveAccessToken(stateStr, accessToken);
         }
 
-        if (accessToken) {
-          // TODO: (1) Better chipIssuer selection when more communities added
-          //  (2) Data option selection when more import options are available -- this should also include scope selection *before* the authorization code is fetched
-          //  (3) Check for access token before authorization flow, must be of the correct scope too -- non-public scope should fail for server-side token fetching
+        if (accessToken && details.can_import) {
+          // TODO: Better data import option selection, which would include scope selection *before* the authorization code is fetched
+          const importOption = details.data_options[0];
 
+          const { session } = await storage.getUserAndSession();
+
+          // TODO: Better chipIssuer selection when more communities added
           // Unlike access token fetching, all data importing will be from client
-          //const leaderboardEntry = await importOAuthData(user.userData.username, ChipIssuer.EDGE_CITY_LANNA, accessToken, details.data_options[0]);
+          const leaderboardEntryRequest = await importOAuthData(session.authTokenValue, ChipIssuer.EDGE_CITY_LANNA, accessToken, importOption);
 
-          toast.success("Successfully minted OAuth token");
+          try {
+            if (!leaderboardEntryRequest) {
+              throw new Error("Imported leaderboard entry is null");
+            }
+            await updateLeaderboardEntry(leaderboardEntryRequest);
+            toast.success("Successfully imported application data");
+          } catch (error) {
+            toast.error("OAuth data import failed");
+            console.error("OAuth data import failed:", errorToString(error));
+          }
         }
 
         router.push("/profile");
