@@ -84,7 +84,15 @@ export default function TensionsPage() {
       router.push("/profile");
     } catch (error) {
       console.error(error);
-      toast(SupportToast("", true, "Failed to save tensions. Please try again.", ERROR_SUPPORT_CONTACT, errorToString(error)));
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Failed to save tensions. Please try again",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
     } finally {
       setLoading(false);
     }
