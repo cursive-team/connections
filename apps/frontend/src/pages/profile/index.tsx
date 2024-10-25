@@ -13,8 +13,8 @@ import { NextSeo } from "next-seo";
 import { Card } from "@/components/cards/Card";
 import { logoutUser } from "@/lib/auth";
 import { logClientEvent } from "@/lib/frontend/metrics";
-import ImportGithubButton from "@/features/oauth/ImportGithubButton";
-import ImportStravaButton from "@/features/oauth/ImportStravaButton";
+// import ImportGithubButton from "@/features/oauth/ImportGithubButton";
+// import ImportStravaButton from "@/features/oauth/ImportStravaButton";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
