@@ -14,6 +14,7 @@ import { NextSeo } from "next-seo";
 import { Card } from "@/components/cards/Card";
 import { logoutUser } from "@/lib/auth";
 import { logClientEvent } from "@/lib/frontend/metrics";
+import { FRONTEND_URL } from "@/config";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -99,6 +100,17 @@ const ProfilePage: React.FC = () => {
             <div className="flex flex-col gap-2">
               <div className="py-2">
                 <div className="w-full flex gap-2 overflow-x-auto">
+                  <Link
+                    href={`https://www.strava.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_ID}&response_type=code&state=strava&redirect_uri=${FRONTEND_URL}/oauth/exchange_token&approval_prompt=force&scope=read`}
+                  >
+                    <Tag
+                      emoji={<Icons.Strava />}
+                      variant="transparent"
+                      text="Strava"
+                      className="!bg-[#FC4C01] !text-white self-start min-w-max pl-4 pr-8"
+                      addElement
+                    />
+                  </Link>
                   <Tag
                     emoji={<Icons.GitHub />}
                     variant="gray"

@@ -6,6 +6,8 @@ export enum DisplayedDashboard {
   NONE = "none",
   WEEKLY = "weekly",
   TOTAL = "total",
+  STRAVA = "strava",
+  GITHUB = "github",
 }
 
 export interface CommunityCardProps {
