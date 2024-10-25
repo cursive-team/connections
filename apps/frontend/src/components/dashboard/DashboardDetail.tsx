@@ -62,7 +62,7 @@ export function DashboardDetail({
           <div>
             <div className="flex flex-row w-full px-1 pt-8 pb-4 bg-white justify-between items-center inline-flex">
               <div className="text-[#090909] text-xl font-semibold font-['DM Sans'] leading-tight">
-                {`Total: ${leaderboardDetails.totalValue}`}
+                {`Total (${leaderboardDetails.totalValue})`}
               </div>
               <div className="ml-auto">
                 <Icons.XClose
