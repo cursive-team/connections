@@ -7,6 +7,7 @@ import { DashboardDetail } from "@/components/dashboard/DashboardDetail";
 import { Icons } from "@/components/Icons";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { Tag } from "@/components/ui/Tag";
+import { BASE_API_URL } from "@/config";
 import ImportGithubButton from "@/features/oauth/ImportGithubButton";
 import ImportStravaButton from "@/features/oauth/ImportStravaButton";
 import AppLayout from "@/layouts/AppLayout";
@@ -231,13 +232,30 @@ export default function CommunityPage() {
   }, [router]);
 
   // track if people are using the external links
-  const handleLinkClick = (
+  const handleLinkClick = async (
     e: React.MouseEvent<HTMLAnchorElement>,
     item: { href: string; label: string }
   ) => {
     e.preventDefault();
     logClientEvent(item.label, {});
-    window.open(item.href, "_blank", "noopener,noreferrer");
+
+    if (item.label === "community-cherry-link") {
+      // Redirect to the Cherry OTP API endpoint
+      const { user, session } = await storage.getUserAndSession();
+      if (
+        user &&
+        session &&
+        session.authTokenValue &&
+        session.authTokenExpiresAt > new Date()
+      ) {
+        window.location.href = `${BASE_API_URL}/lanna/cherry_otp?authToken=${session.authTokenValue}`;
+      } else {
+        toast.error("Please log in to access Cherry.");
+        router.push("/login");
+      }
+    } else {
+      window.open(item.href, "_blank", "noopener,noreferrer");
+    }
   };
 
   if (
