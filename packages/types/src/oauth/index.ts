@@ -1,6 +1,6 @@
 import {z} from "zod";
-import {ChipIssuer, LeaderboardEntrySchema, LeaderboardEntryType, LeaderboardEntryTypeSchema} from "../chip";
-import {LeaderboardEntry} from "../chip";
+
+import {LeaderboardEntryTypeSchema} from "../chip";
 
 export const StravaAtheleteSchema = z.object({
   id: z.number(),
@@ -42,8 +42,9 @@ export const DataOptionSchema = z.object({
 
 export type DataOption = z.infer<typeof DataOptionSchema>;
 
-export const OAuthMappingSchema = z.object({
+export const OAuthAppDetailsSchema = z.object({
   client_side_fetching: z.boolean(),
+  can_import: z.boolean(),
   redirect_uri: z.string(),
   id: z.string(),
   secret: z.string(),
@@ -51,7 +52,7 @@ export const OAuthMappingSchema = z.object({
   data_options: z.array(DataOptionSchema),
 });
 
-export type OAuthMapping = z.infer<typeof OAuthMappingSchema>;
+export type OAuthAppDetails = z.infer<typeof OAuthAppDetailsSchema>;
 
 export const OAuthExchangeTokensRequestSchema = z.object({
   code: z.string(),
@@ -63,7 +64,6 @@ export type OAuthExchangeTokensRequest = z.infer<
 >;
 
 // Mapping access token types
-
 export async function stravaMapResponseToAccessToken(resp: globalThis.Response): Promise<AccessToken> {
   const data = await resp.json();
 

@@ -3,7 +3,7 @@ import { RouterItem } from "@/lib/frontend/types";
 import { Icons } from "@/components/Icons";
 import {
   LeaderboardEntryType,
-  OAuthMapping
+  OAuthAppDetails
 } from "@types";
 
 export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
@@ -11,11 +11,12 @@ export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
 export const BASE_API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
-export const OAUTH_APP_MAPPING: Record<string, OAuthMapping> = {
+export const OAUTH_APP_MAPPING: Record<string, OAuthAppDetails> = {
   "strava": {
     client_side_fetching: true,
+    can_import: true,
     token_url: "https://www.strava.com/api/v3/oauth/token",
-    redirect_uri: "http://connections.cursive.team/oauth/exchange_token&approval_prompt=force&scope=read", // TODO: update for prod, set correct scopes for each service -- definitely should have app-level separation for app-specific scopes,
+    redirect_uri: "https://connections.cursive.team/oauth/exchange_token&approval_prompt=force&scope=read",
     id: process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_ID || "",
     secret: process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_SECRET || "",
     data_options: [
@@ -26,8 +27,9 @@ export const OAUTH_APP_MAPPING: Record<string, OAuthMapping> = {
   },
   "github": {
     client_side_fetching: false,
+    can_import: false,
     token_url: "https://github.com/login/oauth/access_token",
-    redirect_uri: "http://connections.cursive.team/oauth/exchange_token&approval_prompt=force&scope=read",
+    redirect_uri: "https://connections.cursive.team/oauth/exchange_token&approval_prompt=force&scope=read",
     id: process.env.NEXT_PUBLIC_OAUTH_GITHUB_CLIENT_ID || "",
     secret: process.env.NEXT_PUBLIC_OAUTH_GITHUB_CLIENT_SECRET || "",
     data_options: [
