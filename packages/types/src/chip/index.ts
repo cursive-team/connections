@@ -123,9 +123,7 @@ export type GetLeaderboardEntryRequest = z.infer<
 
 export const LeaderboardEntrySchema = z.object({
   username: z.string(),
-  chipIssuer: ChipIssuerSchema,
   entryValue: z.coerce.number(),
-  entryType: LeaderboardEntryTypeSchema,
 });
 
 export type LeaderboardEntry = z.infer<typeof LeaderboardEntrySchema>;
@@ -134,7 +132,6 @@ export const GetLeaderboardPositionRequestSchema = z.object({
   authToken: z.string(),
   chipIssuer: ChipIssuerSchema,
   entryType: LeaderboardEntryTypeSchema,
-  entryValue: z.number(),
 });
 
 export type GetLeaderboardPositionRequest = z.infer<
