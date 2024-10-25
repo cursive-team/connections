@@ -52,7 +52,15 @@ const LoginPage: React.FC = () => {
       await requestSigninToken(submittedEmail);
     } catch (error) {
       console.error(error);
-      toast(SupportToast("", true, "Error requesting signin token", ERROR_SUPPORT_CONTACT, errorToString(error)));
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Error requesting signin token",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
       return;
     }
 
@@ -89,7 +97,15 @@ const LoginPage: React.FC = () => {
       router.push("/profile");
     } catch (error) {
       console.error("Password authentication error:", error);
-      toast.error("Invalid password. Please try again.");
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Invalid password. Please try again",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
     }
   };
 
@@ -106,7 +122,15 @@ const LoginPage: React.FC = () => {
       router.push("/profile");
     } catch (error) {
       console.error("Passkey authentication error:", error);
-      toast(SupportToast("", true, "Passkey authentication failed. Please try password instead", ERROR_SUPPORT_CONTACT, errorToString(error)));
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Passkey authentication failed",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
     }
   };
 
