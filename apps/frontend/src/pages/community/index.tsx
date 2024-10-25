@@ -7,6 +7,8 @@ import { DashboardDetail } from "@/components/dashboard/DashboardDetail";
 import { Icons } from "@/components/Icons";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { Tag } from "@/components/ui/Tag";
+import ImportGithubButton from "@/features/oauth/ImportGithubButton";
+import ImportStravaButton from "@/features/oauth/ImportStravaButton";
 import AppLayout from "@/layouts/AppLayout";
 import {
   getTopLeaderboardEntries,
@@ -33,14 +35,6 @@ export const metadata: Metadata = {
 
 const ComingSoonCommunityGoals = () => {
   const mocks: CommunityCardProps[] = [
-    {
-      image: "/images/build.png",
-      title: "Lanna Build Club (GitHub)",
-      description: "500 commits",
-      type: "community",
-      totalContributors: 50,
-      progressPercentage: 89,
-    },
     {
       image: "/images/yoga.png",
       title: "Yoga With Sophie",
@@ -80,6 +74,14 @@ export default function CommunityPage() {
     useState<LeaderboardDetails | null>(null);
   const [weeklyLeaderboardEntries, setWeeklyLeaderboardEntries] =
     useState<LeaderboardEntries | null>(null);
+  const [stravaLeaderboardDetails, setStravaLeaderboardDetails] =
+    useState<LeaderboardDetails | null>(null);
+  const [stravaLeaderboardEntries, setStravaLeaderboardEntries] =
+    useState<LeaderboardEntries | null>(null);
+  const [githubLeaderboardDetails, setGithubLeaderboardDetails] =
+    useState<LeaderboardDetails | null>(null);
+  const [githubLeaderboardEntries, setGithubLeaderboardEntries] =
+    useState<LeaderboardEntries | null>(null);
   const [cardProps, setCardProps] = useState<CommunityCardProps[]>([]);
   const [displayedDashboard, setDisplayedDashboard] =
     useState<DisplayedDashboard>(DisplayedDashboard.NONE);
@@ -99,6 +101,10 @@ export default function CommunityPage() {
       let entries: LeaderboardEntries | null = null;
       let weeklyDetails: LeaderboardDetails | null = null;
       let weeklyEntries: LeaderboardEntries | null = null;
+      let stravaDetails: LeaderboardDetails | null = null;
+      let stravaEntries: LeaderboardEntries | null = null;
+      let githubDetails: LeaderboardDetails | null = null;
+      let githubEntries: LeaderboardEntries | null = null;
       try {
         details = await getUserLeaderboardDetails(
           communityIssuer,
@@ -116,13 +122,38 @@ export default function CommunityPage() {
           communityIssuer,
           LeaderboardEntryType.WEEK_OCT_20_TAP_COUNT
         );
+        stravaDetails = await getUserLeaderboardDetails(
+          communityIssuer,
+          LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE
+        );
+        stravaEntries = await getTopLeaderboardEntries(
+          communityIssuer,
+          LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE
+        );
+        githubDetails = await getUserLeaderboardDetails(
+          communityIssuer,
+          LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS
+        );
+        githubEntries = await getTopLeaderboardEntries(
+          communityIssuer,
+          LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS
+        );
       } catch (error) {
         console.error("Error getting user leaderboard info:", error);
         toast.error("Error getting user leaderboard info.");
         router.push("/profile");
         return;
       }
-      if (!details || !entries || !weeklyDetails || !weeklyEntries) {
+      if (
+        !details ||
+        !entries ||
+        !weeklyDetails ||
+        !weeklyEntries ||
+        !stravaDetails ||
+        !stravaEntries ||
+        !githubDetails ||
+        !githubEntries
+      ) {
         toast.error("User leaderboard info not found.");
         router.push("/profile");
         return;
@@ -132,8 +163,40 @@ export default function CommunityPage() {
       setLeaderboardEntries(entries);
       setWeeklyLeaderboardDetails(weeklyDetails);
       setWeeklyLeaderboardEntries(weeklyEntries);
+      setStravaLeaderboardDetails(stravaDetails);
+      setStravaLeaderboardEntries(stravaEntries);
+      setGithubLeaderboardDetails(githubDetails);
+      setGithubLeaderboardEntries(githubEntries);
 
       const props: CommunityCardProps[] = [
+        // {
+        //   image: "/images/runclub.png",
+        //   title: "Lanna Run Club",
+        //   description: `${(stravaDetails.totalValue / 1000).toFixed(
+        //     2
+        //   )} of 1000 km`,
+        //   type: "active",
+        //   position: stravaDetails.userPosition,
+        //   totalContributors: stravaDetails.totalContributors,
+        //   progressPercentage: Math.min(
+        //     100,
+        //     Math.round((stravaDetails.totalValue / (1000 * 1000)) * 100)
+        //   ),
+        //   dashboard: DisplayedDashboard.STRAVA,
+        // },
+        // {
+        //   image: "/images/buildclub.png",
+        //   title: "Lanna Builders",
+        //   description: `${githubDetails.totalValue} of 1000 contributions`,
+        //   type: "active",
+        //   position: githubDetails.userPosition,
+        //   totalContributors: githubDetails.totalContributors,
+        //   progressPercentage: Math.min(
+        //     100,
+        //     Math.round((githubDetails.totalValue / 1000) * 100)
+        //   ),
+        //   dashboard: DisplayedDashboard.GITHUB,
+        // },
         {
           image: "/images/hand.png",
           title: "Lanna Social Graph",
@@ -228,6 +291,58 @@ export default function CommunityPage() {
         goal={2000}
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
+        type="active"
+        returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
+      />
+    );
+  }
+
+  if (
+    stravaLeaderboardDetails &&
+    stravaLeaderboardEntries &&
+    displayedDashboard === DisplayedDashboard.STRAVA
+  ) {
+    return (
+      <DashboardDetail
+        image="/images/runclub_wide.png"
+        title="Strava Running Distance"
+        description={`Share your Strava running distance to participate in the Lanna Run Club!`}
+        leaderboardDetails={{
+          ...stravaLeaderboardDetails,
+          totalValue: stravaLeaderboardDetails.totalValue / 1000,
+        }}
+        leaderboardEntries={{
+          entries: stravaLeaderboardEntries.entries.map((entry) => ({
+            ...entry,
+            entryValue: entry.entryValue / 1000,
+          })),
+        }}
+        goal={1000}
+        organizer="Cursive"
+        organizerDescription="Cryptography for human connection"
+        actionItem={<ImportStravaButton />}
+        type="active"
+        returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
+      />
+    );
+  }
+
+  if (
+    githubLeaderboardDetails &&
+    githubLeaderboardEntries &&
+    displayedDashboard === DisplayedDashboard.GITHUB
+  ) {
+    return (
+      <DashboardDetail
+        image="/images/buildclub_wide.png"
+        title="Open Source GitHub Contributions"
+        description={`Share your GitHub contributions with the Lanna Builder community!`}
+        leaderboardDetails={githubLeaderboardDetails}
+        leaderboardEntries={githubLeaderboardEntries}
+        goal={1000}
+        organizer="Cursive"
+        organizerDescription="Cryptography for human connection"
+        actionItem={<ImportGithubButton />}
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
       />

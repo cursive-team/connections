@@ -5,7 +5,6 @@ import { User, UserData } from "@/lib/storage/types";
 import { toast } from "sonner";
 import AppLayout from "@/layouts/AppLayout";
 import { AppButton } from "@/components/ui/Button";
-import { Tag } from "@/components/ui/Tag";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import Link from "next/link";
@@ -14,6 +13,8 @@ import { NextSeo } from "next-seo";
 import { Card } from "@/components/cards/Card";
 import { logoutUser } from "@/lib/auth";
 import { logClientEvent } from "@/lib/frontend/metrics";
+// import ImportGithubButton from "@/features/oauth/ImportGithubButton";
+// import ImportStravaButton from "@/features/oauth/ImportStravaButton";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -97,18 +98,12 @@ const ProfilePage: React.FC = () => {
               </span>
             </div>
             <div className="flex flex-col gap-2">
-              <div className="py-2">
+              {/* <div className="py-2">
                 <div className="w-full flex gap-2 overflow-x-auto">
-                  <Tag
-                    emoji={<Icons.GitHub />}
-                    variant="gray"
-                    text="GitHub"
-                    className="min-w-max pl-4 pr-8"
-                    addElement
-                    onClick={() => toast.info("Coming soon!")}
-                  />
+                  <ImportStravaButton />
+                  <ImportGithubButton />
                 </div>
-              </div>
+              </div> */}
               {/* <Card.Base
                 variant="gray"
                 className="p-4 !rounded-lg"

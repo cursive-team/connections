@@ -124,7 +124,9 @@ export function Leaderboard({
                   <div
                     className={`text-right ${styling.fontStyling} font-['DM Sans'] leading-[140%]`}
                   >
-                    {entryValue}
+                    {Number.isInteger(entryValue)
+                      ? entryValue
+                      : entryValue.toFixed(2)}
                   </div>
                 </div>
               </div>
