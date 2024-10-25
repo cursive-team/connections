@@ -10,14 +10,11 @@ import {
   DATA_IMPORT_SOURCE,
   OAuthAppDetails,
 } from "@types";
-import {
-  getAccessToken,
-  saveAccessToken,
-} from "@/lib/storage/localStorage/oauth";
 import { OAUTH_APP_DETAILS } from "@/config";
 import { storage } from "@/lib/storage";
 import { importOAuthData } from "@/lib/oauth/imports";
 import { updateLeaderboardEntry } from "@/lib/chip";
+import { updateUserDataFromOAuth } from "@/lib/oauth/update";
 
 async function getOAuthAccessToken(
   app: string,
@@ -27,19 +24,17 @@ async function getOAuthAccessToken(
   let token: AccessToken | undefined | null;
 
   // First check if access token already exists and is active in local storage
-  token = await getAccessToken(app);
+  token = await storage.getOAuthAccessToken(app);
   if (token) {
     // NOTE: when there are more scopes, check token scope, XOR save token by $app_$scope
 
     if (app === DATA_IMPORT_SOURCE.GITHUB) {
       // Github OAuth tokens do not expire, unless they have not been used for a year
-      toast.success("Fetched local OAuth token");
       return token;
     }
 
     if (token.expires_at && token.expires_at * 1000 > Date.now()) {
       // Strava expires_at is in seconds. Data.now() is in milliseconds.
-      toast.success("Fetched local OAuth token");
       return token;
     }
     // NOTE: Add refresh_token support
@@ -69,8 +64,7 @@ async function getOAuthAccessToken(
   }
 
   // Save access token and continue
-  saveAccessToken(app, token);
-  toast.success("Successfully minted OAuth token");
+  await storage.saveOAuthAccessToken(app, token);
   return token;
 }
 
@@ -133,6 +127,12 @@ const OAuthAccessTokenPage: React.FC = () => {
             if (!leaderboardEntryRequest) {
               throw new Error("Imported leaderboard entry is null");
             }
+            const newUserData = await updateUserDataFromOAuth(
+              user.userData,
+              leaderboardEntryRequest.entryType,
+              leaderboardEntryRequest.entryValue
+            );
+            await storage.updateUserData(newUserData);
             await updateLeaderboardEntry(leaderboardEntryRequest);
             toast.success("Successfully imported application data");
           } catch (error) {
@@ -141,7 +141,7 @@ const OAuthAccessTokenPage: React.FC = () => {
           }
         }
 
-        router.push("/profile");
+        router.push("/community");
       }
     };
 

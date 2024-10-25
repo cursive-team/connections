@@ -23,6 +23,7 @@ import {
 import { addChip } from "@/lib/storage/localStorage/user/chip";
 import { updateUserData } from "@/lib/storage/localStorage/user/userData";
 import {
+  AccessToken,
   ChipIssuer,
   ChipTapResponse,
   CreateMessageData,
@@ -39,6 +40,10 @@ import {
 } from "@/lib/storage/localStorage/tapInfo";
 import { createTapBackMessage } from "./user/connection/message/tapBack";
 import { processNewMessages } from "./user/connection/message";
+import {
+  getOAuthAccessToken,
+  saveOAuthAccessToken,
+} from "@/lib/storage/localStorage/user/oauth";
 
 export class LocalStorage implements ClientStorage {
   async loadInitialStorageData(
@@ -71,6 +76,14 @@ export class LocalStorage implements ClientStorage {
 
   async getSession(): Promise<Session | undefined> {
     return getSession();
+  }
+
+  async saveOAuthAccessToken(app: string, token: AccessToken): Promise<void> {
+    return saveOAuthAccessToken(app, token);
+  }
+
+  async getOAuthAccessToken(app: string): Promise<AccessToken | undefined> {
+    return getOAuthAccessToken(app);
   }
 
   async saveTapInfo(tapInfo: TapInfo): Promise<void> {

@@ -21,3 +21,11 @@ export const nullToUndefined = <T extends z.ZodTypeAny>(schema: T) =>
     .nullable()
     .transform((val) => (val === null ? undefined : val))
     .optional();
+
+// Represents a numerical field that has an update date
+export const UpdatableFieldSchema = z.object({
+  value: z.number(),
+  lastUpdated: z.coerce.date(),
+});
+
+export type UpdatableField = z.infer<typeof UpdatableFieldSchema>;

@@ -10,6 +10,7 @@ import {
 } from "./types";
 import { LocalStorage } from "./localStorage/client";
 import {
+  AccessToken,
   ChipIssuer,
   ChipTapResponse,
   CreateMessageData,
@@ -30,6 +31,8 @@ export interface ClientStorage {
   getUserAndSession(): Promise<{ user: User; session: Session }>;
   getUser(): Promise<User | undefined>;
   getSession(): Promise<Session | undefined>;
+  saveOAuthAccessToken(app: string, token: AccessToken): Promise<void>;
+  getOAuthAccessToken(app: string): Promise<AccessToken | undefined>;
   saveTapInfo(tapInfo: TapInfo): Promise<void>;
   loadSavedTapInfo(): Promise<TapInfo | undefined>;
   deleteSavedTapInfo(): Promise<void>;
