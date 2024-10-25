@@ -98,12 +98,12 @@ const ProfilePage: React.FC = () => {
               </span>
             </div>
             <div className="flex flex-col gap-2">
-              <div className="py-2">
+              {/* <div className="py-2">
                 <div className="w-full flex gap-2 overflow-x-auto">
                   <ImportStravaButton />
                   <ImportGithubButton />
                 </div>
-              </div>
+              </div> */}
               {/* <Card.Base
                 variant="gray"
                 className="p-4 !rounded-lg"
