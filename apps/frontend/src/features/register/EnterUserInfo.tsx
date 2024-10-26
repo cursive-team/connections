@@ -202,6 +202,8 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
                     onChange={(e) => handleInputChange(e.target.value)}
                     onKeyDown={handleKeyDown}
                     aria-label={steps[step].question}
+                    required={steps[step].required}
+                    autoFocus
                   />
                   <button
                     className="text-sm text-link-primary font-sans font-semibold"
