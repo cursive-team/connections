@@ -101,6 +101,13 @@ export default function ProfileOverview() {
                 value={user?.userData.signal.username}
               />
             )}
+            {user?.userData.instagram?.username && (
+              <LinkCardBox
+                label="Instagram"
+                value={user?.userData.instagram.username}
+                href={`https://www.instagram.com/${user.userData.instagram.username}`}
+              />
+            )}
           </div>
         </div>
         {user?.userData.bio !== "" && (
