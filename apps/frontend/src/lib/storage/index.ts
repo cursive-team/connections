@@ -9,7 +9,12 @@ import {
   UserData,
 } from "./types";
 import { LocalStorage } from "./localStorage/client";
-import { ChipTapResponse } from "@types";
+import {
+  ChipIssuer,
+  ChipTapResponse,
+  CreateMessageData,
+  MessageData,
+} from "@types";
 
 export interface InitialStorageData {
   user: User;
@@ -37,6 +42,11 @@ export interface ClientStorage {
   ): Promise<void>;
   updatePSI(connectionUsername: string, psiData: PSIData): Promise<void>;
   addActivity(activity: Activity): Promise<void>;
+  processNewMessages(messages: MessageData[]): Promise<void>;
+  createTapBackMessage(
+    connectionUsername: string,
+    chipIssuer: ChipIssuer
+  ): Promise<CreateMessageData>;
 }
 
 const storage = new LocalStorage();

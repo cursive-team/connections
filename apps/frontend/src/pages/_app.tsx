@@ -12,6 +12,7 @@ import OnlyMobileLayout from "@/layouts/OnlyMobileLayout";
 import { DefaultSeo } from "next-seo";
 // import { AnimatePresence, motion } from "framer-motion";
 import { preMigrationSignaturePublicKeys } from "@/common/constants";
+import { fetchMessages } from "@/lib/message";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -28,6 +29,29 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [isPreMigrationSessionChecked, setIsPreMigrationSessionChecked] =
     useState(false);
+
+  // Refresh messages when the page is refreshed
+  useEffect(() => {
+    const refreshMessages = async () => {
+      console.log("Refreshing messages...");
+      const user = await storage.getUser();
+      const session = await storage.getSession();
+      if (!user || !session) {
+        return;
+      }
+
+      const messages = await fetchMessages({
+        authToken: session.authTokenValue,
+        lastMessageFetchedAt: user.lastMessageFetchedAt,
+      });
+      console.log(`Found ${messages.length} messages`);
+      if (messages.length > 0) {
+        await storage.processNewMessages(messages);
+      }
+    };
+
+    refreshMessages();
+  }, []);
 
   // Check if the user is a pre-migration user and logout if so
   useEffect(() => {

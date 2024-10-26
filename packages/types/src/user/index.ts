@@ -13,6 +13,7 @@ export enum BackupEntryType {
   CHIP = "CHIP",
   CONNECTION = "CONNECTION",
   ACTIVITY = "ACTIVITY",
+  LAST_MESSAGE_FETCHED_AT = "LAST_MESSAGE_FETCHED_AT",
 }
 
 export const BackupEntryTypeSchema = z.nativeEnum(BackupEntryType);

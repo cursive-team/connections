@@ -22,7 +22,12 @@ import {
 } from "@/lib/storage/types";
 import { addChip } from "@/lib/storage/localStorage/user/chip";
 import { updateUserData } from "@/lib/storage/localStorage/user/userData";
-import { ChipTapResponse } from "@types";
+import {
+  ChipIssuer,
+  ChipTapResponse,
+  CreateMessageData,
+  MessageData,
+} from "@types";
 import { addTap } from "@/lib/storage/localStorage/user/connection/tap";
 import { updateComment } from "@/lib/storage/localStorage/user/connection/comment";
 import { updatePSI } from "@/lib/storage/localStorage/user/connection/psi";
@@ -32,6 +37,8 @@ import {
   loadSavedTapInfo,
   saveTapInfo,
 } from "@/lib/storage/localStorage/tapInfo";
+import { createTapBackMessage } from "./user/connection/message/tapBack";
+import { processNewMessages } from "./user/connection/message";
 
 export class LocalStorage implements ClientStorage {
   async loadInitialStorageData(
@@ -103,5 +110,16 @@ export class LocalStorage implements ClientStorage {
 
   async addActivity(activity: Activity): Promise<void> {
     return addActivity(activity);
+  }
+
+  async createTapBackMessage(
+    connectionUsername: string,
+    chipIssuer: ChipIssuer
+  ): Promise<CreateMessageData> {
+    return createTapBackMessage(connectionUsername, chipIssuer);
+  }
+
+  async processNewMessages(messages: MessageData[]): Promise<void> {
+    return processNewMessages(messages);
   }
 }

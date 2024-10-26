@@ -6,7 +6,13 @@ import {
   AuthTokenCreateRequest,
   SigninToken,
 } from "@/lib/controller/postgres/types";
-import { AuthToken, BackupData, CreateBackupData } from "@types";
+import {
+  AuthToken,
+  BackupData,
+  CreateBackupData,
+  CreateMessageData,
+  MessageData,
+} from "@types";
 
 export interface iPostgresClient {
   HealthCheck(): Promise<boolean>;
@@ -38,4 +44,11 @@ export interface iPostgresClient {
   // AuthToken methods
   CreateAuthToken(createAuthToken: AuthTokenCreateRequest): Promise<AuthToken>;
   CreateAuthTokenForUser(userId: string): Promise<AuthToken>;
+
+  // Message methods
+  GetMessagesForUser(
+    userSignaturePublicKey: string,
+    lastMessageFetchedAt: Date | undefined
+  ): Promise<MessageData[]>;
+  CreateMessages(messages: CreateMessageData[]): Promise<void>;
 }

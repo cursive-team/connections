@@ -21,6 +21,7 @@ import { TensionSlider } from "../tensions";
 import { Icons } from "@/components/Icons";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
+import { sendMessages } from "@/lib/message";
 
 interface CommentModalProps {
   username: string;
@@ -29,6 +30,7 @@ interface CommentModalProps {
   previousNote: string | undefined;
   tapResponse: ChipTapResponse | undefined;
   onClose: () => void;
+  onTapBack: () => Promise<void>;
   onSubmit: (emoji: string | null, note: string) => void;
 }
 
@@ -37,11 +39,14 @@ const CommentModal: React.FC<CommentModalProps> = ({
   displayName,
   previousEmoji,
   previousNote,
+  tapResponse,
   onClose,
+  onTapBack,
   onSubmit,
 }) => {
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
   const [privateNote, setPrivateNote] = useState("");
+  const [hasTappedBack, setHasTappedBack] = useState(false);
 
   useEffect(() => {
     if (previousEmoji) {
@@ -85,6 +90,19 @@ const CommentModal: React.FC<CommentModalProps> = ({
               {displayName}
             </span>
           </div>
+          {tapResponse && (
+            <div className="flex flex-col mt-2">
+              <AppButton
+                onClick={async () => {
+                  setHasTappedBack(true);
+                  await onTapBack();
+                }}
+                disabled={hasTappedBack}
+              >
+                Share socials back
+              </AppButton>
+            </div>
+          )}
           <span className="text-center text-xs text-tertiary font-medium font-sans">
             Add details to remember this connection. <br />
             They stay <strong className="font-bold">private to you.</strong>
@@ -198,6 +216,29 @@ const UserProfilePage: React.FC = () => {
     logClientEvent("user-profile-comment-modal-closed", {});
     setShowCommentModal(false);
     await storage.deleteSavedTapInfo();
+  };
+
+  const handleTapBack = async () => {
+    logClientEvent("user-profile-tap-back-clicked", {});
+    if (!session || !connection || !tapInfo?.tapResponse.chipIssuer) {
+      toast.error("Failed to tap back");
+      return;
+    }
+
+    const message = await storage.createTapBackMessage(
+      connection.user.username,
+      tapInfo.tapResponse.chipIssuer
+    );
+    try {
+      await sendMessages({
+        authToken: session.authTokenValue,
+        messages: [message],
+      });
+      toast.success("Tap back sent successfully!");
+    } catch (error) {
+      console.error("Error sending tap back:", error);
+      toast.error("Failed to send tap back");
+    }
   };
 
   const handleSubmitComment = async (emoji: string | null, note: string) => {
@@ -354,6 +395,7 @@ const UserProfilePage: React.FC = () => {
           previousNote={connection.comment?.note}
           tapResponse={tapInfo?.tapResponse}
           onClose={handleCloseCommentModal}
+          onTapBack={handleTapBack}
           onSubmit={handleSubmitComment}
         />
       )}
