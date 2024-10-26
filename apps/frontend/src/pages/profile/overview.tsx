@@ -12,6 +12,7 @@ import Link from "next/link";
 import router from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { CardBox } from "@/components/ui/CardBox";
 
 export default function ProfileOverview() {
   const [user, setUser] = useState<User | null>(null);
@@ -92,6 +93,12 @@ export default function ProfileOverview() {
                 label="Twitter"
                 value={user?.userData.twitter.username}
                 href={`https://twitter.com/${user.userData.twitter.username}`}
+              />
+            )}
+            {user?.userData.signal?.username && (
+              <CardBox
+                label="Signal"
+                value={user?.userData.signal.username}
               />
             )}
           </div>
