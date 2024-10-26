@@ -13,8 +13,8 @@ import { NextSeo } from "next-seo";
 import { Card } from "@/components/cards/Card";
 import { logoutUser } from "@/lib/auth";
 import { logClientEvent } from "@/lib/frontend/metrics";
-// import ImportGithubButton from "@/features/oauth/ImportGithubButton";
-// import ImportStravaButton from "@/features/oauth/ImportStravaButton";
+import ImportGithubButton from "@/features/oauth/ImportGithubButton";
+import ImportStravaButton from "@/features/oauth/ImportStravaButton";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -98,12 +98,24 @@ const ProfilePage: React.FC = () => {
               </span>
             </div>
             <div className="flex flex-col gap-2">
-              {/* <div className="py-2">
+              <div className="py-2">
                 <div className="w-full flex gap-2 overflow-x-auto">
-                  <ImportStravaButton />
-                  <ImportGithubButton />
+                  <div
+                    onClick={() =>
+                      logClientEvent("user-profile-strava-clicked", {})
+                    }
+                  >
+                    <ImportStravaButton />
+                  </div>
+                  <div
+                    onClick={() =>
+                      logClientEvent("user-profile-github-clicked", {})
+                    }
+                  >
+                    <ImportGithubButton />
+                  </div>
                 </div>
-              </div> */}
+              </div>
               {/* <Card.Base
                 variant="gray"
                 className="p-4 !rounded-lg"

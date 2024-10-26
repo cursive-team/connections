@@ -19,6 +19,7 @@ import {
 } from "@/lib/storage/types";
 import { decryptBackupString, encryptBackupString } from "@/lib/crypto/backup";
 import { BASE_API_URL } from "@/config";
+import { OAuthData, OAuthDataSchema } from "@/lib/storage/types";
 
 /**
  * Parses a user object from backup data.
@@ -114,6 +115,17 @@ export const processUserBackup = ({
           );
         }
         user.lastMessageFetchedAt = new Date(JSON.parse(decryptedData));
+      case BackupEntryType.OAUTH:
+        if (!user) {
+          throw new Error("OAUTH backup entry found before INITIAL");
+        }
+        const oauthData: OAuthData = OAuthDataSchema.parse(
+          JSON.parse(decryptedData)
+        );
+        if (!user.oauth) {
+          user.oauth = {};
+        }
+        user.oauth[oauthData.app] = oauthData.token;
         break;
       default:
         throw new Error(`Invalid backup entry type: ${data.backupEntryType}`);
@@ -352,6 +364,32 @@ export const createLastMessageFetchedAtBackup = ({
     iv,
     encryptedData,
     backupEntryType: BackupEntryType.LAST_MESSAGE_FETCHED_AT,
+    clientCreatedAt: new Date(),
+  };
+};
+
+export interface CreateOAuthBackupArgs {
+  email: string;
+  password: string;
+  oauthData: OAuthData;
+}
+
+export const createOAuthBackup = ({
+  email,
+  password,
+  oauthData,
+}: CreateOAuthBackupArgs): CreateBackupData => {
+  const { authenticationTag, iv, encryptedData } = encryptBackupString({
+    backup: JSON.stringify(oauthData),
+    email,
+    password,
+  });
+
+  return {
+    authenticationTag,
+    iv,
+    encryptedData,
+    backupEntryType: BackupEntryType.OAUTH,
     clientCreatedAt: new Date(),
   };
 };

@@ -3,6 +3,8 @@ import { nullToUndefined } from "@types";
 import { TwitterDataSchema } from "./twitterData";
 import { TelegramDataSchema } from "./telegramData";
 import { LannaDataSchema, TensionsRatingSchema } from "./lannaData";
+import { StravaDataSchema } from "./stravaData";
+import { GithubDataSchema } from "./githubData";
 
 export const UserDataSchema = z.object({
   username: z.string(),
@@ -15,6 +17,8 @@ export const UserDataSchema = z.object({
   telegram: nullToUndefined(TelegramDataSchema),
   lanna: nullToUndefined(LannaDataSchema),
   tensionsRating: nullToUndefined(TensionsRatingSchema),
+  strava: nullToUndefined(StravaDataSchema),
+  github: nullToUndefined(GithubDataSchema),
 });
 
 export type UserData = z.infer<typeof UserDataSchema>;
@@ -27,3 +31,5 @@ export {
   type LannaData,
   LannaDataSchema,
 } from "./lannaData";
+export { type GithubData, GithubDataSchema } from "./githubData";
+export { type StravaData, StravaDataSchema } from "./stravaData";

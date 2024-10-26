@@ -170,34 +170,34 @@ export default function CommunityPage() {
       setGithubLeaderboardEntries(githubEntries);
 
       const props: CommunityCardProps[] = [
-        // {
-        //   image: "/images/runclub.png",
-        //   title: "Lanna Run Club",
-        //   description: `${(stravaDetails.totalValue / 1000).toFixed(
-        //     2
-        //   )} of 1000 km`,
-        //   type: "active",
-        //   position: stravaDetails.userPosition,
-        //   totalContributors: stravaDetails.totalContributors,
-        //   progressPercentage: Math.min(
-        //     100,
-        //     Math.round((stravaDetails.totalValue / (1000 * 1000)) * 100)
-        //   ),
-        //   dashboard: DisplayedDashboard.STRAVA,
-        // },
-        // {
-        //   image: "/images/buildclub.png",
-        //   title: "Lanna Builders",
-        //   description: `${githubDetails.totalValue} of 1000 contributions`,
-        //   type: "active",
-        //   position: githubDetails.userPosition,
-        //   totalContributors: githubDetails.totalContributors,
-        //   progressPercentage: Math.min(
-        //     100,
-        //     Math.round((githubDetails.totalValue / 1000) * 100)
-        //   ),
-        //   dashboard: DisplayedDashboard.GITHUB,
-        // },
+        {
+          image: "/images/runclub.png",
+          title: "Lanna Run Club",
+          description: `${(stravaDetails.totalValue / 1000).toFixed(
+            2
+          )} of 1000 km`,
+          type: "active",
+          position: stravaDetails.userPosition,
+          totalContributors: stravaDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((stravaDetails.totalValue / (1000 * 1000)) * 100)
+          ),
+          dashboard: DisplayedDashboard.STRAVA,
+        },
+        {
+          image: "/images/buildclub.png",
+          title: "Lanna Builders",
+          description: `${githubDetails.totalValue} of 1000 contributions`,
+          type: "active",
+          position: githubDetails.userPosition,
+          totalContributors: githubDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((githubDetails.totalValue / 1000) * 100)
+          ),
+          dashboard: DisplayedDashboard.GITHUB,
+        },
         {
           image: "/images/hand.png",
           title: "Lanna Social Graph",
@@ -338,7 +338,11 @@ export default function CommunityPage() {
         goal={1000}
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
-        actionItem={<ImportStravaButton />}
+        actionItem={
+          <div onClick={() => logClientEvent("community-strava-clicked", {})}>
+            <ImportStravaButton />
+          </div>
+        }
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
       />
@@ -360,7 +364,11 @@ export default function CommunityPage() {
         goal={1000}
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
-        actionItem={<ImportGithubButton />}
+        actionItem={
+          <div onClick={() => logClientEvent("community-github-clicked", {})}>
+            <ImportGithubButton />
+          </div>
+        }
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
       />
@@ -433,11 +441,14 @@ export default function CommunityPage() {
                 return (
                   <div
                     key={index}
-                    onClick={() =>
+                    onClick={() => {
+                      logClientEvent("community-dashboard-clicked", {
+                        title: prop?.title,
+                      });
                       setDisplayedDashboard(
                         prop?.dashboard || DisplayedDashboard.NONE
-                      )
-                    }
+                      );
+                    }}
                   >
                     <CommunityCard
                       image={prop?.image}
