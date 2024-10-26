@@ -1,8 +1,6 @@
 import { UserData } from "@/lib/storage/types";
 
-export const ProfileImage = ({ user }: { user: UserData }) => {
-  if (!user || Object.keys(user)?.length === 0)
-    return <div className="size-10 rounded-full bg-quaternary/20"></div>;
+export const getProfileBackgroundColor = (user: UserData) => {
   const colorPalette = [
     "#FF9DF8", // Light Pinkish Purple
     "#FFF59D", // Light Yellow
@@ -25,11 +23,33 @@ export const ProfileImage = ({ user }: { user: UserData }) => {
       .split("")
       .reduce((acc, char) => acc + char.charCodeAt(0), 0) % colorPalette.length;
 
-  const backgroundColor = colorPalette[colorIndex];
+  return colorPalette[colorIndex];
+};
+
+export const ProfileImage = ({ user }: { user: UserData }) => {
+  if (!user || Object.keys(user)?.length === 0)
+    return <div className="size-10 rounded-full bg-quaternary/20"></div>;
+  const colorPalette = [
+    "#FF9DF8", // Light Pinkish Purple
+    "#FFF59D", // Light Yellow
+    "#9DFFB3", // Light Green
+    "#FFC69D", // Light Orange
+    "#FF9DAF", // Light Pink
+    "#9DE8FF", // Light Blue
+    "#D49DF5", // Light Purple
+    "#FFF59D", // Light Yellow
+    "#F5D49D", // Light Beige Orange
+    "#F59DFF", // Soft Magenta
+    "#9DF5E8", // Light Aqua
+    "#9DAFFF", // Soft Lavender Blue
+    "#F5A89D", // Soft Coral
+  ];
+
+  const backgroundColor = getProfileBackgroundColor(user);
 
   return (
     <div
-      className={`size-10 rounded-full border border-quaternary/10 flex items-center justify-center`}
+      className={`size-16 rounded-full border border-quaternary/10 flex items-center justify-center`}
       style={{ backgroundColor }}
     >
       <span

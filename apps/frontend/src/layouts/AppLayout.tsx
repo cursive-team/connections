@@ -22,6 +22,7 @@ interface AppLayoutProps {
   };
   header?: React.ReactNode;
   headerDivider?: boolean;
+  headerContainer?: boolean;
 }
 
 export default function AppLayout({
@@ -30,6 +31,7 @@ export default function AppLayout({
   showHeader = false,
   header = null,
   headerDivider = false,
+  headerContainer = true,
   className = "",
   back = undefined,
   withContainer = true,
@@ -54,8 +56,9 @@ export default function AppLayout({
       {header && (
         <div
           className={cn(
-            "flex items-center relative min-h-12 px-3",
-            headerDivider && "border-b border-b-quaternary/20"
+            "flex items-center relative min-h-12",
+            headerDivider && "border-b border-b-quaternary/20",
+            headerContainer && "px-3"
           )}
         >
           {header}

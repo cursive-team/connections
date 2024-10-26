@@ -1,8 +1,14 @@
+import { Icons } from "@/components/Icons";
+import { AppButton } from "@/components/ui/Button";
 import { LinkCardBox } from "@/components/ui/LinkCardBox";
-import { ProfileImage } from "@/components/ui/ProfileImage";
+import {
+  getProfileBackgroundColor,
+  ProfileImage,
+} from "@/components/ui/ProfileImage";
 import AppLayout from "@/layouts/AppLayout";
 import { storage } from "@/lib/storage";
 import { User, UserData } from "@/lib/storage/types";
+import Link from "next/link";
 import router from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -27,23 +33,42 @@ export default function ProfileOverview() {
   return (
     <AppLayout
       withContainer={false}
-      showFooter={false}
-      back={{
-        href: "/profile",
-        label: "Back",
-      }}
-    >
-      <div className="">
-        <div className="flex items-center justify-between w-full p-4">
-          <div className="flex flex-col">
-            <span className="text-[24px] font-semibold tracking-[-0.22px] font-sans">{`${user?.userData.username}`}</span>
-            <span className="text-[14px] font-medium font-sans text-tertiary">
-              {user?.userData.displayName}
-            </span>
+      headerDivider
+      headerContainer={false}
+      header={
+        <div className="flex flex-col w-full">
+          <div
+            className="h-[60px] w-full relative"
+            style={{
+              background: `linear-gradient(90deg, #FFF 0%, ${getProfileBackgroundColor(
+                user?.userData as UserData
+              )} 100%)`,
+            }}
+          >
+            <div className="absolute left-4 top-[40px]">
+              <ProfileImage user={user?.userData as UserData} />
+            </div>
+            <div className="absolute right-4 top-[70px]">
+              <Link href="/profile/edit">
+                <AppButton variant="outline" className="w-fit">
+                  <Icons.Pencil className="mr-2" />{" "}
+                  <span className="text-[14px]">Edit</span>
+                </AppButton>
+              </Link>
+            </div>
           </div>
-          <ProfileImage user={user?.userData as UserData} />
         </div>
-
+      }
+    >
+      <div className="flex flex-col gap-3 mt-[46px]">
+        <div className="flex flex-col px-4">
+          <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans">
+            {user?.userData.displayName}
+          </span>
+          <span className="text-[14px] font-medium font-sans text-tertiary">
+            {`${user?.userData.username}`}
+          </span>
+        </div>
         <div className="flex flex-col gap-2 p-4">
           <span className="text-sm font-semibold text-primary font-sans">
             Socials

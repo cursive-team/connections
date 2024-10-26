@@ -9,6 +9,9 @@ import { GoArrowUpRight as ExternalLink } from "react-icons/go";
 import { IoMdAdd as Plus } from "react-icons/io";
 import { FiPaperclip as Clip } from "react-icons/fi";
 import { IoMdRemove as Remove } from "react-icons/io";
+import { FaRegCalendar as Calendar } from "react-icons/fa";
+import { IoMenu as Menu } from "react-icons/io5";
+import { IoIosCloseCircle as CloseLocation } from "react-icons/io";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Icons: Record<string, any> = {
@@ -23,6 +26,23 @@ export const Icons: Record<string, any> = {
   Plus,
   Clip,
   Remove,
+  Calendar,
+  Menu,
+  CloseLocation,
+  LocationError: () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="195"
+      height="196"
+      viewBox="0 0 195 196"
+      fill="none"
+    >
+      <path
+        d="M195 97.6235C195 151.471 151.348 195.124 97.5 195.124C43.6522 195.124 0 151.471 0 97.6235C0 43.7758 43.6522 0.123535 97.5 0.123535C151.348 0.123535 195 43.7758 195 97.6235Z"
+        fill="#FFF0F4"
+      />
+    </svg>
+  ),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   NarrowCast: ({ size = 18, ...props }: any) => (
     <svg
