@@ -23,6 +23,7 @@ type ChipEditFormData = {
   bio?: string;
   twitterUsername?: string;
   telegramUsername?: string;
+  signalUsername?: string;
 };
 
 const ProfileEdit = () => {
@@ -43,6 +44,7 @@ const ProfileEdit = () => {
           bio: user.userData?.bio || "",
           twitterUsername: user.userData?.twitter?.username || "",
           telegramUsername: user.userData?.telegram?.username || "",
+          signalUsername: user.userData?.signal?.username || "",
         });
       } else {
         toast.error("User not found");
@@ -55,7 +57,7 @@ const ProfileEdit = () => {
 
   const onHandleSubmit = async (formData: ChipEditFormData) => {
     setLoading(true);
-    const { displayName, bio, twitterUsername, telegramUsername } = formData;
+    const { displayName, bio, twitterUsername, telegramUsername, signalUsername } = formData;
     try {
       await updateChip({
         authToken: session!.authTokenValue,
@@ -64,6 +66,7 @@ const ProfileEdit = () => {
         ownerBio: bio ?? null,
         ownerTwitterUsername: twitterUsername ?? null,
         ownerTelegramUsername: telegramUsername ?? null,
+        ownerSignalUsername: signalUsername ?? null,
       });
       toast.success("Chip updated successfully");
       router.push("/profile");
@@ -126,6 +129,12 @@ const ProfileEdit = () => {
               variant="secondary"
               icon={<TwitterIcon className="text-icon-primary/50" />}
               {...register("twitterUsername")}
+            />
+            <AppInput
+              label="Signal"
+              placeholder="Signal"
+              variant="secondary"
+              {...register("signalUsername")}
             />
             <AppTextarea
               label="Bio"

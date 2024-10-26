@@ -2,6 +2,7 @@ import { z } from "zod";
 import { nullToUndefined } from "@types";
 import { TwitterDataSchema } from "./twitterData";
 import { TelegramDataSchema } from "./telegramData";
+import { SignalDataSchema } from "./signalData";
 import { LannaDataSchema, TensionsRatingSchema } from "./lannaData";
 import { StravaDataSchema } from "./stravaData";
 import { GithubDataSchema } from "./githubData";
@@ -16,6 +17,7 @@ export const UserDataSchema = z.object({
   psiPublicKeyLink: nullToUndefined(z.string()),
   twitter: nullToUndefined(TwitterDataSchema),
   telegram: nullToUndefined(TelegramDataSchema),
+  signal: nullToUndefined(SignalDataSchema),
   lanna: nullToUndefined(LannaDataSchema),
   tensionsRating: nullToUndefined(TensionsRatingSchema),
   strava: nullToUndefined(StravaDataSchema),
