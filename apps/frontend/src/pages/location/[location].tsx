@@ -8,7 +8,7 @@ import { logClientEvent } from "@/lib/frontend/metrics";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import React from "react";
-import Lottie, { useLottie } from "lottie-react";
+import { useLottie } from "lottie-react";
 import locationSuccess from "./../../../public/lottie/location-success.json";
 
 enum TapState {
@@ -25,10 +25,8 @@ const LocationTapModal: React.FC<LocationTapModalProps> = ({
   onClose,
   username,
 }) => {
-  const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
-  const [privateNote, setPrivateNote] = useState("");
-  const [tapState, setTapState] = useState(TapState.ERROR);
-  const [hasTappedBack, setHasTappedBack] = useState(false);
+  // @ts-ignore
+  const [tapState, setTapState] = useState(TapState.SUCCESS);
 
   const options = {
     animationData: locationSuccess,
