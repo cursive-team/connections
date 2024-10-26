@@ -3,6 +3,7 @@ import { nullToUndefined } from "@types";
 import { TwitterDataSchema } from "./twitterData";
 import { TelegramDataSchema } from "./telegramData";
 import { SignalDataSchema } from "./signalData";
+import { InstagramDataSchema } from "./instagramData";
 import { LannaDataSchema, TensionsRatingSchema } from "./lannaData";
 import { StravaDataSchema } from "./stravaData";
 import { GithubDataSchema } from "./githubData";
@@ -17,6 +18,7 @@ export const UserDataSchema = z.object({
   twitter: nullToUndefined(TwitterDataSchema),
   telegram: nullToUndefined(TelegramDataSchema),
   signal: nullToUndefined(SignalDataSchema),
+  instagram: nullToUndefined(InstagramDataSchema),
   lanna: nullToUndefined(LannaDataSchema),
   tensionsRating: nullToUndefined(TensionsRatingSchema),
   strava: nullToUndefined(StravaDataSchema),
@@ -27,6 +29,8 @@ export type UserData = z.infer<typeof UserDataSchema>;
 
 export { type TwitterData, TwitterDataSchema } from "./twitterData";
 export { type TelegramData, TelegramDataSchema } from "./telegramData";
+export { type SignalData, SignalDataSchema } from "./signalData";
+export { type InstagramData, InstagramDataSchema } from "./instagramData";
 export {
   type LannaDesiredConnections,
   LannaDesiredConnectionsSchema,

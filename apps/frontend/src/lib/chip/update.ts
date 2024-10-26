@@ -10,6 +10,7 @@ interface UpdateChipArgs {
   ownerTwitterUsername: string | null;
   ownerTelegramUsername: string | null;
   ownerSignalUsername: string | null;
+  ownerInstagramUsername: string | null;
 }
 
 export async function updateChip(args: UpdateChipArgs): Promise<void> {
@@ -18,18 +19,24 @@ export async function updateChip(args: UpdateChipArgs): Promise<void> {
     ownerUserData.twitter = {
       username: args.ownerTwitterUsername,
     };
-  }
+  };
   if (args.ownerTelegramUsername) {
     ownerUserData.telegram = {
       username: args.ownerTelegramUsername,
     };
-  }
-
+  };
   if (args.ownerSignalUsername) {
     ownerUserData.signal = {
       username: args.ownerSignalUsername,
     };
-  }
+  };
+  if (args.ownerInstagramUsername) {
+    ownerUserData.instagram = {
+      username: args.ownerInstagramUsername,
+    };
+  };
+
+
 
   const request: UpdateChipRequest = {
     authToken: args.authToken,
@@ -71,6 +78,9 @@ export async function updateChip(args: UpdateChipArgs): Promise<void> {
       },
       signal: {
         username: args.ownerSignalUsername ?? undefined,
+      },
+      instagram: {
+        username: args.ownerInstagramUsername ?? undefined,
       },
     });
   } catch (error) {
