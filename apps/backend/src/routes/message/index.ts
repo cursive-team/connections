@@ -71,7 +71,7 @@ router.post(
       return res.status(201).json({});
     } catch (error) {
       console.error("Error sending message:", error);
-      return res.status(400).json({ error: errorToString(error) });
+      return res.status(500).json({ error: errorToString(error) });
     }
   }
 );

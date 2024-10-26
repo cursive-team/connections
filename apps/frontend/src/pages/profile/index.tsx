@@ -15,7 +15,6 @@ import { logoutUser } from "@/lib/auth";
 import { logClientEvent } from "@/lib/frontend/metrics";
 // import ImportGithubButton from "@/features/oauth/ImportGithubButton";
 // import ImportStravaButton from "@/features/oauth/ImportStravaButton";
-import { fetchMessages } from "@/lib/message";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();

@@ -50,7 +50,8 @@ export const fetchMessages = async ({
   );
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch messages: ${response.statusText}`);
+    console.error(`Failed to fetch messages: ${response.statusText}`);
+    return [];
   }
 
   const messages: MessageData[] = await response.json();

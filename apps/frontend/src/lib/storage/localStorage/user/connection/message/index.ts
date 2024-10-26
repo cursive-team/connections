@@ -26,10 +26,14 @@ export const processNewMessages = async (
   const connectionTapBacks: Record<string, TapBackMessage[]> = {};
 
   let lastMessageTimestamp: Date | null = null;
-  for (const message of messages) {
+  const sortedMessages = messages.sort(
+    (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+  );
+  for (const message of sortedMessages) {
     // Ensure messages are in order and update lastMessageTimestamp
     if (lastMessageTimestamp && message.createdAt < lastMessageTimestamp) {
-      throw new Error("Messages are not in order");
+      console.error("Messages are not in order");
+      continue;
     }
     lastMessageTimestamp = message.createdAt;
 
@@ -56,6 +60,7 @@ export const processNewMessages = async (
     }
   }
 
+  // This should never happen
   if (!lastMessageTimestamp) {
     throw new Error("No messages found");
   }

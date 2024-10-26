@@ -19,12 +19,9 @@ app.use(express.json());
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/chip", chipRoutes);
-<<<<<<< HEAD
 app.use("/api/oauth", oauthRoutes);
 app.use("/api/lanna", lannaRoutes);
-=======
 app.use("/api/message", messageRoutes);
->>>>>>> 0aa4000 (working tap backs)
 app.use("/", healthRoutes);
 
 app.locals.intersectionState = {} as IntersectionState;

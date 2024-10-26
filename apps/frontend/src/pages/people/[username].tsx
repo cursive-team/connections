@@ -19,12 +19,9 @@ import { BASE_API_URL } from "@/config";
 import Link from "next/link";
 import { TensionSlider } from "../tensions";
 import { Icons } from "@/components/Icons";
-<<<<<<< HEAD
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
-=======
 import { sendMessages } from "@/lib/message";
->>>>>>> 0aa4000 (working tap backs)
 
 interface CommentModalProps {
   username: string;
@@ -229,12 +226,16 @@ const UserProfilePage: React.FC = () => {
       connection.user.username,
       tapInfo.tapResponse.chipIssuer
     );
-    await sendMessages({
-      authToken: session.authTokenValue,
-      messages: [message],
-    });
-
-    toast.success("Tap back sent successfully!");
+    try {
+      await sendMessages({
+        authToken: session.authTokenValue,
+        messages: [message],
+      });
+      toast.success("Tap back sent successfully!");
+    } catch (error) {
+      console.error("Error sending tap back:", error);
+      toast.error("Failed to send tap back");
+    }
   };
 
   const handleSubmitComment = async (emoji: string | null, note: string) => {
