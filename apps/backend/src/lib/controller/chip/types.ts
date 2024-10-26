@@ -37,3 +37,9 @@ export const NTAG424TapParamsSchema = z.object({
   encryptedChipId: z.string(),
   cmac: z.string(),
 });
+
+export const ChipAttendanceSchema = z.object({
+  weeks: z.array(z.string()).default([]),
+});
+
+export type ChipAttendance = z.infer<typeof ChipAttendanceSchema>;

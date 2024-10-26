@@ -152,3 +152,15 @@ export const LeaderboardDetailsSchema = z.object({
 });
 
 export type LeaderboardDetails = z.infer<typeof LeaderboardDetailsSchema>;
+
+export const ChipAttendanceSchema = z.object({
+  weeks: z.array(z.string()).default([])
+});
+
+export type ChipAttendance = z.infer<typeof ChipAttendanceSchema>;
+
+export const ChipAttendanceRequestSchema = z.object({
+  authToken: z.string(),
+});
+
+export type ChipAttendanceRequest = z.infer<typeof ChipAttendanceRequestSchema>;

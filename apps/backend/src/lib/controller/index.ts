@@ -200,6 +200,12 @@ export class Controller {
     );
   }
 
+  GetChipAttendance(
+    chipId: string,
+  ): Promise<string[] | null> {
+    return this.chipClient.GetChipAttendance(chipId);
+  }
+
   EmailSigninToken(signinToken: SigninToken): Promise<void> {
     return this.emailClient.EmailSigninToken(signinToken);
   }

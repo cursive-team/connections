@@ -71,6 +71,7 @@ export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
     psiPublicKeyLink: tap.ownerPsiPublicKeyLink,
     twitter: ownerTwitter,
     telegram: ownerTelegram,
+    attendance: [],
   };
 
   // Taps will be appended to the existing taps

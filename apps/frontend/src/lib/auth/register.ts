@@ -91,6 +91,7 @@ export async function registerUser({
       telegram: {
         username: telegramHandle,
       },
+      attendance: [],
     },
     chips: [],
     connections: {},

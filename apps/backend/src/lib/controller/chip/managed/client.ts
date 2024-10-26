@@ -15,6 +15,7 @@ import("@/lib/controller/chip/managed/update");
 import("@/lib/controller/chip/managed/leaderboard");
 import("@/lib/controller/chip/managed/register");
 import("@/lib/controller/chip/managed/tap");
+import("@/lib/controller/chip/managed/attendance");
 
 export class ManagedChipClient implements iChipClient {
   prismaClient: PrismaClient;
@@ -65,4 +66,8 @@ export class ManagedChipClient implements iChipClient {
     entryType: LeaderboardEntryType,
     count: number | undefined
   ): Promise<LeaderboardEntry[] | null>;
+
+  // @ts-expect-error (ts2391)
+  GetChipAttendance(chipId: string):
+    Promise<string[] | null>;
 }

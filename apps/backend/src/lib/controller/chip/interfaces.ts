@@ -37,4 +37,6 @@ export interface iChipClient {
     entryType: LeaderboardEntryType,
     count: number | undefined
   ): Promise<LeaderboardEntry[] | null>;
+  GetChipAttendance(chipId: string):
+    Promise<string[] | null>;
 }

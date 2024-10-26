@@ -96,3 +96,9 @@ model LeaderboardEntry {
   tapCount   Int?
   createdAt  DateTime @default(now())
 }
+
+model EdgeCityAttendance {
+  id        String    @id @default(uuid())
+  chipId    String
+  weeks     String[]
+}

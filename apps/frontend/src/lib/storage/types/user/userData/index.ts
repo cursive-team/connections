@@ -15,6 +15,7 @@ export const UserDataSchema = z.object({
   telegram: nullToUndefined(TelegramDataSchema),
   lanna: nullToUndefined(LannaDataSchema),
   tensionsRating: nullToUndefined(TensionsRatingSchema),
+  attendance: z.array(z.string()).default([]),
 });
 
 export type UserData = z.infer<typeof UserDataSchema>;

@@ -20,6 +20,7 @@ export const getUserShareableData = (userData: UserData): UserData => {
     psiPublicKeyLink: userData.psiPublicKeyLink,
     twitter: userData.twitter,
     telegram: userData.telegram,
+    attendance: [],
   };
 };
 
