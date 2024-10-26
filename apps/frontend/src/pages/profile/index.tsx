@@ -100,8 +100,20 @@ const ProfilePage: React.FC = () => {
             <div className="flex flex-col gap-2">
               <div className="py-2">
                 <div className="w-full flex gap-2 overflow-x-auto">
-                  <ImportStravaButton />
-                  <ImportGithubButton />
+                  <div
+                    onClick={() =>
+                      logClientEvent("user-profile-strava-clicked", {})
+                    }
+                  >
+                    <ImportStravaButton />
+                  </div>
+                  <div
+                    onClick={() =>
+                      logClientEvent("user-profile-github-clicked", {})
+                    }
+                  >
+                    <ImportGithubButton />
+                  </div>
                 </div>
               </div>
               {/* <Card.Base

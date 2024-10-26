@@ -7,6 +7,7 @@ import { LeaderboardDetails, LeaderboardEntries } from "@types";
 import { useState, useEffect } from "react";
 import { Leaderboard } from "./Leaderboard";
 import { IoIosArrowBack as BackIcon } from "react-icons/io";
+import { logClientEvent } from "@/lib/frontend/metrics";
 
 interface DashboardDetailProps {
   image: string;
@@ -183,7 +184,12 @@ export function DashboardDetail({
                 variant="outline"
                 className="rounded-full max-w-[120px]"
                 icon={<Icons.Star className="mr-2" />}
-                onClick={() => setSeeFullLeaderboard(true)}
+                onClick={() => {
+                  logClientEvent("dashboard-leaderboard-clicked", {
+                    title,
+                  });
+                  setSeeFullLeaderboard(true);
+                }}
               >
                 See more
               </AppButton>

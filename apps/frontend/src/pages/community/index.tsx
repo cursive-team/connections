@@ -338,7 +338,11 @@ export default function CommunityPage() {
         goal={1000}
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
-        actionItem={<ImportStravaButton />}
+        actionItem={
+          <div onClick={() => logClientEvent("community-strava-clicked", {})}>
+            <ImportStravaButton />
+          </div>
+        }
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
       />
@@ -360,7 +364,11 @@ export default function CommunityPage() {
         goal={1000}
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
-        actionItem={<ImportGithubButton />}
+        actionItem={
+          <div onClick={() => logClientEvent("community-github-clicked", {})}>
+            <ImportGithubButton />
+          </div>
+        }
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
       />
@@ -433,11 +441,14 @@ export default function CommunityPage() {
                 return (
                   <div
                     key={index}
-                    onClick={() =>
+                    onClick={() => {
+                      logClientEvent("community-dashboard-clicked", {
+                        title: prop?.title,
+                      });
                       setDisplayedDashboard(
                         prop?.dashboard || DisplayedDashboard.NONE
-                      )
-                    }
+                      );
+                    }}
                   >
                     <CommunityCard
                       image={prop?.image}
