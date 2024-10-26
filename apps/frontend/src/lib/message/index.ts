@@ -9,6 +9,7 @@ import {
   CreateMessagesRequest,
   GetMessagesRequest,
   MessageData,
+  MessageDataSchema,
 } from "@types";
 
 export * from "./tapBack";
@@ -54,8 +55,19 @@ export const fetchMessages = async ({
     return [];
   }
 
-  const messages: MessageData[] = await response.json();
-  return messages;
+  const receivedMessages = await response.json();
+  try {
+    const parsedMessages = await Promise.all(
+      receivedMessages.map(MessageDataSchema.parse)
+    );
+    if (parsedMessages.every((message) => message !== undefined)) {
+      return parsedMessages;
+    }
+  } catch (error) {
+    console.error("Error parsing messages:", error);
+  }
+
+  return [];
 };
 
 interface CreateMessageArgs {

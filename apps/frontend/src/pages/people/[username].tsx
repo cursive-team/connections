@@ -39,6 +39,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
   displayName,
   previousEmoji,
   previousNote,
+  tapResponse,
   onClose,
   onTapBack,
   onSubmit,
@@ -89,17 +90,19 @@ const CommentModal: React.FC<CommentModalProps> = ({
               {displayName}
             </span>
           </div>
-          <div className="flex flex-col mt-2">
-            <AppButton
-              onClick={async () => {
-                setHasTappedBack(true);
-                await onTapBack();
-              }}
-              disabled={hasTappedBack}
-            >
-              Share socials back
-            </AppButton>
-          </div>
+          {tapResponse && (
+            <div className="flex flex-col mt-2">
+              <AppButton
+                onClick={async () => {
+                  setHasTappedBack(true);
+                  await onTapBack();
+                }}
+                disabled={hasTappedBack}
+              >
+                Share socials back
+              </AppButton>
+            </div>
+          )}
           <span className="text-center text-xs text-tertiary font-medium font-sans">
             Add details to remember this connection. <br />
             They stay <strong className="font-bold">private to you.</strong>
