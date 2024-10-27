@@ -8,8 +8,11 @@ import { logClientEvent } from "@/lib/frontend/metrics";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import React from "react";
-import { useLottie } from "lottie-react";
-import locationSuccess from "./../../../public/lottie/location-success.json";
+import dynamic from "next/dynamic";
+import locationSuccess from "../../../public/animations/location-success.json";
+
+// Dynamically import the Lottie component with SSR disabled
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 enum TapState {
   SUCCESS,
@@ -25,23 +28,14 @@ const LocationTapModal: React.FC<LocationTapModalProps> = ({
   onClose,
   username,
 }) => {
-  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tapState, setTapState] = useState(TapState.SUCCESS);
-
-  const options = {
-    animationData: locationSuccess,
-    loop: true,
-    autoplay: true,
-    speed: 0.4,
-  };
 
   const TapStateTitleMapping: Record<TapState, string> = {
     [TapState.SUCCESS]: "You're checked in!",
     [TapState.ERROR]: `${username}, your wristband is not valid.`,
     [TapState.ALREADY_CHECKED]: `${username}, you already checked-in.`,
   };
-
-  const { View } = useLottie(options);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[200]">
@@ -70,7 +64,11 @@ const LocationTapModal: React.FC<LocationTapModalProps> = ({
                   Lorem, ipsum dolor.
                 </span>
               </div>
-              {View}
+              <Lottie
+                animationData={locationSuccess}
+                loop={true}
+                autoplay={true}
+              />
             </>
           )}
           {[TapState.ALREADY_CHECKED, TapState.ERROR].includes(tapState) && (
@@ -100,6 +98,7 @@ export default function LocationPage() {
   const leaderboardEntries = {
     entries: [],
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const prize: any = null;
 
   if (seeFullLeaderboard) {
