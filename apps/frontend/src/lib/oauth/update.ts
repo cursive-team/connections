@@ -17,11 +17,11 @@ export const updateUserDataFromOAuth = async (
           },
         },
       };
-    case LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS:
+    case LeaderboardEntryType.GITHUB_LANNA_COMMITS:
       return {
         ...userData,
         github: {
-          weekOct20Commits: { value, lastUpdated: new Date() },
+          lannaCommits: { value, lastUpdated: new Date() },
         },
       };
     default:

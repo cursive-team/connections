@@ -83,6 +83,10 @@ export default function CommunityPage() {
     useState<LeaderboardDetails | null>(null);
   const [githubLeaderboardEntries, setGithubLeaderboardEntries] =
     useState<LeaderboardEntries | null>(null);
+  const [weekOct27TapLeaderboardDetails, setWeekOct27TapLeaderboardDetails] =
+    useState<LeaderboardDetails | null>(null);
+  const [weekOct27TapLeaderboardEntries, setWeekOct27TapLeaderboardEntries] =
+    useState<LeaderboardEntries | null>(null);
   const [cardProps, setCardProps] = useState<CommunityCardProps[]>([]);
   const [displayedDashboard, setDisplayedDashboard] =
     useState<DisplayedDashboard>(DisplayedDashboard.NONE);
@@ -106,6 +110,8 @@ export default function CommunityPage() {
       let stravaEntries: LeaderboardEntries | null = null;
       let githubDetails: LeaderboardDetails | null = null;
       let githubEntries: LeaderboardEntries | null = null;
+      let weekOct27TapDetails: LeaderboardDetails | null = null;
+      let weekOct27TapEntries: LeaderboardEntries | null = null;
       try {
         details = await getUserLeaderboardDetails(
           communityIssuer,
@@ -133,11 +139,19 @@ export default function CommunityPage() {
         );
         githubDetails = await getUserLeaderboardDetails(
           communityIssuer,
-          LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS
+          LeaderboardEntryType.GITHUB_LANNA_COMMITS
         );
         githubEntries = await getTopLeaderboardEntries(
           communityIssuer,
-          LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS
+          LeaderboardEntryType.GITHUB_LANNA_COMMITS
+        );
+        weekOct27TapDetails = await getUserLeaderboardDetails(
+          communityIssuer,
+          LeaderboardEntryType.WEEK_OCT_27_TAP_COUNT
+        );
+        weekOct27TapEntries = await getTopLeaderboardEntries(
+          communityIssuer,
+          LeaderboardEntryType.WEEK_OCT_27_TAP_COUNT
         );
       } catch (error) {
         console.error("Error getting user leaderboard info:", error);
@@ -153,7 +167,9 @@ export default function CommunityPage() {
         !stravaDetails ||
         !stravaEntries ||
         !githubDetails ||
-        !githubEntries
+        !githubEntries ||
+        !weekOct27TapDetails ||
+        !weekOct27TapEntries
       ) {
         toast.error("User leaderboard info not found.");
         router.push("/profile");
@@ -168,6 +184,8 @@ export default function CommunityPage() {
       setStravaLeaderboardEntries(stravaEntries);
       setGithubLeaderboardDetails(githubDetails);
       setGithubLeaderboardEntries(githubEntries);
+      setWeekOct27TapLeaderboardDetails(weekOct27TapDetails);
+      setWeekOct27TapLeaderboardEntries(weekOct27TapEntries);
 
       const props: CommunityCardProps[] = [
         {
@@ -197,6 +215,19 @@ export default function CommunityPage() {
             Math.round((githubDetails.totalValue / 1000) * 100)
           ),
           dashboard: DisplayedDashboard.GITHUB,
+        },
+        {
+          image: "/images/week.png",
+          title: "Social Graph, Week of 10/27",
+          description: `${weekOct27TapDetails.totalValue} of 500 taps`,
+          type: "active",
+          position: weekOct27TapDetails.userPosition,
+          totalContributors: weekOct27TapDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((weekOct27TapDetails.totalValue / 500) * 100)
+          ),
+          dashboard: DisplayedDashboard.WEEKLY_TAPS_OCT_27,
         },
         {
           image: "/images/hand.png",
@@ -295,6 +326,42 @@ export default function CommunityPage() {
   }
 
   if (
+    weekOct27TapLeaderboardDetails &&
+    weekOct27TapLeaderboardEntries &&
+    displayedDashboard === DisplayedDashboard.WEEKLY_TAPS_OCT_27
+  ) {
+    return (
+      <DashboardDetail
+        image="/images/week-wide.png"
+        title="Social Graph, Week of 10/27"
+        description={
+          <div className="flex flex-col gap-4">
+            <span>
+              Weekly tapping challenge to grow the Lanna Social Graph.{" "}
+              <b>
+                The top 5 contributors will win an exclusive Cursive NFC ring!
+              </b>
+            </span>
+            <span>
+              Make sure your tapping is natural, we want to incentive evangelism
+              of the app experience and genuine connection. Not just tapping for
+              the sake of tapping.
+            </span>
+          </div>
+        }
+        leaderboardDetails={weekOct27TapLeaderboardDetails}
+        leaderboardEntries={weekOct27TapLeaderboardEntries}
+        goal={500}
+        organizer="Cursive"
+        organizerDescription="Cryptography for human connection"
+        type="active"
+        returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
+        prize={true}
+      />
+    );
+  }
+
+  if (
     leaderboardDetails &&
     leaderboardEntries &&
     displayedDashboard === DisplayedDashboard.TOTAL
@@ -323,7 +390,7 @@ export default function CommunityPage() {
     return (
       <DashboardDetail
         image="/images/runclub_wide.png"
-        title="Strava Running Distance"
+        title="Lanna Run Club"
         description={`Share your Strava running distance to participate in the Lanna Run Club!`}
         leaderboardDetails={{
           ...stravaLeaderboardDetails,
@@ -357,8 +424,8 @@ export default function CommunityPage() {
     return (
       <DashboardDetail
         image="/images/buildclub_wide.png"
-        title="Open Source GitHub Contributions"
-        description={`Share your GitHub contributions with the Lanna Builder community!`}
+        title="Lanna Builders"
+        description={`Share your open source GitHub contributions with the Lanna Builder community!`}
         leaderboardDetails={githubLeaderboardDetails}
         leaderboardEntries={githubLeaderboardEntries}
         goal={1000}

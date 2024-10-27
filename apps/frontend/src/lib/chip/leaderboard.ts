@@ -47,11 +47,10 @@ export async function updateTapLeaderboardEntry(
 ): Promise<void> {
   const { user, session } = await storage.getUserAndSession();
 
-  // Count total taps and taps for the week starting October 20th
-  const weekOct20StartDate = new Date("2024-10-20T00:00:00Z");
-  const retapCloseDate = new Date("2024-10-24T00:00:00+07:00");
+  // Count total taps and taps for the week starting October 27th
+  const weekOct27StartDate = new Date("2024-10-27T00:00:00Z");
   let totalTapCount = 0;
-  let weekOct20TapCount = 0;
+  let weekOct27TapCount = 0;
 
   Object.values(user.connections).forEach((connection) => {
     const tapsFromIssuer = connection.taps.filter(
@@ -62,15 +61,11 @@ export async function updateTapLeaderboardEntry(
 
       const validWeeklyTaps = tapsFromIssuer.filter((tap) => {
         const tapDate = new Date(tap.timestamp);
-        return tapDate >= weekOct20StartDate && tapDate < retapCloseDate;
+        return tapDate >= weekOct27StartDate;
       });
 
       if (validWeeklyTaps.length > 0) {
-        weekOct20TapCount += validWeeklyTaps.length;
-      } else if (
-        tapsFromIssuer.some((tap) => new Date(tap.timestamp) >= retapCloseDate)
-      ) {
-        weekOct20TapCount++;
+        weekOct27TapCount++;
       }
     }
   });
@@ -86,8 +81,8 @@ export async function updateTapLeaderboardEntry(
     const updateWeekTapsRequest: UpdateLeaderboardEntryRequest = {
       authToken: session.authTokenValue,
       chipIssuer,
-      entryType: LeaderboardEntryType.WEEK_OCT_20_TAP_COUNT,
-      entryValue: weekOct20TapCount,
+      entryType: LeaderboardEntryType.WEEK_OCT_27_TAP_COUNT,
+      entryValue: weekOct27TapCount,
     };
 
     const requests = [updateTotalTapsRequest, updateWeekTapsRequest];

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 export enum DisplayedDashboard {
   NONE = "none",
   WEEKLY = "weekly",
+  WEEKLY_TAPS_OCT_27 = "weekly-taps-oct-27",
   TOTAL = "total",
   STRAVA = "strava",
   GITHUB = "github",
