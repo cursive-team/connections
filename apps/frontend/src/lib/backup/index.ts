@@ -115,6 +115,7 @@ export const processUserBackup = ({
           );
         }
         user.lastMessageFetchedAt = new Date(JSON.parse(decryptedData));
+        break;
       case BackupEntryType.OAUTH:
         if (!user) {
           throw new Error("OAUTH backup entry found before INITIAL");
