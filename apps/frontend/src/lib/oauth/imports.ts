@@ -159,7 +159,7 @@ export async function importOAuthData(
   } catch (error) {
     // If error delete access token -- the token may have been revoked
     // By deleting the access token we'll fetch a new one on a re-attempt
-    storage.getOAuthAccessToken(options.type);
+    storage.deleteOAuthAccessToken(options.type);
     console.error("Error importing data:", errorToString(error));
     toast.error("Import failed, token removed. Rerun if token was revoked.");
     return null;
