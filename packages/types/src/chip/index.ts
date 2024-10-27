@@ -85,7 +85,9 @@ export type ChipTap = z.infer<typeof ChipTapSchema>;
 export const ChipTapResponseSchema = z.object({
   chipIssuer: ChipIssuerSchema,
   chipIsRegistered: z.boolean(),
-  tap: ChipTapSchema.nullable(),
+  isLocationChip: z.boolean().nullable(),
+  userTap: ChipTapSchema.nullable(),
+  locationTap: ChipTapSchema.nullable(),
 });
 
 export type ChipTapResponse = z.infer<typeof ChipTapResponseSchema>;

@@ -84,6 +84,11 @@ model Chip {
   ownerEncryptionPublicKey String?
   ownerPsiPublicKeyLink    String?
   ownerUserData            Json? // Nullable JSONB field
+  isLocationChip           Boolean?
+  locationId               String?   @unique
+  locationName             String?
+  locationDescription      String?
+  locationData             Json? // Nullable JSONB field
   createdAt                DateTime  @default(now())
 }
 
