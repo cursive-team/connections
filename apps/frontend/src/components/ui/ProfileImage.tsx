@@ -34,7 +34,7 @@ export const ProfileImage = ({ user }: { user: UserData }) => {
 
   return (
     <div
-      className={`size-16 rounded-full border border-quaternary/10 flex items-center justify-center`}
+      className={`size-12 rounded-full border border-quaternary/10 flex items-center justify-center`}
       style={{ backgroundColor }}
     >
       <span

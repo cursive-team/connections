@@ -390,7 +390,7 @@ export default function CommunityPage() {
     return (
       <DashboardDetail
         image="/images/runclub_wide.png"
-        title="Strava Running Distance"
+        title="Lanna Run Club"
         description={`Share your Strava running distance to participate in the Lanna Run Club!`}
         leaderboardDetails={{
           ...stravaLeaderboardDetails,
@@ -424,8 +424,8 @@ export default function CommunityPage() {
     return (
       <DashboardDetail
         image="/images/buildclub_wide.png"
-        title="Open Source GitHub Contributions"
-        description={`Share your GitHub contributions with the Lanna Builder community!`}
+        title="Lanna Builders"
+        description={`Share your open source GitHub contributions with the Lanna Builder community!`}
         leaderboardDetails={githubLeaderboardDetails}
         leaderboardEntries={githubLeaderboardEntries}
         goal={1000}
