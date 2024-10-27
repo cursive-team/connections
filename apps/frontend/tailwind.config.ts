@@ -52,7 +52,10 @@ const config: Config = {
         },
 
         surface: {
-          primary: "#FFF",
+          primary: {
+            DEFAULT: "#FFF",
+            hover: "rgba(255, 157, 248, 0.10)",
+          },
           quaternary: "rgba(0, 0, 0, 0.03)",
           notice: {
             primary: "#000000",

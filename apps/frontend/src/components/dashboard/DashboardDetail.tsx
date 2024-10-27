@@ -63,7 +63,7 @@ export function DashboardDetail({
         showFooter={false}
         header={
           <div>
-            <div className="flex flex-row w-full px-1 pt-8 pb-4 bg-white justify-between items-center inline-flex">
+            <div className="flex-row w-full px-1 pt-8 pb-4 bg-white justify-between items-center inline-flex">
               <div className="text-[#090909] text-xl font-semibold font-['DM Sans'] leading-tight">
                 {`Total (${
                   Number.isInteger(leaderboardDetails.totalValue)
@@ -191,7 +191,7 @@ export function DashboardDetail({
                   setSeeFullLeaderboard(true);
                 }}
               >
-                See more
+                See all
               </AppButton>
             </div>
           </div>
