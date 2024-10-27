@@ -35,7 +35,7 @@ export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
     secret: "",
     data_options: [
       {
-        type: LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS,
+        type: LeaderboardEntryType.GITHUB_LANNA_COMMITS,
         scope: "read",
       },
     ],

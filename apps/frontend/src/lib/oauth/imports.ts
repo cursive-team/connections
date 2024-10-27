@@ -6,37 +6,46 @@ import {
   UpdateLeaderboardEntryRequest,
   GithubUserResponse,
   GithubUserResponseSchema,
-  errorToString
+  errorToString,
 } from "@types";
-import {toast} from "sonner";
+import { toast } from "sonner";
+import { MapStravaActivityStatsToLeaderboardEntryRequest } from "./strava";
+import { MapGithubCommitContributionsToLeaderboardEntry } from "./github";
 
-import {
-  MapStravaActivityStatsToLeaderboardEntryRequest
-} from "./strava";
-
-import {
-  MapGithubCommitContributionsToLeaderboardEntry
-} from "./github";
-
-// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-export function MapResponseToLeaderboardEntryRequest(authToken: string, type: LeaderboardEntryType, chipIssuer: ChipIssuer, resp: any): UpdateLeaderboardEntryRequest | null {
-  switch(type) {
+export function MapResponseToLeaderboardEntryRequest(
+  authToken: string,
+  type: LeaderboardEntryType,
+  chipIssuer: ChipIssuer,
+  // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+  resp: any
+): UpdateLeaderboardEntryRequest | null {
+  switch (type) {
     case LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
-      return MapStravaActivityStatsToLeaderboardEntryRequest(authToken, chipIssuer, resp);
-    case LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS:
-      return MapGithubCommitContributionsToLeaderboardEntry(authToken, chipIssuer, resp);
+      return MapStravaActivityStatsToLeaderboardEntryRequest(
+        authToken,
+        chipIssuer,
+        resp
+      );
+    case LeaderboardEntryType.GITHUB_LANNA_COMMITS:
+      return MapGithubCommitContributionsToLeaderboardEntry(
+        authToken,
+        chipIssuer,
+        resp
+      );
     default:
       // Probably should throw error
       return null;
   }
 }
 
-
-async function fetchData(token: AccessToken, options: DataOption): Promise<Response | null> {
-  switch(options.type) {
+async function fetchData(
+  token: AccessToken,
+  options: DataOption
+): Promise<Response | null> {
+  switch (options.type) {
     case LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
       return await stravaFetch(token);
-    case LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS:
+    case LeaderboardEntryType.GITHUB_LANNA_COMMITS:
       return await ghFetch(token);
     default:
       return null;
@@ -50,32 +59,29 @@ async function stravaFetch(token: AccessToken): Promise<Response> {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token.access_token}`,
+        Authorization: `Bearer ${token.access_token}`,
       },
     }
   );
 }
 
 async function ghFetch(token: AccessToken): Promise<Response | null> {
-  const user = await fetch(
-    "https://api.github.com/user",
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token.access_token}`,
-      },
-    }
-  );
+  const user = await fetch("https://api.github.com/user", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token.access_token}`,
+    },
+  });
 
   const rawUser = await user.json();
 
   const resp: GithubUserResponse = GithubUserResponseSchema.parse(rawUser);
 
   const username = resp.login;
-  // NOTE: with the exception of year, values are indices
-  const from = new Date(2024, 9, 21); // Oct 20, 2024
-  const to = new Date(2024, 9, 28); // Oct 27, 2024
+  // NOTE: month is 0-indexed
+  const from = new Date(2024, 9, 10); // Oct 10, 2024
+  const to = new Date(2024, 10, 10); // Nov 10, 2024
 
   // TODO: find graphgl library for handling query / variables
   const query = `
@@ -88,26 +94,26 @@ async function ghFetch(token: AccessToken): Promise<Response | null> {
           totalPullRequestReviewContributions
         }
       }
-    }`
+    }`;
 
   const variables = `
     {
       "username": "${username}",
       "from": "${from.toISOString()}",
       "to": "${to.toISOString()}"
-    }`
+    }`;
 
   const body = {
     query,
-    variables
-  }
+    variables,
+  };
 
-  const response = await fetch('https://api.github.com/graphql', {
-    method: 'POST',
+  const response = await fetch("https://api.github.com/graphql", {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token.access_token}`,
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
   });
 
   return response;
@@ -117,15 +123,14 @@ export async function importOAuthData(
   authToken: string,
   chipIssuer: ChipIssuer,
   token: AccessToken,
-  options: DataOption,
+  options: DataOption
 ): Promise<UpdateLeaderboardEntryRequest | null> {
-
   try {
     const response = await fetchData(token, options);
     if (!response) {
       throw new Error("No response from OAuth import");
     }
-    
+
     if (!response.ok) {
       const errorResponse = await response.json();
       console.error(
@@ -144,7 +149,12 @@ export async function importOAuthData(
     }
 
     // Map response to LeaderboardEntry for each type
-    return MapResponseToLeaderboardEntryRequest(authToken, options.type, chipIssuer, data);
+    return MapResponseToLeaderboardEntryRequest(
+      authToken,
+      options.type,
+      chipIssuer,
+      data
+    );
   } catch (error) {
     console.error("Error importing data:", errorToString(error));
     toast.error("Unable to import OAuth data");
