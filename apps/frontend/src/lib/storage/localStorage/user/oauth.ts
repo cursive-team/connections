@@ -36,3 +36,15 @@ export const getOAuthAccessToken = async (
 
   return undefined;
 };
+
+export const deleteOAuthAccessToken = async (
+  app: string
+): Promise<void> => {
+  const { user } = await getUserAndSession();
+
+  if (user.oauth && user.oauth[app]) {
+    delete user.oauth[app];
+  }
+
+  return;
+};

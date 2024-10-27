@@ -41,6 +41,7 @@ import {
 import { createTapBackMessage } from "./user/connection/message/tapBack";
 import { processNewMessages } from "./user/connection/message";
 import {
+  deleteOAuthAccessToken,
   getOAuthAccessToken,
   saveOAuthAccessToken,
 } from "@/lib/storage/localStorage/user/oauth";
@@ -85,6 +86,10 @@ export class LocalStorage implements ClientStorage {
 
   async getOAuthAccessToken(app: string): Promise<AccessToken | undefined> {
     return getOAuthAccessToken(app);
+  }
+
+  async deleteOAuthAccessToken(app: string): Promise<void> {
+    return deleteOAuthAccessToken(app);
   }
 
   async saveTapInfo(tapInfo: TapInfo): Promise<void> {
