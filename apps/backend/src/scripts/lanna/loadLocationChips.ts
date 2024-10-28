@@ -1,10 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import { generateSignatureKeyPair } from "../../lib/util";
-import { LocationChip } from "./locationChips";
 import { v4 as uuidv4 } from "uuid";
 // import { EDGE_CITY_LANNA_LOCATION_CHIPS } from "./locationChips";
 
 const prisma = new PrismaClient();
+
+export interface LocationChip {
+  uid: string;
+  name: string;
+  description: string;
+}
 
 async function loadLocationChips() {
   try {
