@@ -104,6 +104,11 @@ export const generateTapSignatureFromChip = async (
     ownerEncryptionPublicKey,
     ownerPsiPublicKeyLink,
     ownerUserData,
+    isLocationChip,
+    locationId,
+    locationName,
+    locationDescription,
+    locationData,
   } = chip;
 
   // If chip is not registered, return a response indicating so
@@ -111,7 +116,9 @@ export const generateTapSignatureFromChip = async (
     return ChipTapResponseSchema.parse({
       chipIssuer,
       chipIsRegistered,
-      tap: null,
+      isLocationChip: null,
+      userTap: null,
+      locationTap: null,
     });
   }
 
@@ -131,11 +138,32 @@ export const generateTapSignatureFromChip = async (
     },
   });
 
-  // Return the tap response
+  // Return the tap response based on chip type
+  if (isLocationChip) {
+    return ChipTapResponseSchema.parse({
+      chipIssuer,
+      chipIsRegistered,
+      isLocationChip,
+      userTap: null,
+      locationTap: {
+        chipPublicKey,
+        message,
+        signature,
+        tapCount: chipTapCount + 1,
+        locationId,
+        locationName,
+        locationDescription,
+        locationData,
+        timestamp: new Date(),
+      },
+    });
+  }
+
   return ChipTapResponseSchema.parse({
     chipIssuer,
     chipIsRegistered,
-    tap: {
+    isLocationChip,
+    userTap: {
       chipPublicKey,
       message,
       signature,
@@ -149,5 +177,6 @@ export const generateTapSignatureFromChip = async (
       ownerUserData,
       timestamp: new Date(),
     },
+    locationTap: null,
   });
 };

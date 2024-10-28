@@ -2,14 +2,17 @@
 import { CheckInWeek } from "@/components/CheckInWeek";
 import { Leaderboard } from "@/components/dashboard/Leaderboard";
 import { Icons } from "@/components/Icons";
-import { AppButton } from "@/components/ui/Button";
 import AppLayout from "@/layouts/AppLayout";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import dynamic from "next/dynamic";
 import locationSuccess from "../../../public/animations/location-success.json";
+import { storage } from "@/lib/storage";
+import { toast } from "sonner";
+import { Location } from "@/lib/storage/types";
+import { TapParams, ChipTapResponse } from "@types";
 
 // Dynamically import the Lottie component with SSR disabled
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
@@ -20,17 +23,20 @@ enum TapState {
   ALREADY_CHECKED,
 }
 interface LocationTapModalProps {
-  onClose: () => void;
   username: string;
+  locationName: string;
+  tapDate: Date;
+  tapState: TapState;
+  onClose: () => void;
 }
 
 const LocationTapModal: React.FC<LocationTapModalProps> = ({
-  onClose,
   username,
+  locationName,
+  tapDate,
+  tapState,
+  onClose,
 }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [tapState, setTapState] = useState(TapState.SUCCESS);
-
   const TapStateTitleMapping: Record<TapState, string> = {
     [TapState.SUCCESS]: "You're checked in!",
     [TapState.ERROR]: `${username}, your wristband is not valid.`,
@@ -58,10 +64,19 @@ const LocationTapModal: React.FC<LocationTapModalProps> = ({
                   {username}
                 </span>
                 <span className="text-base text-primary leading-none">
-                  Lorem, ipsum dolor.
+                  {locationName}
                 </span>
                 <span className="text-base text-primary leading-none">
-                  Lorem, ipsum dolor.
+                  {tapDate.toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric",
+                  })}{" "}
+                  {tapDate.toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
                 </span>
               </div>
               <Lottie
@@ -84,9 +99,83 @@ const LocationTapModal: React.FC<LocationTapModalProps> = ({
 
 export default function LocationPage() {
   const router = useRouter();
-  const { location } = router.query;
+  const { id } = router.query;
+  const [location, setLocation] = useState<Location | null>(null);
+  const [tapInfo, setTapInfo] = useState<{
+    tapParams: TapParams;
+    tapResponse: ChipTapResponse;
+  } | null>(null);
+  const [tapState, setTapState] = useState(TapState.SUCCESS);
   const [seeFullLeaderboard, setSeeFullLeaderboard] = useState(false);
   const [showTapModal, setShowTapModal] = useState(true);
+  const [weeklyTapDays, setWeeklyTapDays] = useState<number[]>([]);
+
+  useEffect(() => {
+    const fetchLocationAndTapInfo = async () => {
+      const user = await storage.getUser();
+      const session = await storage.getSession();
+      const location = user?.locations?.[id as string];
+      if (!user || !session || !location) {
+        console.error("Location not found");
+        toast.error("Location not found");
+        router.push("/profile");
+        return;
+      }
+      setLocation(location);
+
+      // Compute the days of the week that the user has tapped in
+      const tapDays = computeWeeklyTapDays(
+        location.taps?.map((tap) => new Date(tap.timestamp))
+      );
+      setWeeklyTapDays(tapDays);
+
+      const savedTapInfo = await storage.loadSavedTapInfo();
+      // Delete saved tap info after fetching
+      await storage.deleteSavedTapInfo();
+      // Show tap modal if tap info is for current location
+      if (
+        savedTapInfo &&
+        savedTapInfo.tapResponse.locationTap?.locationId === id
+      ) {
+        logClientEvent("location-tap-chip-modal-shown", {});
+        setTapInfo(savedTapInfo);
+        setTapState(TapState.SUCCESS);
+        setShowTapModal(true);
+      }
+    };
+
+    fetchLocationAndTapInfo();
+  }, [id, router]);
+
+  // Compute the days of the week that the user has tapped in
+  const computeWeeklyTapDays = (tapDates: Date[]): number[] => {
+    // Get start of current week (Sunday) in user's timezone
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const tapDays: number[] = [];
+    const today = now.getDay();
+
+    // Check each day from Sunday up to today
+    for (let day = 0; day <= today; day++) {
+      const dayStart = new Date(startOfWeek);
+      dayStart.setDate(startOfWeek.getDate() + day);
+      const dayEnd = new Date(dayStart);
+      dayEnd.setHours(23, 59, 59, 999);
+
+      const hasTap = tapDates.some((tapDate) => {
+        return tapDate >= dayStart && tapDate <= dayEnd;
+      });
+
+      if (hasTap) {
+        tapDays.push(day);
+      }
+    }
+
+    return tapDays;
+  };
 
   // TODO: implement
   const leaderboardDetails = {
@@ -161,11 +250,16 @@ export default function LocationPage() {
     );
   }
 
+  const locationName = location?.name;
+  const tapDate = tapInfo?.tapResponse.locationTap?.timestamp;
   return (
     <>
-      {showTapModal && (
+      {showTapModal && locationName && tapDate && (
         <LocationTapModal
           username="Example"
+          locationName={locationName}
+          tapDate={tapDate}
+          tapState={tapState}
           onClose={() => {
             setShowTapModal(false);
           }}
@@ -183,16 +277,15 @@ export default function LocationPage() {
           <div className="flex flex-col pt-4">
             <div className="flex flex-col gap-4 pb-6">
               <span className="text-xl text-primary font-bold">
-                [Location Name]
+                {`[${locationName || "Location"}]`}
               </span>
               <span className="text-sm text-tertiary font-normal">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum,
-                labore!
+                {location?.description || "No description"}
               </span>
             </div>
-            <CheckInWeek activeDaysIndexes={[2, 4]} />
+            <CheckInWeek activeDaysIndexes={weeklyTapDays} />
           </div>
-          <div className="flex flex-col gap-4">
+          {/* <div className="flex flex-col gap-4">
             <div className="flex items-center">
               <Icons.Menu className="text-quaternary" />
               <span className="text-xs font-bold text-quaternary ml-2">
@@ -219,7 +312,7 @@ export default function LocationPage() {
                 See all
               </AppButton>
             </div>
-          </div>
+          </div> */}
         </div>
       </AppLayout>
     </>

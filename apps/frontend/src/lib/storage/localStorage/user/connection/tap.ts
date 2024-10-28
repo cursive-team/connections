@@ -11,10 +11,12 @@ import { createTapActivity } from "@/lib/activity";
 import { saveBackupAndUpdateStorage } from "../../utils";
 import { getUserAndSession } from "..";
 
-export const addTap = async (tapResponse: ChipTapResponse): Promise<void> => {
+export const addUserTap = async (
+  tapResponse: ChipTapResponse
+): Promise<void> => {
   const { user, session } = await getUserAndSession();
 
-  const tap = tapResponse.tap;
+  const tap = tapResponse.userTap;
   if (!tap) {
     throw new Error("Tap not found");
   }

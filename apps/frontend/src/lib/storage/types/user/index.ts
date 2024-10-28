@@ -15,7 +15,7 @@ export const UserSchema = z.object({
   userData: UserDataSchema,
   chips: z.array(ChipSchema),
   connections: z.record(z.string(), ConnectionSchema),
-  locations: z.record(z.string(), LocationSchema),
+  locations: nullToUndefined(z.record(z.string(), LocationSchema)),
   activities: z.array(ActivitySchema),
   oauth: nullToUndefined(z.record(z.string(), AccessTokenSchema)),
 });
@@ -27,3 +27,4 @@ export * from "./chip";
 export * from "./connection";
 export * from "./activity";
 export * from "./oauth";
+export * from "./location";

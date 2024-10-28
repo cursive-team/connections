@@ -18,6 +18,11 @@ export const ChipSchema = z.object({
   ownerEncryptionPublicKey: z.string().nullable(),
   ownerPsiPublicKeyLink: z.string().nullable(),
   ownerUserData: JsonSchema.nullable(),
+  isLocationChip: z.boolean().nullable(),
+  locationId: z.string().nullable(),
+  locationName: z.string().nullable(),
+  locationDescription: z.string().nullable(),
+  locationData: JsonSchema.nullable(),
   createdAt: z.date(),
 });
 
