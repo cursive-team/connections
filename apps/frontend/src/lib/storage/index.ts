@@ -38,7 +38,8 @@ export interface ClientStorage {
   deleteSavedTapInfo(): Promise<void>;
   updateUserData(userData: UserData): Promise<void>;
   addChip(chip: Chip): Promise<void>;
-  addTap(tapResponse: ChipTapResponse): Promise<void>;
+  addUserTap(tapResponse: ChipTapResponse): Promise<void>;
+  addLocationTap(tapResponse: ChipTapResponse): Promise<void>;
   updateComment(
     connectionUsername: string,
     comment: CommentData

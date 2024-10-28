@@ -9,6 +9,7 @@ import { CircleCard } from "@/components/ui/CircleCard";
 import { MdKeyboardArrowRight as ArrowIcon } from "react-icons/md";
 import Link from "next/link";
 import {
+  LocationTapActivityDataSchema,
   PSIActivityDataSchema,
   RegisterChipActivityDataSchema,
   TapActivityDataSchema,
@@ -80,6 +81,15 @@ const parseActivity = (activity: Activity): ActivityDisplayItem => {
       return {
         text: `${tapBackReceivedConnectionUsername} tapped you back`,
         link: `/people/${tapBackReceivedConnectionUsername}`,
+        timestamp: activity.timestamp,
+      };
+    case "LOCATION_TAP":
+      const { locationId, locationName } = LocationTapActivityDataSchema.parse(
+        JSON.parse(activity.serializedData)
+      );
+      return {
+        text: `You checked into ${locationName}`,
+        link: `/locations/${locationId}`,
         timestamp: activity.timestamp,
       };
     default:

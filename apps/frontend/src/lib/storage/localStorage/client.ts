@@ -29,7 +29,7 @@ import {
   CreateMessageData,
   MessageData,
 } from "@types";
-import { addTap } from "@/lib/storage/localStorage/user/connection/tap";
+import { addUserTap } from "@/lib/storage/localStorage/user/connection/tap";
 import { updateComment } from "@/lib/storage/localStorage/user/connection/comment";
 import { updatePSI } from "@/lib/storage/localStorage/user/connection/psi";
 import { addActivity } from "@/lib/storage/localStorage/user/activity";
@@ -44,6 +44,7 @@ import {
   getOAuthAccessToken,
   saveOAuthAccessToken,
 } from "@/lib/storage/localStorage/user/oauth";
+import { addLocationTap } from "./user/location";
 
 export class LocalStorage implements ClientStorage {
   async loadInitialStorageData(
@@ -106,8 +107,12 @@ export class LocalStorage implements ClientStorage {
     return addChip(chip);
   }
 
-  async addTap(tapResponse: ChipTapResponse): Promise<void> {
-    return addTap(tapResponse);
+  async addUserTap(tapResponse: ChipTapResponse): Promise<void> {
+    return addUserTap(tapResponse);
+  }
+
+  async addLocationTap(tapResponse: ChipTapResponse): Promise<void> {
+    return addLocationTap(tapResponse);
   }
 
   async updateComment(

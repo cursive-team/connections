@@ -65,7 +65,7 @@ export const UpdateChipRequestSchema = z.object({
 
 export type UpdateChipRequest = z.infer<typeof UpdateChipRequestSchema>;
 
-export const ChipTapSchema = z.object({
+export const UserTapSchema = z.object({
   chipPublicKey: z.string(),
   message: z.string(),
   signature: z.string(),
@@ -80,12 +80,28 @@ export const ChipTapSchema = z.object({
   timestamp: z.coerce.date(),
 });
 
-export type ChipTap = z.infer<typeof ChipTapSchema>;
+export type UserTap = z.infer<typeof UserTapSchema>;
+
+export const LocationTapSchema = z.object({
+  chipPublicKey: z.string(),
+  message: z.string(),
+  signature: z.string(),
+  tapCount: z.number().int().nonnegative(),
+  locationId: z.string().nullable(),
+  locationName: z.string().nullable(),
+  locationDescription: z.string().nullable(),
+  locationData: JsonSchema.nullable(),
+  timestamp: z.coerce.date(),
+});
+
+export type LocationTap = z.infer<typeof LocationTapSchema>;
 
 export const ChipTapResponseSchema = z.object({
   chipIssuer: ChipIssuerSchema,
   chipIsRegistered: z.boolean(),
-  tap: ChipTapSchema.nullable(),
+  isLocationChip: z.boolean().nullable(),
+  userTap: UserTapSchema.nullable(),
+  locationTap: LocationTapSchema.nullable(),
 });
 
 export type ChipTapResponse = z.infer<typeof ChipTapResponseSchema>;

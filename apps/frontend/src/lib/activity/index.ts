@@ -99,3 +99,21 @@ export const createTapBackReceivedActivity = (
     timestamp,
   };
 };
+
+export const LocationTapActivityDataSchema = z.object({
+  locationId: z.string(),
+  locationName: z.string(),
+});
+export type LocationTapActivityData = z.infer<
+  typeof LocationTapActivityDataSchema
+>;
+export const createLocationTapActivity = (
+  locationId: string,
+  locationName: string
+): Activity => {
+  return {
+    type: ActivityType.LOCATION_TAP,
+    serializedData: JSON.stringify({ locationId, locationName }),
+    timestamp: new Date(),
+  };
+};

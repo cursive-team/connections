@@ -7,6 +7,7 @@ export enum ActivityType {
   PSI = "PSI",
   TAP_BACK_SENT = "TAP_BACK_SENT",
   TAP_BACK_RECEIVED = "TAP_BACK_RECEIVED",
+  LOCATION_TAP = "LOCATION_TAP",
 }
 
 export const ActivitySchema = z.object({

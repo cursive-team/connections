@@ -200,7 +200,7 @@ const UserProfilePage: React.FC = () => {
         // Show tap modal if tap info is for current connection
         if (
           savedTapInfo &&
-          savedTapInfo.tapResponse.tap?.ownerUsername === username
+          savedTapInfo.tapResponse.userTap?.ownerUsername === username
         ) {
           logClientEvent("user-profile-tap-chip-modal-shown", {});
           setTapInfo(savedTapInfo);

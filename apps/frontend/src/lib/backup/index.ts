@@ -12,6 +12,8 @@ import {
   ChipSchema,
   Connection,
   ConnectionSchema,
+  Location,
+  LocationSchema,
   User,
   UserData,
   UserDataSchema,
@@ -127,6 +129,18 @@ export const processUserBackup = ({
           user.oauth = {};
         }
         user.oauth[oauthData.app] = oauthData.token;
+        break;
+      case BackupEntryType.LOCATION:
+        if (!user) {
+          throw new Error("LOCATION backup entry found before INITIAL");
+        }
+        const location: Location = LocationSchema.parse(
+          JSON.parse(decryptedData)
+        );
+        if (!user.locations) {
+          user.locations = {};
+        }
+        user.locations[location.id] = location;
         break;
       default:
         throw new Error(`Invalid backup entry type: ${data.backupEntryType}`);
@@ -391,6 +405,32 @@ export const createOAuthBackup = ({
     iv,
     encryptedData,
     backupEntryType: BackupEntryType.OAUTH,
+    clientCreatedAt: new Date(),
+  };
+};
+
+export interface CreateLocationBackupArgs {
+  email: string;
+  password: string;
+  location: Location;
+}
+
+export const createLocationBackup = ({
+  email,
+  password,
+  location,
+}: CreateLocationBackupArgs): CreateBackupData => {
+  const { authenticationTag, iv, encryptedData } = encryptBackupString({
+    backup: JSON.stringify(location),
+    email,
+    password,
+  });
+
+  return {
+    authenticationTag,
+    iv,
+    encryptedData,
+    backupEntryType: BackupEntryType.LOCATION,
     clientCreatedAt: new Date(),
   };
 };
