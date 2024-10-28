@@ -4,3 +4,4 @@ dist
 
 # Lanna chips
 src/scripts/lanna/chips.ts
+src/scripts/lanna/locationChips.ts

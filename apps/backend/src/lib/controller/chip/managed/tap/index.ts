@@ -10,7 +10,6 @@ ManagedChipClient.prototype.GetTapFromChip = async function (
       this.prismaClient,
       tapParams
     );
-    console.log(tapResponse);
     return tapResponse;
   } catch (error) {
     console.error(errorToString(error));
