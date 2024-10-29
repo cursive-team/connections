@@ -74,7 +74,7 @@ wsClient.onmessage = async (e: WebSocket.MessageEvent) => {
   };
 };
 
-wsClient.onclose = async (e: WebSocket.CloseEvent) => {
+wsClient.onclose = async () => {
   const { user, session } = await getUserAndSession();
   const senderSigPubKey: string = getUserSigPubKey(user);
 
@@ -87,6 +87,7 @@ export const wsConnectUser = (authToken: string, senderSigPubKey: string): void 
   return;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const wsRequest = (authToken: string, type: string, targetSigPubKey: string, senderSigPubKey: string, payload: any): void => {
 
   const req: WebSocketRequest = {
