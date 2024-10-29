@@ -6,8 +6,10 @@ import Link from "next/link";
 
 const ImportGithubButton = ({
   addElement = true,
+  fullWidth = false,
 }: {
   addElement?: boolean;
+  fullWidth?: boolean;
 }) => {
   return (
     <Link
@@ -17,8 +19,13 @@ const ImportGithubButton = ({
         emoji={<Icons.GitHub />}
         variant="gray"
         text="GitHub"
-        className={cn("min-w-max pl-4", addElement ? "pr-8" : "pr-4")}
+        className={cn(
+          "pl-4",
+          addElement ? "pr-8" : "pr-4",
+          fullWidth ? "w-full" : "min-w-max"
+        )}
         addElement={addElement}
+        fullWidth={fullWidth}
       />
     </Link>
   );

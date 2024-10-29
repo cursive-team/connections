@@ -165,12 +165,14 @@ export function DashboardDetail({
           </div>
         </div>
         {description && (
-          <div className="p-4">
+          <div className="w-full p-4">
             <p className="text-sm font-normal text-primary text-left">
               {description}
             </p>
             {actionItem && (
-              <div className="flex justify-center mt-4">{actionItem}</div>
+              <div className="flex justify-center w-full mt-4">
+                {actionItem}
+              </div>
             )}
           </div>
         )}

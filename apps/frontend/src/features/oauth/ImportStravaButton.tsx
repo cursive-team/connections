@@ -6,8 +6,10 @@ import Link from "next/link";
 
 const ImportStravaButton = ({
   addElement = true,
+  fullWidth = false,
 }: {
   addElement?: boolean;
+  fullWidth?: boolean;
 }) => {
   return (
     <Link
@@ -18,10 +20,12 @@ const ImportStravaButton = ({
         variant="transparent"
         text="Strava"
         className={cn(
-          "!bg-[#FC4C01] !text-white self-start min-w-max pl-4",
-          addElement ? "pr-8" : "pr-4"
+          "!bg-[#FC4C01] !text-white self-start pl-4",
+          addElement ? "pr-8" : "pr-4",
+          fullWidth ? "w-full" : "min-w-max"
         )}
         addElement={addElement}
+        fullWidth={fullWidth}
       />
     </Link>
   );

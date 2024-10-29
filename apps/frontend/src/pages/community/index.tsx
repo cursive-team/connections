@@ -17,6 +17,7 @@ import {
 } from "@/lib/chip";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { storage } from "@/lib/storage";
+import { User } from "@/lib/storage/types";
 import {
   ChipIssuer,
   LeaderboardDetails,
@@ -90,6 +91,7 @@ export default function CommunityPage() {
   const [cardProps, setCardProps] = useState<CommunityCardProps[]>([]);
   const [displayedDashboard, setDisplayedDashboard] =
     useState<DisplayedDashboard>(DisplayedDashboard.NONE);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchInfo = async () => {
@@ -99,6 +101,7 @@ export default function CommunityPage() {
         router.push("/");
         return;
       }
+      setUser(user);
 
       const communityIssuer: ChipIssuer = user.chips[0].issuer;
 
@@ -395,9 +398,16 @@ export default function CommunityPage() {
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         actionItem={
-          <div onClick={() => logClientEvent("community-strava-clicked", {})}>
-            <ImportStravaButton />
-          </div>
+          user &&
+          (!user.oauth ||
+            (user.oauth && !Object.keys(user?.oauth).includes("strava"))) && (
+            <div
+              className="w-full"
+              onClick={() => logClientEvent("community-strava-clicked", {})}
+            >
+              <ImportStravaButton fullWidth />
+            </div>
+          )
         }
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
@@ -421,9 +431,16 @@ export default function CommunityPage() {
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         actionItem={
-          <div onClick={() => logClientEvent("community-github-clicked", {})}>
-            <ImportGithubButton />
-          </div>
+          user &&
+          (!user.oauth ||
+            (user.oauth && !Object.keys(user?.oauth).includes("github"))) && (
+            <div
+              className="w-full"
+              onClick={() => logClientEvent("community-github-clicked", {})}
+            >
+              <ImportGithubButton fullWidth />
+            </div>
+          )
         }
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
