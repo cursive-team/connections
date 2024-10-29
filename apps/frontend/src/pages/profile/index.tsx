@@ -79,7 +79,7 @@ const ProfilePage: React.FC = () => {
               }}
             >
               <div className="absolute left-4 top-[30px]">
-                <ProfileImage user={user?.userData as UserData} />
+                <ProfileImage size={16} user={user?.userData as UserData} />
               </div>
             </div>
           </div>
