@@ -279,6 +279,7 @@ export default function CommunityPage() {
         session.authTokenValue &&
         session.authTokenExpiresAt > new Date()
       ) {
+        toast.info("Redirecting to Cherry...");
         window.location.href = `${BASE_API_URL}/lanna/cherry_otp?authToken=${session.authTokenValue}`;
       } else {
         toast.error("Please log in to access Cherry.");
