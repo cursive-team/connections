@@ -11,7 +11,7 @@ import dynamic from "next/dynamic";
 import locationSuccess from "../../../public/animations/location-success.json";
 import { storage } from "@/lib/storage";
 import { toast } from "sonner";
-import { Location } from "@/lib/storage/types";
+import { Location, User } from "@/lib/storage/types";
 import { TapParams, ChipTapResponse } from "@types";
 
 // Dynamically import the Lottie component with SSR disabled
@@ -100,6 +100,7 @@ const LocationTapModal: React.FC<LocationTapModalProps> = ({
 export default function LocationPage() {
   const router = useRouter();
   const { id } = router.query;
+  const [user, setUser] = useState<User | null>(null);
   const [location, setLocation] = useState<Location | null>(null);
   const [tapInfo, setTapInfo] = useState<{
     tapParams: TapParams;
@@ -121,6 +122,7 @@ export default function LocationPage() {
         router.push("/profile");
         return;
       }
+      setUser(user);
       setLocation(location);
 
       // Compute the days of the week that the user has tapped in
@@ -250,13 +252,14 @@ export default function LocationPage() {
     );
   }
 
+  const username = user?.userData?.username;
   const locationName = location?.name;
   const tapDate = tapInfo?.tapResponse.locationTap?.timestamp;
   return (
     <>
-      {showTapModal && locationName && tapDate && (
+      {showTapModal && username && locationName && tapDate && (
         <LocationTapModal
-          username="Example"
+          username={username}
           locationName={locationName}
           tapDate={tapDate}
           tapState={tapState}
@@ -277,13 +280,16 @@ export default function LocationPage() {
           <div className="flex flex-col pt-4">
             <div className="flex flex-col gap-4 pb-6">
               <span className="text-xl text-primary font-bold">
-                {`[${locationName || "Location"}]`}
+                {`${locationName || "Location"}`}
               </span>
               <span className="text-sm text-tertiary font-normal">
                 {location?.description || "No description"}
               </span>
             </div>
-            <CheckInWeek activeDaysIndexes={weeklyTapDays} />
+            <CheckInWeek
+              checkInCount={location?.taps?.length || 0}
+              activeDaysIndexes={weeklyTapDays}
+            />
           </div>
           {/* <div className="flex flex-col gap-4">
             <div className="flex items-center">

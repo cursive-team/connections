@@ -1,10 +1,12 @@
 import { Icons } from "./Icons";
 
 interface CheckInWeekProps {
+  checkInCount: number;
   activeDaysIndexes?: number[];
   label?: string;
 }
 export const CheckInWeek = ({
+  checkInCount,
   activeDaysIndexes = [],
   label = "Check-ins",
 }: CheckInWeekProps) => {
@@ -19,9 +21,12 @@ export const CheckInWeek = ({
   ];
 
   return (
-    <div className="flex flex-col gap-4 w-full ">
-      <h2 className="text-base text-primary font-bold py-2">{label}</h2>
-      <div className="flex flex-col gap-4 pb-4">
+    <div className="flex flex-col gap-2 w-full ">
+      <h2 className="text-base text-primary font-bold pt-2">{label}</h2>
+      <div className="flex justify-between items-center text-4xl">
+        <b>{checkInCount}</b>
+      </div>
+      <div className="flex flex-col gap-4 pb-4 mt-2">
         <div className="flex items-center">
           <Icons.Calendar className="text-quaternary" />
           <span className="text-xs font-bold text-quaternary ml-2">
