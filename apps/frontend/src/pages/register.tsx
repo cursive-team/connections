@@ -10,14 +10,13 @@ import EnterUserInfo from "@/features/register/EnterUserInfo";
 import RegisterWithPasskey from "@/features/register/RegisterWithPasskey";
 import RegisterWithPassword from "@/features/register/RegisterWithPassword";
 import CreatingAccount from "@/features/register/CreatingAccount";
-import LannaDiscoverConnections from "@/features/register/LannaDiscoverConnections";
 import {
   requestSigninToken,
   verifyEmailIsUnique,
   verifySigninToken,
   verifyUsernameIsUnique,
 } from "@/lib/auth/util";
-import { LannaDesiredConnections, TapInfo } from "@/lib/storage/types";
+import { TapInfo } from "@/lib/storage/types";
 import { registerChip } from "@/lib/chip/register";
 import { registerUser } from "@/lib/auth/register";
 import useSettings from "@/hooks/useSettings";
@@ -89,7 +88,15 @@ const Register: React.FC = () => {
       await requestSigninToken(submittedEmail);
     } catch (error) {
       console.error(error);
-      toast(SupportToast("", true, "Error requesting signin token", ERROR_SUPPORT_CONTACT, errorToString(error)));
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Error requesting signin token",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
       return;
     }
 
@@ -216,11 +223,6 @@ const Register: React.FC = () => {
           ownerPsiPublicKeyLink: psiPublicKeyLink,
           ownerUserData,
         });
-
-        // If user is registering with a chip, continue onboarding
-        // TODO: Only do this for Lanna chips
-        setDisplayState(DisplayState.LANNA_DISCOVER_CONNECTIONS);
-        return;
       }
 
       // Show success toast and redirect to home
@@ -232,28 +234,17 @@ const Register: React.FC = () => {
         error: errorToString(error),
       });
       console.error(error);
-      toast(SupportToast("", true, "Failed to create account. Please try again", ERROR_SUPPORT_CONTACT, errorToString(error)));
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Failed to create account. Please try again",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
       return;
     }
-  };
-
-  const handleLannaDiscoverConnectionsSubmit = async (
-    desiredConnections: LannaDesiredConnections
-  ) => {
-    logClientEvent("register-lanna-discover-connections-submit", {});
-    const user = await storage.getUser();
-    if (!user) {
-      toast.error("User not found");
-      return;
-    }
-
-    await storage.updateUserData({
-      ...user.userData,
-      lanna: { desiredConnections },
-    });
-    logClientEvent("register-lanna-discover-connections-success", {});
-    toast.success("Successfully created your account!");
-    router.push("/profile");
   };
 
   const onGoBack = () => {
@@ -352,11 +343,6 @@ const Register: React.FC = () => {
           />
         )}
         {displayState === DisplayState.CREATING_ACCOUNT && <CreatingAccount />}
-        {displayState === DisplayState.LANNA_DISCOVER_CONNECTIONS && (
-          <LannaDiscoverConnections
-            onSubmit={handleLannaDiscoverConnectionsSubmit}
-          />
-        )}
       </div>
     </div>
   );

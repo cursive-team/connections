@@ -50,6 +50,17 @@ const ProfilePage: React.FC = () => {
     );
   }
 
+  const hasStravaToAdd =
+    !user.oauth || !Object.keys(user.oauth).includes("strava");
+  const hasGithubToAdd =
+    !user.oauth || !Object.keys(user.oauth).includes("github");
+  const hasOauthToAdd = hasStravaToAdd || hasGithubToAdd;
+  const hasDataToAdd = hasOauthToAdd || !user.userData.tensionsRating;
+
+  const hasVaultData =
+    (user.oauth && Object.keys(user.oauth).length > 0) ||
+    user.userData.tensionsRating;
+
   return (
     <>
       <NextSeo title="Profile" />
@@ -76,7 +87,7 @@ const ProfilePage: React.FC = () => {
         className="mx-auto pb-4"
       >
         <div className="flex flex-col">
-          <div className="flex flex-col  mt-[38px] px-3">
+          <div className="flex flex-col  mt-[38px] px-3 pb-4">
             <div className="flex flex-col gap-4 w-full">
               <div className="flex flex-col">
                 <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans">
@@ -100,145 +111,131 @@ const ProfilePage: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-2 p-4">
-            <div className="flex flex-col gap-1">
-              <span className="text-lg font-semibold text-primary font-sans">
-                Add data to connect with others
-              </span>
-              <span className="text-sm font-normal text-tertiary">
-                Your data is private to you and you have full control over how
-                it is used in the app.
-              </span>
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="py-2">
-                <div className="w-full flex gap-2 overflow-x-auto">
-                  <div
-                    onClick={() =>
-                      logClientEvent("user-profile-strava-clicked", {})
-                    }
-                  >
-                    <ImportStravaButton />
-                  </div>
-                  <div
-                    onClick={() =>
-                      logClientEvent("user-profile-github-clicked", {})
-                    }
-                  >
-                    <ImportGithubButton />
-                  </div>
-                </div>
-              </div>
-              {/* <Card.Base
-                variant="gray"
-                className="p-4 !rounded-lg"
-                onClick={() => toast.info("Coming soon!")}
-              >
-                <div className="flex flex-col gap-[10px]">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <Icons.Clip />
-                      <span className="text-sm text-primary font-medium">
-                        Frontier tech: over or underrated 🧪
-                      </span>
-                    </div>
-                    <Icons.Plus />
-                  </div>
-                  <span className="text-xs font-medium text-tertiary">
-                    Share your hot takes on frontier tech to discover residents
-                    who have similar interests or qualms.
-                  </span>
-                </div>
-              </Card.Base> */}
-              {!user.userData.tensionsRating && (
-                <Card.Base
-                  variant="gray"
-                  className="p-4 !rounded-lg"
-                  onClick={() => {
-                    logClientEvent("start_tensions", {});
-                    router.push("/tensions");
-                  }}
-                >
-                  <div className="flex flex-col gap-[10px]">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1">
-                        <Icons.Clip />
-                        <span className="text-sm text-primary font-medium">
-                          Tensions 🪢
-                        </span>
-                      </div>
-                      <Icons.Plus />
-                    </div>
-                    <span className="text-xs font-medium text-tertiary">
-                      Practice your decision making skills by playing the
-                      Tensions game, match with residents who hold opposing
-                      views to learn new perspectives.
-                    </span>
-                  </div>
-                </Card.Base>
-              )}
-            </div>
-          </div>
 
-          <div className="px-4">
-            <div className="flex flex-col gap-2 p-4 bg-surface-primary-hover !rounded-lg">
+          {hasDataToAdd && (
+            <div className="flex flex-col gap-2 p-4">
               <div className="flex flex-col gap-1">
                 <span className="text-lg font-semibold text-primary font-sans">
-                  Your data
+                  Add data to connect with others
                 </span>
                 <span className="text-sm font-normal text-tertiary">
-                  {`This is the data you’ve taken ownership of and are using to meaningfully connect with others!`}
+                  Your data is private to you and you have full control over how
+                  it is used in the app.
                 </span>
               </div>
-              {user.userData.tensionsRating && (
-                <Card.Base
-                  variant="gray"
-                  className="p-4 !rounded-lg"
-                  onClick={() => {
-                    logClientEvent("edit_tensions", {});
-                    router.push("/tensions");
-                  }}
-                >
-                  <div className="flex flex-col gap-[10px]">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1">
-                        <Icons.Clip />
-                        <span className="text-sm text-primary font-medium">
-                          Tensions 🪢
-                        </span>
-                      </div>
-                      <Icons.Pencil />
+              <div className="flex flex-col gap-2">
+                {hasOauthToAdd && (
+                  <div className="py-2">
+                    <div className="w-full flex gap-2 overflow-x-auto">
+                      {hasStravaToAdd && (
+                        <div
+                          onClick={() =>
+                            logClientEvent("user-profile-strava-clicked", {})
+                          }
+                        >
+                          <ImportStravaButton />
+                        </div>
+                      )}
+                      {hasGithubToAdd && (
+                        <div
+                          onClick={() =>
+                            logClientEvent("user-profile-github-clicked", {})
+                          }
+                        >
+                          <ImportGithubButton />
+                        </div>
+                      )}
                     </div>
-                    <span className="text-xs font-medium text-tertiary">
-                      Practice your decision making skills by playing the
-                      Tensions game, match with residents who hold opposing
-                      views to learn new perspectives.
-                    </span>
                   </div>
-                </Card.Base>
-              )}
-              <Card.Base
-                className="p-4 !rounded-lg"
-                onClick={() => toast.info("Coming soon!")}
-              >
-                <div className="flex flex-col gap-[10px]">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <Icons.Clip />
-                      <span className="text-sm text-primary font-medium">
-                        How you want to connect 👥
+                )}
+
+                {!user.userData.tensionsRating && (
+                  <Card.Base
+                    variant="gray"
+                    className="p-4 !rounded-lg"
+                    onClick={() => {
+                      logClientEvent("start_tensions", {});
+                      router.push("/tensions");
+                    }}
+                  >
+                    <div className="flex flex-col gap-[10px]">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                          <Icons.Clip />
+                          <span className="text-sm text-primary font-medium">
+                            Tensions 🪢
+                          </span>
+                        </div>
+                        <Icons.Plus />
+                      </div>
+                      <span className="text-xs font-medium text-tertiary">
+                        Practice your decision making skills by playing the
+                        Tensions game, match with residents who hold opposing
+                        views to learn new perspectives.
                       </span>
                     </div>
-                    <Icons.Pencil />
-                  </div>
-                  <span className="text-xs font-medium text-tertiary">
-                    Interests shared during registration, used to seed private
-                    overlap computation with other attendees.
+                  </Card.Base>
+                )}
+              </div>
+            </div>
+          )}
+
+          {hasVaultData && (
+            <div className="p-4">
+              <div className="flex flex-col gap-2 ">
+                <div className="flex flex-col gap-1">
+                  <span className="text-lg font-semibold text-primary font-sans">
+                    Your vault
+                  </span>
+                  <span className="text-sm font-normal text-tertiary">
+                    {`Change which features use your data or remove your data altogether.`}
                   </span>
                 </div>
-              </Card.Base>
+                {user.oauth && Object.keys(user.oauth).length > 0 && (
+                  <div className="py-2">
+                    <div className="w-full flex gap-2 overflow-x-auto">
+                      {Object.keys(user.oauth).includes("strava") && (
+                        <div>
+                          <ImportStravaButton addElement={false} />
+                        </div>
+                      )}
+                      {Object.keys(user.oauth).includes("github") && (
+                        <div>
+                          <ImportGithubButton addElement={false} />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+                {user.userData.tensionsRating && (
+                  <Card.Base
+                    className="p-4 !rounded-lg"
+                    onClick={() => {
+                      logClientEvent("edit_tensions", {});
+                      router.push("/tensions");
+                    }}
+                  >
+                    <div className="flex flex-col gap-[10px]">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                          <Icons.Clip />
+                          <span className="text-sm text-primary font-medium">
+                            Tensions 🪢
+                          </span>
+                        </div>
+                        <Icons.Pencil />
+                      </div>
+                      <span className="text-xs font-medium text-tertiary">
+                        Practice your decision making skills by playing the
+                        Tensions game, match with residents who hold opposing
+                        views to learn new perspectives.
+                      </span>
+                    </div>
+                  </Card.Base>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
         <div className="px-4 py-6">
           <AppButton onClick={handleLogout} variant="outline">
