@@ -24,6 +24,7 @@ async function loadLocationChips() {
           chipIssuer: "EDGE_CITY_LANNA",
           chipVariant: "NTAG212",
           chipIsRegistered: true,
+          chipRegisteredAt: new Date(),
           chipPublicKey: verifyingKey,
           chipPrivateKey: signingKey,
           chipTapCount: 0,
@@ -35,10 +36,15 @@ async function loadLocationChips() {
       })
       .filter((chip) => chip !== null);
 
-    await prisma.chip.createMany({
-      data: chipsToCreate,
-      skipDuplicates: true,
-    });
+    try {
+      const res = await prisma.chip.createMany({
+        data: chipsToCreate,
+        skipDuplicates: true,
+      });
+      console.log("Chips created:", res);
+    } catch (error) {
+      console.error("Error creating chips:", error);
+    }
 
     console.log("Finished loading location chips.");
   } catch (error) {
