@@ -12,8 +12,6 @@ import { createInitialBackup, processUserBackup } from "@/lib/backup";
 import { User } from "@/lib/storage/types";
 import { storage } from "@/lib/storage";
 import { createRegisterActivity } from "../activity";
-import { generatePSIKeyPair, psiBlobUploadClient } from "../psi";
-import { supabase } from "@/lib/realtime";
 
 export interface RegisterUserArgs {
   signinToken: string;
@@ -62,21 +60,13 @@ export async function registerUser({
   const passwordSalt = generateSalt();
   const passwordHash = await hashPassword(password, passwordSalt);
 
-  const { psiPublicKey, psiPrivateKey } = await generatePSIKeyPair();
-
-  // Upload PSI public key to blob storage
-  const psiPublicKeyLink = await psiBlobUploadClient(
-    "connectionsPsiPublicKey",
-    JSON.stringify(psiPublicKey)
-  );
-
   // Add activity for registering
   const registerActivity = createRegisterActivity();
   const user: User = {
     email,
     signaturePrivateKey,
     encryptionPrivateKey,
-    serializedPsiPrivateKey: JSON.stringify(psiPrivateKey),
+    serializedPsiPrivateKey: undefined,
     lastMessageFetchedAt: new Date(),
     userData: {
       username,
@@ -84,7 +74,7 @@ export async function registerUser({
       bio,
       signaturePublicKey,
       encryptionPublicKey,
-      psiPublicKeyLink,
+      psiPublicKeyLink: undefined,
       twitter: {
         username: twitterHandle,
       },
@@ -109,7 +99,7 @@ export async function registerUser({
     email,
     signaturePublicKey,
     encryptionPublicKey,
-    psiPublicKeyLink,
+    psiPublicKeyLink: undefined,
     passwordSalt,
     passwordHash,
     registeredWithPasskey,
@@ -140,14 +130,6 @@ export async function registerUser({
       password,
       backupData,
     });
-
-    // Authenticate with supabase
-    const { data: authData, error: authError } =
-      await supabase.auth.signInAnonymously();
-    if (!authData) {
-      console.error("Error with realtime auth.", authError);
-      throw new Error("Failed to authenticate realtime. Please try again.");
-    }
 
     // Load the initial storage data
     await storage.loadInitialStorageData({

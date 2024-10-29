@@ -14,7 +14,7 @@ model User {
   email                 String      @unique
   signaturePublicKey    String
   encryptionPublicKey   String
-  psiPublicKeyLink      String
+  psiPublicKeyLink      String?
   passwordSalt          String
   passwordHash          String
   registrationNumber    Int         @unique @default(autoincrement())

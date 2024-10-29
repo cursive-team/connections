@@ -12,7 +12,7 @@ export const UserDataSchema = z.object({
   bio: z.string(),
   signaturePublicKey: z.string(),
   encryptionPublicKey: z.string(),
-  psiPublicKeyLink: z.string(),
+  psiPublicKeyLink: nullToUndefined(z.string()),
   twitter: nullToUndefined(TwitterDataSchema),
   telegram: nullToUndefined(TelegramDataSchema),
   lanna: nullToUndefined(LannaDataSchema),

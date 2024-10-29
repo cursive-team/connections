@@ -129,7 +129,7 @@ export const UserRegisterRequestSchema = z.object({
   email: EmailSchema,
   signaturePublicKey: z.string(),
   encryptionPublicKey: z.string(),
-  psiPublicKeyLink: z.string(),
+  psiPublicKeyLink: z.string().optional(),
   passwordSalt: z.string(),
   passwordHash: z.string(),
   registeredWithPasskey: z.boolean(),
