@@ -286,7 +286,10 @@ export default function LocationPage() {
                 {location?.description || "No description"}
               </span>
             </div>
-            <CheckInWeek activeDaysIndexes={weeklyTapDays} />
+            <CheckInWeek
+              checkInCount={location?.taps?.length || 0}
+              activeDaysIndexes={weeklyTapDays}
+            />
           </div>
           {/* <div className="flex flex-col gap-4">
             <div className="flex items-center">
