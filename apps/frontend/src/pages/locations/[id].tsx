@@ -45,7 +45,7 @@ const LocationTapModal: React.FC<LocationTapModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[200]">
-      <div className="flex flex-col bg-white p-6 pb-10 rounded-[32px] w-full min-h-[90vh] max-w-[90vw] overflow-y-auto relative">
+      <div className="flex flex-col bg-white p-6 pb-10 rounded-[32px] w-full min-h-[80vh] max-w-[80vw] overflow-y-auto relative">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-tertiary hover:text-primary transition-colors"
