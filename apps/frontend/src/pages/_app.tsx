@@ -16,6 +16,10 @@ import { fetchMessages } from "@/lib/message";
 import { cn } from "@/lib/frontend/util";
 import { usePathname } from "next/navigation";
 
+// Note: Hoist web socket code here so that it's run
+import("@/lib/ws/index");
+
+
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-dm-sans",

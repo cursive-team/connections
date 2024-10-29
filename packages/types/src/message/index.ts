@@ -34,3 +34,14 @@ export const MessageDataSchema = z.object({
 });
 
 export type MessageData = z.infer<typeof MessageDataSchema>;
+
+export const MapCreateMessageDataToMessageData =(createMessageData: CreateMessageData): MessageData => {
+  return {
+    receiverSignaturePublicKey: createMessageData.receiverSignaturePublicKey,
+    senderEphemeralEncryptionPublicKey: createMessageData.senderEphemeralEncryptionPublicKey,
+    encryptedData: createMessageData.encryptedData,
+    senderEncryptedSignaturePublicKey: createMessageData.senderEncryptedSignaturePublicKey,
+    senderEncryptedSignature: createMessageData.senderEncryptedSignature,
+    createdAt: new Date(),
+  }
+}

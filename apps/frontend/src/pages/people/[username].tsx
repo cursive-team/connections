@@ -1,10 +1,18 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { Connection, Session, User } from "@/lib/storage/types";
+import {
+  Connection,
+  Session,
+  User
+} from "@/lib/storage/types";
 import { toast } from "sonner";
-import { TapParams, ChipTapResponse, errorToString } from "@types";
+import {
+  ChipTapResponse,
+  errorToString,
+  TapParams,
+} from "@types";
 import { AppButton } from "@/components/ui/Button";
 import Image from "next/image";
 import AppLayout from "@/layouts/AppLayout";
@@ -17,11 +25,16 @@ import { tensionPairs } from "@/common/constants";
 import { hashCommit } from "@/lib/psi/hash";
 import { BASE_API_URL } from "@/config";
 import Link from "next/link";
-import { TensionSlider } from "../tensions";
 import { Icons } from "@/components/icons/Icons";
+import { TensionSlider } from "../tensions";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { sendMessages } from "@/lib/message";
+import { wsRequest } from "@/lib/ws";
+import {
+  getConnectionPubKey,
+  getUserSigPubKey
+} from "@/lib/user";
 
 interface CommentModalProps {
   username: string;
@@ -237,6 +250,18 @@ const UserProfilePage: React.FC = () => {
         authToken: session.authTokenValue,
         messages: [message],
       });
+
+      if (user) {
+        // Get target and sender id (pub keys)
+        const targetSigPubKey: string = getConnectionPubKey(user, connection.user.username);
+        
+        const senderSignPubKey: string = getUserSigPubKey(user);
+        wsRequest(session.authTokenValue, WebSocketRequestTypes.MSG, targetSigPubKey, senderSignPubKey, message);
+      } else {
+        // This case should never happen but it should be handled
+        console.error("Unable to find user, cannot send ws message request")
+      }
+
       toast.success("Tap back sent successfully!");
     } catch (error) {
       console.error("Error sending tap back:", error);
