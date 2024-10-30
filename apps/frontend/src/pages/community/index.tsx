@@ -526,6 +526,12 @@ export default function CommunityPage() {
                 text: "Cherry",
                 label: "community-cherry-link",
               },
+              {
+                href: "https://lannaedges.radicalxchange.org/",
+                emoji: <span className="text-[16px]">∈</span>,
+                text: "Edges",
+                label: "community-edges-link",
+              }
             ].map((item, index) => (
               <Link
                 key={index}
