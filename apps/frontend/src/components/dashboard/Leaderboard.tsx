@@ -8,20 +8,31 @@ interface LeaderboardProps {
   leaderboardEntries: LeaderboardEntries;
   leaderboardDetails: LeaderboardDetails;
   prize?: boolean;
+  markedRank?: number;
 }
 
-const CURSIVE_USERNAMES = [
+const RING_USERNAMES = [
   "vivek",
   "rachel",
   "Tessla",
   "stevenelleman",
   "andrew",
+  "Janine",
+  "Cheyenne",
+  "Sophiemophie",
+  "Timour",
+  "Colton",
+  "albicodes",
+  "James",
+  "marcusaurelius",
+  "timber",
 ];
 
 export function Leaderboard({
   leaderboardEntries,
   leaderboardDetails,
   prize = false,
+  markedRank = 10,
 }: LeaderboardProps) {
   let lastEntryValue = -1;
   let tiedPosition = -1;
@@ -67,15 +78,15 @@ export function Leaderboard({
 
         const adjustedIndex = prize ? index - cursiveCount : index;
 
-        if (adjustedIndex > 9) {
+        if (adjustedIndex > markedRank - 1) {
           styling.fontStyling = "text-[#090909]/40 text-[14px] font-normal";
         }
-        if (adjustedIndex == 9) {
+        if (adjustedIndex == markedRank - 1) {
           styling.divider = true;
         }
 
         let username = entry.username;
-        if (CURSIVE_USERNAMES.includes(entry.username)) {
+        if (RING_USERNAMES.includes(entry.username)) {
           cursiveCount++;
         }
         const entryValue = entry.entryValue;
@@ -116,9 +127,7 @@ export function Leaderboard({
                   className={`flex flex-row grow shrink basis-0 ${styling.fontStyling} leading-[140%]`}
                 >
                   {username}
-                  {prize && CURSIVE_USERNAMES.includes(username) && (
-                    <>{" 💍"}</>
-                  )}
+                  {prize && RING_USERNAMES.includes(username) && <>{" 💍"}</>}
                 </div>
                 <div className="justify-start items-start gap-[5px] flex">
                   <div

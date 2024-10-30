@@ -42,6 +42,60 @@ export async function updateLeaderboardEntry(
   }
 }
 
+export async function updateWorkoutLeaderboardEntry(): Promise<void> {
+  const { user, session } = await storage.getUserAndSession();
+
+  // Count total workouts for Edge City Lanna
+  const locations = user.locations || {};
+  let totalWorkouts = 0;
+  Object.values(locations).forEach((location) => {
+    if (location.chipIssuer === ChipIssuer.EDGE_CITY_LANNA) {
+      const LANNA_WORKOUT_LOCATION_IDS = [
+        "a2902af9-3843-4e5c-8af5-4e48fcc3252a", // Red Dog Gallery
+        "d633cded-618a-496e-a91c-c6a4f0a4996a", // Apex Gym
+        "02400216-7d81-4ffa-8ada-c498fd0a6c39", // Sting Hive Muay Thai Gym
+        "298e6c59-0b87-454e-92e0-9553a826ef64", // Manasak Muay Thai Gym
+      ];
+      if (LANNA_WORKOUT_LOCATION_IDS.includes(location.id)) {
+        totalWorkouts += location.taps.length;
+      }
+    }
+  });
+
+  try {
+    const request: UpdateLeaderboardEntryRequest = {
+      authToken: session.authTokenValue,
+      chipIssuer: ChipIssuer.EDGE_CITY_LANNA,
+      entryType: LeaderboardEntryType.LANNA_TOTAL_WORKOUT_COUNT,
+      entryValue: totalWorkouts,
+    };
+
+    const response = await fetch(
+      `${BASE_API_URL}/chip/update_leaderboard_entry`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(request),
+      }
+    );
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error(
+        `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+      );
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+      );
+    }
+  } catch (error) {
+    console.error("Error updating workout leaderboard entry:", error);
+    throw error;
+  }
+}
+
 export async function updateTapLeaderboardEntry(
   chipIssuer: ChipIssuer
 ): Promise<void> {

@@ -102,9 +102,7 @@ export const processNewMessages = async (
           updatedConnection.user.signaturePublicKey !==
             tapBackMessage.user.signaturePublicKey ||
           updatedConnection.user.encryptionPublicKey !==
-            tapBackMessage.user.encryptionPublicKey ||
-          updatedConnection.user.psiPublicKeyLink !==
-            tapBackMessage.user.psiPublicKeyLink
+            tapBackMessage.user.encryptionPublicKey
         ) {
           throw new Error("Connection cannot change username or keys");
         }

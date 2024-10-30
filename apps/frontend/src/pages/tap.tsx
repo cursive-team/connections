@@ -1,9 +1,13 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { TapParams, ChipTapResponse, errorToString } from "@types";
+import { TapParams, ChipTapResponse, errorToString, ChipIssuer } from "@types";
 import { toast } from "sonner";
 import { storage } from "@/lib/storage";
-import { tapChip, updateTapLeaderboardEntry } from "@/lib/chip";
+import {
+  tapChip,
+  updateTapLeaderboardEntry,
+  updateWorkoutLeaderboardEntry,
+} from "@/lib/chip";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { SupportToast } from "@/components/ui/SupportToast";
@@ -56,6 +60,11 @@ const TapPage: React.FC = () => {
 
             // Save tap to local storage
             await storage.addLocationTap(response);
+
+            // Update workout leaderboard entry if the chip issuer is Edge City Lanna
+            if (response.chipIssuer === ChipIssuer.EDGE_CITY_LANNA) {
+              await updateWorkoutLeaderboardEntry();
+            }
 
             // Save tap to populate modal upon redirect
             await storage.saveTapInfo({ tapParams, tapResponse: response });

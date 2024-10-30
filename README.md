@@ -13,8 +13,6 @@ Frontend:
 - `cd apps/frontend`
 - Copy over .env.example into .env and update vars
   - Set `NEXT_PUBLIC_API_URL` to point to the backend, defaults to `http://localhost:8080/api`
-  - Set `BLOB_READ_WRITE_TOKEN` to point to vercel blob store
-  - Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` based on supabase instance
 - `source .env`
 - `pnpm run dev`
 
@@ -46,7 +44,6 @@ Testing:
 Testing Secret Values:
 
 - For the email service, `AWS_SES_SENDER_EMAIL`, `AWS_ACCESS_KEY_ID`, `AWS_REGION`, and `AWS_SECRET_ACCESS_KEY` must be set with target email and key info.
-- For the passkey / PSI to work, `BLOB_READ_WRITE_TOKEN` must be set with secret.
 
 Testing Utilities:
 

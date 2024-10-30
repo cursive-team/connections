@@ -9,6 +9,7 @@ export enum DisplayedDashboard {
   TOTAL = "total",
   STRAVA = "strava",
   GITHUB = "github",
+  LANNA_TOTAL_WORKOUTS = "lanna-total-workouts",
 }
 
 export interface CommunityCardProps {
@@ -20,6 +21,7 @@ export interface CommunityCardProps {
   type: "active" | "community" | "coming-soon";
   progressPercentage?: number;
   dashboard?: DisplayedDashboard;
+  past?: boolean;
 }
 
 export const CommunityCard = ({
