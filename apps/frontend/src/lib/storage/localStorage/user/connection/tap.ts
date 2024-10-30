@@ -24,8 +24,7 @@ export const addUserTap = async (
   if (
     !tap.ownerUsername ||
     !tap.ownerSignaturePublicKey ||
-    !tap.ownerEncryptionPublicKey ||
-    !tap.ownerPsiPublicKeyLink
+    !tap.ownerEncryptionPublicKey
   ) {
     throw new Error("Tap owner username, display name, or keys not found");
   }
@@ -70,7 +69,7 @@ export const addUserTap = async (
     bio: ownerBio,
     signaturePublicKey: tap.ownerSignaturePublicKey,
     encryptionPublicKey: tap.ownerEncryptionPublicKey,
-    psiPublicKeyLink: tap.ownerPsiPublicKeyLink,
+    psiPublicKeyLink: tap.ownerPsiPublicKeyLink ?? undefined,
     twitter: ownerTwitter,
     telegram: ownerTelegram,
   };
