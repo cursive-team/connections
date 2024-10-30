@@ -98,7 +98,7 @@ const activityStates: Record<ActivityKey, boolean> = {
   meetNewPeople: false,
 };
 
-const HalloweenModal = ({
+const SpookyModal = ({
   isOpen,
   setIsOpen,
   onClose, // run when modal close
@@ -394,6 +394,6 @@ const HalloweenModal = ({
   );
 };
 
-HalloweenModal.displayName = "HalloweenModal";
+SpookyModal.displayName = "SpookyModal";
 
-export { HalloweenModal };
+export { SpookyModal };

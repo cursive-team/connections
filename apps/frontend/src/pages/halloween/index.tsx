@@ -1,5 +1,4 @@
 import { AstrologyModal } from "@/components/modals/AstrologyModal";
-import { HalloweenModal } from "@/components/modals/HalloweenModal";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import AppLayout from "@/layouts/AppLayout";
 import { classed } from "@tw-classed/react";
@@ -9,6 +8,7 @@ import { MdKeyboardArrowRight as ArrowRight } from "react-icons/md";
 import { MdOutlineEdit as EditIcon } from "react-icons/md";
 import { FaPlus as PlusIcon } from "react-icons/fa6";
 import { FreakModal } from "@/components/modals/FreakModal";
+import { SpookyModal } from "@/components/modals/SpookyModal";
 
 interface VaultCardProps {
   active?: boolean;
@@ -56,7 +56,7 @@ export default function HalloweenPage() {
   return (
     <>
       <NextSeo title="Halloween" />
-      <HalloweenModal
+      <SpookyModal
         setIsOpen={setHalloweenModalOpen}
         isOpen={halloweenModalOpen}
       />
