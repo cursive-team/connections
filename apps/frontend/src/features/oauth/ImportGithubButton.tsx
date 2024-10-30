@@ -19,12 +19,9 @@ const ImportGithubButton = ({
         emoji={<Icons.GitHub />}
         variant="gray"
         text="GitHub"
-        className={cn(
-          "pl-4",
-          addElement ? "pr-8" : "pr-4",
-          fullWidth ? "w-full" : "min-w-max"
-        )}
+        className={cn("pl-4 pr-8", fullWidth ? "w-full" : "min-w-max")}
         addElement={addElement}
+        refresh={!addElement}
         fullWidth={fullWidth}
       />
     </Link>

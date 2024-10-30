@@ -15,6 +15,7 @@ type TagProps = {
   remove?: boolean;
   addElement?: boolean;
   fullWidth?: boolean;
+  refresh?: boolean;
 };
 
 const TagBase = classed.div(
@@ -45,6 +46,7 @@ export const Tag = ({
   addElement = false,
   remove = false,
   fullWidth = false,
+  refresh = false,
 }: TagProps) => {
   return (
     <TagBase
@@ -80,6 +82,11 @@ export const Tag = ({
           <Icons.Remove
             className={cn(fullWidth ? "ml-2" : "absolute right-[8px]")}
           />
+        </>
+      )}
+      {refresh && (
+        <>
+          <Icons.Refresh className="absolute right-[8px]" />
         </>
       )}
     </TagBase>
