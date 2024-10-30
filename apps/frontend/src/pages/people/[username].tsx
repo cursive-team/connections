@@ -12,6 +12,7 @@ import {
   ChipTapResponse,
   errorToString,
   TapParams,
+  WebSocketRequestTypes,
 } from "@types";
 import { AppButton } from "@/components/ui/Button";
 import Image from "next/image";

@@ -9,23 +9,19 @@ import {
   WebSocketErrorPayloadSchema,
   WebSocketErrorPayload,
   CreateMessageDataSchema,
-  CreateMessageData, MessageData, MapCreateMessageDataToMessageData
+  CreateMessageData,
+  MessageData,
+  MapCreateMessageDataToMessageData, CreateBackupData
 } from "@types";
-import {getUserAndSession} from "@/lib/storage/localStorage/user";
-import {getUserSigPubKey} from "@/lib/user";
-import {storage} from "@/lib/storage";
+import { getUserAndSession } from "@/lib/storage/localStorage/user";
+import { getUserSigPubKey } from "@/lib/user";
+import { storage } from "@/lib/storage";
 
 export const wsClient: WebSocket = new WebSocket(`${BASE_API_WS}`);
 
-// TODO: solve "TS2702: WebSocket only refers to a type, but is being used as a namespace here."
-wsClient.onopen = async (e: WebSocket.Event) => {
+wsClient.onopen = async () => {
   console.log("Open ws server connection")
 
-  if (e) {
-    console.log("Client onopen:", e)
-  }
-
-  //
   const user = await storage.getUser();
   const session = await storage.getSession();
 
@@ -58,6 +54,7 @@ wsClient.onmessage = async (e: WebSocket.MessageEvent) => {
         const message: MessageData = MapCreateMessageDataToMessageData(createMessage)
 
         if (message) {
+          // processNewMessages handles updating user state and creating backups
           await storage.processNewMessages([message]);
         }
 
