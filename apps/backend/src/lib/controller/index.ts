@@ -32,6 +32,8 @@ import { iOAuthClient } from "@/lib/controller/oauth/interfaces";
 import { BespokeOAuthClient } from "@/lib/controller/oauth/bespoke/client";
 import { TelegramNotificationClient } from "./notification/telegram/client";
 import { iNotificationClient } from "./notification/interfaces";
+import { NitroEnclaveClient } from "@/lib/controller/enclave/nitro/client";
+import { iEnclaveClient } from "@/lib/controller/enclave/interfaces";
 
 export class Controller {
   postgresClient: iPostgresClient; // Use interface so that it can be mocked out
@@ -39,6 +41,7 @@ export class Controller {
   emailClient: iEmailClient;
   oauthClient: iOAuthClient;
   notificationClient: iNotificationClient;
+  enclaveClient: iEnclaveClient;
 
   constructor() {
     // Default client, could also pass through mock
@@ -54,6 +57,9 @@ export class Controller {
 
     // Notification client, currently only Telegram
     this.notificationClient = new TelegramNotificationClient();
+
+    // Enclave client with AWS Nitro Enclave
+    this.enclaveClient = new NitroEnclaveClient();
 
     // Over time more clients will be added (e.g. nitro enclave client)...
   }
@@ -221,5 +227,17 @@ export class Controller {
   // OAuth
   MintOAuthToken(app: string, code: string): Promise<AccessToken | null> {
     return this.oauthClient.MintOAuthToken(app, code);
+  }
+
+  // Enclave
+  GetAttestationDoc(): Promise<string> {
+    return this.enclaveClient.GetAttestationDoc();
+  }
+
+  HashWithSecret(encryptedInput: string): Promise<{
+    inputWithSecretHash: string;
+    secretHash: string;
+  }> {
+    return this.enclaveClient.HashWithSecret(encryptedInput);
   }
 }
