@@ -180,7 +180,7 @@ export default function CommunityPage() {
       const props: CommunityCardProps[] = [
         {
           image: "/images/week.png",
-          title: "Social Graph, Week of 10/27",
+          title: "Social Graph, Week of 10/27 💍",
           description: `${weekOct27TapDetails.totalValue} of 500 taps`,
           type: "active",
           position: weekOct27TapDetails.userPosition,
@@ -193,7 +193,7 @@ export default function CommunityPage() {
         },
         {
           image: "/images/runclub.png",
-          title: "Lanna Run Club",
+          title: "Lanna Run Club 🏃‍♂️",
           description: `${(stravaDetails.totalValue / 1000).toFixed(
             2
           )} of 1000 km`,
@@ -208,7 +208,7 @@ export default function CommunityPage() {
         },
         {
           image: "/images/buildclub.png",
-          title: "Lanna Builders",
+          title: "Lanna Hacker Club 👩‍💻",
           description: `${githubDetails.totalValue} of 1000 contributions`,
           type: "active",
           position: githubDetails.userPosition,
@@ -220,8 +220,8 @@ export default function CommunityPage() {
           dashboard: DisplayedDashboard.GITHUB,
         },
         {
-          image: "/images/runclub.png",
-          title: "Lanna Workouts",
+          image: "/images/yoga.png",
+          title: "Lanna Workouts 🥊",
           description: `${lannaTotalWorkoutDetails.totalValue} of 200 workouts`,
           type: "active",
           position: lannaTotalWorkoutDetails.userPosition,
@@ -234,7 +234,7 @@ export default function CommunityPage() {
         },
         {
           image: "/images/hand.png",
-          title: "Lanna Social Graph",
+          title: "Lanna Social Graph 🌐",
           description: `${details.totalValue} of 2000 taps`,
           type: "active",
           position: details.userPosition,
@@ -302,7 +302,7 @@ export default function CommunityPage() {
     return (
       <DashboardDetail
         image="/images/runclub_wide.png"
-        title="Lanna Workouts"
+        title="Lanna Workouts 🥊"
         description={
           "Check into Apex Gym, Sting Hive, or Manasak Muay Thai Gym by tapping Curtis the Connections Elephant upon visiting. Help us reach the Lanna goal of 200 workouts during the month!"
         }
@@ -399,7 +399,7 @@ export default function CommunityPage() {
     return (
       <DashboardDetail
         image="/images/social-graph-wide.png"
-        title="Lanna Social Graph"
+        title="Lanna Social Graph 🌐"
         description={`Grow the Lanna Social Graph by tapping NFC wristbands to share socials, organize your contacts, and discover common and complimentary interests!`}
         leaderboardDetails={leaderboardDetails}
         leaderboardEntries={leaderboardEntries}
@@ -420,7 +420,7 @@ export default function CommunityPage() {
     return (
       <DashboardDetail
         image="/images/runclub_wide.png"
-        title="Lanna Run Club"
+        title="Lanna Run Club 🏃‍♂️"
         description={`Share your Strava running distance to participate in the Lanna Run Club!`}
         leaderboardDetails={{
           ...stravaLeaderboardDetails,
@@ -461,7 +461,7 @@ export default function CommunityPage() {
     return (
       <DashboardDetail
         image="/images/buildclub_wide.png"
-        title="Lanna Builders"
+        title="Lanna Hacker Club 👩‍💻"
         description={`Share your open source GitHub contributions with the Lanna Builder community!`}
         leaderboardDetails={githubLeaderboardDetails}
         leaderboardEntries={githubLeaderboardEntries}
