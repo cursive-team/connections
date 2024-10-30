@@ -35,37 +35,6 @@ export const metadata: Metadata = {
   title: "Community",
 };
 
-const ComingSoonCommunityGoals = () => {
-  const mocks: CommunityCardProps[] = [
-    {
-      image: "/images/yoga.png",
-      title: "Yoga With Sophie",
-      description: "100 hours",
-      type: "community",
-      totalContributors: 10,
-      progressPercentage: 50,
-    },
-  ];
-
-  return (
-    <div className="flex flex-col gap-4">
-      {mocks?.map((mock: CommunityCardProps, index) => {
-        return (
-          <CommunityCard
-            image={mock?.image}
-            key={index}
-            type="coming-soon"
-            title={mock?.title}
-            description={mock?.description}
-            progressPercentage={mock?.progressPercentage}
-            totalContributors={mock?.totalContributors}
-          />
-        );
-      })}
-    </div>
-  );
-};
-
 export default function CommunityPage() {
   const router = useRouter();
   const [leaderboardDetails, setLeaderboardDetails] =
