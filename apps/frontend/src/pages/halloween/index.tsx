@@ -47,9 +47,11 @@ export const VaultCard = ({
 export default function HalloweenPage() {
   const [halloweenModalOpen, setHalloweenModalOpen] = useState(false);
   const [astrologyModalOpen, setAstrologyModalOpen] = useState(false);
+  const [freakModalOpen, setFreakModalOpen] = useState(false);
 
   const halloweenSubmitted = false;
   const astrologySubmitted = false;
+  const freakSubmitted = false;
   return (
     <>
       <NextSeo title="Halloween" />
@@ -118,7 +120,7 @@ export default function HalloweenPage() {
                       setAstrologyModalOpen(true);
                     }}
                   >
-                    {halloweenSubmitted ? (
+                    {astrologySubmitted ? (
                       <EditIcon size={18} className="text-white" />
                     ) : (
                       <PlusIcon size={18} className="text-white" />
@@ -127,9 +129,21 @@ export default function HalloweenPage() {
                 }
               />
               <VaultCard
-                title="Lorem, ipsum."
-                description=" Lorem, ipsum dolor sit amet consectetur adipisicing elit."
-                icon={<EditIcon size={18} className="text-white" />}
+                title="Match my freak 👹"
+                description="You can now match with residents who have similar or complimentary goals. "
+                icon={
+                  <button
+                    onClick={() => {
+                      setFreakModalOpen(true);
+                    }}
+                  >
+                    {freakSubmitted ? (
+                      <EditIcon size={18} className="text-white" />
+                    ) : (
+                      <PlusIcon size={18} className="text-white" />
+                    )}
+                  </button>
+                }
                 active={false}
               />
             </div>
