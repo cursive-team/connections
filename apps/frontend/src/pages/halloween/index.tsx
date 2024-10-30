@@ -76,17 +76,18 @@ export default function HalloweenPage() {
         <div
           className="h-[135px] bg-slate-50 w-full rounded-lg overflow-hidden mt-4"
           style={{
-            backgroundImage: `url('')`,
+            backgroundImage: `url('/images/halloween-party.svg')`,
             backgroundSize: "cover",
           }}
         />
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4">
             <span className="text-primary text-lg font-sans font-bold">
-              [title]
+              Halloween Party
             </span>
             <span className="text-tertiary text-base font-sans font-normal">
-              [description]
+              A description et tristique viverra mus volutpat vitae dapibus a.
+              In aliquam porttitor dignissim diam semper.
             </span>
           </div>
           <div className="flex flex-col gap-4">
