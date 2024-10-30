@@ -65,7 +65,7 @@ const ErrorFullPageBanner = ({
 
   if (isNotMobile) {
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center">
+      <div className="min-h-screen bg-background flex flex-col justify-center items-center">
         <div className="max-w-[350px] text-center">
           <div className="flex flex-col gap-2 items-center justify-center">
             <CursiveLogo />
@@ -86,7 +86,7 @@ const ErrorFullPageBanner = ({
       style={{
         minHeight: `${pageHeight}px`,
       }}
-      className="min-h-screen bg-gray-100 flex flex-col"
+      className="min-h-screen bg-background flex flex-col"
     >
       <HeaderCover className="!pb-0" />
       <div className="flex flex-col gap-4 mx-auto px-6">

@@ -23,7 +23,7 @@ const TagBase = classed.div(
         selected: "border border-primary text-primary",
         default: "bg-transparent border border-quaternary text-quaternary",
         active: "border border-transparent bg-[#FF9DF8] text-primary",
-        gray: "border border-transparent bg-[#F1F1F1] text-primary",
+        gray: "border border-transparent bg-tag-gray text-primary",
         transparent: "bg-transparent",
       },
     },

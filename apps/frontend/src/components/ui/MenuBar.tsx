@@ -8,7 +8,7 @@ export const MenuBarItem = ({ label, href, isActive, icon }: RouterItem) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Icon: any = icon;
 
-  const iconColor = isActive ? "text-icon-primary" : "text-icon-tertiary";
+  const iconColor = isActive ? "text-icon-primary" : "text-icon-primary";
 
   return (
     <Link href={href}>
@@ -21,7 +21,7 @@ export const MenuBarItem = ({ label, href, isActive, icon }: RouterItem) => {
         <Icon
           size={24}
           className={cn(
-            "duration-200 mx-auto opacity-50",
+            "duration-200 mx-auto opacity-100",
             iconColor,
             isActive && "!opacity-100"
           )}

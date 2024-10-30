@@ -43,11 +43,15 @@ export default function AppLayout({
     <div>
       {seoTitle && <NextSeo title={seoTitle} />}
       {back && (
-        <div className="sticky top-0 h-12 flex items-center border-b border-b-quaternary/20 bg-white z-20">
+        <div
+          className={cn(
+            "sticky top-0 h-12 flex items-center border-b border-b-quaternary/20 bg-background z-20"
+          )}
+        >
           <div className="px-4">
             <Link className="flex gap-1 items-center" href={back?.href ?? "/"}>
-              <BackIcon size={12} />
-              <span className="text-sm">{back?.label}</span>
+              <BackIcon className="text-primary" size={12} />
+              <span className="text-sm text-primary">{back?.label}</span>
             </Link>
           </div>
           {back?.content}

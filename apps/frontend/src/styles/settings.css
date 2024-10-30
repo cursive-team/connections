@@ -1,0 +1,123 @@
+:root {
+
+  /* Base colors */
+  --color-background: #FFF;
+  --color-primary: #090909;
+  --color-secondary: rgba(9, 9, 9, 0.60);
+  --color-tertiary: rgba(9, 9, 9, 0.50);
+  --color-quaternary: rgba(9, 9, 9, 0.40);
+  --color-cinnamon: #F74227;
+
+  /* Card */
+  --color-card-primary: #FFF;
+  --color-card-secondary: '';
+  --color-card-secondary: '';
+  --color-card-gray: #F1F1F1;
+
+  --color-tag-gray: #f1f1f1;
+
+
+  /* Stroke colors */
+  --color-stroke-primary: rgba(0, 0, 0, 0.80);
+  --color-stroke-secondary: rgba(0, 0, 0, 0.60);
+  --color-stroke-quaternary: rgba(0, 0, 0, 0.20);
+
+  /* Surface colors */
+  --color-surface-primary: #FFF;
+  --color-surface-primary-hover: rgba(255, 157, 248, 0.10);
+  --color-surface-quaternary: rgba(0, 0, 0, 0.03);
+  --color-surface-notice-primary: #000000;
+  --color-surface-notice-secondary: rgba(0, 0, 0, 0.15);
+  --color-surface-content-primary: #FF9DF8;
+
+  /* Icon colors */
+  --color-icon-primary: #090909;
+  --color-icon-notice-primary: #F74227;
+  --color-icon-notice-secondary: #7CE514;
+
+  /* Link colors */
+  --color-link-primary: #F429D5;
+
+  /* Button colors */
+  --color-button-primary: #191A1E;
+  --color-button-primary-label: #FFF;
+  --color-button-primary-hover: rgba(25, 26, 30, 0.90);
+  --color-button-secondary: #FF9DF8;
+  --color-button-secondary-label: #191A1E;
+  --color-button-secondary-hover: rgba(255, 157, 248, 0.9);
+  --color-button-outline: #191A1E00;
+  --color-button-outline-label: #191A1E;
+  --color-button-outline-hover: #191A1E0F;
+  --color-button-subtle: #EDEDED;
+  --color-button-subtle-label: #000;
+  --color-button-subtle-hover: #E1E1E1;
+  --color-button-ghost: rgba(25, 26, 30, 0.00);
+  --color-button-ghost-label: #000;
+  --color-button-ghost-hover: rgba(25, 26, 30, 0.02);
+  --color-button-link: rgba(255, 255, 255, 0.00);
+  --color-button-link-label: #000;
+  --color-button-link-label-hover: #00197E;
+  --color-button-link-hover: rgba(255, 255, 255, 0.00);
+}
+
+/* Halloween Theme */
+.halloween-theme {
+  /* Base colors */
+  --color-background: #000;
+  --color-primary: #FFF;
+  --color-secondary: rgba(255, 255, 255, 0.60);
+  --color-tertiary: rgba(255, 255, 255, 0.50);
+  --color-quaternary: rgba(255, 255, 255, 0.40);
+  --color-cinnamon: #8B0000;
+
+  /* Tag */
+  --color-tag-gray: rgba(255, 255, 255, 0.12);
+
+  /* Card */
+  --color-card-primary: #000;
+  --color-card-secondary: '';
+  --color-card-secondary: '';
+  --color-card-gray: rgba(255, 255, 255, 0.60);
+
+  /* Stroke colors */
+  --color-stroke-primary: rgba(255, 255, 255, 0.80);
+  --color-stroke-secondary: rgba(255, 255, 255, 0.60);
+  --color-stroke-quaternary: rgba(255, 255, 255, 0.20);
+
+  /* Surface colors */
+  --color-surface-primary: #000;
+  --color-surface-primary-hover: rgba(255, 102, 0, 0.10);
+  --color-surface-quaternary: rgba(255, 102, 0, 0.03);
+  --color-surface-notice-primary: #FF6600;
+  --color-surface-notice-secondary: rgba(255, 102, 0, 0.15);
+  --color-surface-content-primary: #8B0000;
+
+  /* Icon colors */
+  --color-icon-primary: #FFFFFF;
+  --color-icon-notice-primary: rgba(255, 255, 255, 0.50);
+  --color-icon-notice-secondary: rgba(255, 255, 255, 0.30);
+
+  /* Link colors */
+  --color-link-primary: #9932CC;
+
+  /* Button colors */
+  --color-button-primary: #FF70E9;
+  --color-button-primary-label: #1A1A1A;
+  --color-button-primary-hover: rgba(255, 102, 0, 0.90);
+  --color-button-secondary: #FF70E9;
+  --color-button-secondary-label: #FFF;
+  --color-button-secondary-hover: rgba(139, 0, 0, 0.9);
+  --color-button-outline: #FF660000;
+  --color-button-outline-label: #FFF;
+  --color-button-outline-hover: #FF70E9;
+  --color-button-subtle: #4B0082;
+  --color-button-subtle-label: #FFF;
+  --color-button-subtle-hover: #5E0A9E;
+  --color-button-ghost: rgba(255, 102, 0, 0.00);
+  --color-button-ghost-label: #FF6600;
+  --color-button-ghost-hover: rgba(255, 102, 0, 0.02);
+  --color-button-link: rgba(255, 102, 0, 0.00);
+  --color-button-link-label: #FF6600;
+  --color-button-link-label-hover: #9932CC;
+  --color-button-link-hover: rgba(255, 102, 0, 0.00);
+}

@@ -13,6 +13,7 @@ import { DefaultSeo } from "next-seo";
 // import { AnimatePresence, motion } from "framer-motion";
 import { preMigrationSignaturePublicKeys } from "@/common/constants";
 import { fetchMessages } from "@/lib/message";
+import { cn } from "@/lib/frontend/util";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -97,7 +98,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }, [router, isPreMigrationSessionChecked]);
 
   return (
-    <main className={`${dmSans.className} ${dmSans.variable}`}>
+    <main className={cn(`${dmSans.className} ${dmSans.variable} `)}>
       <DefaultSeo titleTemplate="%s | Cursive Connections" />
       <PlausibleProvider
         domain={process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN!}
@@ -112,7 +113,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         position="top-center"
         toastOptions={{
           duration: 5000,
-          className: "font-sans text-primary",
+          className: "font-sans bg-background text-primary",
         }}
       />
     </main>

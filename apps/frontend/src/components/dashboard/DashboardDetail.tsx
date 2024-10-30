@@ -117,11 +117,11 @@ export function DashboardDetail({
       withContainer={false}
       headerDivider
       header={
-        <div className="sticky top-0 h-12 flex items-center bg-white z-20">
+        <div className="sticky top-0 h-12 flex items-center bg-background z-20">
           <div className="px-1">
             <div className="flex gap-1 items-center" onClick={returnToHome}>
-              <BackIcon size={12} />
-              <span className="text-sm">Back</span>
+              <BackIcon className="text-primary" size={12} />
+              <span className="text-sm text-primary">Back</span>
             </div>
           </div>
         </div>
