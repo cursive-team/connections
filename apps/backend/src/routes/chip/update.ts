@@ -27,7 +27,7 @@ router.post(
         return res.status(401).json({ error: "Invalid authentication token" });
       }
 
-      const updatedChip = await controller.UpdateChip(validatedData);
+      await controller.UpdateChip(validatedData);
 
       return res.status(200).json({});
     } catch (error) {

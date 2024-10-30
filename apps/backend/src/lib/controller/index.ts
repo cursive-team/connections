@@ -28,14 +28,17 @@ import { iChipClient } from "@/lib/controller/chip/interfaces";
 import { ManagedChipClient } from "@/lib/controller/chip/managed/client";
 import { SESEmailClient } from "@/lib/controller/email/ses/client";
 import { iEmailClient } from "@/lib/controller/email/interfaces";
-import {iOAuthClient} from "@/lib/controller/oauth/interfaces";
-import {BespokeOAuthClient} from "@/lib/controller/oauth/bespoke/client";
+import { iOAuthClient } from "@/lib/controller/oauth/interfaces";
+import { BespokeOAuthClient } from "@/lib/controller/oauth/bespoke/client";
+import { TelegramNotificationClient } from "./notification/telegram/client";
+import { iNotificationClient } from "./notification/interfaces";
 
 export class Controller {
   postgresClient: iPostgresClient; // Use interface so that it can be mocked out
   chipClient: iChipClient;
   emailClient: iEmailClient;
   oauthClient: iOAuthClient;
+  notificationClient: iNotificationClient;
 
   constructor() {
     // Default client, could also pass through mock
@@ -49,7 +52,18 @@ export class Controller {
     // Bespoke OAuth client -- in theory could change out for mature OAuth library, if we have the need and a good candidate
     this.oauthClient = new BespokeOAuthClient();
 
+    // Notification client, currently only Telegram
+    this.notificationClient = new TelegramNotificationClient();
+
     // Over time more clients will be added (e.g. nitro enclave client)...
+  }
+
+  NotificationInitialize(): Promise<void> {
+    return this.notificationClient.Initialize();
+  }
+
+  SendNotification(userId: string, message: string): Promise<boolean> {
+    return this.notificationClient.SendNotification(userId, message);
   }
 
   PostgresHealthCheck(): Promise<boolean> {
