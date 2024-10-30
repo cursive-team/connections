@@ -47,6 +47,8 @@ const config: Config = {
 
         tag: {
           gray: "var(--color-tag-gray)",
+          active: "var(--color-tag-active)",
+          border: "var(--color-tag-border)",
         },
 
         stroke: {
@@ -54,8 +56,6 @@ const config: Config = {
           secondary: "var(--color-stroke-secondary)",
           quaternary: "var(--color-stroke-quaternary)",
         },
-
-        
 
         surface: {
           primary: {

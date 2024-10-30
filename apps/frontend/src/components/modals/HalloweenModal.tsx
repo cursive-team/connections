@@ -111,10 +111,8 @@ const HalloweenModal = ({
 
   const [step, setStep] = useState(0);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
-  const [selectedPreferences, setSelectedPreferences] = useState<
-    string[] | null
-  >(null);
-  const [mood, setMood] = useState("");
+  const [selectedPreferences, setSelectedPreferences] =
+    useState(activityStates);
 
   const moods = [
     { id: "mischievous", image: "mischievous.svg", label: "Mischievous" },
@@ -123,13 +121,12 @@ const HalloweenModal = ({
     { id: "excited", image: "excited.svg", label: "Excited" },
   ];
   const handleToggle = (key: ActivityKey) => {
-    // @ts-ignore
     setSelectedPreferences((prev) => ({
       ...prev,
-      // @ts-ignore
       [key]: !prev?.[key],
     }));
   };
+
   const steps: Step[] = [
     {
       title: "",
@@ -196,6 +193,8 @@ const HalloweenModal = ({
       content: (
         <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
           {Object.entries(activityStates).map(([key, value]) => {
+            // @ts-ignore
+            const isActive = selectedPreferences?.[key] ?? false;
             return (
               <div key={key} className="flex items-center">
                 <input
@@ -206,7 +205,7 @@ const HalloweenModal = ({
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                 />
                 <Tag
-                  variant={value ? "active" : "default"}
+                  variant={isActive ? "active" : "default"}
                   // @ts-ignore
                   emoji={activityMappings?.[key as any]?.emoji ?? ""}
                   onClick={() => handleToggle(key as any)}

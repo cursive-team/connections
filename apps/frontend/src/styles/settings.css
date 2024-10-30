@@ -15,6 +15,8 @@
   --color-card-gray: #F1F1F1;
 
   --color-tag-gray: #f1f1f1;
+  --color-tag-active: #FF9DF8;
+  --color-tag-border: #FF9DF8;
 
 
   /* Stroke colors */
@@ -72,6 +74,8 @@
 
   /* Tag */
   --color-tag-gray: rgba(255, 255, 255, 0.12);
+  --color-tag-active: rgba(255, 157, 248, 0.10);
+  --color-tag-border: #fff;
 
   /* Card */
   --color-card-primary: #000;

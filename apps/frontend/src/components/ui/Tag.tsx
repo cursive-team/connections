@@ -16,13 +16,13 @@ type TagProps = {
 };
 
 const TagBase = classed.div(
-  "relative inline-flex items-center rounded-full pl-2 pr-6 py-2 text-sm font-medium",
+  "relative inline-flex items-center rounded-full pl-2 pr-6 py-2 text-sm font-medium duration-200",
   {
     variants: {
       variant: {
         selected: "border border-primary text-primary",
         default: "bg-transparent border border-quaternary text-quaternary",
-        active: "border border-transparent bg-[#FF9DF8] text-primary",
+        active: "border border-tag-border bg-tag-active text-primary",
         gray: "border border-transparent bg-tag-gray text-primary",
         transparent: "bg-transparent",
       },
