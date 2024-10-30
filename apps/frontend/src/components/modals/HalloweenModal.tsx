@@ -156,7 +156,7 @@ const HalloweenModal = ({
     {
       title: "How are you feeling?",
       content: (
-        <div className="grid grid-cols-[1fr_1fr] gap-10">
+        <div className="grid grid-cols-[1fr_1fr] gap-10 mt-4">
           {moods?.map((mood) => {
             const isSelected = mood.id === selectedMood;
             return (
