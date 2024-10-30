@@ -11,7 +11,7 @@ import {
   CreateMessageDataSchema,
   CreateMessageData,
   MessageData,
-  MapCreateMessageDataToMessageData, CreateBackupData
+  MapCreateMessageDataToMessageData
 } from "@types";
 import { getUserAndSession } from "@/lib/storage/localStorage/user";
 import { getUserSigPubKey } from "@/lib/user";
@@ -95,7 +95,6 @@ export const wsRequest = (authToken: string, type: string, targetSigPubKey: stri
     payload,
   }
 
-  console.log("Client wsRequest", JSON.stringify(req))
   wsClient.send(JSON.stringify(req));
   return;
 }

@@ -2,9 +2,6 @@ import { LeaderboardEntryType, OAuthAppDetails } from "@types";
 
 export const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
-// TODO: insecure ws may not even be allowed, check
-export const BASE_API_WS = process.env.NEXT_PUBLIC_API_WSS || "ws://localhost:8080/socket"
-
 export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
   strava: {
     client_side_fetching: true,
