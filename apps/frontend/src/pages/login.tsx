@@ -33,6 +33,7 @@ const LoginPage: React.FC = () => {
   const [loginResponse, setLoginResponse] = useState<UserLoginResponse | null>(
     null
   );
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -92,6 +93,7 @@ const LoginPage: React.FC = () => {
     }
 
     try {
+      setLoading(true);
       await processLoginResponse(loginResponse, email, password);
       toast.success("Successfully logged in!");
       router.push("/profile");
@@ -106,6 +108,8 @@ const LoginPage: React.FC = () => {
           errorToString(error)
         )
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -117,6 +121,7 @@ const LoginPage: React.FC = () => {
     }
 
     try {
+      setLoading(true);
       await processLoginResponse(loginResponse, email, password);
       toast.success("Successfully logged in!");
       router.push("/profile");
@@ -131,6 +136,8 @@ const LoginPage: React.FC = () => {
           errorToString(error)
         )
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -156,10 +163,16 @@ const LoginPage: React.FC = () => {
           <EnterCode email={email} submitCode={handleCodeSubmit} />
         )}
         {step === LoginState.PASSWORD && (
-          <LoginWithPassword onPasswordLogin={handlePasswordSubmit} />
+          <LoginWithPassword
+            loading={loading}
+            onPasswordLogin={handlePasswordSubmit}
+          />
         )}
         {step === LoginState.PASSKEY && (
-          <LoginWithPasskey onPasskeyLogin={handlePasskeySubmit} />
+          <LoginWithPasskey
+            loading={loading}
+            onPasskeyLogin={handlePasskeySubmit}
+          />
         )}
       </div>
     </div>

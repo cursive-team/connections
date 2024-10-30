@@ -6,10 +6,12 @@ import { AppCopy } from "@/components/ui/AppCopy";
 
 interface LoginWithPasswordProps {
   onPasswordLogin: (password: string) => Promise<void>;
+  loading: boolean;
 }
 
 const LoginWithPassword: React.FC<LoginWithPasswordProps> = ({
   onPasswordLogin,
+  loading,
 }) => {
   const [password, setPassword] = useState("");
 
@@ -33,7 +35,9 @@ const LoginWithPassword: React.FC<LoginWithPasswordProps> = ({
               required
             />
           </div>
-          <AppButton type="submit">Login</AppButton>
+          <AppButton type="submit" loading={loading}>
+            Login
+          </AppButton>
         </form>
         <AppCopy className="text-center py-4" />
       </div>

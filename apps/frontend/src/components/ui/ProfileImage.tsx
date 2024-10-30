@@ -1,4 +1,11 @@
+import { cn } from "@/lib/frontend/util";
 import { UserData } from "@/lib/storage/types";
+import { Goudy_Bookletter_1911 } from "next/font/google";
+
+const goudyBookletter = Goudy_Bookletter_1911({
+  weight: "400",
+  subsets: ["latin"],
+});
 
 export const getProfileBackgroundColor = (user: UserData) => {
   const colorPalette = [
@@ -26,22 +33,39 @@ export const getProfileBackgroundColor = (user: UserData) => {
   return colorPalette[colorIndex];
 };
 
-export const ProfileImage = ({ user }: { user: UserData }) => {
+export const ProfileImage = ({
+  user,
+  size = 12,
+}: {
+  user: UserData;
+  size?: number;
+}) => {
   if (!user || Object.keys(user)?.length === 0)
-    return <div className="size-10 rounded-full bg-quaternary/20"></div>;
+    return (
+      <div
+        className="rounded-full bg-quaternary/20"
+        style={{ width: `${size * 4}px`, height: `${size * 4}px` }}
+      ></div>
+    );
 
   const backgroundColor = getProfileBackgroundColor(user);
 
   return (
     <div
-      className={`size-12 rounded-full border border-quaternary/10 flex items-center justify-center`}
-      style={{ backgroundColor }}
+      className="rounded-full border border-quaternary/10 flex items-center justify-center"
+      style={{
+        backgroundColor,
+        width: `${size * 4}px`,
+        height: `${size * 4}px`,
+      }}
     >
       <span
-        className={`text-lg font-normal text-primary`}
-        style={{
-          fontFamily: `"Times New Roman", Times, serif`,
-        }}
+        className={cn(
+          `text-primary ${goudyBookletter.className}`,
+          size === 16
+            ? "text-[25px] leading-[1] font-bold"
+            : "font-normal text-[18px] leading-[1]"
+        )}
       >
         {(() => {
           if (!user.displayName || user.displayName.length <= 2) {

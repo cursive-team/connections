@@ -348,4 +348,48 @@ export const Icons: Record<string, any> = {
       </defs>
     </svg>
   ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Mona: ({ size = 16, ...props }: any) => (
+    <svg
+      version="1.0"
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      preserveAspectRatio="xMidYMid meet"
+      {...props}
+    >
+      <g
+        transform="translate(0.000000,64.000000) scale(0.100000,-0.100000)"
+        fill="#000000"
+        stroke="none"
+      >
+        <path
+          d="M0 325 l0 -275 75 0 75 0 2 177 c3 201 4 201 55 -37 l29 -135 65 -3
+c45 -2 69 1 76 10 6 7 15 42 22 78 23 126 56 260 64 260 5 0 7 -78 6 -172 l-2
+-173 87 -3 86 -3 0 276 0 275 -135 0 c-74 0 -135 -3 -135 -7 -1 -24 -40 -246
+-44 -250 -3 -3 -7 5 -10 18 -7 34 -26 169 -29 204 l-2 30 -142 3 -143 3 0
+-276z"
+        />
+      </g>
+    </svg>
+  ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Refresh: ({ size = 16, ...props }: any) => (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M13.6354 8.59536C13.4502 10.3353 12.4643 11.9658 10.833 12.9076C8.12269 14.4724 4.65701 13.5438 3.0922 10.8335L2.92554 10.5448M2.36417 7.40467C2.54937 5.66474 3.53523 4.03426 5.16655 3.09241C7.87688 1.5276 11.3426 2.45623 12.9074 5.16655L13.074 5.45523M2.32886 12.044L2.81689 10.2227L4.63826 10.7107M11.3617 5.28934L13.183 5.77737L13.6711 3.95601"
+        stroke="#191A1E"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
 };

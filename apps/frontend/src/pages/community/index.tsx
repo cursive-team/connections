@@ -17,6 +17,7 @@ import {
 } from "@/lib/chip";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { storage } from "@/lib/storage";
+import { User } from "@/lib/storage/types";
 import {
   ChipIssuer,
   LeaderboardDetails,
@@ -34,42 +35,15 @@ export const metadata: Metadata = {
   title: "Community",
 };
 
-const ComingSoonCommunityGoals = () => {
-  const mocks: CommunityCardProps[] = [
-    {
-      image: "/images/yoga.png",
-      title: "Yoga With Sophie",
-      description: "100 hours",
-      type: "community",
-      totalContributors: 10,
-      progressPercentage: 50,
-    },
-  ];
-
-  return (
-    <div className="flex flex-col gap-4">
-      {mocks?.map((mock: CommunityCardProps, index) => {
-        return (
-          <CommunityCard
-            image={mock?.image}
-            key={index}
-            type="coming-soon"
-            title={mock?.title}
-            description={mock?.description}
-            progressPercentage={mock?.progressPercentage}
-            totalContributors={mock?.totalContributors}
-          />
-        );
-      })}
-    </div>
-  );
-};
-
 export default function CommunityPage() {
   const router = useRouter();
   const [leaderboardDetails, setLeaderboardDetails] =
     useState<LeaderboardDetails | null>(null);
   const [leaderboardEntries, setLeaderboardEntries] =
+    useState<LeaderboardEntries | null>(null);
+  const [weeklyLeaderboardDetails, setWeeklyLeaderboardDetails] =
+    useState<LeaderboardDetails | null>(null);
+  const [weeklyLeaderboardEntries, setWeeklyLeaderboardEntries] =
     useState<LeaderboardEntries | null>(null);
   const [stravaLeaderboardDetails, setStravaLeaderboardDetails] =
     useState<LeaderboardDetails | null>(null);
@@ -90,6 +64,7 @@ export default function CommunityPage() {
   const [cardProps, setCardProps] = useState<CommunityCardProps[]>([]);
   const [displayedDashboard, setDisplayedDashboard] =
     useState<DisplayedDashboard>(DisplayedDashboard.NONE);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchInfo = async () => {
@@ -99,11 +74,14 @@ export default function CommunityPage() {
         router.push("/");
         return;
       }
+      setUser(user);
 
       const communityIssuer: ChipIssuer = user.chips[0].issuer;
 
       let details: LeaderboardDetails | null = null;
       let entries: LeaderboardEntries | null = null;
+      let weeklyDetails: LeaderboardDetails | null = null;
+      let weeklyEntries: LeaderboardEntries | null = null;
       let stravaDetails: LeaderboardDetails | null = null;
       let stravaEntries: LeaderboardEntries | null = null;
       let githubDetails: LeaderboardDetails | null = null;
@@ -120,6 +98,14 @@ export default function CommunityPage() {
         entries = await getTopLeaderboardEntries(
           communityIssuer,
           LeaderboardEntryType.TOTAL_TAP_COUNT
+        );
+        weeklyDetails = await getUserLeaderboardDetails(
+          communityIssuer,
+          LeaderboardEntryType.WEEK_OCT_20_TAP_COUNT
+        );
+        weeklyEntries = await getTopLeaderboardEntries(
+          communityIssuer,
+          LeaderboardEntryType.WEEK_OCT_20_TAP_COUNT
         );
         stravaDetails = await getUserLeaderboardDetails(
           communityIssuer,
@@ -162,6 +148,8 @@ export default function CommunityPage() {
       if (
         !details ||
         !entries ||
+        !weeklyDetails ||
+        !weeklyEntries ||
         !stravaDetails ||
         !stravaEntries ||
         !githubDetails ||
@@ -178,6 +166,8 @@ export default function CommunityPage() {
 
       setLeaderboardDetails(details);
       setLeaderboardEntries(entries);
+      setWeeklyLeaderboardDetails(weeklyDetails);
+      setWeeklyLeaderboardEntries(weeklyEntries);
       setStravaLeaderboardDetails(stravaDetails);
       setStravaLeaderboardEntries(stravaEntries);
       setGithubLeaderboardDetails(githubDetails);
@@ -189,8 +179,21 @@ export default function CommunityPage() {
 
       const props: CommunityCardProps[] = [
         {
+          image: "/images/week.png",
+          title: "Social Graph, Week of 10/27 💍",
+          description: `${weekOct27TapDetails.totalValue} of 500 taps`,
+          type: "active",
+          position: weekOct27TapDetails.userPosition,
+          totalContributors: weekOct27TapDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((weekOct27TapDetails.totalValue / 500) * 100)
+          ),
+          dashboard: DisplayedDashboard.WEEKLY_TAPS_OCT_27,
+        },
+        {
           image: "/images/runclub.png",
-          title: "Lanna Run Club",
+          title: "Lanna Run Club 🏃‍♂️",
           description: `${(stravaDetails.totalValue / 1000).toFixed(
             2
           )} of 1000 km`,
@@ -205,7 +208,7 @@ export default function CommunityPage() {
         },
         {
           image: "/images/buildclub.png",
-          title: "Lanna Builders",
+          title: "Lanna Hacker Club 👩‍💻",
           description: `${githubDetails.totalValue} of 1000 contributions`,
           type: "active",
           position: githubDetails.userPosition,
@@ -217,8 +220,8 @@ export default function CommunityPage() {
           dashboard: DisplayedDashboard.GITHUB,
         },
         {
-          image: "/images/runclub.png",
-          title: "Lanna Workouts",
+          image: "/images/yoga.png",
+          title: "Lanna Workouts 🥊",
           description: `${lannaTotalWorkoutDetails.totalValue} of 200 workouts`,
           type: "active",
           position: lannaTotalWorkoutDetails.userPosition,
@@ -230,21 +233,8 @@ export default function CommunityPage() {
           dashboard: DisplayedDashboard.LANNA_TOTAL_WORKOUTS,
         },
         {
-          image: "/images/week.png",
-          title: "Social Graph, Week of 10/27",
-          description: `${weekOct27TapDetails.totalValue} of 500 taps`,
-          type: "active",
-          position: weekOct27TapDetails.userPosition,
-          totalContributors: weekOct27TapDetails.totalContributors,
-          progressPercentage: Math.min(
-            100,
-            Math.round((weekOct27TapDetails.totalValue / 500) * 100)
-          ),
-          dashboard: DisplayedDashboard.WEEKLY_TAPS_OCT_27,
-        },
-        {
           image: "/images/hand.png",
-          title: "Lanna Social Graph",
+          title: "Lanna Social Graph 🌐",
           description: `${details.totalValue} of 2000 taps`,
           type: "active",
           position: details.userPosition,
@@ -254,6 +244,20 @@ export default function CommunityPage() {
             Math.round((details.totalValue / 2000) * 100)
           ),
           dashboard: DisplayedDashboard.TOTAL,
+        },
+        {
+          image: "/images/week.png",
+          title: "Social Graph, Week of 10/20",
+          description: `${weeklyDetails.totalValue} of 500 taps`,
+          type: "active",
+          position: weeklyDetails.userPosition,
+          totalContributors: weeklyDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((weeklyDetails.totalValue / 500) * 100)
+          ),
+          dashboard: DisplayedDashboard.WEEKLY,
+          past: true,
         },
       ];
       setCardProps(props);
@@ -279,6 +283,7 @@ export default function CommunityPage() {
         session.authTokenValue &&
         session.authTokenExpiresAt > new Date()
       ) {
+        toast.info("Redirecting to Cherry...");
         window.location.href = `${BASE_API_URL}/lanna/cherry_otp?authToken=${session.authTokenValue}`;
       } else {
         toast.error("Please log in to access Cherry.");
@@ -297,13 +302,49 @@ export default function CommunityPage() {
     return (
       <DashboardDetail
         image="/images/runclub_wide.png"
-        title="Lanna Workouts"
+        title="Lanna Workouts 🥊"
         description={
           "Check into workouts at Red Dog Gallery, Apex Gym, Sting Hive, or Manasak Muay Thai Gym by tapping Curtis the Connections Elephant upon visiting. Help us reach the Lanna goal of 200 workouts during the month!"
         }
         leaderboardDetails={lannaTotalWorkoutDetails}
         leaderboardEntries={lannaTotalWorkoutEntries}
         goal={200}
+        organizer="Cursive"
+        organizerDescription="Cryptography for human connection"
+        type="active"
+        returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
+        prize={true}
+      />
+    );
+  }
+
+  if (
+    weeklyLeaderboardDetails &&
+    weeklyLeaderboardEntries &&
+    displayedDashboard === DisplayedDashboard.WEEKLY
+  ) {
+    return (
+      <DashboardDetail
+        image="/images/week-wide.png"
+        title="Social Graph, Week of 10/20"
+        description={
+          <div className="flex flex-col gap-4">
+            <span>
+              Weekly tapping challenge to grow the Lanna Social Graph.{" "}
+              <b>
+                The top 10 contributors will win an exclusive Cursive NFC ring!
+              </b>
+            </span>
+            <span>
+              Make sure your tapping is natural, we want to incentive evangelism
+              of the app experience and genuine connection. Not just tapping for
+              the sake of tapping.
+            </span>
+          </div>
+        }
+        leaderboardDetails={weeklyLeaderboardDetails}
+        leaderboardEntries={weeklyLeaderboardEntries}
+        goal={500}
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         type="active"
@@ -345,6 +386,7 @@ export default function CommunityPage() {
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
         prize={true}
+        prizeRank={5}
       />
     );
   }
@@ -357,7 +399,7 @@ export default function CommunityPage() {
     return (
       <DashboardDetail
         image="/images/social-graph-wide.png"
-        title="Lanna Social Graph"
+        title="Lanna Social Graph 🌐"
         description={`Grow the Lanna Social Graph by tapping NFC wristbands to share socials, organize your contacts, and discover common and complimentary interests!`}
         leaderboardDetails={leaderboardDetails}
         leaderboardEntries={leaderboardEntries}
@@ -378,7 +420,7 @@ export default function CommunityPage() {
     return (
       <DashboardDetail
         image="/images/runclub_wide.png"
-        title="Lanna Run Club"
+        title="Lanna Run Club 🏃‍♂️"
         description={`Share your Strava running distance to participate in the Lanna Run Club!`}
         leaderboardDetails={{
           ...stravaLeaderboardDetails,
@@ -394,9 +436,16 @@ export default function CommunityPage() {
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         actionItem={
-          <div onClick={() => logClientEvent("community-strava-clicked", {})}>
-            <ImportStravaButton />
-          </div>
+          user &&
+          (!user.oauth ||
+            (user.oauth && !Object.keys(user?.oauth).includes("strava"))) && (
+            <div
+              className="w-full"
+              onClick={() => logClientEvent("community-strava-clicked", {})}
+            >
+              <ImportStravaButton fullWidth />
+            </div>
+          )
         }
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
@@ -412,7 +461,7 @@ export default function CommunityPage() {
     return (
       <DashboardDetail
         image="/images/buildclub_wide.png"
-        title="Lanna Builders"
+        title="Lanna Hacker Club 👩‍💻"
         description={`Share your open source GitHub contributions with the Lanna Builder community!`}
         leaderboardDetails={githubLeaderboardDetails}
         leaderboardEntries={githubLeaderboardEntries}
@@ -420,9 +469,16 @@ export default function CommunityPage() {
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         actionItem={
-          <div onClick={() => logClientEvent("community-github-clicked", {})}>
-            <ImportGithubButton />
-          </div>
+          user &&
+          (!user.oauth ||
+            (user.oauth && !Object.keys(user?.oauth).includes("github"))) && (
+            <div
+              className="w-full"
+              onClick={() => logClientEvent("community-github-clicked", {})}
+            >
+              <ImportGithubButton fullWidth />
+            </div>
+          )
         }
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
@@ -446,42 +502,48 @@ export default function CommunityPage() {
           </>
         }
       >
-        <div className="flex  overflow-x-scroll gap-2 py-4">
-          {[
-            {
-              href: "https://app.sola.day/event/edgecitylanna/",
-              emoji: <Icons.SocialLayer size={18} />,
-              text: "Social Layer",
-              label: "community-social-layer-link",
-            },
-            {
-              href: "https://lannaedges.radicalxchange.org/",
-              emoji: <span className="text-[16px]">∈</span>,
-              text: "Edges",
-              label: "community-edges-link",
-            },
-            {
-              href: "https://cherry.builders/",
-              emoji: "🍒",
-              text: "Cherry",
-              label: "community-cherry-link",
-            },
-          ].map((item, index) => (
-            <Link
-              key={index}
-              className="min-w-max"
-              href={item.href}
-              onClick={(e) => handleLinkClick(e, item)}
-            >
-              <Tag
-                emoji={item.emoji}
-                variant="gray"
-                text={item.text}
-                external
-              />
-            </Link>
-          ))}
+        <div className="flex flex-col py-4">
+          <span className="text-base font-bold text-primary font-sans">
+            {`Applications`}
+          </span>
+          <div className="flex  overflow-x-scroll gap-2 pt-2">
+            {[
+              {
+                href: "https://monaverse.com/collections/8453/0xafa80d3a82f6d749694de21b2dccf1e74a262547/1",
+                emoji: <Icons.Mona size={18} />,
+                text: "Mona",
+                label: "community-social-layer-link",
+              },
+              {
+                href: "https://lannaedges.radicalxchange.org/",
+                emoji: <span className="text-[16px]">∈</span>,
+                text: "Edges",
+                label: "community-edges-link",
+              },
+              {
+                href: "https://cherry.builders/",
+                emoji: "🍒",
+                text: "Cherry",
+                label: "community-cherry-link",
+              },
+            ].map((item, index) => (
+              <Link
+                key={index}
+                className="min-w-max"
+                href={item.href}
+                onClick={(e) => handleLinkClick(e, item)}
+              >
+                <Tag
+                  emoji={item.emoji}
+                  variant="gray"
+                  text={item.text}
+                  external
+                />
+              </Link>
+            ))}
+          </div>
         </div>
+
         {!leaderboardDetails || !leaderboardEntries ? (
           <div className="flex justify-center items-center pt-4">
             <CursiveLogo isLoading />
@@ -490,10 +552,12 @@ export default function CommunityPage() {
           <div className="flex flex-col gap-6 pt-2 pb-6">
             <div className="flex flex-col gap-2">
               <span className="text-base font-bold text-primary font-sans">
-                {`Contribute now!`}
+                {`Current dashboards`}
               </span>
               {cardProps?.map((prop: CommunityCardProps, index) => {
-                return (
+                return prop.past ? (
+                  <></>
+                ) : (
                   <div
                     key={index}
                     onClick={() => {
@@ -521,9 +585,36 @@ export default function CommunityPage() {
             </div>
             <div className="flex flex-col gap-2">
               <span className="text-base font-bold text-primary font-sans">
-                Coming soon!
+                {`Past dashboards`}
               </span>
-              <ComingSoonCommunityGoals />
+              {cardProps?.map((prop: CommunityCardProps, index) => {
+                return !prop.past ? (
+                  <></>
+                ) : (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      logClientEvent("community-dashboard-clicked", {
+                        title: prop?.title,
+                      });
+                      setDisplayedDashboard(
+                        prop?.dashboard || DisplayedDashboard.NONE
+                      );
+                    }}
+                  >
+                    <CommunityCard
+                      image={prop?.image}
+                      type="active"
+                      title={prop?.title}
+                      description={prop?.description}
+                      progressPercentage={prop?.progressPercentage}
+                      position={prop?.position}
+                      totalContributors={prop?.totalContributors}
+                      dashboard={prop?.dashboard}
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

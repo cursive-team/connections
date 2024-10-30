@@ -11,10 +11,12 @@ import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 interface LoginWithPasskeyProps {
   onPasskeyLogin: (password: string) => Promise<void>;
+  loading: boolean;
 }
 
 const LoginWithPasskey: React.FC<LoginWithPasskeyProps> = ({
   onPasskeyLogin,
+  loading,
 }) => {
   const handlePasskeyAuthentication = async () => {
     const authenticationOptions = await generateAuthenticationOptions({
@@ -27,7 +29,15 @@ const LoginWithPasskey: React.FC<LoginWithPasskeyProps> = ({
       await onPasskeyLogin(id);
     } catch (error) {
       console.error("Error logging in: ", error);
-      toast(SupportToast("", true, "Authentication failed! Please try again", ERROR_SUPPORT_CONTACT, errorToString(error)));
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Authentication failed! Please try again",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
       return;
     }
   };
@@ -38,7 +48,7 @@ const LoginWithPasskey: React.FC<LoginWithPasskeyProps> = ({
 
       <div className="flex flex-col mt-auto">
         <div className="flex flex-col space-y-3 pb-2">
-          <AppButton onClick={handlePasskeyAuthentication}>
+          <AppButton onClick={handlePasskeyAuthentication} loading={loading}>
             Login with passkey
           </AppButton>
         </div>
