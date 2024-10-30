@@ -8,6 +8,7 @@ import React, { ReactNode, useState } from "react";
 import { MdKeyboardArrowRight as ArrowRight } from "react-icons/md";
 import { MdOutlineEdit as EditIcon } from "react-icons/md";
 import { FaPlus as PlusIcon } from "react-icons/fa6";
+import { FreakModal } from "@/components/modals/FreakModal";
 
 interface VaultCardProps {
   active?: boolean;
@@ -63,6 +64,7 @@ export default function HalloweenPage() {
         setIsOpen={setAstrologyModalOpen}
         isOpen={astrologyModalOpen}
       />
+      <FreakModal setIsOpen={setFreakModalOpen} isOpen={freakModalOpen} />
       <AppLayout
         showFooter={false}
         back={{

@@ -29,6 +29,19 @@ export const Icons: Record<string, any> = {
   Calendar,
   Menu,
   CloseLocation,
+  Checked: () => (
+    <svg
+      className="w-4 h-4 text-gray-900"
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path d="M5 13l4 4L19 7"></path>
+    </svg>
+  ),
   LocationError: () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"

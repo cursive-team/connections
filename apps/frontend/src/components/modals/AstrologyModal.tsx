@@ -133,7 +133,6 @@ const AstrologyModal = ({
   const [marsSign, setMarsSign] = useState(null);
   const [venusSign, setVenusSign] = useState(null);
   const [mercurySign, setMercurySign] = useState(null);
-  const [selectedPreferences, setSelectedPreferences] = useState(zodiacStates);
 
   const steps: Step[] = [
     {
@@ -395,10 +394,23 @@ const AstrologyModal = ({
     setStep(step - 1);
   };
 
+  const onHandleSubmit = () => {
+    const data = {
+      sunSign,
+      moonSign,
+      risignSign,
+      marsSign,
+      venusSign,
+      mercurySign,
+    };
+    console.log("data =>", data);
+  };
+
   const handleNext = () => {
     if (step === steps?.length - 1) {
       onClose?.();
       setIsOpen(false);
+      onHandleSubmit();
     } else {
       setStep(step + 1);
     }

@@ -12,8 +12,6 @@ import { IoMdClose as Close } from "react-icons/io";
 import { AppButton } from "../ui/Button";
 import { DM_Sans } from "next/font/google";
 import Image from "next/image";
-import { cn } from "@/lib/frontend/util";
-import { Tag } from "../ui/Tag";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -36,69 +34,7 @@ export interface ModalProps
   withBackButton?: boolean;
 }
 
-type ActivityKey =
-  | "trickOrTreat"
-  | "danceOff"
-  | "hideAndSeek"
-  | "nameSwap"
-  | "deepConversation"
-  | "congoLine"
-  | "pairFortune"
-  | "beNPCs"
-  | "meetNewPeople";
-
-const activityMappings: Record<ActivityKey, any> = {
-  trickOrTreat: {
-    emoji: "🔍",
-    label: "trick or treat",
-  },
-  danceOff: {
-    emoji: "🕺",
-    label: "dance off",
-  },
-  hideAndSeek: {
-    emoji: "🙈",
-    label: "hide & seek",
-  },
-  nameSwap: {
-    emoji: "👑",
-    label: "name swap",
-  },
-  deepConversation: {
-    emoji: "💭",
-    label: "deep conversation",
-  },
-  congoLine: {
-    emoji: "👯",
-    label: "congo line",
-  },
-  pairFortune: {
-    emoji: "🔮",
-    label: "pair fortune",
-  },
-  beNPCs: {
-    emoji: "👤",
-    label: "be NPCs",
-  },
-  meetNewPeople: {
-    emoji: "🤝",
-    label: "meet new people as a team",
-  },
-};
-
-const activityStates: Record<ActivityKey, boolean> = {
-  trickOrTreat: false,
-  danceOff: false,
-  hideAndSeek: false,
-  nameSwap: false,
-  deepConversation: false,
-  congoLine: false,
-  pairFortune: false,
-  beNPCs: false,
-  meetNewPeople: false,
-};
-
-const HalloweenModal = ({
+const FreakModal = ({
   isOpen,
   setIsOpen,
   onClose, // run when modal close
@@ -110,23 +46,94 @@ const HalloweenModal = ({
   };
 
   const [step, setStep] = useState(0);
-  const [selectedMood, setSelectedMood] = useState<string | null>(null);
-  const [selectedPreferences, setSelectedPreferences] =
-    useState(activityStates);
 
-  const moods = [
-    { id: "mischievous", image: "mischievous.svg", label: "Mischievous" },
-    { id: "awkward", image: "awkward.svg", label: "Awkward" },
-    { id: "invisible", image: "invisible.svg", label: "Invisible" },
-    { id: "excited", image: "excited.svg", label: "Excited" },
+  const [goodTime, setGoodTime] = useState<null | number>(null);
+  const [experience, setExperience] = useState<null | number>(null);
+  const [unusualItem, setUnusualItem] = useState<null | number>(null);
+  const [uniqueChallange, setUniqueChallange] = useState<null | number>(null);
+
+  const goodTimesItems = [
+    {
+      id: 1,
+      label:
+        "🕺 Trying something totally out-of-the-box, like ecstatic dancing",
+    },
+    {
+      id: 2,
+      label:
+        "🍀 Finding the nearest spot with trivia or puzzles to solve together",
+    },
+    {
+      id: 3,
+      label: "👀 People-watching and imagining everyone's secret lives",
+    },
+    {
+      id: 4,
+      label: "🤝 Creating weird handshakes or silly games",
+    },
   ];
 
-  const handleToggle = (key: ActivityKey) => {
-    setSelectedPreferences((prev) => ({
-      ...prev,
-      [key]: !prev?.[key],
-    }));
-  };
+  const experiencesItems = [
+    {
+      id: 5,
+      label: "👻 Participating in a local ghost tour",
+    },
+    {
+      id: 6,
+      label: "✨ A meditation or sound bath session to just vibe",
+    },
+    {
+      id: 7,
+      label: "🧩 Testing out old-school games like hopscotch or four-square",
+    },
+    {
+      id: 8,
+      label: "🎥 Watching the most bizarre movies from different cultures",
+    },
+  ];
+
+  const unusualItems = [
+    {
+      id: 9,
+      label:
+        "🔮 A personal fortune-telling kit complete with tarot cards and a crystal ball",
+    },
+    {
+      id: 10,
+      label:
+        "📜 A vintage typewriter that lets me leave poetic notes in unexpected places",
+    },
+    {
+      id: 11,
+      label:
+        "🗝️ A treasure chest full of random trinkets I can use for scavenger hunts",
+    },
+    {
+      id: 12,
+      label: "🌙 A notebook filled with weird dreams I've had over the years",
+    },
+  ];
+
+  const uniqueChallangeItems = [
+    {
+      id: 13,
+      label:
+        "🗺️ Learn the basics of three new languages just enough to surprise people",
+    },
+    {
+      id: 14,
+      label: "🎶 Try a different genre of music every day for the month",
+    },
+    {
+      id: 15,
+      label: "📸 Take one candid photo of a stranger daily for an art project",
+    },
+    {
+      id: 16,
+      label:
+        "🧭 Walk a different route to every destination just to see where I end up",
+    },
+  ];
 
   const steps: Step[] = [
     {
@@ -141,7 +148,7 @@ const HalloweenModal = ({
             className="mx-auto"
           />
           <span className="font-sans text-primary font-semibold text-[30px] leading-[30px]">
-            Welcome to the party, [USERNAME]!
+            {`Who’s gonna match your freak?`}
           </span>
           <span className="font-sans text-primary font-bold text-[20px] leading-[20px]">
             Get matched with other guests
@@ -155,113 +162,137 @@ const HalloweenModal = ({
       enabled: () => true,
     },
     {
-      title: "How are you feeling?",
+      title: "What's your idea of a good time when meeting someone new?",
       content: (
-        <div className="grid grid-cols-[1fr_1fr] gap-10 mt-4">
-          {moods?.map((mood) => {
-            const isSelected = mood.id === selectedMood;
+        <div className="flex flex-col gap-6 mt-16">
+          {goodTimesItems?.map((item, index) => {
+            const isChecked = goodTime === item.id;
             return (
               <div
-                key={mood.id}
+                key={index}
+                className="grid grid-cols-[24px_1fr] items-center gap-2"
                 onClick={() => {
-                  setSelectedMood(mood.id);
+                  setGoodTime(item.id);
                 }}
-                className={cn(
-                  "flex flex-col gap-1 text-center p-2",
-                  isSelected &&
-                    "border border-white bg-gradient-halloween bg-[#FF9DF81A] rounded "
-                )}
               >
-                <Image
-                  alt={mood.id}
-                  src={`/images/${mood.image}`}
-                  width={140}
-                  height={140}
-                />
-                <span className="text-base text-primary font-medium">
-                  {mood.label}
+                <button
+                  className={`w-6 h-6 rounded flex items-center justify-center border ${
+                    isChecked ? "bg-white" : "border-white"
+                  }`}
+                  aria-checked={isChecked}
+                  role="checkbox"
+                >
+                  {isChecked && <Icons.Checked />}
+                </button>
+                <span className="text-sm text-primary font-medium leading-none">
+                  {item.label}
                 </span>
               </div>
             );
           })}
         </div>
       ),
-      enabled: () => selectedMood != null, // Requires mood selection
+      enabled: () => goodTime != null,
     },
     {
-      title:
-        "Looks like there are a few other lone spirits here… how do you wanna connect?",
+      title: "What kind of unusual experience are you always down for?",
       content: (
-        <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
-          {Object.entries(activityStates).map(([key, value]) => {
-            // @ts-ignore
-            const isActive = selectedPreferences?.[key] ?? false;
+        <div className="flex flex-col gap-6 mt-16">
+          {experiencesItems?.map((item, index) => {
+            const isChecked = experience === item.id;
             return (
-              <div key={key} className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={key}
-                  checked={value}
-                  onChange={() => handleToggle(key as any)}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
-                />
-                <Tag
-                  variant={isActive ? "active" : "default"}
-                  // @ts-ignore
-                  emoji={activityMappings?.[key as any]?.emoji ?? ""}
-                  onClick={() => handleToggle(key as any)}
-                  text={
-                    key.charAt(0).toUpperCase() +
-                    key.slice(1).replace(/([A-Z])/g, " $1")
-                  }
-                />
+              <div
+                key={index}
+                className="grid grid-cols-[24px_1fr] items-center gap-2"
+                onClick={() => {
+                  setExperience(item.id);
+                }}
+              >
+                <button
+                  className={`w-6 h-6 rounded flex items-center justify-center border ${
+                    isChecked ? "bg-white" : "border-white"
+                  }`}
+                  aria-checked={isChecked}
+                  role="checkbox"
+                >
+                  {isChecked && <Icons.Checked />}
+                </button>
+                <span className="text-sm text-primary font-medium leading-none">
+                  {item.label}
+                </span>
               </div>
             );
           })}
         </div>
       ),
-      enabled: () => true, //(selectedPreferences ?? [])?.length > 0,
+      enabled: () => experience != null,
     },
     {
+      title: "What unusual item would you be most excited to own?",
       content: (
-        <div className="flex flex-col gap-6">
-          <Image
-            src="/images/elephant.svg"
-            className="mx-auto rotate-[23]"
-            width={200}
-            height={136}
-            alt="elephant"
-          />
-          <span className="font-sans text-primary font-semibold text-[30px] leading-[30px]">
-            Get notified when you match!
-          </span>
-          <span className="text-base font-medium text-primary">
-            {`Let Curtis the connections elephant notify you when someone’s
-            private data intersects with your own!`}
-          </span>
+        <div className="flex flex-col gap-6 mt-16">
+          {unusualItems?.map((item, index) => {
+            const isChecked = unusualItem === item.id;
+            return (
+              <div
+                key={index}
+                className="grid grid-cols-[24px_1fr] items-center gap-2"
+                onClick={() => {
+                  setUnusualItem(item.id);
+                }}
+              >
+                <button
+                  className={`w-6 h-6 rounded flex items-center justify-center border ${
+                    isChecked ? "bg-white" : "border-white"
+                  }`}
+                  aria-checked={isChecked}
+                  role="checkbox"
+                >
+                  {isChecked && <Icons.Checked />}
+                </button>
+                <span className="text-sm text-primary font-medium leading-none">
+                  {item.label}
+                </span>
+              </div>
+            );
+          })}
         </div>
       ),
-      enabled: () => true,
+      enabled: () => unusualItem != null,
     },
     {
+      title:
+        "If you were to set a “unique” challenge for yourself this month, what would it be?",
       content: (
-        <div className="flex flex-col gap-6">
-          <Image
-            src="/images/pot.svg"
-            width={160}
-            height={160}
-            alt="pot"
-            className="mx-auto mb-10"
-          />
-          <span className="font-sans text-primary font-semibold text-[30px] leading-[30px]">
-            {`You're all set!`}
-          </span>
-          <span className="text-base font-medium text-primary">
-            {`Keep checking the event page to unlock more vaults and see your connections`}
-          </span>
+        <div className="flex flex-col gap-6 mt-16">
+          {uniqueChallangeItems?.map((item, index) => {
+            const isChecked = uniqueChallange === item.id;
+            return (
+              <div
+                key={index}
+                className="grid grid-cols-[24px_1fr] items-center gap-2"
+                onClick={() => {
+                  setUniqueChallange(item.id);
+                }}
+              >
+                <button
+                  className={`w-6 h-6 rounded flex items-center justify-center border ${
+                    isChecked ? "bg-white" : "border-white"
+                  }`}
+                  aria-checked={isChecked}
+                  role="checkbox"
+                >
+                  {isChecked && <Icons.Checked />}
+                </button>
+                <span className="text-sm text-primary font-medium leading-none">
+                  {item.label}
+                </span>
+              </div>
+            );
+          })}
         </div>
       ),
-      enabled: () => true,
+      enabled: () => uniqueChallange != null,
     },
   ];
 
@@ -270,10 +301,7 @@ const HalloweenModal = ({
   };
 
   const onHandleSubmit = () => {
-    const data = {
-      selectedMood,
-      selectedPreferences,
-    };
+    const data = { goodTime, experience, unusualItem, uniqueChallange };
     console.log("data =>", data);
   };
 
@@ -394,6 +422,6 @@ const HalloweenModal = ({
   );
 };
 
-HalloweenModal.displayName = "HalloweenModal";
+FreakModal.displayName = "FreakModal";
 
-export { HalloweenModal };
+export { FreakModal };

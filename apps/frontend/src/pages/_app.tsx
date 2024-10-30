@@ -14,6 +14,7 @@ import { DefaultSeo } from "next-seo";
 import { preMigrationSignaturePublicKeys } from "@/common/constants";
 import { fetchMessages } from "@/lib/message";
 import { cn } from "@/lib/frontend/util";
+import { usePathname } from "next/navigation";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -27,9 +28,12 @@ const dmSans = DM_Sans({
 }; */
 
 export default function MyApp({ Component, pageProps }: AppProps) {
+  const pathname = usePathname();
   const router = useRouter();
   const [isPreMigrationSessionChecked, setIsPreMigrationSessionChecked] =
     useState(false);
+
+  const isFortunePage = pathname.includes("/fortune");
 
   // Refresh messages when the page is refreshed
   useEffect(() => {
@@ -104,7 +108,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         domain={process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN!}
         trackOutboundLinks
       >
-        <OnlyMobileLayout>
+        <OnlyMobileLayout ignoreMobile={isFortunePage}>
           <Component {...pageProps} />
         </OnlyMobileLayout>
       </PlausibleProvider>
