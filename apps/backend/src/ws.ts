@@ -1,4 +1,4 @@
-import { WebSocketServer, WebSocket } from 'ws';
+import { WebSocket } from 'ws';
 import { WebSocketRequestSchema } from '@types';
 import { Controller } from "@/lib/controller";
 import {
@@ -10,10 +10,7 @@ import {
   WebSocketResponse,
   WebSocketResponseTypes
 } from "@types";
-
-const WS_PORT = process.env.WS_PORT || 8090;
-
-const wsServer = new WebSocketServer({ port: Number(WS_PORT) })
+import { wsServer } from "@/index";
 
 const controller = new Controller();
 

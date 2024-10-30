@@ -11,7 +11,7 @@ export const FRONTEND_URL =
 export const BASE_API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
-export const BASE_API_WS = process.env.NEXT_PUBLIC_API_WS || "ws://localhost:8090/socket"
+export const BASE_API_WS = process.env.NEXT_PUBLIC_API_WS || "ws://localhost:8080"
 
 export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
   strava: {
