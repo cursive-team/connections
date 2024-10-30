@@ -1,16 +1,67 @@
+import { AstrologyModal } from "@/components/modals/AstrologyModal";
 import { HalloweenModal } from "@/components/modals/HalloweenModal";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import AppLayout from "@/layouts/AppLayout";
+import { classed } from "@tw-classed/react";
 import { NextSeo } from "next-seo";
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { MdKeyboardArrowRight as ArrowRight } from "react-icons/md";
+import { MdLockOutline as LockIcon } from "react-icons/md";
+import { MdOutlineEdit as EditIcon } from "react-icons/md";
+import { FaPlus as PlusIcon } from "react-icons/fa6";
+
+interface VaultCardProps {
+  active?: boolean;
+  title?: string;
+  description?: string;
+  icon?: ReactNode;
+}
+const VaultCardBase = classed.div("flex flex-col gap-1 p-3 rounded-lg", {
+  variants: {
+    active: {
+      true: "bg-transparent border border-white",
+      false: "bg-white/10",
+    },
+  },
+  defaultVariants: {
+    active: true,
+  },
+});
+
+const VaultCard = ({
+  active = true,
+  title,
+  description,
+  icon,
+}: VaultCardProps) => {
+  return (
+    <VaultCardBase active={active}>
+      <div className="flex items-center justify-between">
+        <span className="text-primary text-sm font-normal">{title}</span>
+        {icon && <div>{icon}</div>}
+      </div>
+      <span className="text-tertiary text-sm font-normal">{description}</span>
+    </VaultCardBase>
+  );
+};
 
 export default function HalloweenPage() {
-  const [isModalOpen, setIsMenuOpen] = useState(true);
+  const [halloweenModalOpen, setHalloweenModalOpen] = useState(false);
+  const [astrologyModalOpen, setAstrologyModalOpen] = useState(false);
+
+  const halloweenSubmitted = false;
+  const astrologySubmitted = false;
   return (
     <>
       <NextSeo title="Halloween" />
-      <HalloweenModal setIsOpen={setIsMenuOpen} isOpen={isModalOpen} />
+      <HalloweenModal
+        setIsOpen={setHalloweenModalOpen}
+        isOpen={halloweenModalOpen}
+      />
+      <AstrologyModal
+        setIsOpen={setAstrologyModalOpen}
+        isOpen={astrologyModalOpen}
+      />
       <AppLayout
         showFooter={false}
         back={{
@@ -39,15 +90,49 @@ export default function HalloweenPage() {
             <span className="text-primary text-base font-sans font-bold">
               Vault entries
             </span>
-            <div className="flex flex-col">
-              <div className="flex flex-col gap-1 bg-white/10 p-3">
-                <span className="text-primary text-sm font-normal">
-                  Lorem, ipsum.
-                </span>
-                <span className="text-tertiary text-sm font-normal">
-                  Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                </span>
-              </div>
+            <div className="flex flex-col gap-2">
+              <VaultCard
+                active={halloweenSubmitted}
+                title="Spooky vibe check 🎃"
+                description="Opt-in to match with residents who have similar or complimentary goals. "
+                icon={
+                  <button
+                    onClick={() => {
+                      setHalloweenModalOpen(true);
+                    }}
+                  >
+                    {halloweenSubmitted ? (
+                      <EditIcon size={18} className="text-white" />
+                    ) : (
+                      <PlusIcon size={18} className="text-white" />
+                    )}
+                  </button>
+                }
+              />
+              <VaultCard
+                active={astrologySubmitted}
+                title="My astrology signs ✨"
+                description="You can now match with residents who have similar or complimentary goals. "
+                icon={
+                  <button
+                    onClick={() => {
+                      setAstrologyModalOpen(true);
+                    }}
+                  >
+                    {halloweenSubmitted ? (
+                      <EditIcon size={18} className="text-white" />
+                    ) : (
+                      <PlusIcon size={18} className="text-white" />
+                    )}
+                  </button>
+                }
+              />
+              <VaultCard
+                title="Lorem, ipsum."
+                description=" Lorem, ipsum dolor sit amet consectetur adipisicing elit."
+                icon={<EditIcon size={18} className="text-white" />}
+                active={false}
+              />
             </div>
           </div>
           <div className="flex flex-col gap-4">
