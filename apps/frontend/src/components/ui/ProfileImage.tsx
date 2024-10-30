@@ -41,19 +41,30 @@ export const ProfileImage = ({
   size?: number;
 }) => {
   if (!user || Object.keys(user)?.length === 0)
-    return <div className={`size-${size} rounded-full bg-quaternary/20`}></div>;
+    return (
+      <div
+        className="rounded-full bg-quaternary/20"
+        style={{ width: `${size * 4}px`, height: `${size * 4}px` }}
+      ></div>
+    );
 
   const backgroundColor = getProfileBackgroundColor(user);
 
   return (
     <div
-      className={`size-${size} rounded-full border border-quaternary/10 flex items-center justify-center`}
-      style={{ backgroundColor }}
+      className="rounded-full border border-quaternary/10 flex items-center justify-center"
+      style={{
+        backgroundColor,
+        width: `${size * 4}px`,
+        height: `${size * 4}px`,
+      }}
     >
       <span
         className={cn(
-          `font-normal text-primary ${goudyBookletter.className}`,
-          size === 16 ? "text-[25px] leading-[1]" : "text-[18px] leading-[1]"
+          `text-primary ${goudyBookletter.className}`,
+          size === 16
+            ? "text-[25px] leading-[1] font-bold"
+            : "font-normal text-[18px] leading-[1]"
         )}
       >
         {(() => {
