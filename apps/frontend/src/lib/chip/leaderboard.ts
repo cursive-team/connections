@@ -51,6 +51,7 @@ export async function updateWorkoutLeaderboardEntry(): Promise<void> {
   Object.values(locations).forEach((location) => {
     if (location.chipIssuer === ChipIssuer.EDGE_CITY_LANNA) {
       const LANNA_WORKOUT_LOCATION_IDS = [
+        "a2902af9-3843-4e5c-8af5-4e48fcc3252a", // Red Dog Gallery
         "d633cded-618a-496e-a91c-c6a4f0a4996a", // Apex Gym
         "02400216-7d81-4ffa-8ada-c498fd0a6c39", // Sting Hive Muay Thai Gym
         "298e6c59-0b87-454e-92e0-9553a826ef64", // Manasak Muay Thai Gym

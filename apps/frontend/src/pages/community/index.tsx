@@ -299,7 +299,7 @@ export default function CommunityPage() {
         image="/images/runclub_wide.png"
         title="Lanna Workouts"
         description={
-          "Check into Apex Gym, Sting Hive, or Manasak Muay Thai Gym by tapping Curtis the Connections Elephant upon visiting. Help us reach the Lanna goal of 200 workouts during the month!"
+          "Check into workouts at Red Dog Gallery, Apex Gym, Sting Hive, or Manasak Muay Thai Gym by tapping Curtis the Connections Elephant upon visiting. Help us reach the Lanna goal of 200 workouts during the month!"
         }
         leaderboardDetails={lannaTotalWorkoutDetails}
         leaderboardEntries={lannaTotalWorkoutEntries}
