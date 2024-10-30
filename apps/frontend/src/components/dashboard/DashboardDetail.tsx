@@ -21,6 +21,7 @@ interface DashboardDetailProps {
   actionItem?: React.ReactNode;
   type?: "active" | "community";
   prize?: boolean;
+  prizeRank?: number;
   returnToHome: () => void;
 }
 
@@ -36,6 +37,7 @@ export function DashboardDetail({
   actionItem,
   type = "active",
   prize = false,
+  prizeRank,
   returnToHome,
 }: DashboardDetailProps) {
   const [progress, setProgress] = useState(0);
@@ -85,12 +87,12 @@ export function DashboardDetail({
               {prize && (
                 <>
                   <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
-                    Win an NFC ring by ranking in the top 10 this week! Winners
-                    are announced at Sunday dinner.
+                    Win an NFC ring by ranking in the top {prizeRank} this week!
+                    Winners are announced at Sunday dinner.
                   </div>
                   <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
-                    Cursive team members are marked with a 💍.
-                    {prize && " They do not count in the top 10."}
+                    People who already have a ring are marked with a 💍.
+                    {prize && ` They do not count in the top ${prizeRank}.`}
                   </div>
                 </>
               )}
@@ -105,6 +107,7 @@ export function DashboardDetail({
           }}
           leaderboardDetails={leaderboardDetails}
           prize={prize}
+          markedRank={prizeRank}
         />
       </AppLayout>
     );

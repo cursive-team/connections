@@ -348,4 +348,30 @@ export const Icons: Record<string, any> = {
       </defs>
     </svg>
   ),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Mona: ({ size = 16, ...props }: any) => (
+    <svg
+      version="1.0"
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      preserveAspectRatio="xMidYMid meet"
+      {...props}
+    >
+      <g
+        transform="translate(0.000000,64.000000) scale(0.100000,-0.100000)"
+        fill="#000000"
+        stroke="none"
+      >
+        <path
+          d="M0 325 l0 -275 75 0 75 0 2 177 c3 201 4 201 55 -37 l29 -135 65 -3
+c45 -2 69 1 76 10 6 7 15 42 22 78 23 126 56 260 64 260 5 0 7 -78 6 -172 l-2
+-173 87 -3 86 -3 0 276 0 275 -135 0 c-74 0 -135 -3 -135 -7 -1 -24 -40 -246
+-44 -250 -3 -3 -7 5 -10 18 -7 34 -26 169 -29 204 l-2 30 -142 3 -143 3 0
+-276z"
+        />
+      </g>
+    </svg>
+  ),
 };

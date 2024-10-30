@@ -231,7 +231,7 @@ export default function LocationPage() {
                     are announced at Sunday dinner.
                   </div>
                   <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
-                    Cursive team members are marked with a 💍.
+                    People who already have a ring are marked with a 💍.
                     {prize && " They do not count in the top 10."}
                   </div>
                 </>
