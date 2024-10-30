@@ -71,10 +71,6 @@ export default function CommunityPage() {
     useState<LeaderboardDetails | null>(null);
   const [leaderboardEntries, setLeaderboardEntries] =
     useState<LeaderboardEntries | null>(null);
-  const [weeklyLeaderboardDetails, setWeeklyLeaderboardDetails] =
-    useState<LeaderboardDetails | null>(null);
-  const [weeklyLeaderboardEntries, setWeeklyLeaderboardEntries] =
-    useState<LeaderboardEntries | null>(null);
   const [stravaLeaderboardDetails, setStravaLeaderboardDetails] =
     useState<LeaderboardDetails | null>(null);
   const [stravaLeaderboardEntries, setStravaLeaderboardEntries] =
@@ -86,6 +82,10 @@ export default function CommunityPage() {
   const [weekOct27TapLeaderboardDetails, setWeekOct27TapLeaderboardDetails] =
     useState<LeaderboardDetails | null>(null);
   const [weekOct27TapLeaderboardEntries, setWeekOct27TapLeaderboardEntries] =
+    useState<LeaderboardEntries | null>(null);
+  const [lannaTotalWorkoutDetails, setLannaTotalWorkoutDetails] =
+    useState<LeaderboardDetails | null>(null);
+  const [lannaTotalWorkoutEntries, setLannaTotalWorkoutEntries] =
     useState<LeaderboardEntries | null>(null);
   const [cardProps, setCardProps] = useState<CommunityCardProps[]>([]);
   const [displayedDashboard, setDisplayedDashboard] =
@@ -104,14 +104,14 @@ export default function CommunityPage() {
 
       let details: LeaderboardDetails | null = null;
       let entries: LeaderboardEntries | null = null;
-      let weeklyDetails: LeaderboardDetails | null = null;
-      let weeklyEntries: LeaderboardEntries | null = null;
       let stravaDetails: LeaderboardDetails | null = null;
       let stravaEntries: LeaderboardEntries | null = null;
       let githubDetails: LeaderboardDetails | null = null;
       let githubEntries: LeaderboardEntries | null = null;
       let weekOct27TapDetails: LeaderboardDetails | null = null;
       let weekOct27TapEntries: LeaderboardEntries | null = null;
+      let lannaTotalWorkoutDetails: LeaderboardDetails | null = null;
+      let lannaTotalWorkoutEntries: LeaderboardEntries | null = null;
       try {
         details = await getUserLeaderboardDetails(
           communityIssuer,
@@ -120,14 +120,6 @@ export default function CommunityPage() {
         entries = await getTopLeaderboardEntries(
           communityIssuer,
           LeaderboardEntryType.TOTAL_TAP_COUNT
-        );
-        weeklyDetails = await getUserLeaderboardDetails(
-          communityIssuer,
-          LeaderboardEntryType.WEEK_OCT_20_TAP_COUNT
-        );
-        weeklyEntries = await getTopLeaderboardEntries(
-          communityIssuer,
-          LeaderboardEntryType.WEEK_OCT_20_TAP_COUNT
         );
         stravaDetails = await getUserLeaderboardDetails(
           communityIssuer,
@@ -153,6 +145,14 @@ export default function CommunityPage() {
           communityIssuer,
           LeaderboardEntryType.WEEK_OCT_27_TAP_COUNT
         );
+        lannaTotalWorkoutDetails = await getUserLeaderboardDetails(
+          communityIssuer,
+          LeaderboardEntryType.LANNA_TOTAL_WORKOUT_COUNT
+        );
+        lannaTotalWorkoutEntries = await getTopLeaderboardEntries(
+          communityIssuer,
+          LeaderboardEntryType.LANNA_TOTAL_WORKOUT_COUNT
+        );
       } catch (error) {
         console.error("Error getting user leaderboard info:", error);
         toast.error("Error getting user leaderboard info.");
@@ -162,14 +162,14 @@ export default function CommunityPage() {
       if (
         !details ||
         !entries ||
-        !weeklyDetails ||
-        !weeklyEntries ||
         !stravaDetails ||
         !stravaEntries ||
         !githubDetails ||
         !githubEntries ||
         !weekOct27TapDetails ||
-        !weekOct27TapEntries
+        !weekOct27TapEntries ||
+        !lannaTotalWorkoutDetails ||
+        !lannaTotalWorkoutEntries
       ) {
         toast.error("User leaderboard info not found.");
         router.push("/profile");
@@ -178,14 +178,14 @@ export default function CommunityPage() {
 
       setLeaderboardDetails(details);
       setLeaderboardEntries(entries);
-      setWeeklyLeaderboardDetails(weeklyDetails);
-      setWeeklyLeaderboardEntries(weeklyEntries);
       setStravaLeaderboardDetails(stravaDetails);
       setStravaLeaderboardEntries(stravaEntries);
       setGithubLeaderboardDetails(githubDetails);
       setGithubLeaderboardEntries(githubEntries);
       setWeekOct27TapLeaderboardDetails(weekOct27TapDetails);
       setWeekOct27TapLeaderboardEntries(weekOct27TapEntries);
+      setLannaTotalWorkoutDetails(lannaTotalWorkoutDetails);
+      setLannaTotalWorkoutEntries(lannaTotalWorkoutEntries);
 
       const props: CommunityCardProps[] = [
         {
@@ -217,6 +217,19 @@ export default function CommunityPage() {
           dashboard: DisplayedDashboard.GITHUB,
         },
         {
+          image: "/images/runclub.png",
+          title: "Lanna Workouts",
+          description: `${lannaTotalWorkoutDetails.totalValue} of 200 workouts`,
+          type: "active",
+          position: lannaTotalWorkoutDetails.userPosition,
+          totalContributors: lannaTotalWorkoutDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((lannaTotalWorkoutDetails.totalValue / 200) * 100)
+          ),
+          dashboard: DisplayedDashboard.LANNA_TOTAL_WORKOUTS,
+        },
+        {
           image: "/images/week.png",
           title: "Social Graph, Week of 10/27",
           description: `${weekOct27TapDetails.totalValue} of 500 taps`,
@@ -241,19 +254,6 @@ export default function CommunityPage() {
             Math.round((details.totalValue / 2000) * 100)
           ),
           dashboard: DisplayedDashboard.TOTAL,
-        },
-        {
-          image: "/images/week.png",
-          title: "Social Graph, Week of 10/20",
-          description: `${weeklyDetails.totalValue} of 500 taps`,
-          type: "active",
-          position: weeklyDetails.userPosition,
-          totalContributors: weeklyDetails.totalContributors,
-          progressPercentage: Math.min(
-            100,
-            Math.round((weeklyDetails.totalValue / 500) * 100)
-          ),
-          dashboard: DisplayedDashboard.WEEKLY,
         },
       ];
       setCardProps(props);
@@ -290,32 +290,20 @@ export default function CommunityPage() {
   };
 
   if (
-    weeklyLeaderboardDetails &&
-    weeklyLeaderboardEntries &&
-    displayedDashboard === DisplayedDashboard.WEEKLY
+    lannaTotalWorkoutDetails &&
+    lannaTotalWorkoutEntries &&
+    displayedDashboard === DisplayedDashboard.LANNA_TOTAL_WORKOUTS
   ) {
     return (
       <DashboardDetail
-        image="/images/week-wide.png"
-        title="Social Graph, Week of 10/20"
+        image="/images/runclub_wide.png"
+        title="Lanna Workouts"
         description={
-          <div className="flex flex-col gap-4">
-            <span>
-              Weekly tapping challenge to grow the Lanna Social Graph.{" "}
-              <b>
-                The top 10 contributors will win an exclusive Cursive NFC ring!
-              </b>
-            </span>
-            <span>
-              Make sure your tapping is natural, we want to incentive evangelism
-              of the app experience and genuine connection. Not just tapping for
-              the sake of tapping.
-            </span>
-          </div>
+          "Check into Apex Gym, Sting Hive, or Manasak Muay Thai Gym by tapping Curtis the Connections Elephant upon visiting. Help us reach the Lanna goal of 200 workouts during the month!"
         }
-        leaderboardDetails={weeklyLeaderboardDetails}
-        leaderboardEntries={weeklyLeaderboardEntries}
-        goal={500}
+        leaderboardDetails={lannaTotalWorkoutDetails}
+        leaderboardEntries={lannaTotalWorkoutEntries}
+        goal={200}
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         type="active"
