@@ -210,6 +210,19 @@ export default function CommunityPage() {
 
       const props: CommunityCardProps[] = [
         {
+          image: "/images/week.png",
+          title: "Social Graph, Week of 10/27",
+          description: `${weekOct27TapDetails.totalValue} of 500 taps`,
+          type: "active",
+          position: weekOct27TapDetails.userPosition,
+          totalContributors: weekOct27TapDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((weekOct27TapDetails.totalValue / 500) * 100)
+          ),
+          dashboard: DisplayedDashboard.WEEKLY_TAPS_OCT_27,
+        },
+        {
           image: "/images/runclub.png",
           title: "Lanna Run Club",
           description: `${(stravaDetails.totalValue / 1000).toFixed(
@@ -249,19 +262,6 @@ export default function CommunityPage() {
             Math.round((lannaTotalWorkoutDetails.totalValue / 200) * 100)
           ),
           dashboard: DisplayedDashboard.LANNA_TOTAL_WORKOUTS,
-        },
-        {
-          image: "/images/week.png",
-          title: "Social Graph, Week of 10/27",
-          description: `${weekOct27TapDetails.totalValue} of 500 taps`,
-          type: "active",
-          position: weekOct27TapDetails.userPosition,
-          totalContributors: weekOct27TapDetails.totalContributors,
-          progressPercentage: Math.min(
-            100,
-            Math.round((weekOct27TapDetails.totalValue / 500) * 100)
-          ),
-          dashboard: DisplayedDashboard.WEEKLY_TAPS_OCT_27,
         },
         {
           image: "/images/hand.png",
@@ -613,12 +613,6 @@ export default function CommunityPage() {
                   </div>
                 );
               })}
-            </div>
-            <div className="flex flex-col gap-2">
-              <span className="text-base font-bold text-primary font-sans">
-                Coming soon
-              </span>
-              <ComingSoonCommunityGoals />
             </div>
             <div className="flex flex-col gap-2">
               <span className="text-base font-bold text-primary font-sans">
