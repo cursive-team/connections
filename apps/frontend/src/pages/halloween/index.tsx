@@ -6,7 +6,6 @@ import { classed } from "@tw-classed/react";
 import { NextSeo } from "next-seo";
 import React, { ReactNode, useState } from "react";
 import { MdKeyboardArrowRight as ArrowRight } from "react-icons/md";
-import { MdLockOutline as LockIcon } from "react-icons/md";
 import { MdOutlineEdit as EditIcon } from "react-icons/md";
 import { FaPlus as PlusIcon } from "react-icons/fa6";
 
@@ -28,7 +27,7 @@ const VaultCardBase = classed.div("flex flex-col gap-1 p-3 rounded-lg", {
   },
 });
 
-const VaultCard = ({
+export const VaultCard = ({
   active = true,
   title,
   description,

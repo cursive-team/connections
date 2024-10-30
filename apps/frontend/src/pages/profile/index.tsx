@@ -152,7 +152,7 @@ const ProfilePage: React.FC = () => {
                 {!user.userData.tensionsRating && (
                   <Card.Base
                     variant="gray"
-                    className="p-4 !rounded-lg"
+                    className="p-4 !rounded-lg !bg-transparent !border !border-white"
                     onClick={() => {
                       logClientEvent("start_tensions", {});
                       router.push("/tensions");
@@ -161,12 +161,12 @@ const ProfilePage: React.FC = () => {
                     <div className="flex flex-col gap-[10px]">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <Icons.Clip />
+                          <Icons.Clip className="text-white" />
                           <span className="text-sm text-primary font-medium">
                             Tensions 🪢
                           </span>
                         </div>
-                        <Icons.Plus />
+                        <Icons.Plus className="text-white" />
                       </div>
                       <span className="text-xs font-medium text-tertiary">
                         Practice your decision making skills by playing the
@@ -208,8 +208,8 @@ const ProfilePage: React.FC = () => {
                   </div>
                 )}
                 {user.userData.tensionsRating && (
-                  <Card.Base
-                    className="p-4 !rounded-lg"
+                  <div
+                    className="p-4 !rounded-lg !bg-transparent !border !border-white"
                     onClick={() => {
                       logClientEvent("edit_tensions", {});
                       router.push("/tensions");
@@ -218,20 +218,20 @@ const ProfilePage: React.FC = () => {
                     <div className="flex flex-col gap-[10px]">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <Icons.Clip />
+                          <Icons.Clip className="text-white" />
                           <span className="text-sm text-primary font-medium">
                             Tensions 🪢
                           </span>
                         </div>
-                        <Icons.Pencil />
+                        <Icons.Pencil className="text-white" />
                       </div>
-                      <span className="text-xs font-medium text-tertiary">
+                      <span className="text-xs font-medium text-white/50">
                         Practice your decision making skills by playing the
                         Tensions game, match with residents who hold opposing
                         views to learn new perspectives.
                       </span>
                     </div>
-                  </Card.Base>
+                  </div>
                 )}
               </div>
             </div>
