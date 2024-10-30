@@ -36,7 +36,7 @@ wsClient.onopen = async () => {
   }
 };
 
-// TODO: solve "TS2702: WebSocket only refers to a type, but is being used as a namespace here."
+// @ts-expect-error : solve "TS2702: WebSocket only refers to a type, but is being used as a namespace here."
 wsClient.onmessage = async (e: WebSocket.MessageEvent) => {
   if (!e || !e.data) {
     console.warn("Message is invalid")
