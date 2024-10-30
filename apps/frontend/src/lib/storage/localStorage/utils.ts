@@ -8,6 +8,7 @@ export const saveToLocalStorage = (key: string, value: string): void => {
   localStorage.setItem(key, value);
 };
 
+// uncaughtException: ReferenceError: localStorage is not defined
 export const getFromLocalStorage = (key: string): string | null => {
   return localStorage.getItem(key);
 };
