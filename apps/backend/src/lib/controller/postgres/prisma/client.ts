@@ -11,6 +11,7 @@ import {
 import {
   AuthToken,
   BackupData,
+  ChipIssuer,
   CreateBackupData,
   CreateMessageData,
   MessageData,
@@ -98,4 +99,20 @@ export class PrismaPostgresClient implements iPostgresClient {
 
   // @ts-expect-error (ts2391)
   UpdateDataHashes(dataHashes: UpdateDataHash[]): Promise<void>;
+
+  // @ts-expect-error (ts2391)
+  GetAllUserHashesByChipAndLocation(
+    chipIssuer: ChipIssuer,
+    locationId: string
+  ): Promise<Record<string, string[]>>;
+
+  // @ts-expect-error (ts2391)
+  CreateDataHashMatch(
+    usernameA: string,
+    usernameB: string,
+    connectionScore: number
+  ): Promise<void>;
+
+  // @ts-expect-error (ts2391)
+  GetAllDataHashMatches(): Promise<DataHashMatch[]>;
 }

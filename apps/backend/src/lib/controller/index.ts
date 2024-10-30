@@ -10,6 +10,7 @@ import {
   CreateDataHash,
   DataHash,
   UpdateDataHash,
+  DataHashMatch,
 } from "@/lib/controller/postgres/types";
 import {
   AuthToken,
@@ -238,6 +239,32 @@ export class Controller {
 
   UpdateDataHashes(dataHashes: UpdateDataHash[]): Promise<void> {
     return this.postgresClient.UpdateDataHashes(dataHashes);
+  }
+
+  GetAllUserHashesByChipAndLocation(
+    chipIssuer: ChipIssuer,
+    locationId: string
+  ): Promise<Record<string, string[]>> {
+    return this.postgresClient.GetAllUserHashesByChipAndLocation(
+      chipIssuer,
+      locationId
+    );
+  }
+
+  CreateDataHashMatch(
+    usernameA: string,
+    usernameB: string,
+    connectionScore: number
+  ): Promise<void> {
+    return this.postgresClient.CreateDataHashMatch(
+      usernameA,
+      usernameB,
+      connectionScore
+    );
+  }
+
+  GetAllDataHashMatches(): Promise<DataHashMatch[]> {
+    return this.postgresClient.GetAllDataHashMatches();
   }
 
   // OAuth

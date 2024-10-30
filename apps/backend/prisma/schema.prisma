@@ -115,3 +115,11 @@ model PrivateDataHash {
   secretHash       String? // Hash of the secret
   createdAt        DateTime @default(now())
 }
+
+model DataHashMatch {
+  id               String   @id @default(uuid())
+  usernameA        String
+  usernameB        String
+  connectionScore  Decimal
+  createdAt        DateTime @default(now())
+}

@@ -100,6 +100,13 @@ export const UpdateDataHashSchema = z.object({
   secretHash: z.string(),
 });
 
+export const DataHashMatchSchema = z.object({
+  usernameA: UsernameSchema,
+  usernameB: UsernameSchema,
+  connectionScore: z.number(),
+  createdAt: z.date(),
+});
+
 export type User = z.infer<typeof UserSchema>;
 export type UserCreateRequest = z.infer<typeof UserCreateRequestSchema>;
 export type Backup = z.infer<typeof BackupSchema>;
@@ -111,3 +118,4 @@ export type AuthTokenCreateRequest = z.infer<
 export type DataHash = z.infer<typeof DataHashSchema>;
 export type CreateDataHash = z.infer<typeof CreateDataHashSchema>;
 export type UpdateDataHash = z.infer<typeof UpdateDataHashSchema>;
+export type DataHashMatch = z.infer<typeof DataHashMatchSchema>;
