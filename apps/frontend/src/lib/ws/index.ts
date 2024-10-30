@@ -17,6 +17,7 @@ import { getUserAndSession } from "@/lib/storage/localStorage/user";
 import { getUserSigPubKey } from "@/lib/user";
 import { storage } from "@/lib/storage";
 
+
 export const wsClient: WebSocket = new WebSocket(`${BASE_API_WS}`);
 
 wsClient.onopen = async () => {
@@ -37,14 +38,14 @@ wsClient.onopen = async () => {
 };
 
 // @ts-expect-error : solve "TS2702: WebSocket only refers to a type, but is being used as a namespace here."
-wsClient.onmessage = async (e: WebSocket.MessageEvent) => {
-  if (!e || !e.data) {
+wsClient.onmessage = async (ev: WebSocket.MessageEvent) => {
+  if (!ev || !ev.data) {
     console.warn("Message is invalid")
     return;
   }
 
   try {
-    const resp: WebSocketResponse = WebSocketResponseSchema.parse(JSON.parse(e.data));
+    const resp: WebSocketResponse = WebSocketResponseSchema.parse(JSON.parse(ev.data));
 
     switch (resp.type) {
       case WebSocketResponseTypes.MSG:
