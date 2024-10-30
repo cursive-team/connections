@@ -5,6 +5,7 @@ import { TelegramDataSchema } from "./telegramData";
 import { LannaDataSchema, TensionsRatingSchema } from "./lannaData";
 import { StravaDataSchema } from "./stravaData";
 import { GithubDataSchema } from "./githubData";
+import { LannaHalloweenDataSchema } from "./lannaHalloweenData";
 
 export const UserDataSchema = z.object({
   username: z.string(),
@@ -19,6 +20,7 @@ export const UserDataSchema = z.object({
   tensionsRating: nullToUndefined(TensionsRatingSchema),
   strava: nullToUndefined(StravaDataSchema),
   github: nullToUndefined(GithubDataSchema),
+  lannaHalloween: nullToUndefined(LannaHalloweenDataSchema),
 });
 
 export type UserData = z.infer<typeof UserDataSchema>;

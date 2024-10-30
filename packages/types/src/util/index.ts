@@ -29,3 +29,20 @@ export const UpdatableFieldSchema = z.object({
 });
 
 export type UpdatableField = z.infer<typeof UpdatableFieldSchema>;
+
+// Metadata about a hashed field
+export const HashDataSchema = z.object({
+  hashPrefix: z.string(),
+  enclavePublicKeyHash: z.string(),
+  lastUpdated: z.coerce.date(),
+});
+
+export type HashData = z.infer<typeof HashDataSchema>;
+
+// Represents a string field that can be privately hashed
+export const HashableFieldSchema = z.object({
+  value: z.string(),
+  hashData: nullToUndefined(HashDataSchema),
+});
+
+export type HashableField = z.infer<typeof HashableFieldSchema>;

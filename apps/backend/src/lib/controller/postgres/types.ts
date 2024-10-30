@@ -1,4 +1,4 @@
-import { EmailSchema, UsernameSchema } from "@types";
+import { ChipIssuerSchema, EmailSchema, UsernameSchema } from "@types";
 import { z } from "zod";
 
 // These values represent controller-level types, e.g. prisma types will be converted to these
@@ -72,6 +72,34 @@ export const AuthTokenCreateRequestSchema = z.object({
 
 // AuthToken is a shared type
 
+export const DataHashSchema = z.object({
+  id: z.string(),
+  username: UsernameSchema,
+  chipIssuer: ChipIssuerSchema.nullable(),
+  locationId: z.string().nullable(),
+  dataIdentifier: z.string(),
+  encryptedInput: z.string(),
+  enclavePublicKey: z.string(),
+  dataHash: z.string().nullable(),
+  secretHash: z.string().nullable(),
+  createdAt: z.date(),
+});
+
+export const CreateDataHashSchema = z.object({
+  username: UsernameSchema,
+  chipIssuer: ChipIssuerSchema.nullable(),
+  locationId: z.string().nullable(),
+  dataIdentifier: z.string(),
+  encryptedInput: z.string(),
+  enclavePublicKey: z.string(),
+});
+
+export const UpdateDataHashSchema = z.object({
+  id: z.string(),
+  dataHash: z.string(),
+  secretHash: z.string(),
+});
+
 export type User = z.infer<typeof UserSchema>;
 export type UserCreateRequest = z.infer<typeof UserCreateRequestSchema>;
 export type Backup = z.infer<typeof BackupSchema>;
@@ -80,3 +108,6 @@ export type SigninToken = z.infer<typeof SigninTokenSchema>;
 export type AuthTokenCreateRequest = z.infer<
   typeof AuthTokenCreateRequestSchema
 >;
+export type DataHash = z.infer<typeof DataHashSchema>;
+export type CreateDataHash = z.infer<typeof CreateDataHashSchema>;
+export type UpdateDataHash = z.infer<typeof UpdateDataHashSchema>;

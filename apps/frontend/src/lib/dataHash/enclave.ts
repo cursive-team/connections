@@ -14,8 +14,8 @@ export const verifyAttestationDoc = async (
   // Display PCRs
   Object.entries(pcrs as Record<number, Uint8Array>).forEach(([index, pcr]) => {
     if (!pcr) throw new Error(`Wrong PCR${index}`);
-    const docPcr = Buffer.from(pcr).toString("hex");
-    console.log(`PCR${index}: ${docPcr}`);
+    // const docPcr = Buffer.from(pcr).toString("hex");
+    // console.log(`PCR${index}: ${docPcr}`);
   });
 
   // This is the expected application PCR of the enclave image

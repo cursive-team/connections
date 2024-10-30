@@ -22,6 +22,7 @@ import("@/lib/controller/postgres/prisma/backup/backup");
 import("@/lib/controller/postgres/prisma/auth/authToken");
 import("@/lib/controller/postgres/prisma/auth/signinToken");
 import("@/lib/controller/postgres/prisma/message/message");
+import("@/lib/controller/postgres/prisma/dataHash/index");
 
 // Should follow iPostgresClient implementation
 export class PrismaPostgresClient implements iPostgresClient {
@@ -88,4 +89,13 @@ export class PrismaPostgresClient implements iPostgresClient {
 
   // @ts-expect-error (ts2391)
   CreateMessages(messages: CreateMessageData[]): Promise<void>;
+
+  // @ts-expect-error (ts2391)
+  CreatePrivateDataHashes(dataHashes: CreateDataHash[]): Promise<void>;
+
+  // @ts-expect-error (ts2391)
+  GetUnhashedDataHashes(): Promise<DataHash[]>;
+
+  // @ts-expect-error (ts2391)
+  UpdateDataHashes(dataHashes: UpdateDataHash[]): Promise<void>;
 }

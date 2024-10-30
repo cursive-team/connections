@@ -7,6 +7,9 @@ import {
   BackupCreateRequest,
   AuthTokenCreateRequest,
   SigninToken,
+  CreateDataHash,
+  DataHash,
+  UpdateDataHash,
 } from "@/lib/controller/postgres/types";
 import {
   AuthToken,
@@ -222,6 +225,19 @@ export class Controller {
 
   EmailSigninToken(signinToken: SigninToken): Promise<void> {
     return this.emailClient.EmailSigninToken(signinToken);
+  }
+
+  // Data Hash
+  CreatePrivateDataHashes(dataHashes: CreateDataHash[]): Promise<void> {
+    return this.postgresClient.CreatePrivateDataHashes(dataHashes);
+  }
+
+  GetUnhashedDataHashes(): Promise<DataHash[]> {
+    return this.postgresClient.GetUnhashedDataHashes();
+  }
+
+  UpdateDataHashes(dataHashes: UpdateDataHash[]): Promise<void> {
+    return this.postgresClient.UpdateDataHashes(dataHashes);
   }
 
   // OAuth
