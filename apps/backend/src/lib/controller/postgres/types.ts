@@ -16,6 +16,7 @@ export const UserSchema = z.object({
   registrationNumber: z.number(),
   registeredWithPasskey: z.boolean(),
   passkeyAuthPublicKey: z.string().nullable(),
+  notificationUsername: z.string().nullable(),
   createdAt: z.date(),
 });
 
@@ -90,7 +91,7 @@ export const CreateDataHashSchema = z.object({
   chipIssuer: ChipIssuerSchema.nullable(),
   locationId: z.string().nullable(),
   dataIdentifier: z.string(),
-  encryptedInput: z.string(),
+  encryptedInput: z.string().nullable(),
   enclavePublicKey: z.string(),
 });
 
@@ -102,7 +103,9 @@ export const UpdateDataHashSchema = z.object({
 
 export const DataHashMatchSchema = z.object({
   usernameA: UsernameSchema,
+  notificationUsernameA: z.string().nullable(),
   usernameB: UsernameSchema,
+  notificationUsernameB: z.string().nullable(),
   connectionScore: z.number(),
   createdAt: z.date(),
 });

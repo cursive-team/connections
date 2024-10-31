@@ -11,7 +11,10 @@ import {
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { SupportToast } from "@/components/ui/SupportToast";
-import { ERROR_SUPPORT_CONTACT } from "@/constants";
+import {
+  ERROR_SUPPORT_CONTACT,
+  LANNA_HALLOWEEN_LOCATION_IDS_ARRAY,
+} from "@/constants";
 
 const TapPage: React.FC = () => {
   const router = useRouter();
@@ -68,7 +71,20 @@ const TapPage: React.FC = () => {
 
             // Save tap to populate modal upon redirect
             await storage.saveTapInfo({ tapParams, tapResponse: response });
-            router.push(`/locations/${response.locationTap.locationId}`);
+
+            // Routes for halloween party
+            if (
+              LANNA_HALLOWEEN_LOCATION_IDS_ARRAY.includes(
+                response.locationTap.locationId
+              )
+            ) {
+              logClientEvent("tap-halloween-chip", {
+                id: response.locationTap.locationId,
+              });
+              router.push(`/halloween`);
+            } else {
+              router.push(`/locations/${response.locationTap.locationId}`);
+            }
             return;
           } else {
             // Process valid user taps
@@ -100,7 +116,7 @@ const TapPage: React.FC = () => {
 
             if (user.userData.username === response.userTap.ownerUsername) {
               logClientEvent("tap-chip-same-user", {});
-              router.push("/community");
+              router.push("/halloween");
               return;
             }
 

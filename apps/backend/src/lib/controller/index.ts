@@ -254,12 +254,16 @@ export class Controller {
   CreateDataHashMatch(
     usernameA: string,
     usernameB: string,
-    connectionScore: number
+    connectionScore: number,
+    notificationUsernameA: string | undefined,
+    notificationUsernameB: string | undefined
   ): Promise<void> {
     return this.postgresClient.CreateDataHashMatch(
       usernameA,
       usernameB,
-      connectionScore
+      connectionScore,
+      notificationUsernameA,
+      notificationUsernameB
     );
   }
 

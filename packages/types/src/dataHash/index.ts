@@ -3,7 +3,7 @@ import { ChipIssuerSchema } from "../chip";
 
 export const DataHashInputSchema = z.object({
   dataIdentifier: z.string(),
-  encryptedInput: z.string(),
+  encryptedInput: z.string().nullable(),
 });
 
 export type DataHashInput = z.infer<typeof DataHashInputSchema>;
