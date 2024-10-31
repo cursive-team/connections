@@ -57,7 +57,6 @@ export default function FortunePage() {
           new Date().getTime() - firstFetchCompleteTime.getTime() > 15000
         ) {
           setPairConnection(null);
-          setFirstFetchCompleteTime(null);
           return;
         }
 
