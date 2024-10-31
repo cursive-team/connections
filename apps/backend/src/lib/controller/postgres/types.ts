@@ -90,7 +90,7 @@ export const CreateDataHashSchema = z.object({
   chipIssuer: ChipIssuerSchema.nullable(),
   locationId: z.string().nullable(),
   dataIdentifier: z.string(),
-  encryptedInput: z.string(),
+  encryptedInput: z.string().nullable(),
   enclavePublicKey: z.string(),
 });
 

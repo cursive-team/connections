@@ -12,9 +12,55 @@ import { ChipIssuer } from "@types";
 PrismaPostgresClient.prototype.CreatePrivateDataHashes = async function (
   dataHashes: CreateDataHash[]
 ): Promise<void> {
-  await this.prismaClient.privateDataHash.createMany({
-    data: dataHashes,
-  });
+  // Process each data hash sequentially
+  for (const dataHash of dataHashes) {
+    const existingEntry = await this.prismaClient.privateDataHash.findFirst({
+      where: {
+        dataIdentifier: dataHash.dataIdentifier,
+      },
+    });
+
+    // If the entry exists, update or delete it
+    if (existingEntry) {
+      if (dataHash.encryptedInput === null) {
+        // Delete if encryptedInput is null
+        await this.prismaClient.privateDataHash.delete({
+          where: {
+            id: existingEntry.id,
+          },
+        });
+      } else {
+        // Update existing entry
+        await this.prismaClient.privateDataHash.update({
+          where: {
+            id: existingEntry.id,
+          },
+          data: {
+            username: dataHash.username,
+            chipIssuer: dataHash.chipIssuer,
+            locationId: dataHash.locationId,
+            encryptedInput: dataHash.encryptedInput,
+            enclavePublicKey: dataHash.enclavePublicKey,
+            dataHash: null, // Reset data hash
+            secretHash: null, // Reset secret hash
+            createdAt: new Date(),
+          },
+        });
+      }
+    } else if (dataHash.encryptedInput !== null) {
+      // Create new entry
+      await this.prismaClient.privateDataHash.create({
+        data: {
+          username: dataHash.username,
+          chipIssuer: dataHash.chipIssuer,
+          locationId: dataHash.locationId,
+          dataIdentifier: dataHash.dataIdentifier,
+          encryptedInput: dataHash.encryptedInput,
+          enclavePublicKey: dataHash.enclavePublicKey,
+        },
+      });
+    }
+  }
 };
 
 PrismaPostgresClient.prototype.GetUnhashedDataHashes =

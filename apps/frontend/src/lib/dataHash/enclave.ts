@@ -1,5 +1,21 @@
+import { BASE_API_URL } from "@/config";
 import { decode } from "cbor-x";
 import forge from "node-forge";
+
+// Get enclave attestation document from API and derive public key
+export const getEnclavePublicKey = async (): Promise<string> => {
+  // Get enclave attestation
+  const getAttestationResponse = await fetch(
+    `${BASE_API_URL}/data_hash/get_enclave_attestation`
+  );
+  if (!getAttestationResponse.ok) {
+    throw new Error(`HTTP error! status: ${getAttestationResponse.status}`);
+  }
+  const data = await getAttestationResponse.json();
+  const pubKey = await verifyAttestationDoc(data.attestationDoc, true);
+
+  return pubKey;
+};
 
 // Decode an AWS Nitro attestation document, verify the PCR2 value and return the PEM encoded public key
 export const verifyAttestationDoc = async (
