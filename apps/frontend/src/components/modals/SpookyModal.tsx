@@ -48,7 +48,12 @@ type ActivityKey =
   | "chillAndVibe"
   | "introverse";
 
-const activityMappings: Record<ActivityKey, any> = {
+type Activity = {
+  emoji: string,
+  label: string
+};
+
+const activityMappings: Record<ActivityKey, Activity> = {
   deepConversation: {
     emoji: "💭",
     label: "have deep conversation",

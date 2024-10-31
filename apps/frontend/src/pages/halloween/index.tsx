@@ -179,8 +179,9 @@ export default function HalloweenPage() {
             <span className="text-tertiary text-base font-sans font-normal">
               You have intersecting entries in your vaults. Message to meet up!
             </span>
-            <div className="flex gap-4 items-center">
-              <ProfileImage user={null as any} />
+            {
+              user ? <div className="flex gap-4 items-center">
+              <ProfileImage user={user.userData}/>
               <div className="flex flex-col">
                 <span className="text-sm font-medium font-sans text-primary">
                   Lorem, ipsum dolor.
@@ -189,8 +190,9 @@ export default function HalloweenPage() {
                   @username
                 </span>
               </div>
-              <ArrowRight size={18} className="text-white ml-auto" />
-            </div>
+              <ArrowRight size={18} className="text-white ml-auto"/>
+            </div> : <></>
+            }
           </div>
         </div>
       </AppLayout>
