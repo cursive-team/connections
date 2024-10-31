@@ -3,12 +3,14 @@ import { ProfileImage } from "@/components/ui/ProfileImage";
 import AppLayout from "@/layouts/AppLayout";
 import { classed } from "@tw-classed/react";
 import { NextSeo } from "next-seo";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { MdKeyboardArrowRight as ArrowRight } from "react-icons/md";
 import { MdOutlineEdit as EditIcon } from "react-icons/md";
 import { FaPlus as PlusIcon } from "react-icons/fa6";
 import { FreakModal } from "@/components/modals/FreakModal";
 import { SpookyModal } from "@/components/modals/SpookyModal";
+import { User } from "@/lib/storage/types";
+import { storage } from "@/lib/storage";
 
 interface VaultCardProps {
   active?: boolean;
@@ -49,7 +51,24 @@ export default function HalloweenPage() {
   const [halloweenModalOpen, setHalloweenModalOpen] = useState(false);
   const [astrologyModalOpen, setAstrologyModalOpen] = useState(false);
   const [freakModalOpen, setFreakModalOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await storage.getUser();
+      if (!user) {
+        return;
+      }
+      setUser(user)
+    };
+
+    getUser();
+  }, []);
+
+  let username = "";
+  if (user?.userData?.username) {
+    username = " " + user?.userData?.username;
+  }
   const halloweenSubmitted = false;
   const astrologySubmitted = false;
   const freakSubmitted = false;
@@ -59,10 +78,12 @@ export default function HalloweenPage() {
       <SpookyModal
         setIsOpen={setHalloweenModalOpen}
         isOpen={halloweenModalOpen}
+        username={username}
       />
       <AstrologyModal
         setIsOpen={setAstrologyModalOpen}
         isOpen={astrologyModalOpen}
+        username={username}
       />
       <FreakModal setIsOpen={setFreakModalOpen} isOpen={freakModalOpen} />
       <AppLayout

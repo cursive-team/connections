@@ -34,68 +34,69 @@ export interface ModalProps
   closable?: boolean;
   onClose?: () => void;
   withBackButton?: boolean;
+  username: string;
 }
 
 type ActivityKey =
-  | "trickOrTreat"
-  | "danceOff"
-  | "hideAndSeek"
-  | "nameSwap"
   | "deepConversation"
+  | "danceOff"
+  | "talkWork"
   | "congoLine"
-  | "pairFortune"
   | "beNPCs"
-  | "meetNewPeople";
+  | "pairFortune"
+  | "teamUp"
+  | "chillAndVibe"
+  | "introverse";
 
 const activityMappings: Record<ActivityKey, any> = {
-  trickOrTreat: {
-    emoji: "🔍",
-    label: "trick or treat",
+  deepConversation: {
+    emoji: "💭",
+    label: "have deep conversation",
   },
   danceOff: {
     emoji: "🕺",
     label: "dance off",
   },
-  hideAndSeek: {
-    emoji: "🙈",
-    label: "hide & seek",
-  },
-  nameSwap: {
-    emoji: "👑",
-    label: "name swap",
-  },
-  deepConversation: {
-    emoji: "💭",
-    label: "deep conversation",
+  talkWork: {
+    emoji: "💼",
+    label: "talk about work"
   },
   congoLine: {
     emoji: "👯",
-    label: "congo line",
-  },
-  pairFortune: {
-    emoji: "🔮",
-    label: "pair fortune",
+    label: "form a congo line",
   },
   beNPCs: {
     emoji: "👤",
     label: "be NPCs",
   },
-  meetNewPeople: {
-    emoji: "🤝",
-    label: "meet new people as a team",
+  pairFortune: {
+    emoji: "🔮",
+    label: "get a joint fortune",
   },
+  teamUp: {
+    emoji: "👼",
+    label: "stick together at the party"
+  },
+  chillAndVibe: {
+    emoji: "😎",
+    label: "chill and vibe"
+  },
+  introverse: {
+    emoji: "🎴",
+    label: "play the Introverse card game"
+  }
 };
 
 const activityStates: Record<ActivityKey, boolean> = {
-  trickOrTreat: false,
-  danceOff: false,
-  hideAndSeek: false,
-  nameSwap: false,
   deepConversation: false,
+  danceOff: false,
+  talkWork: false,
   congoLine: false,
-  pairFortune: false,
   beNPCs: false,
-  meetNewPeople: false,
+  pairFortune: false,
+  teamUp: true,
+  chillAndVibe: false,
+  introverse: false,
 };
 
 const SpookyModal = ({
@@ -103,6 +104,7 @@ const SpookyModal = ({
   setIsOpen,
   onClose, // run when modal close
   withBackButton = false, // show back button when active
+  username = "",
 }: ModalProps) => {
   const onCloseModal = () => {
     onClose?.();
@@ -141,7 +143,7 @@ const SpookyModal = ({
             className="mx-auto"
           />
           <span className="font-sans text-primary font-semibold text-[30px] leading-[30px]">
-            Welcome to the party, [USERNAME]!
+            Welcome to the party{username}!
           </span>
           <span className="font-sans text-primary font-bold text-[20px] leading-[20px]">
             Get matched with other guests
@@ -210,10 +212,8 @@ const SpookyModal = ({
                   // @ts-ignore
                   emoji={activityMappings?.[key as any]?.emoji ?? ""}
                   onClick={() => handleToggle(key as any)}
-                  text={
-                    key.charAt(0).toUpperCase() +
-                    key.slice(1).replace(/([A-Z])/g, " $1")
-                  }
+                  // @ts-ignore
+                  text={activityMappings?.[key as any]?.label ?? ""}
                 />
               </div>
             );
@@ -236,7 +236,7 @@ const SpookyModal = ({
             Get notified when you match!
           </span>
           <span className="text-base font-medium text-primary">
-            {`Let Curtis the connections elephant notify you when someone’s
+            {`Let Curtis the Connections Elephant notify you when someone’s
             private data intersects with your own!`}
           </span>
         </div>

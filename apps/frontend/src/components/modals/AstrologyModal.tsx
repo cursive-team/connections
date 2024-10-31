@@ -33,6 +33,7 @@ export interface ModalProps
   closable?: boolean;
   onClose?: () => void;
   withBackButton?: boolean;
+  username: string;
 }
 
 type Zodiak =
@@ -49,7 +50,12 @@ type Zodiak =
   | "scorpio"
   | "sagittarius";
 
-const zodiacMappings: Record<Zodiak, any> = {
+type Sign = {
+  emoji: string,
+  label: string
+}
+
+const zodiacMappings: Record<Zodiak, Sign> = {
   capricorn: {
     emoji: "🐐",
     label: "Capricorn",
@@ -100,26 +106,12 @@ const zodiacMappings: Record<Zodiak, any> = {
   },
 };
 
-const zodiacStates: Record<Zodiak, boolean> = {
-  capricorn: false,
-  aquarius: false,
-  pisces: false,
-  aries: false,
-  taurus: false,
-  gemini: false,
-  cancer: false,
-  leo: false,
-  virgo: false,
-  libra: false,
-  scorpio: false,
-  sagittarius: false,
-};
-
 const AstrologyModal = ({
   isOpen,
   setIsOpen,
   onClose, // run when modal close
   withBackButton = false, // show back button when active
+  username = "",
 }: ModalProps) => {
   const onCloseModal = () => {
     onClose?.();
@@ -129,7 +121,7 @@ const AstrologyModal = ({
   const [step, setStep] = useState(0);
   const [sunSign, setSunSign] = useState(null);
   const [moonSign, setMoonSign] = useState(null);
-  const [risignSign, setRisingSign] = useState(null);
+  const [risingSign, setRisingSign] = useState(null);
   const [marsSign, setMarsSign] = useState(null);
   const [venusSign, setVenusSign] = useState(null);
   const [mercurySign, setMercurySign] = useState(null);
@@ -147,7 +139,7 @@ const AstrologyModal = ({
             className="mx-auto"
           />
           <span className="font-sans text-primary font-semibold text-[30px] leading-[30px]">
-            Welcome to the party, [USERNAME]!
+            Welcome to the party{username}!
           </span>
           <span className="font-sans text-primary font-bold text-[20px] leading-[20px]">
             Get matched with other guests
@@ -164,8 +156,8 @@ const AstrologyModal = ({
       content: (
         <div className="flex flex-col gap-1">
           <span className="text-center text-lg text-white font-bold">
-            🌞 <br /> {`What's your  ?`}{" "}
-            <span className="text-[#FF9DF8]">sun</span> sign
+            🌞 <br /> {"What's your "}
+            <span className="text-[#FF9DF8]">sun</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
             {Object.entries(zodiacMappings).map(([key, value]) => {
@@ -176,7 +168,7 @@ const AstrologyModal = ({
                   <input
                     type="checkbox"
                     id={key}
-                    checked={value}
+                    checked={isActive}
                     onChange={() => setSunSign(key as any)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                   />
@@ -202,8 +194,8 @@ const AstrologyModal = ({
       content: (
         <div className="flex flex-col gap-1">
           <span className="text-center text-lg text-white font-bold">
-            🌜 <br /> {`What's your  ?`}{" "}
-            <span className="text-[#FF9DF8]">moon</span> sign
+            🌜 <br /> {"What's your "}
+            <span className="text-[#FF9DF8]">moon</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
             {Object.entries(zodiacMappings).map(([key, value]) => {
@@ -214,7 +206,7 @@ const AstrologyModal = ({
                   <input
                     type="checkbox"
                     id={key}
-                    checked={value}
+                    checked={isActive}
                     onChange={() => setMoonSign(key as any)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                   />
@@ -240,19 +232,19 @@ const AstrologyModal = ({
       content: (
         <div className="flex flex-col gap-1">
           <span className="text-center text-lg text-white font-bold">
-            🌅 <br /> {`What's your  ?`}{" "}
-            <span className="text-[#FF9DF8]">risign</span> sign
+            🌅 <br /> {"What's your "}
+            <span className="text-[#FF9DF8]">rising</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
             {Object.entries(zodiacMappings).map(([key, value]) => {
               // @ts-ignore
-              const isActive = risignSign === key ?? false;
+              const isActive = risingSign === key ?? false;
               return (
                 <div key={key} className="flex items-center">
                   <input
                     type="checkbox"
                     id={key}
-                    checked={value}
+                    checked={isActive}
                     onChange={() => setRisingSign(key as any)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                   />
@@ -272,14 +264,14 @@ const AstrologyModal = ({
           </div>
         </div>
       ),
-      enabled: () => risignSign != null,
+      enabled: () => risingSign != null,
     },
     {
       content: (
         <div className="flex flex-col gap-1">
           <span className="text-center text-lg text-white font-bold">
-            <br /> {`What's your  ?`}{" "}
-            <span className="text-[#FF9DF8]">mars</span> sign
+            <br />  {"What's your "}
+            <span className="text-[#FF9DF8]">mars</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
             {Object.entries(zodiacMappings).map(([key, value]) => {
@@ -290,7 +282,7 @@ const AstrologyModal = ({
                   <input
                     type="checkbox"
                     id={key}
-                    checked={value}
+                    checked={isActive}
                     onChange={() => setMarsSign(key as any)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                   />
@@ -316,8 +308,8 @@ const AstrologyModal = ({
       content: (
         <div className="flex flex-col gap-1">
           <span className="text-center text-lg text-white font-bold">
-            <br /> {`What's your  ?`}{" "}
-            <span className="text-[#FF9DF8]">venus</span> sign
+            <br /> {"What's your "}
+            <span className="text-[#FF9DF8]">venus</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
             {Object.entries(zodiacMappings).map(([key, value]) => {
@@ -328,7 +320,7 @@ const AstrologyModal = ({
                   <input
                     type="checkbox"
                     id={key}
-                    checked={value}
+                    checked={isActive}
                     onChange={() => setVenusSign(key as any)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                   />
@@ -354,8 +346,8 @@ const AstrologyModal = ({
       content: (
         <div className="flex flex-col gap-1">
           <span className="text-center text-lg text-white font-bold">
-            <br /> {`What's your  ?`}{" "}
-            <span className="text-[#FF9DF8]">mercury</span> sign
+            <br /> {"What's your "}
+            <span className="text-[#FF9DF8]">mercury</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
             {Object.entries(zodiacMappings).map(([key, value]) => {
@@ -366,7 +358,7 @@ const AstrologyModal = ({
                   <input
                     type="checkbox"
                     id={key}
-                    checked={value}
+                    checked={isActive}
                     onChange={() => setMercurySign(key as any)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                   />
@@ -398,7 +390,7 @@ const AstrologyModal = ({
     const data = {
       sunSign,
       moonSign,
-      risignSign,
+      risingSign,
       marsSign,
       venusSign,
       mercurySign,
