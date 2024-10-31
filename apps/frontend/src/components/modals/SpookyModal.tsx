@@ -15,6 +15,7 @@ import Image from "next/image";
 import { cn } from "@/lib/frontend/util";
 import { Tag } from "../ui/Tag";
 import { LannaHalloweenData } from "@/lib/storage/types/user/userData/lannaHalloweenData";
+import { logClientEvent } from "@/lib/frontend/metrics";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -36,7 +37,7 @@ export interface ModalProps
   onClose?: () => void;
   withBackButton?: boolean;
   username: string;
-  onSubmit: (data: LannaHalloweenData) => void;
+  onSubmit: (data: LannaHalloweenData) => Promise<void>;
 }
 
 type ActivityKey =
@@ -280,7 +281,7 @@ const SpookyModal = ({
     setStep(step - 1);
   };
 
-  const onHandleSubmit = () => {
+  const onHandleSubmit = async () => {
     const submitData: LannaHalloweenData = {};
     if (selectedMood) {
       submitData.mood = {
@@ -298,7 +299,8 @@ const SpookyModal = ({
       });
     }
 
-    onSubmit(submitData);
+    logClientEvent("halloween-spooky-modal-submitted", {});
+    await onSubmit(submitData);
   };
 
   const handleNext = () => {

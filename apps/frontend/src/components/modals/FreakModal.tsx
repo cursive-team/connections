@@ -12,6 +12,9 @@ import { IoMdClose as Close } from "react-icons/io";
 import { AppButton } from "../ui/Button";
 import { DM_Sans } from "next/font/google";
 import Image from "next/image";
+import { logClientEvent } from "@/lib/frontend/metrics";
+import { LannaHalloweenData } from "@/lib/storage/types/user/userData/lannaHalloweenData";
+import { toast } from "sonner";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -32,6 +35,7 @@ export interface ModalProps
   closable?: boolean;
   onClose?: () => void;
   withBackButton?: boolean;
+  onSubmit: (data: LannaHalloweenData) => Promise<void>;
 }
 
 const FreakModal = ({
@@ -39,6 +43,7 @@ const FreakModal = ({
   setIsOpen,
   onClose, // run when modal close
   withBackButton = false, // show back button when active
+  onSubmit,
 }: ModalProps) => {
   const onCloseModal = () => {
     onClose?.();
@@ -300,9 +305,39 @@ const FreakModal = ({
     setStep(step - 1);
   };
 
-  const onHandleSubmit = () => {
+  const onHandleSubmit = async () => {
     const data = { goodTime, experience, unusualItem, uniqueChallange };
-    console.log("data =>", data);
+    if (
+      !data.goodTime ||
+      !data.experience ||
+      !data.unusualItem ||
+      !data.uniqueChallange
+    ) {
+      toast.error("Please select all options");
+      return;
+    }
+
+    logClientEvent("halloween-freak-modal-submitted", {});
+    await onSubmit({
+      fun: {
+        goodTimes: {
+          value: data.goodTime.toString(),
+          hashData: [],
+        },
+        experiences: {
+          value: data.experience.toString(),
+          hashData: [],
+        },
+        unusualItems: {
+          value: data.unusualItem.toString(),
+          hashData: [],
+        },
+        uniqueChallenge: {
+          value: data.uniqueChallange.toString(),
+          hashData: [],
+        },
+      },
+    });
   };
 
   const handleNext = () => {

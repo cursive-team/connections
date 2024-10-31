@@ -13,6 +13,8 @@ import { AppButton } from "../ui/Button";
 import { DM_Sans } from "next/font/google";
 import Image from "next/image";
 import { Tag } from "../ui/Tag";
+import { logClientEvent } from "@/lib/frontend/metrics";
+import { LannaHalloweenData } from "@/lib/storage/types/user/userData/lannaHalloweenData";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -34,6 +36,7 @@ export interface ModalProps
   onClose?: () => void;
   withBackButton?: boolean;
   username: string;
+  onSubmit: (data: LannaHalloweenData) => Promise<void>;
 }
 
 type Zodiak =
@@ -51,9 +54,9 @@ type Zodiak =
   | "sagittarius";
 
 type Sign = {
-  emoji: string,
-  label: string
-}
+  emoji: string;
+  label: string;
+};
 
 const zodiacMappings: Record<Zodiak, Sign> = {
   capricorn: {
@@ -112,6 +115,7 @@ const AstrologyModal = ({
   onClose, // run when modal close
   withBackButton = false, // show back button when active
   username = "",
+  onSubmit,
 }: ModalProps) => {
   const [step, setStep] = useState(0);
   const [sunSign, setSunSign] = useState("");
@@ -264,7 +268,7 @@ const AstrologyModal = ({
       content: (
         <div className="flex flex-col gap-1">
           <span className="text-center text-lg text-white font-bold">
-            <br />  {"What's your "}
+            <br /> {"What's your "}
             <span className="text-[#FF9DF8]">mars</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
@@ -374,7 +378,7 @@ const AstrologyModal = ({
     setStep(step - 1);
   };
 
-  const onHandleSubmit = () => {
+  const onHandleSubmit = async () => {
     const data = {
       sunSign,
       moonSign,
@@ -383,7 +387,36 @@ const AstrologyModal = ({
       venusSign,
       mercurySign,
     };
-    console.log("data =>", data);
+
+    logClientEvent("halloween-astrology-modal-submitted", {});
+    await onSubmit({
+      astrology: {
+        marsSign: {
+          value: data.marsSign,
+          hashData: [],
+        },
+        venusSign: {
+          value: data.venusSign,
+          hashData: [],
+        },
+        mercurySign: {
+          value: data.mercurySign,
+          hashData: [],
+        },
+        sunSign: {
+          value: data.sunSign,
+          hashData: [],
+        },
+        moonSign: {
+          value: data.moonSign,
+          hashData: [],
+        },
+        risingSign: {
+          value: data.risingSign,
+          hashData: [],
+        },
+      },
+    });
   };
 
   const handleNext = () => {

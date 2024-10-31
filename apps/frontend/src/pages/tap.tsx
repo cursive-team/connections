@@ -116,7 +116,7 @@ const TapPage: React.FC = () => {
 
             if (user.userData.username === response.userTap.ownerUsername) {
               logClientEvent("tap-chip-same-user", {});
-              router.push("/community");
+              router.push("/halloween");
               return;
             }
 
