@@ -6,6 +6,8 @@ import healthRoutes from "./routes/health";
 import oauthRoutes from "./routes/oauth";
 import lannaRoutes from "./routes/lanna";
 import notificationRoutes from "./routes/notification";
+import enclaveRoutes from "./routes/enclave";
+import dataHashRoutes from "./routes/dataHash";
 import { FRONTEND_URL } from "./constants";
 import { IntersectionState } from "@types";
 import { Controller } from "./lib/controller";
@@ -25,6 +27,8 @@ app.use("/api/oauth", oauthRoutes);
 app.use("/api/lanna", lannaRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/notification", notificationRoutes);
+app.use("/api/enclave", enclaveRoutes);
+app.use("/api/data_hash", dataHashRoutes);
 app.use("/", healthRoutes);
 
 app.locals.intersectionState = {} as IntersectionState;

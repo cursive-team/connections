@@ -5,10 +5,15 @@ import {
   BackupCreateRequest,
   AuthTokenCreateRequest,
   SigninToken,
+  CreateDataHash,
+  DataHash,
+  UpdateDataHash,
+  DataHashMatch,
 } from "@/lib/controller/postgres/types";
 import {
   AuthToken,
   BackupData,
+  ChipIssuer,
   CreateBackupData,
   CreateMessageData,
   MessageData,
@@ -51,4 +56,19 @@ export interface iPostgresClient {
     lastMessageFetchedAt: Date | undefined
   ): Promise<MessageData[]>;
   CreateMessages(messages: CreateMessageData[]): Promise<void>;
+
+  // Data Hash methods
+  CreatePrivateDataHashes(dataHashes: CreateDataHash[]): Promise<void>;
+  GetUnhashedDataHashes(): Promise<DataHash[]>;
+  UpdateDataHashes(dataHashes: UpdateDataHash[]): Promise<void>;
+  GetAllUserHashesByChipAndLocation(
+    chipIssuer: ChipIssuer,
+    locationId: string
+  ): Promise<Record<string, string[]>>;
+  CreateDataHashMatch(
+    usernameA: string,
+    usernameB: string,
+    connectionScore: number
+  ): Promise<void>;
+  GetAllDataHashMatches(): Promise<DataHashMatch[]>;
 }

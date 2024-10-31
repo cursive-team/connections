@@ -102,3 +102,24 @@ model LeaderboardEntry {
   tapCount   Int?
   createdAt  DateTime @default(now())
 }
+
+model PrivateDataHash {
+  id               String   @id @default(uuid())
+  username         String
+  chipIssuer       String?
+  locationId       String?
+  dataIdentifier   String // Identifier of the data provided by the client
+  encryptedInput   String // Encrypted input
+  enclavePublicKey String // Public key of the enclave
+  dataHash         String? // Hash of the input concatenated with the secret
+  secretHash       String? // Hash of the secret
+  createdAt        DateTime @default(now())
+}
+
+model DataHashMatch {
+  id               String   @id @default(uuid())
+  usernameA        String
+  usernameB        String
+  connectionScore  Decimal
+  createdAt        DateTime @default(now())
+}
