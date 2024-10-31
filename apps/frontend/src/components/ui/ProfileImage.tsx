@@ -8,7 +8,7 @@ const goudyBookletter = Goudy_Bookletter_1911({
 });
 
 export const getProfileBackgroundColor = (user: UserData) => {
-  const isHalloween: boolean = true;
+  const isHalloween: boolean = false;
 
   const colorPalette = [
     "#FF9DF8", // Light Pinkish Purple

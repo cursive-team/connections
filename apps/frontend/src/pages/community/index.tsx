@@ -28,7 +28,7 @@ import { Metadata } from "next";
 import { NextSeo } from "next-seo";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Mona } from "@/components/icons/Mona";
 

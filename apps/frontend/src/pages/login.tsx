@@ -35,6 +35,14 @@ const LoginPage: React.FC = () => {
   );
   const [loading, setLoading] = useState(false);
 
+  // Halloween change, remove afterwards
+  useEffect(() => {
+    const removeHWClass = async () =>{
+      document.getElementsByTagName('body')[0].classList.remove('halloween-theme');
+    };
+    removeHWClass();
+  });
+
   useEffect(() => {
     const checkLoginStatus = async () => {
       const user = await storage.getUser();

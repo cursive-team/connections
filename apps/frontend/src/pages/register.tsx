@@ -53,6 +53,14 @@ const Register: React.FC = () => {
   const [telegramHandle, setTelegramHandle] = useState("");
   const [twitterHandle, setTwitterHandle] = useState("");
 
+  // Halloween change, remove afterwards
+  useEffect(() => {
+    const removeHWClass = async () =>{
+      document.getElementsByTagName('body')[0].classList.remove('halloween-theme');
+    };
+    removeHWClass();
+  });
+
   useEffect(() => {
     const loadSavedTap = async () => {
       const tap = await storage.loadSavedTapInfo();

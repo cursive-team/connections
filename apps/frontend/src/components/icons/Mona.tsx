@@ -1,7 +1,7 @@
 
 export const Mona = () => {
   return (
-    <svg width="68" height="14" viewBox="0 0 68 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="68" height="20" viewBox="0 0 68 16" fill="none" >
       <rect width="67.1111" height="16" fill="url(#pattern0_5642_56262)"/>
       <defs>
         <pattern id="pattern0_5642_56262" patternContentUnits="objectBoundingBox" width="1" height="1">
