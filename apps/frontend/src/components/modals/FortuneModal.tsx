@@ -12,8 +12,6 @@ import { IoMdClose as Close } from "react-icons/io";
 import { AppButton } from "../ui/Button";
 import { DM_Sans } from "next/font/google";
 import Image from "next/image";
-import { LannaHalloweenData } from "@/lib/storage/types/user/userData/lannaHalloweenData";
-import { getUser } from "@/lib/storage/localStorage/user";
 import { storage } from "@/lib/storage";
 import { toast } from "sonner";
 import { logClientEvent } from "@/lib/frontend/metrics";
