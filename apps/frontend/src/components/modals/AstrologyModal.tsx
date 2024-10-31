@@ -113,11 +113,6 @@ const AstrologyModal = ({
   withBackButton = false, // show back button when active
   username = "",
 }: ModalProps) => {
-  const onCloseModal = () => {
-    onClose?.();
-    setIsOpen(false);
-  };
-
   const [step, setStep] = useState(0);
   const [sunSign, setSunSign] = useState(null);
   const [moonSign, setMoonSign] = useState(null);
@@ -125,6 +120,11 @@ const AstrologyModal = ({
   const [marsSign, setMarsSign] = useState(null);
   const [venusSign, setVenusSign] = useState(null);
   const [mercurySign, setMercurySign] = useState(null);
+
+  const onCloseModal = () => {
+    onClose?.();
+    setIsOpen(false);
+  };
 
   const steps: Step[] = [
     {
@@ -402,6 +402,7 @@ const AstrologyModal = ({
     if (step === steps?.length - 1) {
       onClose?.();
       setIsOpen(false);
+      setStep(0);
       onHandleSubmit();
     } else {
       setStep(step + 1);

@@ -94,7 +94,7 @@ const activityStates: Record<ActivityKey, boolean> = {
   congoLine: false,
   beNPCs: false,
   pairFortune: false,
-  teamUp: true,
+  teamUp: false,
   chillAndVibe: false,
   introverse: false,
 };
@@ -106,15 +106,15 @@ const SpookyModal = ({
   withBackButton = false, // show back button when active
   username = "",
 }: ModalProps) => {
-  const onCloseModal = () => {
-    onClose?.();
-    setIsOpen(false);
-  };
-
   const [step, setStep] = useState(0);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [selectedPreferences, setSelectedPreferences] =
     useState(activityStates);
+
+  const onCloseModal = () => {
+    onClose?.();
+    setIsOpen(false);
+  };
 
   const moods = [
     { id: "mischievous", image: "mischievous.svg", label: "Mischievous" },
@@ -281,6 +281,7 @@ const SpookyModal = ({
     if (step === steps?.length - 1) {
       onClose?.();
       setIsOpen(false);
+      setStep(0);
       onHandleSubmit();
     } else {
       setStep(step + 1);
