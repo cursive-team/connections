@@ -2,7 +2,7 @@ import * as React from "react";
 import type * as Classed from "@tw-classed/react";
 import { classed } from "@tw-classed/react";
 import { cn } from "@/lib/frontend/util";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/icons/Icons";
 
 const ButtonComponent = classed.button(
   "font-base flex items-center disabled:opacity-20 disabled:pointer-events-none w-full flex focus:ring-0 focus:outline-none active:scale-95",

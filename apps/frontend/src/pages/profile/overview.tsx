@@ -1,4 +1,4 @@
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/icons/Icons";
 import { AppButton } from "@/components/ui/Button";
 import { LinkCardBox } from "@/components/ui/LinkCardBox";
 import {

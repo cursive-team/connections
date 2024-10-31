@@ -1,7 +1,7 @@
 import { classed } from "@tw-classed/react";
 import React, { ReactNode } from "react";
 import { IoMdClose as CloseIcon } from "react-icons/io";
-import { Icons } from "../Icons";
+import { Icons } from "../icons/Icons";
 import { cn } from "@/lib/frontend/util";
 
 type TagProps = {

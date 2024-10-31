@@ -5,7 +5,7 @@ import {
   DialogPanel,
 } from "@headlessui/react";
 import React, { Fragment } from "react";
-import { Icons } from "../Icons";
+import { Icons } from "../icons/Icons";
 import { fontBase } from "@/config";
 import { cn } from "@/lib/frontend/util";
 

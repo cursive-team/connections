@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import { RouterItem } from "@/lib/frontend/types";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/icons/Icons";
 import { LeaderboardEntryType, OAuthAppDetails } from "@types";
 
 export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
@@ -65,9 +65,9 @@ export const ROUTER_ITEMS: RouterItem[] = [
     iconSize: 20,
   },
   {
-    label: "Community",
-    href: "/community",
-    icon: Icons.Activity,
+    label: "Halloween",
+    href: "/halloween",
+    icon: Icons.Star,
     iconSize: 20,
   },
   {

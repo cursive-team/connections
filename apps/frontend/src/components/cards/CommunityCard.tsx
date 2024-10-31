@@ -48,8 +48,7 @@ export const CommunityCard = ({
     <div
       className={cn(
         "w-full bg-backgrounds rounded-lg border border-primary",
-        type === "coming-soon" &&
-          (hasHalloweenTheme ? "" : "bg-gray-100 border-gray-200")
+          (hasHalloweenTheme ? "border-white/80" : "bg-gray-100 border-gray-200")
       )}
     >
       <div className="p-2 flex items-center gap-[10px]">

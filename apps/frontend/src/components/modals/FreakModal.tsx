@@ -5,7 +5,7 @@ import {
   DialogPanel,
 } from "@headlessui/react";
 import React, { Fragment, ReactNode, useState } from "react";
-import { Icons } from "../Icons";
+import { Icons } from "../icons/Icons";
 import { fontBase } from "@/config";
 import { IoIosArrowRoundBack as ArrowBack } from "react-icons/io";
 import { IoMdClose as Close } from "react-icons/io";

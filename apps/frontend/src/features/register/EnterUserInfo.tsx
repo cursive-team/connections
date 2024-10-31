@@ -8,7 +8,7 @@ import { IoCloseSharp as CloseIcon } from "react-icons/io5";
 
 import useSettings from "@/hooks/useSettings";
 import { AppButton } from "@/components/ui/Button";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/icons/Icons";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
 

@@ -18,7 +18,7 @@ import { hashCommit } from "@/lib/psi/hash";
 import { BASE_API_URL } from "@/config";
 import Link from "next/link";
 import { TensionSlider } from "../tensions";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/icons/Icons";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { sendMessages } from "@/lib/message";

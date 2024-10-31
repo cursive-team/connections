@@ -9,7 +9,7 @@ export const LinkCardBox = ({ label, value, href }: any) => {
           {label}
         </span>
         <div className="h-[1px] bg-stroke-quaternary w-full"></div>
-        <span className="text-[14px] text-right text-link-primary">
+        <span className="text-[14px] text-right" style={{color: "#FF9DF8"}}>
           {value ?? "N/A"}
         </span>
       </div>
