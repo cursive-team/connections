@@ -255,8 +255,6 @@ export class Controller {
     usernameA: string,
     usernameB: string,
     connectionScore: number,
-    displayNameA: string | undefined,
-    displayNameB: string | undefined,
     notificationUsernameA: string | undefined,
     notificationUsernameB: string | undefined
   ): Promise<void> {
@@ -264,8 +262,6 @@ export class Controller {
       usernameA,
       usernameB,
       connectionScore,
-      displayNameA,
-      displayNameB,
       notificationUsernameA,
       notificationUsernameB
     );

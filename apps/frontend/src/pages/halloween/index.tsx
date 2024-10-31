@@ -71,7 +71,6 @@ export const VaultCard = ({
 
 interface HashConnection {
   username: string;
-  displayName: string | null;
   notificationUsername: string | null;
   score: number;
 }
@@ -876,7 +875,7 @@ export default function HalloweenPage() {
                     <ProfileImage
                       user={{
                         username: connection.username,
-                        displayName: connection.displayName || "",
+                        displayName: connection.username,
                         bio: "",
                         signaturePublicKey: "",
                         encryptionPublicKey: "",
@@ -884,10 +883,12 @@ export default function HalloweenPage() {
                     />
                     <div className="flex flex-col">
                       <span className="text-sm font-medium font-sans text-primary">
-                        {connection.displayName || connection.username}
+                        {connection.username}
                       </span>
                       <span className="text-xs font-medium font-sans text-[#FF9DF8]">
-                        @{connection.username}
+                        {connection.notificationUsername
+                          ? `@${connection.notificationUsername}`
+                          : ""}
                       </span>
                     </div>
                     <ArrowRight size={18} className="text-white ml-auto" />

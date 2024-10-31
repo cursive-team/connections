@@ -16,6 +16,7 @@ export const UserSchema = z.object({
   registrationNumber: z.number(),
   registeredWithPasskey: z.boolean(),
   passkeyAuthPublicKey: z.string().nullable(),
+  notificationUsername: z.string().nullable(),
   createdAt: z.date(),
 });
 

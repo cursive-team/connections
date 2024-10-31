@@ -17,7 +17,6 @@ router.get(
       | {
           connections: Array<{
             username: string;
-            displayName: string | null;
             notificationUsername: string | null;
             score: number;
           }>;
@@ -58,11 +57,6 @@ router.get(
                 ? match.usernameB
                 : match.usernameA;
 
-            const displayName =
-              match.usernameA === user.username
-                ? match.displayNameB
-                : match.displayNameA;
-
             const notificationUsername =
               match.usernameA === user.username
                 ? match.notificationUsernameB
@@ -70,7 +64,6 @@ router.get(
 
             return {
               username,
-              displayName,
               notificationUsername,
               score: Number(match.connectionScore),
             };

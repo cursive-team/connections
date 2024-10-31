@@ -69,8 +69,6 @@ export interface iPostgresClient {
     usernameA: string,
     usernameB: string,
     connectionScore: number,
-    displayNameA: string | undefined,
-    displayNameB: string | undefined,
     notificationUsernameA: string | undefined,
     notificationUsernameB: string | undefined
   ): Promise<void>;

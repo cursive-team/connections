@@ -120,10 +120,8 @@ model PrivateDataHash {
 model DataHashMatch {
   id                    String   @id @default(uuid())
   usernameA             String
-  displayNameA          String?
   notificationUsernameA String?
   usernameB             String
-  displayNameB          String?
   notificationUsernameB String?
   connectionScore       Decimal
   createdAt             DateTime @default(now())
