@@ -33,7 +33,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   const [isPreMigrationSessionChecked, setIsPreMigrationSessionChecked] =
     useState(false);
 
-  const isFortunePage = pathname.includes("/fortune");
+  let isFortunePage: boolean = false;
+  if (pathname?.includes("/fortune")) {
+    isFortunePage = pathname.includes("/fortune")
+  }
 
   // Refresh messages when the page is refreshed
   useEffect(() => {
