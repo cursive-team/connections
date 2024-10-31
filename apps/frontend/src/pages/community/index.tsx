@@ -515,10 +515,10 @@ export default function CommunityPage() {
                 label: "community-social-layer-link",
               },
               {
-                href: "https://lannaedges.radicalxchange.org/",
-                emoji: <span className="text-[16px]">∈</span>,
-                text: "Edges",
-                label: "community-edges-link",
+                href: "https://app.sola.day/event/edgecitylanna/",
+                emoji: <Icons.SocialLayer size={18} />,
+                text: "Social Layer",
+                label: "community-social-layer-link",
               },
               {
                 href: "https://cherry.builders/",
@@ -526,6 +526,12 @@ export default function CommunityPage() {
                 text: "Cherry",
                 label: "community-cherry-link",
               },
+              {
+                href: "https://lannaedges.radicalxchange.org/",
+                emoji: <span className="text-[16px]">∈</span>,
+                text: "Edges",
+                label: "community-edges-link",
+              }
             ].map((item, index) => (
               <Link
                 key={index}
