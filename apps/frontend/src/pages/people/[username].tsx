@@ -66,11 +66,11 @@ const CommentModal: React.FC<CommentModalProps> = ({
       <div className="flex flex-col bg-white dark:bg-gray-900 p-6 pb-10 rounded-[32px] w-full max-w-[90vw] overflow-y-auto relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-tertiary hover:text-primary dark:text-gray-400 dark:hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-tertiary hover:text-primary text-gray-400 hover:text-white transition-colors"
         >
           <Icons.XClose
             size={24}
-            className="text-primary dark:bg-white dark:text-white"
+            className="text-primary bg-white text-white"
           />
         </button>
         <div className="size-[80px] relative flex mx-auto">
@@ -86,10 +86,10 @@ const CommentModal: React.FC<CommentModalProps> = ({
         </div>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col text-center">
-            <span className="text-[20px] font-semibold text-primary dark:text-white tracking-[-0.1px] font-sans">
+            <span className="text-[20px] font-semibold text-primary text-white tracking-[-0.1px] font-sans">
               {username}
             </span>
-            <span className="text-secondary dark:text-gray-400 text-sm font-medium font-sans text-center">
+            <span className="text-secondary text-gray-400 text-sm font-medium font-sans text-center">
               {displayName}
             </span>
           </div>
@@ -106,14 +106,14 @@ const CommentModal: React.FC<CommentModalProps> = ({
               </AppButton>
             </div>
           )}
-          <span className="text-center text-xs text-tertiary dark:text-gray-400 font-medium font-sans">
+          <span className="text-center text-xs text-tertiary text-gray-400 font-medium font-sans">
             Add details to remember this connection. <br />
             They stay <strong className="font-bold">private to you.</strong>
           </span>
         </div>
 
         <div className="flex flex-col gap-3 mt-4">
-          <span className="text-sm font-semibold text-primary dark:text-white font-sans">
+          <span className="text-sm font-semibold text-primary text-white font-sans">
             Labels
           </span>
           <div className="flex space-x-2 justify-around">
@@ -126,10 +126,8 @@ const CommentModal: React.FC<CommentModalProps> = ({
                   });
                   handleEmojiSelect(emoji);
                 }}
-                className={`p-2 size-12 rounded-full bg-[#F1F1F1] dark:bg-gray-800 border border-transparent duration-200 ${
-                  selectedEmoji === emoji
-                    ? "!border-primary dark:!border-white"
-                    : ""
+                className={`p-2 size-12 rounded-full bg-[#F1F1F1] bg-gray-800 border border-transparent duration-200 ${
+                  selectedEmoji === emoji ? "!border-primary !border-white" : ""
                 }`}
               >
                 {emoji}
@@ -139,7 +137,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
         </div>
 
         <div className="flex flex-col gap-3 mt-4">
-          <span className="text-sm font-semibold text-primary dark:text-white font-sans">
+          <span className="text-sm font-semibold text-primary text-white font-sans">
             Notes
           </span>
           <AppTextarea
