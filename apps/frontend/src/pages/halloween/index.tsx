@@ -756,7 +756,7 @@ export default function HalloweenPage() {
       <AppLayout
         showFooter={false}
         back={{
-          href: "/",
+          href: "/profile",
           label: "Back",
         }}
         className="flex flex-col gap-4"

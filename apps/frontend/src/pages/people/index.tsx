@@ -51,7 +51,7 @@ const PeoplePage: React.FC = () => {
     >
       <div className="w-full px-4 py-4">
         <Banner
-          className="justify-center bg-gradient-to-r from-[#ff9df7] to-[#9389ff]"
+          className="justify-center"
           italic={false}
           title={
             <span className="!font-normal text-center">
