@@ -4,7 +4,7 @@ import {
   DisplayedDashboard,
 } from "@/components/cards/CommunityCard";
 import { DashboardDetail } from "@/components/dashboard/DashboardDetail";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/icons/Icons";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { Tag } from "@/components/ui/Tag";
 import { BASE_API_URL } from "@/config";
@@ -30,6 +30,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Mona } from "@/components/icons/Mona";
 
 export const metadata: Metadata = {
   title: "Community",
@@ -309,6 +310,7 @@ export default function CommunityPage() {
         leaderboardDetails={lannaTotalWorkoutDetails}
         leaderboardEntries={lannaTotalWorkoutEntries}
         goal={200}
+        unit="workout"
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         type="active"
@@ -345,6 +347,7 @@ export default function CommunityPage() {
         leaderboardDetails={weeklyLeaderboardDetails}
         leaderboardEntries={weeklyLeaderboardEntries}
         goal={500}
+        unit="tap"
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         type="active"
@@ -381,6 +384,7 @@ export default function CommunityPage() {
         leaderboardDetails={weekOct27TapLeaderboardDetails}
         leaderboardEntries={weekOct27TapLeaderboardEntries}
         goal={500}
+        unit="tap"
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         type="active"
@@ -404,6 +408,7 @@ export default function CommunityPage() {
         leaderboardDetails={leaderboardDetails}
         leaderboardEntries={leaderboardEntries}
         goal={2000}
+        unit="tap"
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         type="active"
@@ -433,6 +438,7 @@ export default function CommunityPage() {
           })),
         }}
         goal={1000}
+        unit="km"
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         actionItem={
@@ -466,6 +472,7 @@ export default function CommunityPage() {
         leaderboardDetails={githubLeaderboardDetails}
         leaderboardEntries={githubLeaderboardEntries}
         goal={1000}
+        unit="contribution"
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         actionItem={
@@ -510,13 +517,12 @@ export default function CommunityPage() {
             {[
               {
                 href: "https://monaverse.com/collections/8453/0xafa80d3a82f6d749694de21b2dccf1e74a262547/1",
-                emoji: <Icons.Mona size={18} />,
-                text: "Mona",
+                emoji: <Mona />,
                 label: "community-social-layer-link",
               },
               {
                 href: "https://app.sola.day/event/edgecitylanna/",
-                emoji: <Icons.SocialLayer size={18} />,
+                emoji: <Icons.SocialLayer size={18}/>,
                 text: "Social Layer",
                 label: "community-social-layer-link",
               },
@@ -542,7 +548,7 @@ export default function CommunityPage() {
                 <Tag
                   emoji={item.emoji}
                   variant="gray"
-                  text={item.text}
+                  text={(item?.text) ? item.text : ""}
                   external
                 />
               </Link>

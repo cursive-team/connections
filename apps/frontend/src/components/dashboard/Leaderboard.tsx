@@ -81,7 +81,7 @@ export function Leaderboard({
         if (adjustedIndex > markedRank - 1) {
           styling.fontStyling = "text-white/40 text-[14px] font-normal";
         }
-        if (adjustedIndex == markedRank - 1) {
+        if (index == 9) {
           styling.divider = true;
         }
 

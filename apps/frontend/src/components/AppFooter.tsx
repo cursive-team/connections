@@ -14,7 +14,7 @@ const AppFooter = () => {
       className="fixed w-full bottom-0 z-[50] bg-surface-primary"
     >
       <MenuBar
-        className="md:container grid bottom-0 py-3 xs:pt-[17px] xs:pb-[13px]"
+        className="md:container grid bottom-0 py-3 xs:pt-[17px] xs:pb-[13px] border-r-0 border-l-0 border-b-0"
         style={{
           gridTemplateColumns: `repeat(${ROUTER_ITEMS.length}, 1fr)`,
         }}

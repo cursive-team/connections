@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/ProfileImage";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import Link from "next/link";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/icons/Icons";
 import { NextSeo } from "next-seo";
 import { Card } from "@/components/cards/Card";
 import { logoutUser } from "@/lib/auth";

@@ -1,7 +1,7 @@
 "use client";
 import { CheckInWeek } from "@/components/CheckInWeek";
 import { Leaderboard } from "@/components/dashboard/Leaderboard";
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/icons/Icons";
 import AppLayout from "@/layouts/AppLayout";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { useRouter } from "next/router";

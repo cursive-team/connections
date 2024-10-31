@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Icons } from "./Icons";
+import { Icons } from "./icons/Icons";
 import { cn } from "@/lib/frontend/util";
 import { classed } from "@tw-classed/react";
 import { useRouter } from "next/router";

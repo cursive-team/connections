@@ -20,6 +20,7 @@ export default function NarrowcastPage() {
     >
       <div className="flex flex-col items-center justify-center p-4">
         <Banner
+          className="bg-gradient-to-r from-[#ff9df7] to-[#9389ff]"
           italic={false}
           title={
             <div className="!font-normal flex flex-col gap-4">

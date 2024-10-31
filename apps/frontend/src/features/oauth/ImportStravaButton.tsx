@@ -1,4 +1,4 @@
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/icons/Icons";
 import { Tag } from "@/components/ui/Tag";
 import { FRONTEND_URL } from "@/config";
 import { cn } from "@/lib/frontend/util";

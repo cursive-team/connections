@@ -1,4 +1,4 @@
-import { Icons } from "@/components/Icons";
+import { Icons } from "@/components/icons/Icons";
 import { AppButton } from "@/components/ui/Button";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import AppLayout from "@/layouts/AppLayout";
@@ -16,6 +16,7 @@ interface DashboardDetailProps {
   leaderboardEntries: LeaderboardEntries;
   leaderboardDetails: LeaderboardDetails;
   goal: number;
+  unit: string;
   organizer: string;
   organizerDescription: string;
   actionItem?: React.ReactNode;
@@ -32,6 +33,7 @@ export function DashboardDetail({
   leaderboardEntries,
   leaderboardDetails,
   goal,
+  unit,
   organizer,
   organizerDescription,
   actionItem,
@@ -162,9 +164,10 @@ export function DashboardDetail({
                     ? "bg-active-progress"
                     : "bg-community-progress"
                 )}
-                style={{ width: `${progress}%` }}
+                style={{width: `${progress}%`}}
               ></div>
             </div>
+            <div className="text-white/40 text-xs font-bold font-['DM Sans'] leading-none">{leaderboardDetails.totalValue} of {goal} {unit} goal</div>
           </div>
         </div>
         {description && (

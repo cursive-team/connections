@@ -51,11 +51,11 @@ const PeoplePage: React.FC = () => {
     >
       <div className="w-full px-4 py-4">
         <Banner
-          className="justify-center"
+          className="justify-center bg-gradient-to-r from-[#ff9df7] to-[#9389ff]"
           italic={false}
           title={
             <span className="!font-normal text-center">
-              <b>Tap wristbands to</b>: share socials, organize contacts, and
+              <b>Tap wristbands </b> -- share socials, organize contacts, and
               discover shared interests! Troubleshoot tapping{" "}
               <a
                 href="https://cursive.team/tap-help"
