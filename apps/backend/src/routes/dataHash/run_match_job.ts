@@ -65,6 +65,16 @@ router.get(
             commonHashCount
           );
 
+          console.log(
+            "connectionScore",
+            connectionScore,
+            userA,
+            userB,
+            userAHashCount,
+            userBHashCount,
+            commonHashCount
+          );
+
           if (connectionScore >= LANNA_HALLOWEEN_CONNECTION_SCORE_THRESHOLD) {
             const userAData = await controller.GetUserByUsernameCaseInsensitive(
               userA

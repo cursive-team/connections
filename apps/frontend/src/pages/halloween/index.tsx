@@ -98,7 +98,7 @@ export default function HalloweenPage() {
       console.log(fortuneModalOpen);
 
       const connections = await fetch(
-        `${BASE_API_URL}/api/data_hash/get_connections?authToken=${session.authTokenValue}`
+        `${BASE_API_URL}/data_hash/get_connections?authToken=${session.authTokenValue}`
       );
       const connectionsData: { connections: HashConnection[] } =
         await connections.json();
