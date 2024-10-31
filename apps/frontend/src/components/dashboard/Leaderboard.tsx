@@ -40,15 +40,15 @@ export function Leaderboard({
 
   return (
     <div>
-      <div className="px-4 py-2 bg-white dark:bg-black items-center justify-between items-start inline-flex w-full">
+      <div className="px-4 py-2 bg-black items-center justify-between items-start inline-flex w-full">
         <div className="grid grid-cols-[40px_1fr_1fr] justify-start items-start gap-3 flex w-full">
-          <div className="text-[#090909]/40 dark:text-white/40 text-xs text-center font-medium leading-[140%]">
+          <div className="text-white/40 text-xs text-center font-medium leading-[140%]">
             #
           </div>
-          <div className="text-[#090909]/40 dark:text-white/40 text-xs font-medium leading-[140%]">
+          <div className="text-white/40 text-xs font-medium leading-[140%]">
             User name
           </div>
-          <div className="text-right text-[#090909]/40 dark:text-white/40 text-xs font-medium leading-[140%]">
+          <div className="text-right text-white/40 text-xs font-medium leading-[140%]">
             Entry
           </div>
         </div>
@@ -70,18 +70,16 @@ export function Leaderboard({
         lastEntryValue = entry.entryValue;
 
         const styling = {
-          positionColor: "bg-black/20 dark:bg-white/20",
+          positionColor: "bg-white/20",
           positionTextColor: "",
-          fontStyling:
-            "text-[#090909]/60 dark:text-white/60 text-[14px] font-normal",
+          fontStyling: "text-white/60 text-[14px] font-normal",
           divider: false,
         };
 
         const adjustedIndex = prize ? index - cursiveCount : index;
 
         if (adjustedIndex > markedRank - 1) {
-          styling.fontStyling =
-            "text-[#090909]/40 dark:text-white/40 text-[14px] font-normal";
+          styling.fontStyling = "text-white/40 text-[14px] font-normal";
         }
         if (adjustedIndex == markedRank - 1) {
           styling.divider = true;
@@ -94,17 +92,15 @@ export function Leaderboard({
         const entryValue = entry.entryValue;
 
         if (position == 1) {
-          styling.positionColor = "bg-[#090909] dark:bg-white";
-          styling.positionTextColor = "text-white dark:text-black";
-          styling.fontStyling =
-            "text-[#090909] dark:text-white text-[16px] font-medium";
+          styling.positionColor = "bg-white";
+          styling.positionTextColor = "text-black";
+          styling.fontStyling = "text-white text-[16px] font-medium";
         }
 
         if (entry.username == leaderboardDetails.username) {
           styling.positionColor = "bg-[#FF9DF8]";
           styling.positionTextColor = "text-black";
-          styling.fontStyling =
-            "text-[#090909] dark:text-white text-[16px] font-medium";
+          styling.fontStyling = "text-white text-[16px] font-medium";
           username += " (me)";
 
           if (leaderboardDetails.userPosition != tiedPosition) {
@@ -146,7 +142,7 @@ export function Leaderboard({
             </div>
             {styling.divider && (
               <div className="py-2">
-                <div className="h-[0px] border border-black/20 dark:border-white/20"></div>
+                <div className="h-[0px] border border-white/20"></div>
               </div>
             )}
           </div>
