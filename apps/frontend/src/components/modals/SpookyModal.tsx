@@ -195,25 +195,25 @@ const SpookyModal = ({
         "Looks like there are a few other lone spirits here… how do you wanna connect?",
       content: (
         <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
-          {Object.entries(activityStates).map(([key, value]) => {
-            // @ts-ignore
-            const isActive = selectedPreferences?.[key] ?? false;
+          {Object.entries(activityStates).map(([key]) => {
+            let isActive: boolean = false;
+            if (selectedPreferences && Object.keys(selectedPreferences).includes(key)) {
+              isActive = selectedPreferences[key as ActivityKey];
+            }
             return (
               <div key={key} className="flex items-center">
                 <input
                   type="checkbox"
                   id={key}
-                  checked={value}
-                  onChange={() => handleToggle(key as any)}
+                  checked={isActive}
+                  onChange={() => handleToggle(key as ActivityKey)}
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                 />
                 <Tag
                   variant={isActive ? "active" : "default"}
-                  // @ts-ignore
-                  emoji={activityMappings?.[key as any]?.emoji ?? ""}
-                  onClick={() => handleToggle(key as any)}
-                  // @ts-ignore
-                  text={activityMappings?.[key as any]?.label ?? ""}
+                  emoji={activityMappings?.[key as ActivityKey]?.emoji ?? ""}
+                  onClick={() => handleToggle(key as ActivityKey)}
+                  text={activityMappings?.[key as ActivityKey]?.label ?? ""}
                 />
               </div>
             );

@@ -114,12 +114,12 @@ const AstrologyModal = ({
   username = "",
 }: ModalProps) => {
   const [step, setStep] = useState(0);
-  const [sunSign, setSunSign] = useState(null);
-  const [moonSign, setMoonSign] = useState(null);
-  const [risingSign, setRisingSign] = useState(null);
-  const [marsSign, setMarsSign] = useState(null);
-  const [venusSign, setVenusSign] = useState(null);
-  const [mercurySign, setMercurySign] = useState(null);
+  const [sunSign, setSunSign] = useState("");
+  const [moonSign, setMoonSign] = useState("");
+  const [risingSign, setRisingSign] = useState("");
+  const [marsSign, setMarsSign] = useState("");
+  const [venusSign, setVenusSign] = useState("");
+  const [mercurySign, setMercurySign] = useState("");
 
   const onCloseModal = () => {
     onClose?.();
@@ -160,23 +160,21 @@ const AstrologyModal = ({
             <span className="text-[#FF9DF8]">sun</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
-            {Object.entries(zodiacMappings).map(([key, value]) => {
-              // @ts-ignore
-              const isActive = sunSign === key ?? false;
+            {Object.entries(zodiacMappings).map(([key]) => {
+              const isActive = sunSign === key;
               return (
                 <div key={key} className="flex items-center">
                   <input
                     type="checkbox"
                     id={key}
                     checked={isActive}
-                    onChange={() => setSunSign(key as any)}
+                    onChange={() => setSunSign(key as Zodiak)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                   />
                   <Tag
                     variant={isActive ? "active" : "default"}
-                    // @ts-ignore
-                    emoji={zodiacMappings?.[key as any]?.emoji ?? ""}
-                    onClick={() => setSunSign(key as any)}
+                    emoji={zodiacMappings?.[key as Zodiak]?.emoji ?? ""}
+                    onClick={() => setSunSign(key as Zodiak)}
                     text={
                       key.charAt(0).toUpperCase() +
                       key.slice(1).replace(/([A-Z])/g, " $1")
@@ -198,23 +196,21 @@ const AstrologyModal = ({
             <span className="text-[#FF9DF8]">moon</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
-            {Object.entries(zodiacMappings).map(([key, value]) => {
-              // @ts-ignore
-              const isActive = moonSign === key ?? false;
+            {Object.entries(zodiacMappings).map(([key]: [string, Sign]) => {
+              const isActive = moonSign === key;
               return (
                 <div key={key} className="flex items-center">
                   <input
                     type="checkbox"
                     id={key}
                     checked={isActive}
-                    onChange={() => setMoonSign(key as any)}
+                    onChange={() => setMoonSign(key as Zodiak)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                   />
                   <Tag
                     variant={isActive ? "active" : "default"}
-                    // @ts-ignore
-                    emoji={zodiacMappings?.[key as any]?.emoji ?? ""}
-                    onClick={() => setMoonSign(key as any)}
+                    emoji={zodiacMappings?.[key as Zodiak]?.emoji ?? ""}
+                    onClick={() => setMoonSign(key as Zodiak)}
                     text={
                       key.charAt(0).toUpperCase() +
                       key.slice(1).replace(/([A-Z])/g, " $1")
@@ -236,23 +232,21 @@ const AstrologyModal = ({
             <span className="text-[#FF9DF8]">rising</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
-            {Object.entries(zodiacMappings).map(([key, value]) => {
-              // @ts-ignore
-              const isActive = risingSign === key ?? false;
+            {Object.entries(zodiacMappings).map(([key]) => {
+              const isActive = risingSign === key;
               return (
                 <div key={key} className="flex items-center">
                   <input
                     type="checkbox"
                     id={key}
                     checked={isActive}
-                    onChange={() => setRisingSign(key as any)}
+                    onChange={() => setRisingSign(key as Zodiak)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                   />
                   <Tag
                     variant={isActive ? "active" : "default"}
-                    // @ts-ignore
-                    emoji={zodiacMappings?.[key as any]?.emoji ?? ""}
-                    onClick={() => setRisingSign(key as any)}
+                    emoji={zodiacMappings?.[key as Zodiak]?.emoji ?? ""}
+                    onClick={() => setRisingSign(key as Zodiak)}
                     text={
                       key.charAt(0).toUpperCase() +
                       key.slice(1).replace(/([A-Z])/g, " $1")
@@ -274,23 +268,21 @@ const AstrologyModal = ({
             <span className="text-[#FF9DF8]">mars</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
-            {Object.entries(zodiacMappings).map(([key, value]) => {
-              // @ts-ignore
-              const isActive = marsSign === key ?? false;
+            {Object.entries(zodiacMappings).map(([key]) => {
+              const isActive = marsSign === key;
               return (
                 <div key={key} className="flex items-center">
                   <input
                     type="checkbox"
                     id={key}
                     checked={isActive}
-                    onChange={() => setMarsSign(key as any)}
+                    onChange={() => setMarsSign(key as Zodiak)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                   />
                   <Tag
                     variant={isActive ? "active" : "default"}
-                    // @ts-ignore
-                    emoji={zodiacMappings?.[key as any]?.emoji ?? ""}
-                    onClick={() => setMarsSign(key as any)}
+                    emoji={zodiacMappings?.[key as Zodiak]?.emoji ?? ""}
+                    onClick={() => setMarsSign(key as Zodiak)}
                     text={
                       key.charAt(0).toUpperCase() +
                       key.slice(1).replace(/([A-Z])/g, " $1")
@@ -312,23 +304,21 @@ const AstrologyModal = ({
             <span className="text-[#FF9DF8]">venus</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
-            {Object.entries(zodiacMappings).map(([key, value]) => {
-              // @ts-ignore
-              const isActive = venusSign === key ?? false;
+            {Object.entries(zodiacMappings).map(([key]) => {
+              const isActive = venusSign === key;
               return (
                 <div key={key} className="flex items-center">
                   <input
                     type="checkbox"
                     id={key}
                     checked={isActive}
-                    onChange={() => setVenusSign(key as any)}
+                    onChange={() => setVenusSign(key as Zodiak)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                   />
                   <Tag
                     variant={isActive ? "active" : "default"}
-                    // @ts-ignore
-                    emoji={zodiacMappings?.[key as any]?.emoji ?? ""}
-                    onClick={() => setVenusSign(key as any)}
+                    emoji={zodiacMappings?.[key as Zodiak]?.emoji ?? ""}
+                    onClick={() => setVenusSign(key as Zodiak)}
                     text={
                       key.charAt(0).toUpperCase() +
                       key.slice(1).replace(/([A-Z])/g, " $1")
@@ -350,23 +340,21 @@ const AstrologyModal = ({
             <span className="text-[#FF9DF8]">mercury</span> sign?
           </span>
           <div className=" text-center flex flex-wrap gap-2 mt-5 justify-center">
-            {Object.entries(zodiacMappings).map(([key, value]) => {
-              // @ts-ignore
-              const isActive = mercurySign === key ?? false;
+            {Object.entries(zodiacMappings).map(([key]) => {
+              const isActive = mercurySign === key;
               return (
                 <div key={key} className="flex items-center">
                   <input
                     type="checkbox"
                     id={key}
                     checked={isActive}
-                    onChange={() => setMercurySign(key as any)}
+                    onChange={() => setMercurySign(key as Zodiak)}
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded hidden"
                   />
                   <Tag
                     variant={isActive ? "active" : "default"}
-                    // @ts-ignore
-                    emoji={zodiacMappings?.[key as any]?.emoji ?? ""}
-                    onClick={() => setMercurySign(key as any)}
+                    emoji={zodiacMappings?.[key as Zodiak]?.emoji ?? ""}
+                    onClick={() => setMercurySign(key as Zodiak)}
                     text={
                       key.charAt(0).toUpperCase() +
                       key.slice(1).replace(/([A-Z])/g, " $1")
