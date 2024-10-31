@@ -67,7 +67,7 @@ export const ROUTER_ITEMS: RouterItem[] = [
   {
     label: "Halloween",
     href: "/halloween",
-    icon: Icons.Activity,
+    icon: Icons.Star,
     iconSize: 20,
   },
   {

@@ -37,6 +37,7 @@ export function Leaderboard({
   let lastEntryValue = -1;
   let tiedPosition = -1;
   let cursiveCount = 0;
+  let dividerSet = false;
 
   return (
     <div>
@@ -81,8 +82,9 @@ export function Leaderboard({
         if (adjustedIndex > markedRank - 1) {
           styling.fontStyling = "text-white/40 text-[14px] font-normal";
         }
-        if (index == 9) {
+        if (adjustedIndex === markedRank - 1 && !dividerSet) {
           styling.divider = true;
+          dividerSet = true;
         }
 
         let username = entry.username;
