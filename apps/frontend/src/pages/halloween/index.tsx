@@ -695,7 +695,6 @@ export default function HalloweenPage() {
 
   const submitSpookyData = async (updateData: LannaHalloweenData) => {
     await updateHalloweenData(updateData);
-    setHalloweenModalOpen(false);
   };
 
   const submitAstrologyData = async (updateData: LannaHalloweenData) => {
@@ -725,6 +724,9 @@ export default function HalloweenPage() {
         isOpen={halloweenModalOpen}
         username={username}
         onSubmit={submitSpookyData}
+        onClose={() => {
+          setHalloweenModalOpen(false);
+        }}
       />
       <AstrologyModal
         setIsOpen={setAstrologyModalOpen}

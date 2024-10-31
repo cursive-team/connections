@@ -40,7 +40,7 @@ export const AddNotificationButton: FC<AddNotificationButtonProps> = ({
         window.location.href = url;
       }
     } else {
-      toast.error("Please log in to access Cherry.");
+      toast.error("Please log in to access Telegram.");
       router.push("/login");
     }
   };

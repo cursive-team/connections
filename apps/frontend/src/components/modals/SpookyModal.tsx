@@ -6,7 +6,7 @@ import {
 } from "@headlessui/react";
 import React, { Fragment, ReactNode, useState } from "react";
 import { Icons } from "../Icons";
-import { fontBase } from "@/config";
+import { BASE_API_URL, fontBase } from "@/config";
 import { IoIosArrowRoundBack as ArrowBack } from "react-icons/io";
 import { IoMdClose as Close } from "react-icons/io";
 import { AppButton } from "../ui/Button";
@@ -16,6 +16,9 @@ import { cn } from "@/lib/frontend/util";
 import { Tag } from "../ui/Tag";
 import { LannaHalloweenData } from "@/lib/storage/types/user/userData/lannaHalloweenData";
 import { logClientEvent } from "@/lib/frontend/metrics";
+import { toast } from "sonner";
+import { storage } from "@/lib/storage";
+import { useRouter } from "next/router";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -115,6 +118,7 @@ const SpookyModal = ({
   username = "",
   onSubmit,
 }: ModalProps) => {
+  const router = useRouter();
   const [step, setStep] = useState(0);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [selectedPreferences, setSelectedPreferences] =
@@ -303,12 +307,47 @@ const SpookyModal = ({
     await onSubmit(submitData);
   };
 
-  const handleNext = () => {
-    if (step === steps?.length - 1) {
+  const onClickTelegram = async () => {
+    logClientEvent("halloween-spooky-modal-telegram-clicked", {});
+
+    try {
+      const { user, session } = await storage.getUserAndSession();
+      if (
+        user &&
+        session &&
+        session.authTokenValue &&
+        session.authTokenExpiresAt > new Date()
+      ) {
+        const url = `${BASE_API_URL}/notification/telegram/link?authToken=${session.authTokenValue}`;
+        // Store the URL in local storage to track that user clicked telegram link
+        localStorage.setItem("telegramLinkClicked", "true");
+
+        window.open(url, "_blank");
+      } else {
+        throw new Error("No user or session found");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Please log in to access Telegram.");
+      router.push("/login");
+    }
+  };
+
+  const handleNext = async () => {
+    if (step === 2) {
+      await onHandleSubmit();
+      if (localStorage.getItem("telegramLinkClicked") === "true") {
+        onClose?.();
+        setIsOpen(false);
+        setStep(0);
+      } else {
+        setStep(3);
+      }
+    } else if (step === 3) {
+      await onClickTelegram();
       onClose?.();
       setIsOpen(false);
       setStep(0);
-      onHandleSubmit();
     } else {
       setStep(step + 1);
     }
