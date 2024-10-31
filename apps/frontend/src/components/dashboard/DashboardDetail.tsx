@@ -58,15 +58,14 @@ export function DashboardDetail({
     if (leaderboardDetails.userPosition == -1) {
       contributorMsg = "You are not on the leaderboard yet.";
     }
-
     return (
       <AppLayout
         withContainer={false}
         showFooter={false}
         header={
           <div>
-            <div className="flex-row w-full px-1 pt-8 pb-4 bg-white justify-between items-center inline-flex">
-              <div className="text-[#090909] text-xl font-semibold font-['DM Sans'] leading-tight">
+            <div className="flex-row w-full px-1 pt-8 pb-4 bg-background dark:bg-black justify-between items-center inline-flex">
+              <div className="text-primary dark:text-white text-xl font-semibold font-['DM Sans'] leading-tight">
                 {`Total (${
                   Number.isInteger(leaderboardDetails.totalValue)
                     ? leaderboardDetails.totalValue
@@ -77,20 +76,21 @@ export function DashboardDetail({
                 <Icons.XClose
                   size={24}
                   onClick={() => setSeeFullLeaderboard(false)}
+                  className="text-primary dark:bg-white dark:text-white"
                 />
               </div>
             </div>
             <div className="py-4 px-1 flex-col justify-center items-start gap-2 inline-flex">
-              <div className="text-[#090909] text-base font-bold font-['DM Sans'] leading-snug">
+              <div className="text-primary dark:text-white text-base font-bold font-['DM Sans'] leading-snug">
                 {contributorMsg}
               </div>
               {prize && (
                 <>
-                  <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
+                  <div className="self-stretch text-tertiary dark:text-gray-400 text-sm font-normal font-['DM Sans'] leading-tight">
                     Win an NFC ring by ranking in the top {prizeRank} this week!
                     Winners are announced at Sunday dinner.
                   </div>
-                  <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
+                  <div className="self-stretch text-tertiary dark:text-gray-400 text-sm font-normal font-['DM Sans'] leading-tight">
                     People who already have a ring are marked with a 💍.
                     {prize && ` They do not count in the top ${prizeRank}.`}
                   </div>
@@ -120,20 +120,20 @@ export function DashboardDetail({
       withContainer={false}
       headerDivider
       header={
-        <div className="sticky top-0 h-12 flex items-center bg-background z-20">
+        <div className="sticky top-0 h-12 flex items-center bg-background dark:bg-gray-900 z-20">
           <div className="px-1">
             <div className="flex gap-1 items-center" onClick={returnToHome}>
-              <BackIcon className="text-primary" size={12} />
-              <span className="text-sm text-primary">Back</span>
+              <BackIcon className="text-primary dark:text-white" size={12} />
+              <span className="text-sm text-primary dark:text-white">Back</span>
             </div>
           </div>
         </div>
       }
     >
-      <div className="flex flex-col divide-y divide-y-quaternary">
+      <div className="flex flex-col divide-y divide-y-quaternary dark:divide-gray-800">
         <div className="flex flex-col gap-4 p-4">
           <div
-            className="rounded-lg overflow-hidden h-[135px] w-full bg-gray-200"
+            className="rounded-lg overflow-hidden h-[135px] w-full bg-gray-200 dark:bg-gray-800"
             style={
               image
                 ? {
@@ -146,15 +146,15 @@ export function DashboardDetail({
             }
           ></div>
           <div className="flex flex-col flex-1 gap-2">
-            <p className="text-xs font-normal text-quaternary">{`${
+            <p className="text-xs font-normal text-quaternary dark:text-gray-400">{`${
               (leaderboardDetails.userPosition ?? 0) > 0
                 ? `#${leaderboardDetails.userPosition} of `
                 : ""
             } ${leaderboardDetails.totalContributors} contributors`}</p>
-            <h2 className="text-xl font-bold leading-none text-primary">
+            <h2 className="text-xl font-bold leading-none text-primary dark:text-white">
               {title}
             </h2>
-            <div className="w-full bg-[#f1f1f1] rounded-full h-[7px] mt-2 mb-1 overflow-hidden">
+            <div className="w-full bg-[#f1f1f1] dark:bg-gray-800 rounded-full h-[7px] mt-2 mb-1 overflow-hidden">
               <div
                 className={cn(
                   "h-[7px] rounded-full transition-all duration-1000 ease-out",
@@ -169,7 +169,7 @@ export function DashboardDetail({
         </div>
         {description && (
           <div className="w-full p-4">
-            <p className="text-sm font-normal text-primary text-left">
+            <p className="text-sm font-normal text-primary dark:text-white text-left">
               {description}
             </p>
             {actionItem && (
@@ -182,12 +182,12 @@ export function DashboardDetail({
         <div className="pb-6">
           <div className="flex flex-col gap-2 p-4">
             <div className=" items-center flex justify-between">
-              <span className="text-base font-bold text-primary font-sans">
+              <span className="text-base font-bold text-primary dark:text-white font-sans">
                 Top 5 contributors
               </span>
               <AppButton
                 variant="outline"
-                className="rounded-full max-w-[120px]"
+                className="rounded-full max-w-[120px] dark:border-gray-700 dark:text-white"
                 icon={<Icons.Star className="mr-2" />}
                 onClick={() => {
                   logClientEvent("dashboard-leaderboard-clicked", {
@@ -212,16 +212,16 @@ export function DashboardDetail({
 
         <div className="p-4">
           <div className="flex flex-col gap-2">
-            <span className="text-base font-bold text-primary font-sans">
+            <span className="text-base font-bold text-primary dark:text-white font-sans">
               Organizer
             </span>
             <div className="flex items-start gap-4 py-4">
               <CursiveLogo size={48} />
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-primary font-sans">
+                <span className="text-sm font-medium text-primary dark:text-white font-sans">
                   {organizer}
                 </span>
-                <span className="text-xs font-medium text-secondary font-sans">
+                <span className="text-xs font-medium text-secondary dark:text-gray-400 font-sans">
                   {organizerDescription}
                 </span>
               </div>
