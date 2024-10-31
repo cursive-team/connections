@@ -40,8 +40,6 @@ export const ProfileImage = ({
   user: UserData;
   size?: number;
 }) => {
-  const halloweenMode: boolean = true;
-
   if (!user || Object.keys(user)?.length === 0)
     return (
       <div
@@ -49,20 +47,14 @@ export const ProfileImage = ({
         style={{ width: `${size * 4}px`, height: `${size * 4}px` }}
       ></div>
     );
-
-  let className: string = "rounded-full border border-quaternary/10 flex items-center justify-center";
-
-  if (halloweenMode) {
-    className += " bg-[#ff9df8]/30";
-  }
-
+  
   const backgroundColor = getProfileBackgroundColor(user);
 
   return (
     <div
-      className={className}
+      className="rounded-full border border-quaternary/10 flex items-center justify-center"
       style={{
-        backgroundColor: (!halloweenMode) ? backgroundColor : "",
+        backgroundColor,
         width: `${size * 4}px`,
         height: `${size * 4}px`,
       }}
