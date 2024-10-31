@@ -6,15 +6,16 @@ export class TelegramNotificationClient implements iNotificationClient {
   private bot: Bot | undefined;
   private readonly maxRetries = 3;
   private readonly retryDelay = 5000;
-  prismaClient: PrismaClient | undefined;
+  prismaClient: PrismaClient;
 
   constructor() {
+    this.prismaClient = new PrismaClient();
+
     if (!process.env.TELEGRAM_BOT_API) {
       // No token, so we don't initialize
       return;
     }
     this.bot = new Bot(process.env.TELEGRAM_BOT_API);
-    this.prismaClient = new PrismaClient();
   }
 
   private async setupBot(): Promise<void> {
@@ -37,7 +38,7 @@ export class TelegramNotificationClient implements iNotificationClient {
 
         try {
           // Store the association in your database
-          await this.prismaClient?.user.update({
+          await this.prismaClient.user.update({
             where: { id: backendUserId },
             data: { notificationUserId: telegramUserId?.toString() },
           });
@@ -81,6 +82,7 @@ export class TelegramNotificationClient implements iNotificationClient {
         await new Promise((resolve) => setTimeout(resolve, this.retryDelay));
       }
     }
+    throw Error("Unable to initialize Telegram client")
   }
 
   async SendNotification(userId: string, message: string): Promise<boolean> {
@@ -90,7 +92,7 @@ export class TelegramNotificationClient implements iNotificationClient {
     }
 
     try {
-      const user = await this.prismaClient?.user.findUnique({
+      const user = await this.prismaClient.user.findUnique({
         where: { id: userId },
       });
 
