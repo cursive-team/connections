@@ -9,6 +9,7 @@ import {
   LeaderboardEntryType,
 } from "@types";
 import { Chip } from "@/lib/controller/chip/types";
+import { TelegramNotificationClient } from "../../notification/telegram/client";
 
 // NOTE: Hoist all prototype methods -- if you do not import the method file, the method(s) will evaluate to undefined at runtime
 import("@/lib/controller/chip/managed/update");
@@ -18,9 +19,11 @@ import("@/lib/controller/chip/managed/tap");
 
 export class ManagedChipClient implements iChipClient {
   prismaClient: PrismaClient;
+  notificationClient: TelegramNotificationClient;
 
   constructor() {
     this.prismaClient = new PrismaClient();
+    this.notificationClient = new TelegramNotificationClient();
   }
 
   // @ts-expect-error (ts2391: function implementation does not immediately follow declaration)

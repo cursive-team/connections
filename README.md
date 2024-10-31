@@ -28,6 +28,14 @@ Backend:
 - Run `pnpm prisma generate` to generate the prisma client
 - `pnpm run dev`
 
+Telegram:
+
+- Create a bot on Telegram using BotFather (https://t.me/BotFather) to test with
+- In `apps/backend/.env`:
+  - Set `TELEGRAM_BOT_API` to the bot api key
+  - Set `TELEGRAM_BOT_USERNAME` to be the bot username
+  - Set `TELEGRAM_BOT_START_DELAY_MS` to the delay in ms before starting the bot, defaults to 0, mostly relevant in prod
+
 Testing:
 
 - This is meant to be a mobile browser app. You can either test this on mobile browser by connecting it to localhost or using ngrok/similar service, or test from a desktop web browser using mobile view

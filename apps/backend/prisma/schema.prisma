@@ -21,6 +21,7 @@ model User {
   registeredWithPasskey Boolean
   passkeyAuthPublicKey  String?
   createdAt             DateTime    @default(now())
+  notificationUserId    String?
   AuthToken             AuthToken[]
   Backup                Backup[]
 }

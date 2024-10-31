@@ -10,9 +10,26 @@ ManagedChipClient.prototype.UpdateChip = async function (
     this.prismaClient,
     updateChip.tapParams
   );
-
   if (!chip) {
     throw new Error("Chip not found");
+  }
+
+  // ensure user owns the chip
+  const prismaAuthToken = await this.prismaClient.authToken.findUnique({
+    where: { value: updateChip.authToken },
+  });
+  if (!prismaAuthToken) {
+    throw new Error("Invalid auth token");
+  }
+
+  const authUser = await this.prismaClient.user.findUnique({
+    where: { id: prismaAuthToken.userId },
+  });
+  if (!authUser) {
+    throw new Error("User not found");
+  }
+  if (authUser.username !== chip.ownerUsername) {
+    throw new Error("User does not own this chip");
   }
 
   // Update the chip with registration information
@@ -30,6 +47,12 @@ ManagedChipClient.prototype.UpdateChip = async function (
           : updateChip.ownerUserData,
     },
   });
+
+  // send notification to user
+  await this.notificationClient.SendNotification(
+    authUser.id,
+    "Your chip has been updated!"
+  );
 
   // Return the updated chip
   return ChipSchema.parse(updatedChip);

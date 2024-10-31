@@ -18,6 +18,7 @@ import { logoutUser } from "@/lib/auth";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import ImportGithubButton from "@/features/oauth/ImportGithubButton";
 import ImportStravaButton from "@/features/oauth/ImportStravaButton";
+import AddNotificationButton from "@/features/notification/AddNotificationButton";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -108,6 +109,9 @@ const ProfilePage: React.FC = () => {
                     <span className="text-[14px]">Activity</span>
                   </AppButton>
                 </Link>
+                <div className="w-fit">
+                  <AddNotificationButton />
+                </div>
               </div>
             </div>
           </div>
