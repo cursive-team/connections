@@ -145,10 +145,22 @@ PrismaPostgresClient.prototype.GetAllUserHashesByChipAndLocation =
 PrismaPostgresClient.prototype.CreateDataHashMatch = async function (
   usernameA: string,
   usernameB: string,
-  connectionScore: number
+  connectionScore: number,
+  displayNameA: string | undefined,
+  displayNameB: string | undefined,
+  notificationUsernameA: string | undefined,
+  notificationUsernameB: string | undefined
 ): Promise<void> {
   await this.prismaClient.dataHashMatch.create({
-    data: { usernameA, usernameB, connectionScore },
+    data: {
+      usernameA,
+      usernameB,
+      connectionScore,
+      displayNameA,
+      displayNameB,
+      notificationUsernameA,
+      notificationUsernameB,
+    },
   });
 };
 
@@ -160,6 +172,10 @@ PrismaPostgresClient.prototype.GetAllDataHashMatches =
         usernameA: dataHashMatch.usernameA,
         usernameB: dataHashMatch.usernameB,
         connectionScore: Number(dataHashMatch.connectionScore),
+        displayNameA: dataHashMatch.displayNameA,
+        displayNameB: dataHashMatch.displayNameB,
+        notificationUsernameA: dataHashMatch.notificationUsernameA,
+        notificationUsernameB: dataHashMatch.notificationUsernameB,
         createdAt: dataHashMatch.createdAt,
       })
     );

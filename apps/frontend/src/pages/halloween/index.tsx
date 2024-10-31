@@ -69,6 +69,13 @@ export const VaultCard = ({
   );
 };
 
+interface HashConnection {
+  username: string;
+  displayName: string | null;
+  notificationUsername: string | null;
+  score: number;
+}
+
 export default function HalloweenPage() {
   const router = useRouter();
   const [halloweenModalOpen, setHalloweenModalOpen] = useState(false);
@@ -76,6 +83,7 @@ export default function HalloweenPage() {
   const [freakModalOpen, setFreakModalOpen] = useState(false);
   const [fortuneModalOpen, setFortuneModalOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [connections, setConnections] = useState<HashConnection[]>([]);
 
   useEffect(() => {
     const loadTap = async () => {
@@ -89,6 +97,13 @@ export default function HalloweenPage() {
       }
       setUser(user);
       console.log(fortuneModalOpen);
+
+      const connections = await fetch(
+        `${BASE_API_URL}/api/data_hash/get_connections?authToken=${session.authTokenValue}`
+      );
+      const connectionsData: { connections: HashConnection[] } =
+        await connections.json();
+      setConnections(connectionsData.connections);
 
       const savedTapInfo = await storage.loadSavedTapInfo();
       // Delete saved tap info after fetching
@@ -834,17 +849,50 @@ export default function HalloweenPage() {
               {`Here's where you'll see your best fit connections. Message to meet up!`}
             </span>
             {user ? (
-              <div className="flex gap-4 items-center">
-                <ProfileImage user={user.userData} />
-                <div className="flex flex-col">
-                  <span className="text-sm font-medium font-sans text-primary">
-                    Lorem, ipsum dolor.
-                  </span>
-                  <span className="text-xs font-medium font-sans text-[#FF9DF8]">
-                    @username
-                  </span>
-                </div>
-                <ArrowRight size={18} className="text-white ml-auto" />
+              <div className="flex flex-col gap-4">
+                {connections.map((connection) => (
+                  <div
+                    key={connection.username}
+                    className="flex gap-4 items-center cursor-pointer"
+                    onClick={() => {
+                      logClientEvent(
+                        "halloween-connections-telegram-clicked",
+                        {}
+                      );
+                      if (!connection.notificationUsername) {
+                        toast.error(
+                          "This user hasn't set up notifications yet"
+                        );
+                        return;
+                      }
+                      // Open in new tab with noopener and noreferrer for security
+                      window.open(
+                        `https://t.me/${connection.notificationUsername}`,
+                        "_blank",
+                        "noopener,noreferrer"
+                      );
+                    }}
+                  >
+                    <ProfileImage
+                      user={{
+                        username: connection.username,
+                        displayName: connection.displayName || "",
+                        bio: "",
+                        signaturePublicKey: "",
+                        encryptionPublicKey: "",
+                      }}
+                    />
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium font-sans text-primary">
+                        {connection.displayName || connection.username}
+                      </span>
+                      <span className="text-xs font-medium font-sans text-[#FF9DF8]">
+                        @{connection.username}
+                      </span>
+                    </div>
+                    <ArrowRight size={18} className="text-white ml-auto" />
+                  </div>
+                ))}
               </div>
             ) : (
               <></>

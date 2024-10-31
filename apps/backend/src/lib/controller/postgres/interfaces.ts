@@ -68,7 +68,11 @@ export interface iPostgresClient {
   CreateDataHashMatch(
     usernameA: string,
     usernameB: string,
-    connectionScore: number
+    connectionScore: number,
+    displayNameA: string | undefined,
+    displayNameB: string | undefined,
+    notificationUsernameA: string | undefined,
+    notificationUsernameB: string | undefined
   ): Promise<void>;
   GetAllDataHashMatches(): Promise<DataHashMatch[]>;
 }

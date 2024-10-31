@@ -102,7 +102,11 @@ export const UpdateDataHashSchema = z.object({
 
 export const DataHashMatchSchema = z.object({
   usernameA: UsernameSchema,
+  displayNameA: z.string().nullable(),
+  notificationUsernameA: z.string().nullable(),
   usernameB: UsernameSchema,
+  displayNameB: z.string().nullable(),
+  notificationUsernameB: z.string().nullable(),
   connectionScore: z.number(),
   createdAt: z.date(),
 });

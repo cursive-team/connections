@@ -67,6 +67,22 @@ router.get(
 
           if (connectionScore >= LANNA_HALLOWEEN_CONNECTION_SCORE_THRESHOLD) {
             await controller.CreateDataHashMatch(userA, userB, connectionScore);
+            const userAData = await controller.GetUserByUsernameCaseInsensitive(
+              userA
+            );
+            const userBData = await controller.GetUserByUsernameCaseInsensitive(
+              userB
+            );
+            if (userAData && userBData) {
+              await controller.SendNotification(
+                userAData.id,
+                `I have discovered a new connection for you. Tap your wristband to see who it is!`
+              );
+              await controller.SendNotification(
+                userBData.id,
+                `I have discovered a new connection for you. Tap your wristband to see who it is!`
+              );
+            }
             // TODO: Notify users of match
             matchCount++;
           }

@@ -22,6 +22,7 @@ model User {
   passkeyAuthPublicKey  String?
   createdAt             DateTime    @default(now())
   notificationUserId    String?
+  notificationUsername  String?
   AuthToken             AuthToken[]
   Backup                Backup[]
 }
@@ -117,9 +118,13 @@ model PrivateDataHash {
 }
 
 model DataHashMatch {
-  id               String   @id @default(uuid())
-  usernameA        String
-  usernameB        String
-  connectionScore  Decimal
-  createdAt        DateTime @default(now())
+  id                    String   @id @default(uuid())
+  usernameA             String
+  displayNameA          String?
+  notificationUsernameA String?
+  usernameB             String
+  displayNameB          String?
+  notificationUsernameB String?
+  connectionScore       Decimal
+  createdAt             DateTime @default(now())
 }

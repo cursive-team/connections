@@ -30,6 +30,7 @@ export class TelegramNotificationClient implements iNotificationClient {
       if (startParameter) {
         // This is where you can link the Telegram user with your backend user
         const telegramUserId = ctx.from?.id;
+        const telegramUsername = ctx.from?.username;
         const backendUserId = startParameter;
 
         if (!telegramUserId || !backendUserId) {
@@ -40,7 +41,10 @@ export class TelegramNotificationClient implements iNotificationClient {
           // Store the association in your database
           await this.prismaClient.user.update({
             where: { id: backendUserId },
-            data: { notificationUserId: telegramUserId?.toString() },
+            data: {
+              notificationUserId: telegramUserId?.toString(),
+              notificationUsername: telegramUsername,
+            },
           });
 
           await ctx.reply(
@@ -82,7 +86,7 @@ export class TelegramNotificationClient implements iNotificationClient {
         await new Promise((resolve) => setTimeout(resolve, this.retryDelay));
       }
     }
-    throw Error("Unable to initialize Telegram client")
+    throw Error("Unable to initialize Telegram client");
   }
 
   async SendNotification(userId: string, message: string): Promise<boolean> {

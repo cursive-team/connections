@@ -110,7 +110,11 @@ export class PrismaPostgresClient implements iPostgresClient {
   CreateDataHashMatch(
     usernameA: string,
     usernameB: string,
-    connectionScore: number
+    connectionScore: number,
+    displayNameA: string | undefined,
+    displayNameB: string | undefined,
+    notificationUsernameA: string | undefined,
+    notificationUsernameB: string | undefined
   ): Promise<void>;
 
   // @ts-expect-error (ts2391)
