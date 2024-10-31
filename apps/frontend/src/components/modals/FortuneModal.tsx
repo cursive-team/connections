@@ -5,7 +5,6 @@ import {
   DialogPanel,
 } from "@headlessui/react";
 import React, { Fragment, ReactNode, useState } from "react";
-import { Icons } from "../Icons";
 import { BASE_API_URL, fontBase } from "@/config";
 import { IoIosArrowRoundBack as ArrowBack } from "react-icons/io";
 import { IoMdClose as Close } from "react-icons/io";
@@ -15,6 +14,7 @@ import Image from "next/image";
 import { storage } from "@/lib/storage";
 import { toast } from "sonner";
 import { logClientEvent } from "@/lib/frontend/metrics";
+import { Icons } from "../icons/Icons";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
