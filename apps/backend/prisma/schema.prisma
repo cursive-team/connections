@@ -126,3 +126,11 @@ model DataHashMatch {
   connectionScore       Decimal
   createdAt             DateTime @default(now())
 }
+
+model PairConnection {
+  id              String   @id @default(uuid())
+  usernameA       String
+  usernameB       String?
+  connectionScore Decimal?
+  createdAt       DateTime @default(now())
+}

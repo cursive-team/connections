@@ -9,6 +9,7 @@ import {
   DataHash,
   UpdateDataHash,
   DataHashMatch,
+  PairConnection,
 } from "@/lib/controller/postgres/types";
 import {
   AuthToken,
@@ -73,4 +74,6 @@ export interface iPostgresClient {
     notificationUsernameB: string | undefined
   ): Promise<void>;
   GetAllDataHashMatches(): Promise<DataHashMatch[]>;
+  UpdatePairConnection(username: string): Promise<void>;
+  GetLatestPairConnection(): Promise<PairConnection | null>;
 }

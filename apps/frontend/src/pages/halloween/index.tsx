@@ -33,6 +33,7 @@ import {
   HashData,
 } from "@types";
 import { BASE_API_URL } from "@/config";
+import { FortuneModal } from "@/components/modals/FortuneModal";
 
 interface VaultCardProps {
   active?: boolean;
@@ -95,7 +96,6 @@ export default function HalloweenPage() {
         return;
       }
       setUser(user);
-      console.log(fortuneModalOpen);
 
       const connections = await fetch(
         `${BASE_API_URL}/data_hash/get_connections?authToken=${session.authTokenValue}`
@@ -753,6 +753,7 @@ export default function HalloweenPage() {
         isOpen={freakModalOpen}
         onSubmit={submitFreakData}
       />
+      <FortuneModal setIsOpen={setFortuneModalOpen} isOpen={fortuneModalOpen} />
       <AppLayout
         showFooter={false}
         back={{
