@@ -5,8 +5,11 @@ import {
   DataHashMatch,
   DataHashMatchSchema,
   DataHashSchema,
+  PairConnection,
+  PairConnectionSchema,
   UpdateDataHash,
 } from "@/lib/controller/postgres/types";
+import { computeConnectionScore } from "@/lib/util/connectionScore";
 import { ChipIssuer } from "@types";
 
 PrismaPostgresClient.prototype.CreatePrivateDataHashes = async function (
@@ -173,4 +176,111 @@ PrismaPostgresClient.prototype.GetAllDataHashMatches =
         createdAt: dataHashMatch.createdAt,
       })
     );
+  };
+
+PrismaPostgresClient.prototype.UpdatePairConnection = async function (
+  username: string
+): Promise<void> {
+  // Get latest pair connection
+  const latestPairConnection = await this.prismaClient.pairConnection.findFirst(
+    {
+      orderBy: {
+        createdAt: "desc",
+      },
+    }
+  );
+
+  if (!latestPairConnection) {
+    // No existing pair connection, create new one with usernameA
+    await this.prismaClient.pairConnection.create({
+      data: {
+        usernameA: username,
+      },
+    });
+  } else if (!latestPairConnection.usernameB) {
+    // If this user is usernameA, return early
+    if (username === latestPairConnection.usernameA) {
+      return;
+    }
+    // Get private data hashes for both users
+    const userAHashes = await this.prismaClient.privateDataHash.findMany({
+      where: {
+        username: latestPairConnection.usernameA,
+        dataHash: {
+          not: null,
+        },
+      },
+      select: {
+        dataHash: true,
+      },
+    });
+    const userAHashesUnique = [
+      ...new Set(
+        userAHashes.map((hash) => hash.dataHash).filter((hash) => hash !== null)
+      ),
+    ];
+
+    const userBHashes = await this.prismaClient.privateDataHash.findMany({
+      where: {
+        username,
+        dataHash: {
+          not: null,
+        },
+      },
+      select: {
+        dataHash: true,
+      },
+    });
+    const userBHashesUnique = [
+      ...new Set(
+        userBHashes.map((hash) => hash.dataHash).filter((hash) => hash !== null)
+      ),
+    ];
+
+    const commonHashCount = userAHashesUnique.filter((hashA) =>
+      userBHashesUnique.includes(hashA)
+    ).length;
+
+    // Compute connection score between the users' data hashes
+    const connectionScore = computeConnectionScore(
+      userAHashesUnique.length,
+      userBHashesUnique.length,
+      commonHashCount
+    );
+
+    // Update with usernameB and score
+    await this.prismaClient.pairConnection.update({
+      where: {
+        id: latestPairConnection.id,
+      },
+      data: {
+        usernameB: username,
+        connectionScore,
+      },
+    });
+  } else {
+    // Both usernames exist, create new pair connection
+    await this.prismaClient.pairConnection.create({
+      data: {
+        usernameA: username,
+      },
+    });
+  }
+};
+
+PrismaPostgresClient.prototype.GetLatestPairConnection =
+  async function (): Promise<PairConnection | null> {
+    const latestPairConnection =
+      await this.prismaClient.pairConnection.findFirst({
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+    return latestPairConnection
+      ? PairConnectionSchema.parse({
+          ...latestPairConnection,
+          connectionScore: Number(latestPairConnection.connectionScore),
+        })
+      : null;
   };

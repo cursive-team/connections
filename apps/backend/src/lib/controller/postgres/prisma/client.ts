@@ -117,4 +117,10 @@ export class PrismaPostgresClient implements iPostgresClient {
 
   // @ts-expect-error (ts2391)
   GetAllDataHashMatches(): Promise<DataHashMatch[]>;
+
+  // @ts-expect-error (ts2391)
+  UpdatePairConnection(username: string): Promise<void>;
+
+  // @ts-expect-error (ts2391)
+  GetLatestPairConnection(): Promise<PairConnection | null>;
 }

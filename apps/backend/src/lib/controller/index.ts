@@ -11,6 +11,7 @@ import {
   DataHash,
   UpdateDataHash,
   DataHashMatch,
+  PairConnection,
 } from "@/lib/controller/postgres/types";
 import {
   AuthToken,
@@ -269,6 +270,14 @@ export class Controller {
 
   GetAllDataHashMatches(): Promise<DataHashMatch[]> {
     return this.postgresClient.GetAllDataHashMatches();
+  }
+
+  UpdatePairConnection(username: string): Promise<void> {
+    return this.postgresClient.UpdatePairConnection(username);
+  }
+
+  GetLatestPairConnection(): Promise<PairConnection | null> {
+    return this.postgresClient.GetLatestPairConnection();
   }
 
   // OAuth

@@ -110,6 +110,14 @@ export const DataHashMatchSchema = z.object({
   createdAt: z.date(),
 });
 
+export const PairConnectionSchema = z.object({
+  id: z.string(),
+  usernameA: UsernameSchema,
+  usernameB: UsernameSchema.nullable(),
+  connectionScore: z.number().nullable(),
+  createdAt: z.date(),
+});
+
 export type User = z.infer<typeof UserSchema>;
 export type UserCreateRequest = z.infer<typeof UserCreateRequestSchema>;
 export type Backup = z.infer<typeof BackupSchema>;
@@ -122,3 +130,4 @@ export type DataHash = z.infer<typeof DataHashSchema>;
 export type CreateDataHash = z.infer<typeof CreateDataHashSchema>;
 export type UpdateDataHash = z.infer<typeof UpdateDataHashSchema>;
 export type DataHashMatch = z.infer<typeof DataHashMatchSchema>;
+export type PairConnection = z.infer<typeof PairConnectionSchema>;

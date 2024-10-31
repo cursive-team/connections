@@ -1,6 +1,7 @@
+import { BASE_API_URL } from "@/config";
 import { cn } from "@/lib/frontend/util";
 import { Ephesis, Poppins } from "next/font/google";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const ephesis = Ephesis({
   weight: ["400"],
@@ -15,7 +16,107 @@ const poppins = Poppins({
 });
 
 export default function FortunePage() {
-  const score = 0;
+  const [pairConnection, setPairConnection] = useState<{
+    state: string;
+    score?: number;
+    createdAt?: Date;
+  } | null>(null);
+  const [firstFetchCompleteTime, setFirstFetchCompleteTime] =
+    useState<Date | null>(null);
+
+  useEffect(() => {
+    const fetchPairConnection = async () => {
+      console.log("Fetching pair connection");
+      try {
+        const response = await fetch(
+          `${BASE_API_URL}/data_hash/pair_connection`
+        );
+        const data = await response.json();
+        const connection = {
+          ...data,
+          createdAt: data.createdAt ? new Date(data.createdAt) : undefined,
+        };
+
+        console.log("Connection:", connection, firstFetchCompleteTime);
+
+        // If we have a score and no firstFetchCompleteTime, set it
+        if (connection.score !== undefined && !firstFetchCompleteTime) {
+          setFirstFetchCompleteTime(new Date());
+        }
+
+        // Reset firstFetchCompleteTime if score disappears
+        if (connection.score === undefined && firstFetchCompleteTime) {
+          setFirstFetchCompleteTime(null);
+          setPairConnection(null);
+          return;
+        }
+
+        // Clear connection if it's too old
+        if (
+          firstFetchCompleteTime &&
+          new Date().getTime() - firstFetchCompleteTime.getTime() > 15000
+        ) {
+          setPairConnection(null);
+          return;
+        }
+
+        // Only update connection state if it's different
+        if (JSON.stringify(connection) !== JSON.stringify(pairConnection)) {
+          setPairConnection(connection);
+        }
+      } catch (error) {
+        console.error("Error fetching pair connection:", error);
+      }
+    };
+
+    const interval = setInterval(fetchPairConnection, 2000);
+    return () => clearInterval(interval);
+  }, [firstFetchCompleteTime, pairConnection]);
+
+  const getTopMessage = () => {
+    if (
+      pairConnection &&
+      pairConnection.state === "complete" &&
+      pairConnection.score
+    ) {
+      const connectionScore = pairConnection.score;
+
+      if (connectionScore >= 0.9) {
+        return "Twin";
+      } else if (connectionScore >= 0.7) {
+        return "Kindred";
+      } else if (connectionScore >= 0.5) {
+        return "Harmonized";
+      } else if (connectionScore >= 0.3) {
+        return "Aligned";
+      } else {
+        return "Unique";
+      }
+    }
+
+    if (pairConnection?.state === "waiting") {
+      return "Waiting";
+    }
+
+    return "Welcome";
+  };
+
+  const getBottomMessage = () => {
+    if (!pairConnection) {
+      return "Tap Curtis to discover your pair fortune...";
+    }
+
+    if (pairConnection.state === "waiting") {
+      return "Waiting for your pair...";
+    }
+
+    if (pairConnection.score !== undefined) {
+      return `similarity score: ${Math.round(pairConnection.score * 100)}`;
+    }
+
+    return "Tap Curtis to discover your pair fortune...";
+  };
+
   return (
     <div
       style={{
@@ -32,16 +133,16 @@ export default function FortunePage() {
           ephesis.className
         )}
       >
-        Harmonized
+        {getTopMessage()}
       </span>
       <span
         className={cn(
           poppins?.variable,
           poppins?.className,
-          "text-bold text-white text-[48px] lg:text-[96px] leading-none text-center -mt-10"
+          "text-bold text-white text-[48px] lg:text-[96px] leading-none text-center -mt-10 mt-10"
         )}
       >
-        {`similarity score: ${score}`}
+        {getBottomMessage()}
       </span>
     </div>
   );
