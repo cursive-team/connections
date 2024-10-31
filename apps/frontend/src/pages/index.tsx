@@ -25,7 +25,7 @@ export default function Home() {
 
   return (
     <div
-      className="min-h-screen bg-gray-100 flex flex-col"
+      className="min-h-screen bg-background flex flex-col"
       style={{
         minHeight: `${pageHeight}px`,
       }}

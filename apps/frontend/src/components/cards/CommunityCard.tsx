@@ -33,6 +33,8 @@ export const CommunityCard = ({
   type = "active",
   progressPercentage = 0,
 }: CommunityCardProps) => {
+  const hasHalloweenTheme = process.env.NEXT_PUBLIC_HALLOWEEN_THEME === "true";
+
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -45,8 +47,9 @@ export const CommunityCard = ({
   return (
     <div
       className={cn(
-        "w-full bg-white rounded-lg border border-primary",
-        type === "coming-soon" && "bg-gray-100 border-gray-200"
+        "w-full bg-backgrounds rounded-lg border border-primary",
+        type === "coming-soon" &&
+          (hasHalloweenTheme ? "" : "bg-gray-100 border-gray-200")
       )}
     >
       <div className="p-2 flex items-center gap-[10px]">

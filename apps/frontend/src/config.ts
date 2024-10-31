@@ -71,7 +71,7 @@ export const ROUTER_ITEMS: RouterItem[] = [
     iconSize: 20,
   },
   {
-    label: "Profile",
+    label: "Account",
     href: "/profile",
     icon: Icons.Profile,
     iconSize: 20,

@@ -8,9 +8,13 @@ import detectIncognito from "detectincognitojs";
 
 interface OnlyMobileProps {
   children?: React.ReactNode;
+  ignoreMobile?: boolean;
 }
 
-export default function OnlyMobileLayout({ children }: OnlyMobileProps) {
+export default function OnlyMobileLayout({
+  children,
+  ignoreMobile = false,
+}: OnlyMobileProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const md = useRef<any>();
   const [isMobile, setIsMobile] = React.useState(false);
@@ -43,7 +47,8 @@ export default function OnlyMobileLayout({ children }: OnlyMobileProps) {
 
   const validMobile = APP_CONFIG.IS_MOBILE_ONLY && isMobile;
   const validIncognito = !APP_CONFIG.ALLOW_INCOGNITO && !isIncognito;
-  const canUseApp = validMobile && validIncognito && !isVanadium;
+  const canUseApp =
+    ignoreMobile || (validMobile && validIncognito && !isVanadium);
 
   if (!isLoaded) return null;
 

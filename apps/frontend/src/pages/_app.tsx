@@ -13,6 +13,8 @@ import { DefaultSeo } from "next-seo";
 // import { AnimatePresence, motion } from "framer-motion";
 import { preMigrationSignaturePublicKeys } from "@/common/constants";
 import { fetchMessages } from "@/lib/message";
+import { cn } from "@/lib/frontend/util";
+import { usePathname } from "next/navigation";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -26,9 +28,15 @@ const dmSans = DM_Sans({
 }; */
 
 export default function MyApp({ Component, pageProps }: AppProps) {
+  const pathname = usePathname();
   const router = useRouter();
   const [isPreMigrationSessionChecked, setIsPreMigrationSessionChecked] =
     useState(false);
+
+  let isFortunePage: boolean = false;
+  if (pathname?.includes("/fortune")) {
+    isFortunePage = pathname.includes("/fortune")
+  }
 
   // Refresh messages when the page is refreshed
   useEffect(() => {
@@ -97,13 +105,13 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }, [router, isPreMigrationSessionChecked]);
 
   return (
-    <main className={`${dmSans.className} ${dmSans.variable}`}>
+    <main className={cn(`${dmSans.className} ${dmSans.variable} `)}>
       <DefaultSeo titleTemplate="%s | Cursive Connections" />
       <PlausibleProvider
         domain={process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN!}
         trackOutboundLinks
       >
-        <OnlyMobileLayout>
+        <OnlyMobileLayout ignoreMobile={isFortunePage}>
           <Component {...pageProps} />
         </OnlyMobileLayout>
       </PlausibleProvider>
@@ -112,7 +120,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         position="top-center"
         toastOptions={{
           duration: 5000,
-          className: "font-sans text-primary",
+          className: "font-sans bg-background text-primary",
         }}
       />
     </main>

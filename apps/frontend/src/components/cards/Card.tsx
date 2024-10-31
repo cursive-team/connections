@@ -4,10 +4,10 @@ import { CSSProperties, HTMLAttributes, useEffect, useState } from "react";
 const CardBase = classed.div("relative rounded overflow-hidden ", {
   variants: {
     variant: {
-      primary: "bg-white border border-primary",
-      secondary: "bg-secondary border border-secondary",
-      tertiary: "bg-secondary border border-secondary",
-      gray: "bg-[#F1F1F1]",
+      primary: "bg-card-primary-bg border border-card-primary-border",
+      secondary: "bg-card-secondary-bg border border-secondary-border",
+      tertiary: "bg-card-tertiary-bg border border-secondary-border",
+      gray: "bg-card-gray",
     },
   },
   defaultVariants: {
@@ -18,17 +18,20 @@ const CardBase = classed.div("relative rounded overflow-hidden ", {
 const CardTitle = classed.h1("text-sm leading-5 text-black");
 const CardDescription = classed.span("text-xs leading-4 text-black");
 
-const CardProgressLine = classed.div("absolute bottom-0 left-0 right-0 h-1", {
-  variants: {
-    color: {
-      white: "bg-white",
-      black: "bg-[#323232]",
+export const CardProgressLine = classed.div(
+  "absolute bottom-0 left-0 right-0 h-1",
+  {
+    variants: {
+      color: {
+        white: "bg-white",
+        black: "bg-[#323232]",
+      },
     },
-  },
-  defaultVariants: {
-    color: "white",
-  },
-});
+    defaultVariants: {
+      color: "white",
+    },
+  }
+);
 
 const CardProgress = ({ style }: HTMLAttributes<HTMLDivElement>) => {
   const [delayStyle, setDelayStyle] = useState<CSSProperties>({ width: "0%" });

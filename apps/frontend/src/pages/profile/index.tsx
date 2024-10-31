@@ -91,7 +91,7 @@ const ProfilePage: React.FC = () => {
           <div className="flex flex-col  mt-[38px] px-3 pb-4">
             <div className="flex flex-col gap-4 w-full">
               <div className="flex flex-col">
-                <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans">
+                <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans text-primary">
                   {user?.userData.displayName}
                 </span>
                 <span className="text-[14px] font-medium font-sans text-tertiary">
@@ -156,7 +156,7 @@ const ProfilePage: React.FC = () => {
                 {!user.userData.tensionsRating && (
                   <Card.Base
                     variant="gray"
-                    className="p-4 !rounded-lg"
+                    className="p-4 !rounded-lg !bg-transparent !border !border-white"
                     onClick={() => {
                       logClientEvent("start_tensions", {});
                       router.push("/tensions");
@@ -165,12 +165,12 @@ const ProfilePage: React.FC = () => {
                     <div className="flex flex-col gap-[10px]">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <Icons.Clip />
+                          <Icons.Clip className="text-white" />
                           <span className="text-sm text-primary font-medium">
                             Tensions 🪢
                           </span>
                         </div>
-                        <Icons.Plus />
+                        <Icons.Plus className="text-white" />
                       </div>
                       <span className="text-xs font-medium text-tertiary">
                         Practice your decision making skills by playing the
@@ -212,8 +212,8 @@ const ProfilePage: React.FC = () => {
                   </div>
                 )}
                 {user.userData.tensionsRating && (
-                  <Card.Base
-                    className="p-4 !rounded-lg"
+                  <div
+                    className="p-4 !rounded-lg !bg-transparent !border !border-white"
                     onClick={() => {
                       logClientEvent("edit_tensions", {});
                       router.push("/tensions");
@@ -222,20 +222,20 @@ const ProfilePage: React.FC = () => {
                     <div className="flex flex-col gap-[10px]">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <Icons.Clip />
+                          <Icons.Clip className="text-white" />
                           <span className="text-sm text-primary font-medium">
                             Tensions 🪢
                           </span>
                         </div>
-                        <Icons.Pencil />
+                        <Icons.Pencil className="text-white" />
                       </div>
-                      <span className="text-xs font-medium text-tertiary">
+                      <span className="text-xs font-medium text-white/50">
                         Practice your decision making skills by playing the
                         Tensions game, match with residents who hold opposing
                         views to learn new perspectives.
                       </span>
                     </div>
-                  </Card.Base>
+                  </div>
                 )}
               </div>
             </div>

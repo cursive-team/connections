@@ -15,6 +15,7 @@ export const Banner = ({
   textCenter = true,
   italic = true,
 }: BannerProps) => {
+  const hasHalloweenTheme = process.env.NEXT_PUBLIC_HALLOWEEN_THEME === "true";
   return (
     <div
       className={cn(
@@ -24,9 +25,21 @@ export const Banner = ({
         className
       )}
     >
-      <span className=" text-base font-bold text-secondary">{title}</span>
+      <span
+        className={cn(
+          "text-base font-bold ",
+          hasHalloweenTheme ? "text-black" : "text-secondary"
+        )}
+      >
+        {title}
+      </span>
       {description && (
-        <span className=" text-base font-normal text-secondary">
+        <span
+          className={cn(
+            "text-base font-normal",
+            hasHalloweenTheme ? "text-black" : "text-secondary"
+          )}
+        >
           {description}
         </span>
       )}

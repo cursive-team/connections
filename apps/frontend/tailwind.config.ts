@@ -37,78 +37,100 @@ const config: Config = {
         sans: "var(--font-dm-sans)",
       },
       colors: {
-        background: "#FFF",
+        main: "var(--color-bg-main)",
+        background: "var(--color-background)",
+        primary: "var(--color-primary)",
+        secondary: "var(--color-secondary)",
+        tertiary: "var(--color-tertiary)",
+        quaternary: "var(--color-quaternary)",
+        cinnamon: "var(--color-cinnamon)",
 
-        primary: "#090909",
-        secondary: "rgba(9, 9, 9, 0.60)",
-        tertiary: "rgba(9, 9, 9, 0.50)",
-        quaternary: "rgba(9, 9, 9, 0.40)",
-        cinnamon: "#F74227",
+        tag: {
+          gray: "var(--color-tag-gray)",
+          active: "var(--color-tag-active)",
+          border: "var(--color-tag-border)",
+        },
 
         stroke: {
-          primary: "rgba(0, 0, 0, 0.80)",
-          secondary: "rgba(0, 0, 0, 0.60)",
-          quaternary: "rgba(0, 0, 0, 0.20)",
+          primary: "var(--color-stroke-primary)",
+          secondary: "var(--color-stroke-secondary)",
+          quaternary: "var(--color-stroke-quaternary)",
         },
 
         surface: {
           primary: {
-            DEFAULT: "#FFF",
-            hover: "rgba(255, 157, 248, 0.10)",
+            DEFAULT: "var(--color-surface-primary)",
+            hover: "var(--color-surface-primary-hover)",
           },
-          quaternary: "rgba(0, 0, 0, 0.03)",
+          quaternary: "var(--color-surface-quaternary)",
           notice: {
-            primary: "#000000",
-            secondary: "rgba(0, 0, 0, 0.15)",
+            primary: "var(--color-surface-notice-primary)",
+            secondary: "var(--color-surface-notice-secondary)",
           },
           content: {
-            primary: "#FF9DF8",
+            primary: "var(--color-surface-content-primary)",
           },
         },
 
         icon: {
-          primary: "#090909",
+          primary: "var(--color-icon-primary)",
           notice: {
-            primary: "#F74227",
-            secondary: "#7CE514",
+            primary: "var(--color-icon-notice-primary)",
+            secondary: "var(--color-icon-notice-secondary)",
           },
         },
 
         link: {
-          primary: "#F429D5",
+          primary: "var(--color-link-primary)",
+        },
+
+        card: {
+          primary: {
+            bg: "var(--color-card-primary)",
+            border: "var(--color-card-primary-border)",
+          },
+          secondary: {
+            bg: "var(--color-card-secondary)",
+            border: "var(--color-card-secondary-border)",
+          },
+          tertiary: {
+            bg: "var(--color-card-tertiary)",
+            border: "var(--color-card-tertiary-border)",
+          },
+          gray: "var(--color-card-gray)",
         },
 
         button: {
           primary: {
-            DEFAULT: "#191A1E",
-            label: "#FFF",
-            hover: "rgba(25, 26, 30, 0.90)",
+            DEFAULT: "var(--color-button-primary)",
+            label: "var(--color-button-primary-label)",
+            hover: "var(--color-button-primary-hover)",
           },
           secondary: {
-            DEFAULT: "#FF9DF8",
-            label: "#191A1E",
-            hover: "rgba(255, 157, 248, 0.9)",
+            DEFAULT: "var(--color-button-secondary)",
+            label: "var(--color-button-secondary-label)",
+            hover: "var(--color-button-secondary-hover)",
           },
           outline: {
-            DEFAULT: "#191A1E00",
-            label: "#191A1E",
-            hover: "#191A1E0F",
+            DEFAULT: "var(--color-button-outline)",
+            label: "var(--color-button-outline-label)",
+            hover: "var(--color-button-outline-hover)",
           },
           subtle: {
-            DEFAULT: "#EDEDED",
-            label: "#000",
-            hover: "#E1E1E1",
+            DEFAULT: "var(--color-button-subtle)",
+            label: "var(--color-button-subtle-label)",
+            hover: "var(--color-button-subtle-hover)",
           },
           ghost: {
-            DEFAULT: "rgba(25, 26, 30, 0.00)",
-            label: "#000",
-            hover: "rgba(25, 26, 30, 0.02)",
+            DEFAULT: "var(--color-button-ghost)",
+            label: "var(--color-button-ghost-label)",
+            hover: "var(--color-button-ghost-hover)",
           },
           link: {
-            DEFAULT: "rgba(255, 255, 255, 0.00)",
-            label: "#000",
-            "label-hover": "#00197E",
-            hover: "rgba(255, 255, 255, 0.00)",
+            DEFAULT: "var(--color-button-link)",
+            label: "var(--color-button-link-label)",
+            "label-hover": "var(--color-button-link-label-hover)",
+            hover: "var(--color-button-link-hover)",
           },
         },
       },
