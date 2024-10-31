@@ -30,7 +30,7 @@ Backend:
 
 Telegram:
 
-- Create a bot on Telegram using BotFather to test with
+- Create a bot on Telegram using BotFather (https://t.me/BotFather) to test with
 - In `apps/backend/.env`:
   - Set `TELEGRAM_BOT_API` to the bot api key
   - Set `TELEGRAM_BOT_USERNAME` to be the bot username
