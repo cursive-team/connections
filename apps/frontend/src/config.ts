@@ -65,9 +65,9 @@ export const ROUTER_ITEMS: RouterItem[] = [
     iconSize: 20,
   },
   {
-    label: "Halloween",
-    href: "/halloween",
-    icon: Icons.Star,
+    label: "Community",
+    href: "/community",
+    icon: Icons.Activity,
     iconSize: 20,
   },
   {
