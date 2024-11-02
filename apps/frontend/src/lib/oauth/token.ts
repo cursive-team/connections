@@ -3,9 +3,11 @@ import {
   AccessTokenSchema,
   OAuthAppDetails,
   mapResponseToAccessToken,
-  DATA_IMPORT_SOURCE,
+  DATA_IMPORT_SOURCE, errorToString,
 } from "@types";
 import { BASE_API_URL, OAUTH_APP_DETAILS } from "@/config";
+import {storage} from "@/lib/storage";
+import {toast} from "sonner";
 
 async function fetchToken(
   app: string,
@@ -113,4 +115,56 @@ export async function getOAuthTokenViaServer(
     console.error("Error getting oauth access:", error);
     throw error;
   }
+}
+
+export async function getOAuthAccessToken(
+  app: string,
+  code: string,
+  details: OAuthAppDetails
+): Promise<AccessToken | null> {
+  let token: AccessToken | undefined | null;
+
+  // First check if access token already exists and is active in local storage
+  token = await storage.getOAuthAccessToken(app);
+  if (token) {
+    // NOTE: when there are more scopes, check token scope, XOR save token by $app_$scope
+
+    if (app === DATA_IMPORT_SOURCE.GITHUB) {
+      // Github OAuth tokens do not expire, unless they have not been used for a year
+      return token;
+    }
+
+    if (token.expires_at && token.expires_at * 1000 > Date.now()) {
+      // Strava expires_at is in seconds. Data.now() is in milliseconds.
+      return token;
+    }
+    // NOTE: Add refresh_token support
+  }
+
+  // Client-side access token fetching is preferred -- it prevents server (which is run by Cursive) from seeing access token in plaintext.
+  // Server-side fetching will only use public scope to s
+  try {
+    if (details.client_side_fetching) {
+      token = await getOAuthTokenViaClient(app, code);
+    } else {
+      token = await getOAuthTokenViaServer(app, code);
+    }
+  } catch (error) {
+    console.error(
+      "Minting OAuth token failed, check if code has expired",
+      errorToString(error)
+    );
+    toast.error("Minting OAuth token failed, check if code has expired");
+    return null;
+  }
+
+  if (!token) {
+    toast.error("Unable to get OAuth access token");
+    console.error("Minting OAuth token failed, check if code has expired");
+    return null;
+  }
+
+  // Save access token and continue
+  await storage.saveOAuthAccessToken(app, token);
+  return token;
 }

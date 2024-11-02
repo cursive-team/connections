@@ -16,6 +16,7 @@ export class SESEmailClient implements iEmailClient {
   }
 
   async EmailSigninToken(signinToken: SigninToken): Promise<void> {
+    console.log("Signin", signinToken.value)
     const emailParams = {
       Source: `"Cursive" <${process.env.AWS_SES_SENDER_EMAIL!}>`,
       Destination: {

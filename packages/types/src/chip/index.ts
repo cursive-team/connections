@@ -118,6 +118,17 @@ export enum LeaderboardEntryType {
 
 export const LeaderboardEntryTypeSchema = z.nativeEnum(LeaderboardEntryType);
 
+// Should be separation between leaderboard type and import data type, e.g. may use a single import type for multiple leaderboards
+export enum ImportDataType {
+  GITHUB_LANNA_COMMITS = "GITHUB_LANNA_COMMITS",
+  STRAVA_PREVIOUS_MONTH_RUN_DISTANCE = "STRAVA_PREVIOUS_MONTH_RUN_DISTANCE",
+  SOCIAL_LAYER_USER_GROUPS = "SOCIAL_LAYER_USER_GROUPS",
+  SOCIAL_LAYER_TICKET_ATTENDANCE = "SOCIAL_LAYER_TICKET_ATTENDANCE",
+  SOCIAL_LAYER_USER_EVENTS = "SOCIAL_LAYER_USER_EVENTS",
+}
+
+export const ImportDataTypeSchema = z.nativeEnum(ImportDataType);
+
 export const UpdateLeaderboardEntryRequestSchema = z.object({
   authToken: z.string(),
   chipIssuer: ChipIssuerSchema,

@@ -287,6 +287,11 @@ const UserProfilePage: React.FC = () => {
     }
 
     try {
+
+      // TODO: add overlapping social layer groups
+      // TODO: add overlapping social layer events (past and upcoming sections)
+      // TODO: add overlapping event tags -- how does this work? make some kind of heuristic -- if they've gone to more than 5 events of a certain type, set to 1
+
       let tensions: string[] = [];
       if (user.userData.tensionsRating?.revealAnswers) {
         const tensionData = tensionPairs.map((tension, index) =>

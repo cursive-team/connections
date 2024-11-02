@@ -1,4 +1,5 @@
 import {
+  AccessToken,
   ChipIssuer,
   LeaderboardEntryType,
   UpdateLeaderboardEntryRequest,
@@ -16,6 +17,19 @@ export const StravaActivityRunStatsSchema = z.object({
 export type StravaActivityRunStats = z.infer<
   typeof StravaActivityRunStatsSchema
 >;
+
+export async function stravaFetch(token: AccessToken): Promise<Response> {
+  return fetch(
+    `https://www.strava.com/api/v3/athletes/${token.user_id}/stats`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token.access_token}`,
+      },
+    }
+  );
+}
 
 export function MapStravaActivityStatsToLeaderboardEntryRequest(
   authToken: string,

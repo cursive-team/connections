@@ -15,6 +15,7 @@ import { preMigrationSignaturePublicKeys } from "@/common/constants";
 import { fetchMessages } from "@/lib/message";
 import { cn } from "@/lib/frontend/util";
 import { usePathname } from "next/navigation";
+import { importData } from "@/lib/imports";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -32,6 +33,33 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [isPreMigrationSessionChecked, setIsPreMigrationSessionChecked] =
     useState(false);
+  const [hasImportedData, setHasImportedData] =
+    useState(false);
+
+  // Refresh imports when app is reopened,
+  useEffect(() => {
+    const refreshImports = async () => {
+      // Gate on hasImportedData once you've tested enough
+
+      console.log("Refreshing imports...");
+      const user = await storage.getUser();
+      const session = await storage.getSession();
+      if (!user || !session) {
+        return;
+      }
+
+      importData("social_layer", "");
+
+      // TODO: loop through imports, run based on stated frequency -- need to figure out how to do for longer-term refresh
+      //  don't want to do every session because it would lead to jarring redirects to logins potentially -- analogous to focus stealing
+      //  just make a table for it, update it after a fetch, something like that
+
+      //
+      setHasImportedData(true);
+    };
+
+    refreshImports();
+  }, []);
 
   let isFortunePage: boolean = false;
   if (pathname?.includes("/fortune")) {

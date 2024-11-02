@@ -6,6 +6,7 @@ import { LannaDataSchema, TensionsRatingSchema } from "./lannaData";
 import { StravaDataSchema } from "./stravaData";
 import { GithubDataSchema } from "./githubData";
 import { LannaHalloweenDataSchema } from "./lannaHalloweenData";
+import { SocialLayerDataSchema } from "./socialLayerData";
 
 export const UserDataSchema = z.object({
   username: z.string(),
@@ -21,6 +22,7 @@ export const UserDataSchema = z.object({
   strava: nullToUndefined(StravaDataSchema),
   github: nullToUndefined(GithubDataSchema),
   lannaHalloween: nullToUndefined(LannaHalloweenDataSchema),
+  socialLayer: nullToUndefined(SocialLayerDataSchema),
 });
 
 export type UserData = z.infer<typeof UserDataSchema>;
@@ -35,3 +37,4 @@ export {
 } from "./lannaData";
 export { type GithubData, GithubDataSchema } from "./githubData";
 export { type StravaData, StravaDataSchema } from "./stravaData";
+export { type SocialLayerData, SocialLayerDataSchema } from "./socialLayerData";
