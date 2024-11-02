@@ -149,7 +149,7 @@ const TapPage: React.FC = () => {
 
             router.push("/register");
             return;
-          } else if (!response.isLocationChip && session && user?.userData){
+          } else if (response.isLocationChip !== true && session && user?.userData) {
             // User logged in and unregistered chip is not locationChip, allow user to bind new chip to profile
             logClientEvent("tap-chip-logged-in-bind-new-chip", {});
 
@@ -168,6 +168,10 @@ const TapPage: React.FC = () => {
 
             toast.success("Successfully bound a new chip to your account")
             router.push("/profile");
+            return;
+          } else if (response.isLocationChip === true && !session) {
+            toast.error("Cannot register a location chip, please pick up your nfc wristband.");
+            router.push("/");
             return;
           }
         }
