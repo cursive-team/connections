@@ -1,9 +1,16 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { TapParams, ChipTapResponse, errorToString, ChipIssuer } from "@types";
+import {
+  TapParams,
+  ChipTapResponse,
+  errorToString,
+  ChipIssuer,
+  JsonSchema
+} from "@types";
 import { toast } from "sonner";
 import { storage } from "@/lib/storage";
 import {
+  registerChip,
   tapChip,
   updateTapLeaderboardEntry,
   updateWorkoutLeaderboardEntry,
@@ -139,15 +146,27 @@ const TapPage: React.FC = () => {
             // Save tap to populate registration flow data
             logClientEvent("tap-chip-not-registered-not-logged-in", {});
             await storage.saveTapInfo({ tapParams, tapResponse: response });
+
             router.push("/register");
             return;
-          } else {
-            // For now, we do not allow users to register chips after account creation
-            // TODO: Allow users to register chips after account creation
-            logClientEvent("tap-chip-not-registered-logged-in", {});
-            toast.error(
-              "This chip is not registered yet. Please tell your friend to register it first!"
-            );
+          } else if (!response.isLocationChip && session && user?.userData){
+            // User logged in and unregistered chip is not locationChip, allow user to bind new chip to profile
+            logClientEvent("tap-chip-logged-in-bind-new-chip", {});
+
+            const userData = JsonSchema.parse(user.userData);
+            await registerChip({
+              authToken: session.authTokenValue,
+              tapParams: tapParams,
+              ownerUsername: user.userData.username,
+              ownerDisplayName: user.userData.displayName,
+              ownerBio: user.userData.bio,
+              ownerSignaturePublicKey: user.userData.signaturePublicKey,
+              ownerEncryptionPublicKey: user.userData.encryptionPublicKey,
+              ownerPsiPublicKeyLink: user.userData.psiPublicKeyLink,
+              ownerUserData: userData,
+            });
+
+            toast.success("Successfully bound a new chip to your account")
             router.push("/profile");
             return;
           }
