@@ -63,12 +63,17 @@ export default function ProfileOverview() {
     >
       <div className="flex flex-col gap-3 mt-[46px]">
         <div className="flex flex-col px-4">
-          <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans">
+          <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans text-primary">
             {user?.userData.displayName}
           </span>
           <span className="text-[14px] font-medium font-sans text-tertiary">
-            {`${user?.userData.username}`}
+            {`@${user?.userData.username}`}
           </span>
+          {user?.userData?.pronouns && (
+            <span className="text-[14px] font-medium font-sans text-tertiary">
+              {user?.userData.pronouns}
+            </span>
+          )}
         </div>
         <div className="flex flex-col gap-2 p-4">
           <span className="text-sm font-semibold text-primary font-sans">
@@ -84,28 +89,35 @@ export default function ProfileOverview() {
             {user?.userData.telegram?.username && (
               <LinkCardBox
                 label="Telegram"
-                value={user?.userData.telegram.username}
+                value={`@${user?.userData.telegram.username}`}
                 href={`https://t.me/${user.userData.telegram.username}`}
               />
             )}
             {user?.userData.twitter?.username && (
               <LinkCardBox
                 label="Twitter"
-                value={user?.userData.twitter.username}
+                value={`@${user?.userData.twitter.username}`}
                 href={`https://twitter.com/${user.userData.twitter.username}`}
               />
             )}
             {user?.userData.signal?.username && (
               <CardBox
                 label="Signal"
-                value={user?.userData.signal.username}
+                value={`@${user?.userData.signal.username}`}
               />
             )}
             {user?.userData.instagram?.username && (
               <LinkCardBox
                 label="Instagram"
-                value={user?.userData.instagram.username}
+                value={`@${user?.userData.instagram.username}`}
                 href={`https://www.instagram.com/${user.userData.instagram.username}`}
+              />
+            )}
+            {user?.userData?.farcaster?.username && (
+              <LinkCardBox
+                label="Farcaster"
+                value={`@${user?.userData.farcaster.username}`}
+                href={`https://www.farcaster.xyz/${user.userData.farcaster.username}`}
               />
             )}
           </div>
