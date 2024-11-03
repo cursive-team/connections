@@ -12,7 +12,6 @@ import Link from "next/link";
 import router from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { CardBox } from "@/components/ui/CardBox";
 
 export default function ProfileOverview() {
   const [user, setUser] = useState<User | null>(null);
