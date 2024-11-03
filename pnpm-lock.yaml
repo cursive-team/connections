@@ -201,6 +201,9 @@ importers:
       typescript:
         specifier: ^5
         version: 5.6.2
+      zxcvbn:
+        specifier: ^4.4.2
+        version: 4.4.2
 
   packages/types:
     dependencies:
@@ -2744,6 +2747,9 @@ packages:
 
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+
+  zxcvbn@4.4.2:
+    resolution: {integrity: sha512-Bq0B+ixT/DMyG8kgX2xWcI5jUvCwqrMxSFam7m0lAf78nf04hv6lNCsyLYdyYTrCVMqNDY/206K7eExYCeSyUQ==}
 
 snapshots:
 
@@ -5979,3 +5985,5 @@ snapshots:
       zod: 3.23.8
 
   zod@3.23.8: {}
+
+  zxcvbn@4.4.2: {}

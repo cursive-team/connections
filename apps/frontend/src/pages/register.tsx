@@ -27,6 +27,9 @@ import { IoIosArrowBack as BackIcon } from "react-icons/io";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const zxcvbn = require("zxcvbn");
+
 enum DisplayState {
   ENTER_EMAIL,
   ENTER_CODE,
@@ -166,6 +169,14 @@ const Register: React.FC = () => {
   };
 
   const handleRegisterWithPassword = async (password: string) => {
+
+    // Check password strength
+    const passwordCheck = zxcvbn(password);
+    if (passwordCheck && passwordCheck.score < 3) {
+      toast.error(`${passwordCheck.feedback?.warning} ${passwordCheck.feedback?.suggestions?.join(" ")}`, {duration: 10000})
+      return;
+    }
+
     logClientEvent("register-register-with-password", {});
     await handleCreateAccount(password, false, undefined);
   };
