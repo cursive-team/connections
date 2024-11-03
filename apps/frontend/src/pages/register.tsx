@@ -114,14 +114,27 @@ const Register: React.FC = () => {
 
   const handleCodeSubmit = async (submittedCode: string) => {
     logClientEvent("register-code-submit", {});
-    const isValid = await verifySigninToken(email, submittedCode);
-    if (!isValid) {
-      toast.error("Invalid code");
+    try {
+      const isValid = await verifySigninToken(email, submittedCode);
+      if (!isValid) {
+        toast.error("Invalid code");
+        return;
+      }
+
+      setCode(submittedCode);
+      setDisplayState(DisplayState.ENTER_USER_INFO);
+    } catch (error) {
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Cannot verify signin code",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
       return;
     }
-
-    setCode(submittedCode);
-    setDisplayState(DisplayState.ENTER_USER_INFO);
   };
 
   const handleUserInfoSubmit = async (userInfo: {

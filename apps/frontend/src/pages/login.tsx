@@ -89,7 +89,15 @@ const LoginPage: React.FC = () => {
       );
     } catch (error) {
       console.error(error);
-      toast.error("Invalid code");
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Invalid code",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
     }
   };
 
