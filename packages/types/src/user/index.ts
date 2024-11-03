@@ -16,6 +16,7 @@ export enum BackupEntryType {
   LAST_MESSAGE_FETCHED_AT = "LAST_MESSAGE_FETCHED_AT",
   OAUTH = "OAUTH",
   LOCATION = "LOCATION",
+  DELETE_OAUTH = "DELETE_OAUTH",
 }
 
 export const BackupEntryTypeSchema = z.nativeEnum(BackupEntryType);

@@ -1,7 +1,10 @@
 import { AccessToken, AccessTokenSchema } from "@types";
 import { getUserAndSession } from ".";
 import { saveBackupAndUpdateStorage } from "../utils";
-import { createOAuthBackup } from "@/lib/backup";
+import {
+  createOAuthBackup,
+  createOAuthDeletionBackup
+} from "@/lib/backup";
 
 export const saveOAuthAccessToken = async (
   app: string,
@@ -40,11 +43,19 @@ export const getOAuthAccessToken = async (
 export const deleteOAuthAccessToken = async (
   app: string
 ): Promise<void> => {
-  const { user } = await getUserAndSession();
+  const { user, session } = await getUserAndSession();
 
-  if (user.oauth && user.oauth[app]) {
-    delete user.oauth[app];
-  }
+  const oauthDeletionBackup = createOAuthDeletionBackup({
+    email: user.email,
+    password: session.backupMasterPassword,
+    oauthApp: {
+      app,
+    },
+  });
 
-  return;
+  await saveBackupAndUpdateStorage({
+    user,
+    session,
+    newBackupData: [oauthDeletionBackup],
+  });
 };

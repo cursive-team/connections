@@ -18,6 +18,8 @@ import {
   UserData,
   UserDataSchema,
   UserSchema,
+  OAuthAppSchema,
+  OAuthApp
 } from "@/lib/storage/types";
 import { decryptBackupString, encryptBackupString } from "@/lib/crypto/backup";
 import { BASE_API_URL } from "@/config";
@@ -141,6 +143,17 @@ export const processUserBackup = ({
           user.locations = {};
         }
         user.locations[location.id] = location;
+        break;
+      case BackupEntryType.DELETE_OAUTH:
+        if (!user) {
+          throw new Error("DELETE_OAUTH backup entry found before INITIAL");
+        }
+        const oauthApp: OAuthApp = OAuthAppSchema.parse(
+          JSON.parse(decryptedData)
+        );
+        if (user.oauth) {
+          delete user.oauth[oauthApp.app];
+        }
         break;
       default:
         throw new Error(`Invalid backup entry type: ${data.backupEntryType}`);
@@ -431,6 +444,32 @@ export const createLocationBackup = ({
     iv,
     encryptedData,
     backupEntryType: BackupEntryType.LOCATION,
+    clientCreatedAt: new Date(),
+  };
+};
+
+export interface CreateOAuthDeletionBackupArgs {
+  email: string;
+  password: string;
+  oauthApp: OAuthApp;
+}
+
+export const createOAuthDeletionBackup = ({
+    email,
+    password,
+    oauthApp,
+  }: CreateOAuthDeletionBackupArgs): CreateBackupData => {
+  const { authenticationTag, iv, encryptedData } = encryptBackupString({
+    backup: JSON.stringify(oauthApp),
+    email,
+    password,
+  });
+
+  return {
+    authenticationTag,
+    iv,
+    encryptedData,
+    backupEntryType: BackupEntryType.DELETE_OAUTH,
     clientCreatedAt: new Date(),
   };
 };

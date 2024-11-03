@@ -7,3 +7,9 @@ export const OAuthDataSchema = z.object({
 });
 
 export type OAuthData = z.infer<typeof OAuthDataSchema>;
+
+export const OAuthAppSchema = z.object({
+  app: z.string(),
+});
+
+export type OAuthApp = z.infer<typeof OAuthAppSchema>;
