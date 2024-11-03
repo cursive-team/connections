@@ -26,6 +26,7 @@ import { sendMessages } from "@/lib/message";
 interface CommentModalProps {
   username: string;
   displayName: string;
+  pronouns: string;
   previousEmoji: string | undefined;
   previousNote: string | undefined;
   tapResponse: ChipTapResponse | undefined;
@@ -37,6 +38,7 @@ interface CommentModalProps {
 const CommentModal: React.FC<CommentModalProps> = ({
   username,
   displayName,
+  pronouns,
   previousEmoji,
   previousNote,
   tapResponse,
@@ -91,6 +93,9 @@ const CommentModal: React.FC<CommentModalProps> = ({
             </span>
             <span className="text-secondary text-gray-400 text-sm font-medium font-sans text-center">
               {displayName}
+            </span>
+            <span className="text-secondary text-gray-400 text-sm font-medium font-sans text-center">
+              {pronouns}
             </span>
           </div>
           {tapResponse && (
@@ -388,12 +393,15 @@ const UserProfilePage: React.FC = () => {
     );
   }
 
+  console.log("Check pronouns", connection.user.pronouns)
+
   return (
     <>
       {showCommentModal && (
         <CommentModal
           username={connection.user.username}
           displayName={connection.user.displayName}
+          pronouns={connection.user.pronouns || ""}
           previousEmoji={connection.comment?.emoji}
           previousNote={connection.comment?.note}
           tapResponse={tapInfo?.tapResponse}
@@ -414,16 +422,20 @@ const UserProfilePage: React.FC = () => {
           <div className="flex flex-col w-full">
             <div className="flex items-center justify-between w-full pb-4">
               <div className="flex flex-col gap-1 pt-4">
-                <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans leading-none text-primary dark:text-white">{`${connection?.user?.username}`}</span>
+                <span
+                  className="text-[30px] font-semibold tracking-[-0.22px] font-sans leading-none text-primary dark:text-white">{`${connection?.user?.username}`}</span>
                 <span className="text-sm font-medium font-sans text-tertiary dark:text-gray-400 leading-none">
                   {connection?.user?.displayName}
                 </span>
+                <span className="text-sm font-medium font-sans text-tertiary dark:text-gray-400 leading-none">
+                  {connection?.user?.pronouns}
+                </span>
               </div>
-              <ProfileImage user={connection.user} />
+              <ProfileImage user={connection.user}/>
             </div>
             <div className="flex flex-row gap-2 mb-2">
               <div className="w-2/5">
-                <AppButton
+              <AppButton
                   variant="outline"
                   onClick={() => {
                     logClientEvent("user-profile-begin-edit-comment", {});
@@ -477,6 +489,46 @@ const UserProfilePage: React.FC = () => {
                   />
                 </div>
               )}
+              {connection?.user?.signal?.username && (
+                <div
+                  onClick={() => {
+                    logClientEvent("user-profile-signal-clicked", {});
+                  }}
+                >
+                  <LinkCardBox
+                    label="Signal"
+                    value={`@${connection.user.signal.username}`}
+                    href={`sgnl://signal.me/#u/${connection.user.signal.username}`}
+                  />
+                </div>
+              )}
+              {connection?.user?.instagram?.username && (
+                <div
+                  onClick={() => {
+                    logClientEvent("user-profile-instagram-clicked", {});
+                  }}
+                >
+                  <LinkCardBox
+                    label="Instagram"
+                    value={`@${connection.user.instagram.username}`}
+                    href={`https://www.instagram.com/${connection.user.instagram.username}`}
+                  />
+                </div>
+              )}
+              {connection?.user?.farcaster?.username && (
+                <div
+                  onClick={() => {
+                    logClientEvent("user-profile-farcaster-clicked", {});
+                  }}
+                >
+                  <LinkCardBox
+                    label="Farcaster"
+                    value={`@${connection.user.farcaster.username}`}
+                    href={`https://warpcast.com/${connection.user.farcaster.username}`}
+                  />
+                </div>
+              )}
+
             </div>
           </div>
 

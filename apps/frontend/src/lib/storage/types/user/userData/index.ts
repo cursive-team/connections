@@ -36,6 +36,8 @@ export { type TwitterData, TwitterDataSchema } from "./twitterData";
 export { type TelegramData, TelegramDataSchema } from "./telegramData";
 export { type SignalData, SignalDataSchema } from "./signalData";
 export { type InstagramData, InstagramDataSchema } from "./instagramData";
+export { type FarcasterData, FarcasterDataSchema } from "./farcasterData";
+
 export {
   type LannaDesiredConnections,
   LannaDesiredConnectionsSchema,

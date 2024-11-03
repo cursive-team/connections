@@ -161,7 +161,7 @@ const ProfileEdit = () => {
             />
             <AppInput
               label="Farcaster"
-              placeholder="Instagram"
+              placeholder="Farcaster"
               variant="primary"
               {...register("farcasterUsername")}
             />
