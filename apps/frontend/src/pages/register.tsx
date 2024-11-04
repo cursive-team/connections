@@ -26,6 +26,7 @@ import { cn } from "@/lib/frontend/util";
 import { IoIosArrowBack as BackIcon } from "react-icons/io";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
+import { zxcvbn } from '@zxcvbn-ts/core';
 
 enum DisplayState {
   ENTER_EMAIL,
@@ -179,6 +180,16 @@ const Register: React.FC = () => {
   };
 
   const handleRegisterWithPassword = async (password: string) => {
+
+    // Check password strength
+    const passwordCheck = zxcvbn(password);
+
+    // 3 # safely unguessable: moderate protection from offline slow-hash scenario. (guesses < 10^10) (https://github.com/dropbox/zxcvbn/blob/master/README.md)
+    if (passwordCheck && passwordCheck.score < 3) {
+      toast.error("Weak password, try adding numbers, symbols, and using less common words.")
+      return;
+    }
+
     logClientEvent("register-register-with-password", {});
     await handleCreateAccount(password, false, undefined);
   };
