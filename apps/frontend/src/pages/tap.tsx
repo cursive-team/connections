@@ -22,7 +22,7 @@ import {
   ERROR_SUPPORT_CONTACT,
   LANNA_HALLOWEEN_LOCATION_IDS_ARRAY,
 } from "@/constants";
-import { getUserShareableData } from "@/lib/storage/types";
+import { getUserShareableData } from "@/lib/user";
 
 const TapPage: React.FC = () => {
   const router = useRouter();

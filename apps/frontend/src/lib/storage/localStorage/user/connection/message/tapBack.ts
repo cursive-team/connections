@@ -4,7 +4,8 @@ import {
   generateSerializedTapBackMessage,
 } from "@/lib/message";
 import { getUserAndSession } from "@/lib/storage/localStorage/user";
-import { SentMessage, SentMessageSchema, getUserShareableData } from "@/lib/storage/types";
+import { SentMessage, SentMessageSchema } from "@/lib/storage/types";
+import { getUserShareableData } from "@/lib/user";
 import { createActivityBackup, createConnectionBackup } from "@/lib/backup";
 import { saveBackupAndUpdateStorage } from "../../../utils";
 import { createTapBackSentActivity } from "@/lib/activity";
