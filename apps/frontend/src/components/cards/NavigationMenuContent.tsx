@@ -27,12 +27,12 @@ export const NavigationMenuContent = ({
           return (
             <div key={index} className="flex flex-col gap-1">
               {label && (
-                <span className="text-primary font-sans font-medium text-sm">
+                <span className="text-label-primary font-sans font-medium text-sm">
                   {label}
                 </span>
               )}
               {description && (
-                <span className="text-tertiary font-sans font-normal text-sm">
+                <span className="text-label-tertiary font-sans font-normal text-sm">
                   {description}
                 </span>
               )}
@@ -46,12 +46,12 @@ export const NavigationMenuContent = ({
           return (
             <div key={index} className="flex flex-col gap-1">
               {label && (
-                <span className="text-primary font-sans font-medium text-sm">
+                <span className="text-label-primary font-sans font-medium text-sm">
                   {label}
                 </span>
               )}
               {description && (
-                <span className="text-tertiary font-sans font-normal text-sm">
+                <span className="text-label-tertiary font-sans font-normal text-sm">
                   {description}
                 </span>
               )}

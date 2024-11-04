@@ -48,7 +48,7 @@ const LocationTapModal: React.FC<LocationTapModalProps> = ({
       <div className="flex flex-col bg-white p-6 pb-10 rounded-[32px] w-full min-h-[80vh] max-w-[80vw] overflow-y-auto relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-tertiary hover:text-primary transition-colors"
+          className="absolute top-4 right-4 text-label-tertiary hover:text-label-primary transition-colors"
         >
           <Icons.XClose size={24} />
         </button>
@@ -63,10 +63,10 @@ const LocationTapModal: React.FC<LocationTapModalProps> = ({
                 <span className="text-xl font-bold tracking-[-0.1px]">
                   {username}
                 </span>
-                <span className="text-base text-primary leading-none">
+                <span className="text-base text-label-primary leading-none">
                   {locationName}
                 </span>
-                <span className="text-base text-primary leading-none">
+                <span className="text-base text-label-primary leading-none">
                   {tapDate.toLocaleDateString("en-US", {
                     month: "long",
                     day: "numeric",
@@ -195,7 +195,7 @@ export default function LocationPage() {
   if (seeFullLeaderboard) {
     let contributorMsg = `You are #${leaderboardDetails?.userPosition} of ${leaderboardDetails?.totalContributors} contributors!`;
 
-    if (leaderboardDetails.userPosition == -1) {
+    if (leaderboardDetails?.userPosition == -1) {
       contributorMsg = "You are not on the leaderboard yet.";
     }
 
@@ -279,10 +279,10 @@ export default function LocationPage() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col pt-4">
             <div className="flex flex-col gap-4 pb-6">
-              <span className="text-xl text-primary font-bold">
+              <span className="text-xl text-label-primary font-bold">
                 {`${locationName || "Location"}`}
               </span>
-              <span className="text-sm text-tertiary font-normal">
+              <span className="text-sm text-label-tertiary font-normal">
                 {location?.description || "No description"}
               </span>
             </div>
@@ -293,15 +293,15 @@ export default function LocationPage() {
           </div>
           {/* <div className="flex flex-col gap-4">
             <div className="flex items-center">
-              <Icons.Menu className="text-quaternary" />
-              <span className="text-xs font-bold text-quaternary ml-2">
+              <Icons.Menu className="text-label-quaternary" />
+              <span className="text-xs font-bold text-label-quaternary ml-2">
                 This week
               </span>
             </div>
           </div>
           <div className="flex flex-col gap-4">
             <div className=" items-center flex justify-between">
-              <span className="text-base font-bold text-primary font-sans">
+              <span className="text-base font-bold text-label-primary font-sans">
                 Top 5 contributors
               </span>
               <AppButton

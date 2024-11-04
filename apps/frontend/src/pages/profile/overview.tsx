@@ -62,26 +62,26 @@ export default function ProfileOverview() {
     >
       <div className="flex flex-col gap-3 mt-[46px]">
         <div className="flex flex-col px-4">
-          <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans text-primary">
+          <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans text-label-primary">
             {user?.userData.displayName}
           </span>
-          <span className="text-[14px] font-medium font-sans text-tertiary">
+          <span className="text-[14px] font-medium font-sans text-label-tertiary">
             {`@${user?.userData.username}`}
           </span>
           {user?.userData?.pronouns && (
-            <span className="text-[14px] font-medium font-sans text-tertiary">
+            <span className="text-[14px] font-medium font-sans text-label-tertiary">
               {user?.userData.pronouns}
             </span>
           )}
         </div>
         <div className="flex flex-col gap-2 p-4">
-          <span className="text-sm font-semibold text-primary font-sans">
+          <span className="text-sm font-semibold text-label-primary font-sans">
             Socials
           </span>
           <div className="flex flex-col gap-2">
             {!user?.userData?.telegram?.username &&
               !user?.userData?.twitter?.username && (
-                <span className="text-sm text-secondary font-sans font-normal">
+                <span className="text-sm text-label-secondary font-sans font-normal">
                   Add socials by editing your chip details!
                 </span>
               )}
@@ -124,10 +124,10 @@ export default function ProfileOverview() {
         </div>
         {user?.userData.bio !== "" && (
           <div className="flex flex-col gap-2 p-4">
-            <span className="text-sm font-semibold text-primary font-sans">
+            <span className="text-sm font-semibold text-label-primary font-sans">
               Bio
             </span>
-            <span className="text-sm text-tertiary font-normal font-sans">
+            <span className="text-sm text-label-tertiary font-normal font-sans">
               {user?.userData.bio}
             </span>
           </div>

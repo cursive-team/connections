@@ -61,7 +61,7 @@ export const ProfileImage = ({
     >
       <span
         className={cn(
-          `text-primary ${goudyBookletter.className}`,
+          `text-label-primary ${goudyBookletter.className}`,
           size === 16
             ? "text-[25px] leading-[1] font-bold"
             : "font-normal text-[18px] leading-[1]"

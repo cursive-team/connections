@@ -1,3 +1,4 @@
+import useSettings from "@/hooks/useSettings";
 import { cn } from "@/lib/frontend/util";
 import { ReactNode } from "react";
 
@@ -15,7 +16,7 @@ export const Banner = ({
   textCenter = true,
   italic = true,
 }: BannerProps) => {
-  const hasHalloweenTheme = process.env.NEXT_PUBLIC_HALLOWEEN_THEME === "true";
+  const { darkTheme } = useSettings();
   return (
     <div
       className={cn(
@@ -28,7 +29,7 @@ export const Banner = ({
       <span
         className={cn(
           "text-base font-bold ",
-          hasHalloweenTheme ? "text-black" : "text-secondary"
+          !darkTheme ? "text-black" : "text-label-secondary"
         )}
       >
         {title}
@@ -37,7 +38,7 @@ export const Banner = ({
         <span
           className={cn(
             "text-base font-normal",
-            hasHalloweenTheme ? "text-black" : "text-secondary"
+            !darkTheme ? "text-black" : "text-label-secondary"
           )}
         >
           {description}

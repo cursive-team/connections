@@ -50,8 +50,8 @@ export default function AppLayout({
         >
           <div className="px-4">
             <Link className="flex gap-1 items-center" href={back?.href ?? "/"}>
-              <BackIcon className="text-primary" size={12} />
-              <span className="text-sm text-primary">{back?.label}</span>
+              <BackIcon className="text-label-primary" size={12} />
+              <span className="text-sm text-label-primary">{back?.label}</span>
             </Link>
           </div>
           {back?.content}

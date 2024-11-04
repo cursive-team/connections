@@ -14,7 +14,7 @@ export const MenuBarItem = ({ label, href, isActive, icon }: RouterItem) => {
     <Link href={href}>
       <div
         className={cn(
-          "flex flex-col text-center duration-200 gap-1 justify-center text-sm font-sans font-medium text-primary mt-auto leading-5 py-1 px-3 rounded-[4px] opacity-50",
+          "flex flex-col text-center duration-200 gap-1 justify-center text-sm font-sans font-medium text-label-primary mt-auto leading-5 py-1 px-3 rounded-[4px] opacity-50",
           isActive && "!opacity-100"
         )}
       >
@@ -26,7 +26,7 @@ export const MenuBarItem = ({ label, href, isActive, icon }: RouterItem) => {
             isActive && "!opacity-100"
           )}
         />
-        <span className="text-center text-xs font-medium leading-4">
+        <span className="text-center text-xs font-medium leading-4 text-label-primary">
           {label}
         </span>
       </div>

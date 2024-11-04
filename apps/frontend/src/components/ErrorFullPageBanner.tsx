@@ -69,10 +69,10 @@ const ErrorFullPageBanner = ({
         <div className="max-w-[350px] text-center">
           <div className="flex flex-col gap-2 items-center justify-center">
             <CursiveLogo />
-            <span className="font-sans py-4 text-[30px] leading-[30px] font-semibold text-primary tracking-[-0.22px]">
+            <span className="font-sans py-4 text-[30px] leading-[30px] font-semibold text-label-primary tracking-[-0.22px]">
               {APP_CONFIG.APP_NAME}
             </span>
-            <span className=" font-sans text-base text-tertiary font-medium">
+            <span className=" font-sans text-base text-label-tertiary font-medium">
               {`${APP_CONFIG.APP_NAME} is only available on mobile devices. Please visit the website on your phone in order to take part in the experience.`}
             </span>
           </div>

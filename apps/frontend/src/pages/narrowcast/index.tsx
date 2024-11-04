@@ -7,7 +7,7 @@ export default function NarrowcastPage() {
       seoTitle="Narrowcast"
       header={
         <>
-          <span className="text-primary font-medium">Narrowcasting</span>
+          <span className="text-label-primary font-medium">Narrowcasting</span>
           <div
             className="absolute left-0 right-0 bottom-0 h-[2px]"
             style={{

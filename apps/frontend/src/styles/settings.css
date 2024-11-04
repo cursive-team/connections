@@ -1,5 +1,12 @@
 :root {
 
+    /* Labels colors */
+  --color-label-primary: #090909;
+  --color-label-secondary: rgba(9, 9, 9, 0.60);
+  --color-label-tertiary: rgba(9, 9, 9, 0.50);
+  --color-label-quaternary: rgba(9, 9, 9, 0.40);
+  --color-label-cinnamon: #F74227;
+
   /* Base colors */
   --color-background: #FFF;
   --color-primary: #090909;
@@ -63,7 +70,15 @@
 }
 
 /* Halloween Theme */
-.halloween-theme {
+.dark-theme {
+
+   /* Labels colors */
+   --color-label-primary: #FFF;
+   --color-label-secondary: rgba(255, 255, 255, 0.60);
+   --color-label-tertiary: rgba(255, 255, 255, 0.50);
+   --color-label-quaternary: rgba(255, 255, 255, 0.40);
+   --color-label-cinnamon: #F74227;
+   
   /* Base colors */
   --color-background: #000;
   --color-primary: #FFF;
@@ -81,7 +96,7 @@
   --color-card-primary: #000;
   --color-card-secondary: '';
   --color-card-secondary: '';
-  --color-card-gray: rgba(255, 255, 255, 0.60);
+  --color-card-gray: rgba(255, 255, 255, 0);
 
   /* Stroke colors */
   --color-stroke-primary: rgba(255, 255, 255, 0.80);

@@ -44,7 +44,7 @@ export default function ToggleSwitch({
           )}
         ></div>
       </div>
-      <div className="ml-2 text-sm text-primary font-medium font-sans">
+      <div className="ml-2 text-sm text-label-primary font-medium font-sans">
         {label}
       </div>
     </label>

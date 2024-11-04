@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {errorToString, SigninTokenSchema} from "@types";
+import { errorToString, SigninTokenSchema } from "@types";
 import { toast } from "sonner";
 import { RegisterHeader } from "./RegisterHeader";
 import { AppButton } from "@/components/ui/Button";
@@ -23,7 +23,15 @@ const EnterCode: React.FC<EnterCodeProps> = ({ email, submitCode }) => {
       await submitCode(normalizedCode);
     } catch (error) {
       console.error(error);
-      toast(SupportToast("", true, "Please enter a valid 6-digit code", ERROR_SUPPORT_CONTACT, errorToString(error)));
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Please enter a valid 6-digit code",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
     }
   };
 
@@ -91,7 +99,7 @@ const EnterCode: React.FC<EnterCodeProps> = ({ email, submitCode }) => {
                   />
                 ))}
               </div>
-              <span className=" text-xs font-sans text-tertiary text-center">
+              <span className=" text-xs font-sans text-label-tertiary text-center">
                 {`Check your spam folder if you didn’t receive a code.`}
               </span>
             </div>

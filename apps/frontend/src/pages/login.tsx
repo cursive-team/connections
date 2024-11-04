@@ -37,8 +37,8 @@ const LoginPage: React.FC = () => {
 
   // Halloween change, remove afterwards
   useEffect(() => {
-    const removeHWClass = async () =>{
-      document.getElementsByTagName('body')[0].classList.remove('halloween-theme');
+    const removeHWClass = async () => {
+      document.getElementsByTagName("body")[0].classList.remove("dark-theme");
     };
     removeHWClass();
   });

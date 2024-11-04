@@ -22,6 +22,8 @@ import { Icons } from "@/components/icons/Icons";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { sendMessages } from "@/lib/message";
+import useSettings from "@/hooks/useSettings";
+import { cn } from "@/lib/frontend/util";
 
 interface CommentModalProps {
   username: string;
@@ -46,6 +48,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
   onTapBack,
   onSubmit,
 }) => {
+  const { darkTheme } = useSettings();
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
   const [privateNote, setPrivateNote] = useState("");
   const [hasTappedBack, setHasTappedBack] = useState(false);
@@ -64,16 +67,18 @@ const CommentModal: React.FC<CommentModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50">
-      <div className="flex flex-col bg-white dark:bg-gray-900 p-6 pb-10 rounded-[32px] w-full max-w-[90vw] overflow-y-auto relative">
+    <div
+      className={cn(
+        "fixed inset-0 bg-black/75 flex items-center justify-center z-50",
+        darkTheme ? "bg-white/20" : "bg-black/75"
+      )}
+    >
+      <div className="flex flex-col bg-background p-6 pb-10 rounded-[32px] w-full max-w-[90vw] overflow-y-auto relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-tertiary hover:text-primary text-gray-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-label-tertiary hover:text-label-primary hover:text-white transition-colors"
         >
-          <Icons.XClose
-            size={24}
-            className="text-primary bg-white text-white"
-          />
+          <Icons.XClose size={24} className="text-icon-primary bg-background" />
         </button>
         <div className="size-[80px] relative flex mx-auto">
           <div className="absolute -left-3 size-8 rounded-full bg-[#9DE8FF] z-0 top-[28px] border border-quaternary/10"></div>
@@ -88,13 +93,13 @@ const CommentModal: React.FC<CommentModalProps> = ({
         </div>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col text-center">
-            <span className="text-[20px] font-semibold text-primary text-white tracking-[-0.1px] font-sans">
+            <span className="text-[20px] font-semibold text-label-primary tracking-[-0.1px] font-sans">
               {username}
             </span>
-            <span className="text-secondary text-gray-400 text-sm font-medium font-sans text-center">
+            <span className="text-label-secondary text-label-tertiary text-sm font-medium font-sans text-center">
               {displayName}
             </span>
-            <span className="text-secondary text-gray-400 text-sm font-medium font-sans text-center">
+            <span className="text-label-secondary text-label-tertiary text-sm font-medium font-sans text-center">
               {pronouns}
             </span>
           </div>
@@ -111,14 +116,14 @@ const CommentModal: React.FC<CommentModalProps> = ({
               </AppButton>
             </div>
           )}
-          <span className="text-center text-xs text-tertiary text-gray-400 font-medium font-sans">
+          <span className="text-center text-xs text-label-tertiary text-label-tertiary font-medium font-sans">
             Add details to remember this connection. <br />
             They stay <strong className="font-bold">private to you.</strong>
           </span>
         </div>
 
         <div className="flex flex-col gap-3 mt-4">
-          <span className="text-sm font-semibold text-primary text-white font-sans">
+          <span className="text-sm font-semibold text-label-primary text-white font-sans">
             Labels
           </span>
           <div className="flex space-x-2 justify-around">
@@ -131,9 +136,20 @@ const CommentModal: React.FC<CommentModalProps> = ({
                   });
                   handleEmojiSelect(emoji);
                 }}
-                className={`p-2 size-12 rounded-full bg-[#F1F1F1] bg-gray-800 border border-transparent duration-200 ${
-                  selectedEmoji === emoji ? "!border-primary !border-white" : ""
-                }`}
+                className={cn(
+                  `p-2 size-12 rounded-full border border-transparent duration-200 ${
+                    selectedEmoji === emoji
+                      ? "!border-primary !border-white"
+                      : ""
+                  }`,
+                  darkTheme
+                    ? selectedEmoji === emoji
+                      ? "bg-[#FF9DF8] !border-[#FF9DF8]"
+                      : "bg-transparent !border-white"
+                    : selectedEmoji === emoji
+                    ? "bg-[#FF9DF8]"
+                    : "bg-[#f1f1f1]"
+                )}
               >
                 {emoji}
               </button>
@@ -142,7 +158,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
         </div>
 
         <div className="flex flex-col gap-3 mt-4">
-          <span className="text-sm font-semibold text-primary text-white font-sans">
+          <span className="text-sm font-semibold text-label-primary font-sans">
             Notes
           </span>
           <AppTextarea
@@ -420,27 +436,26 @@ const UserProfilePage: React.FC = () => {
           <div className="flex flex-col w-full">
             <div className="flex items-center justify-between w-full pb-4">
               <div className="flex flex-col gap-1 pt-4">
-                <span
-                  className="text-[30px] font-semibold tracking-[-0.22px] font-sans leading-none text-primary dark:text-white">{`${connection?.user?.username}`}</span>
-                <span className="text-sm font-medium font-sans text-tertiary dark:text-gray-400 leading-none">
+                <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans leading-none text-label-primary dark:text-white">{`${connection?.user?.username}`}</span>
+                <span className="text-sm font-medium font-sans text-label-tertiary dark:text-label-tertiary leading-none">
                   {connection?.user?.displayName}
                 </span>
-                <span className="text-sm font-medium font-sans text-tertiary dark:text-gray-400 leading-none">
+                <span className="text-sm font-medium font-sans text-label-tertiary dark:text-label-tertiary leading-none">
                   {connection?.user?.pronouns}
                 </span>
               </div>
-              <ProfileImage user={connection.user}/>
+              <ProfileImage user={connection.user} />
             </div>
             <div className="flex flex-row gap-2 mb-2">
               <div className="w-2/5">
-              <AppButton
+                <AppButton
                   variant="outline"
                   onClick={() => {
                     logClientEvent("user-profile-begin-edit-comment", {});
                     setShowCommentModal(true);
                   }}
                 >
-                  {<Icons.Pencil />}{" "}
+                  {<Icons.Pencil className="text-icon-primary" />}{" "}
                   {connection?.comment?.emoji || connection?.comment?.note
                     ? "Edit Notes"
                     : "Add Notes"}
@@ -452,12 +467,12 @@ const UserProfilePage: React.FC = () => {
       >
         <div className="!divide-y !divide-quaternary/20">
           <div className="flex flex-col gap-2 py-4 px-4">
-            <span className="text-sm font-semibold text-primary font-sans">
+            <span className="text-sm font-semibold text-label-primary font-sans">
               Socials
             </span>
             <div className="flex flex-col gap-4">
               {!connection?.user?.telegram && !connection?.user?.twitter && (
-                <span className="text-sm text-secondary font-sans font-normal">
+                <span className="text-sm text-label-secondary font-sans font-normal">
                   No socials shared.
                 </span>
               )}
@@ -526,14 +541,13 @@ const UserProfilePage: React.FC = () => {
                   />
                 </div>
               )}
-
             </div>
           </div>
 
           <div className="flex flex-col gap-4 py-4 px-4">
-            <span className="text-sm font-semibold text-primary font-sans">
+            <span className="text-sm font-semibold text-label-primary font-sans">
               Overlap icebreaker{" "}
-              <span className="font-normal text-tertiary">
+              <span className="font-normal text-label-tertiary">
                 Find common contacts & opposing tensions to spark conversation
               </span>
             </span>
@@ -541,18 +555,18 @@ const UserProfilePage: React.FC = () => {
             {verifiedIntersection && (
               <>
                 <div className="px-2 pt-2 pb-4 bg-white rounded-lg border border-black/80 flex-col justify-start items-start gap-2 inline-flex">
-                  <div className="text-sm font-semibold text-primary font-sans">
+                  <div className="text-sm font-semibold text-label-primary font-sans">
                     📇 Common contacts
                   </div>
                   {verifiedIntersection.contacts.length === 0 ? (
-                    <div className="text-sm text-primary font-sans font-normal">
+                    <div className="text-sm text-label-primary font-sans font-normal">
                       No common contacts.
                     </div>
                   ) : (
                     <div className="text-sm text-link-primary font-sans font-normal">
                       {verifiedIntersection.contacts.map((contact, index) => (
                         <>
-                          <span className="text-primary">
+                          <span className="text-label-primary">
                             {index !== 0 && " | "}
                           </span>
                           <Link href={`/people/${contact}`}>{contact}</Link>
@@ -562,23 +576,23 @@ const UserProfilePage: React.FC = () => {
                   )}
                 </div>
                 <div className="w-full px-2 pt-2 pb-4 bg-white rounded-lg border border-black/80 flex flex-col gap-2">
-                  <div className="text-sm font-semibold text-primary font-sans">
+                  <div className="text-sm font-semibold text-label-primary font-sans">
                     🪢 Your Tension disagreements
                   </div>
 
                   {verifiedIntersection.tensions.length === 0 ? (
-                    <div className="text-sm text-primary font-sans font-normal">
+                    <div className="text-sm text-label-primary font-sans font-normal">
                       Play the tensions game and refresh to see results!
                     </div>
                   ) : verifiedIntersection.tensions.every(
                       (tension) => tension === "0"
                     ) ? (
-                    <div className="text-sm text-primary font-sans font-normal">
+                    <div className="text-sm text-label-primary font-sans font-normal">
                       No tension disagreements!
                     </div>
                   ) : (
                     <>
-                      <div className="text-sm font-normal text-primary font-sans">
+                      <div className="text-sm font-normal text-label-primary font-sans">
                         {connection.user.username} leaned towards the opposite
                         side on these tensions. Below is what you picked.
                       </div>
@@ -618,7 +632,7 @@ const UserProfilePage: React.FC = () => {
               {}
             </AppButton>
             {waitingForOtherUser && (
-              <div className="text-[12px] text-center text-primary font-sans font-normal">
+              <div className="text-[12px] text-center text-label-primary font-sans font-normal">
                 Waiting for {connection.user.username} to press discover after
                 tapping...
               </div>
@@ -628,10 +642,10 @@ const UserProfilePage: React.FC = () => {
           {connection?.user?.bio && (
             <div className="flex flex-col gap-2 py-4 px-4">
               <>
-                <span className="text-sm font-semibold text-primary font-sans">
+                <span className="text-sm font-semibold text-label-primary font-sans">
                   Bio
                 </span>
-                <span className="text-sm text-secondary font-sans font-normal">
+                <span className="text-sm text-label-secondary font-sans font-normal">
                   {connection?.user?.bio}
                 </span>
               </>

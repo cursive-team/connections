@@ -14,8 +14,8 @@ export interface TabsProps {
 const TabButton = classed.div("font-medium px-3 py-[6px] rounded-[3px]", {
   variants: {
     selected: {
-      true: "text-primary bg-surface-primary",
-      false: "text-secondary",
+      true: "text-label-primary bg-surface-primary",
+      false: "text-label-secondary",
     },
   },
   defaultVariants: {

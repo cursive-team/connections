@@ -15,6 +15,7 @@ import { preMigrationSignaturePublicKeys } from "@/common/constants";
 import { fetchMessages } from "@/lib/message";
 import { cn } from "@/lib/frontend/util";
 import { usePathname } from "next/navigation";
+import useSettings from "@/hooks/useSettings";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -33,9 +34,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   const [isPreMigrationSessionChecked, setIsPreMigrationSessionChecked] =
     useState(false);
 
+  const { darkTheme } = useSettings();
+
   let isFortunePage: boolean = false;
   if (pathname?.includes("/fortune")) {
-    isFortunePage = pathname.includes("/fortune")
+    isFortunePage = pathname.includes("/fortune");
   }
 
   // Refresh messages when the page is refreshed
@@ -88,7 +91,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           {
             duration: 5000,
             className:
-              "font-sans text-primary dark:text-iron-50 bg-white dark:bg-iron-800",
+              "font-sans text-label-primary dark:text-iron-50 bg-white dark:bg-iron-800",
           }
         );
         router.push("/");
@@ -105,7 +108,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   }, [router, isPreMigrationSessionChecked]);
 
   return (
-    <main className={cn(`${dmSans.className} ${dmSans.variable} `)}>
+    <main
+      className={cn(
+        `${dmSans.className} ${dmSans.variable}`,
+        darkTheme && "dark-theme"
+      )}
+    >
       <DefaultSeo titleTemplate="%s | Cursive Connections" />
       <PlausibleProvider
         domain={process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN!}
@@ -120,7 +128,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         position="top-center"
         toastOptions={{
           duration: 5000,
-          className: "font-sans bg-background text-primary",
+          className: "font-sans bg-background text-label-primary",
         }}
       />
     </main>

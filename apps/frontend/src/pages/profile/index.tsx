@@ -19,10 +19,13 @@ import { logClientEvent } from "@/lib/frontend/metrics";
 import ImportGithubButton from "@/features/oauth/ImportGithubButton";
 import ImportStravaButton from "@/features/oauth/ImportStravaButton";
 import AddNotificationButton from "@/features/notification/AddNotificationButton";
+import ToggleSwitch from "@/components/ui/Switch";
+import useSettings from "@/hooks/useSettings";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const { toggleTheme, darkTheme } = useSettings();
 
   const handleLogout = async () => {
     await logoutUser();
@@ -91,10 +94,10 @@ const ProfilePage: React.FC = () => {
           <div className="flex flex-col  mt-[38px] px-3 pb-4">
             <div className="flex flex-col gap-4 w-full">
               <div className="flex flex-col">
-                <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans text-primary">
+                <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans text-label-primary">
                   {user?.userData.displayName}
                 </span>
-                <span className="text-[14px] font-medium font-sans text-tertiary">
+                <span className="text-[14px] font-medium font-sans text-label-tertiary">
                   {`${user?.userData.username}`}
                 </span>
               </div>
@@ -119,10 +122,10 @@ const ProfilePage: React.FC = () => {
           {hasDataToAdd && (
             <div className="flex flex-col gap-2 p-4">
               <div className="flex flex-col gap-1">
-                <span className="text-lg font-semibold text-primary font-sans">
+                <span className="text-lg font-semibold text-label-primary font-sans">
                   Add data to connect with others
                 </span>
-                <span className="text-sm font-normal text-tertiary">
+                <span className="text-sm font-normal text-label-tertiary">
                   Your data is private to you and you have full control over how
                   it is used in the app.
                 </span>
@@ -156,7 +159,7 @@ const ProfilePage: React.FC = () => {
                 {!user.userData.tensionsRating && (
                   <Card.Base
                     variant="gray"
-                    className="p-4 !rounded-lg !bg-transparent !border !border-white"
+                    className="p-4 !rounded-lg !border !border-white"
                     onClick={() => {
                       logClientEvent("start_tensions", {});
                       router.push("/tensions");
@@ -165,14 +168,14 @@ const ProfilePage: React.FC = () => {
                     <div className="flex flex-col gap-[10px]">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <Icons.Clip className="text-white" />
-                          <span className="text-sm text-primary font-medium">
+                          <Icons.Clip className="text-icon-primary" />
+                          <span className="text-sm text-label-primary font-medium">
                             Tensions 🪢
                           </span>
                         </div>
-                        <Icons.Plus className="text-white" />
+                        <Icons.Plus className="text-icon-primary" />
                       </div>
-                      <span className="text-xs font-medium text-tertiary">
+                      <span className="text-xs font-medium text-label-tertiary">
                         Practice your decision making skills by playing the
                         Tensions game, match with residents who hold opposing
                         views to learn new perspectives.
@@ -188,10 +191,10 @@ const ProfilePage: React.FC = () => {
             <div className="p-4">
               <div className="flex flex-col gap-2 ">
                 <div className="flex flex-col gap-1">
-                  <span className="text-lg font-semibold text-primary font-sans">
+                  <span className="text-lg font-semibold text-label-primary font-sans">
                     Your vault
                   </span>
-                  <span className="text-sm font-normal text-tertiary">
+                  <span className="text-sm font-normal text-label-tertiary">
                     {`Change which features use your data or remove your data altogether.`}
                   </span>
                 </div>
@@ -213,7 +216,7 @@ const ProfilePage: React.FC = () => {
                 )}
                 {user.userData.tensionsRating && (
                   <div
-                    className="p-4 !rounded-lg !bg-transparent !border !border-white"
+                    className="p-4 !rounded-lg !border !border-white"
                     onClick={() => {
                       logClientEvent("edit_tensions", {});
                       router.push("/tensions");
@@ -222,12 +225,12 @@ const ProfilePage: React.FC = () => {
                     <div className="flex flex-col gap-[10px]">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <Icons.Clip className="text-white" />
-                          <span className="text-sm text-primary font-medium">
+                          <Icons.Clip className="text-icon-primary" />
+                          <span className="text-sm text-label-primary font-medium">
                             Tensions 🪢
                           </span>
                         </div>
-                        <Icons.Pencil className="text-white" />
+                        <Icons.Pencil className="text-icon-primary" />
                       </div>
                       <span className="text-xs font-medium text-white/50">
                         Practice your decision making skills by playing the
@@ -240,6 +243,15 @@ const ProfilePage: React.FC = () => {
               </div>
             </div>
           )}
+        </div>
+        <div className="px-4 py-6">
+          <ToggleSwitch
+            label="Dark theme"
+            checked={darkTheme}
+            onChange={() => {
+              toggleTheme();
+            }}
+          />
         </div>
         <div className="px-4 py-6">
           <AppButton onClick={handleLogout} variant="outline">

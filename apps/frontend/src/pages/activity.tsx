@@ -141,7 +141,7 @@ const ActivityPage: React.FC = () => {
       className="container mx-auto px-4 py-4"
     >
       <div className="flex items-center gap-0.5 pb-2">
-        <span className="text-lg font-semibold leading-none text-primary">
+        <span className="text-lg font-semibold leading-none text-label-primary">
           Your activity
         </span>
       </div>
@@ -159,7 +159,7 @@ const ActivityPage: React.FC = () => {
       ).map(([date, items]) => (
         <div className="mb-6" key={date}>
           <div className="mb-2">
-            <span className="text-[12px] text-quaternary font-semibold">
+            <span className="text-[12px] text-label-quaternary font-semibold">
               {date}
             </span>
           </div>

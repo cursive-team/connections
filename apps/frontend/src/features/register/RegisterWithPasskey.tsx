@@ -41,7 +41,15 @@ const RegisterWithPasskey: React.FC<RegisterWithPasskeyProps> = ({
       await onPasskeyRegister(id, authPublicKey);
     } catch (error) {
       console.error("Error creating account: ", error);
-      toast(SupportToast("", true, "Authentication failed! Please try again.", ERROR_SUPPORT_CONTACT, errorToString(error)));
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Authentication failed! Please try again.",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
       return;
     }
   };
@@ -59,7 +67,7 @@ const RegisterWithPasskey: React.FC<RegisterWithPasskeyProps> = ({
           <AppButton onClick={handlePasskeyRegistration}>
             Secure with passkey
           </AppButton>
-          <span className="text-quaternary text-center text-sm font-sans ">
+          <span className="text-label-quaternary text-center text-sm font-sans ">
             or
           </span>
           <AppButton onClick={onSwitchToPassword} variant="outline">

@@ -155,13 +155,13 @@ const SpookyModal = ({
             height={160}
             className="mx-auto"
           />
-          <span className="font-sans text-primary font-semibold text-[30px] leading-[30px]">
+          <span className="font-sans text-label-primary font-semibold text-[30px] leading-[30px]">
             Welcome to the party{username}!
           </span>
-          <span className="font-sans text-primary font-bold text-[20px] leading-[20px]">
+          <span className="font-sans text-label-primary font-bold text-[20px] leading-[20px]">
             Get matched with other guests
           </span>
-          <span className="font-sans text-tertiary font-medium text-base ">
+          <span className="font-sans text-label-tertiary font-medium text-base ">
             {`Add some private data, turn on notifications and we'll let you know
             when we find someone with similar interests!`}
           </span>
@@ -193,7 +193,7 @@ const SpookyModal = ({
                   width={140}
                   height={140}
                 />
-                <span className="text-base text-primary font-medium">
+                <span className="text-base text-label-primary font-medium">
                   {mood.label}
                 </span>
               </div>
@@ -248,10 +248,10 @@ const SpookyModal = ({
             height={136}
             alt="elephant"
           />
-          <span className="font-sans text-primary font-semibold text-[30px] leading-[30px]">
+          <span className="font-sans text-label-primary font-semibold text-[30px] leading-[30px]">
             Get notified when you match!
           </span>
-          <span className="text-base font-medium text-primary">
+          <span className="text-base font-medium text-label-primary">
             {`Let Curtis the Connections Elephant notify you when someone’s
             private data intersects with your own!`}
           </span>
@@ -269,10 +269,10 @@ const SpookyModal = ({
     //         alt="pot"
     //         className="mx-auto mb-10"
     //       />
-    //       <span className="font-sans text-primary font-semibold text-[30px] leading-[30px]">
+    //       <span className="font-sans text-label-primary font-semibold text-[30px] leading-[30px]">
     //         {`You're all set!`}
     //       </span>
-    //       <span className="text-base font-medium text-primary">
+    //       <span className="text-base font-medium text-label-primary">
     //         {`Keep checking the event page to unlock more vaults and see your connections`}
     //       </span>
     //     </div>
@@ -392,7 +392,7 @@ const SpookyModal = ({
                     {step > 0 && (
                       <ArrowBack
                         size={18}
-                        className="text-primary bg-white/20 p-0.5"
+                        className="text-label-primary bg-background/20 p-0.5"
                         onClick={() => {
                           handleBack();
                         }}
@@ -415,15 +415,15 @@ const SpookyModal = ({
                   >
                     {withBackButton ? (
                       <div className="flex items-center gap-1">
-                        <Icons.ArrowLeft className="text-white" />
-                        <span className="text-primary font-sans text-sm">
+                        <Icons.ArrowLeft className="text-icon-primary" />
+                        <span className="text-label-primary font-sans text-sm">
                           Back
                         </span>
                       </div>
                     ) : (
                       <Close
                         size={18}
-                        className="text-white bg-white/20 p-0.5"
+                        className="text-icon-primary bg-white/20 p-0.5"
                       />
                     )}
                   </button>
@@ -433,7 +433,7 @@ const SpookyModal = ({
                     <div className="flex flex-col gap-6 mb-2">
                       <div className="flex flex-col">
                         {currentStep?.title && (
-                          <span className="text-primary text-center font-sans text-[20px] font-bold leading-none">
+                          <span className="text-label-primary text-center font-sans text-[20px] font-bold leading-none">
                             {currentStep?.title}
                           </span>
                         )}

@@ -64,7 +64,16 @@ const ProfileEdit = () => {
 
   const onHandleSubmit = async (formData: ChipEditFormData) => {
     setLoading(true);
-    const { displayName, bio, twitterUsername, telegramUsername, signalUsername, instagramUsername, farcasterUsername, pronouns } = formData;
+    const {
+      displayName,
+      bio,
+      twitterUsername,
+      telegramUsername,
+      signalUsername,
+      instagramUsername,
+      farcasterUsername,
+      pronouns,
+    } = formData;
     try {
       await updateChip({
         authToken: session!.authTokenValue,
@@ -82,7 +91,15 @@ const ProfileEdit = () => {
       router.push("/profile");
     } catch (error) {
       console.error(error);
-      toast(SupportToast("", true, "Error updating chip", ERROR_SUPPORT_CONTACT, errorToString(error)));
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Error updating chip",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
     }
     setLoading(false);
   };
@@ -111,10 +128,10 @@ const ProfileEdit = () => {
 
             <div className="flex items-center justify-between gap-4">
               <div className="flex flex-col gap-2">
-                <span className="text-primary">
+                <span className="text-label-primary">
                   <b>Editing</b> Edge City Wristband
                 </span>
-                <span className="text-[14px] text-tertiary">
+                <span className="text-[14px] text-label-tertiary">
                   This information is shared when someone taps your NFC chip
                   with their phone.
                 </span>
@@ -136,21 +153,21 @@ const ProfileEdit = () => {
               label="Telegram"
               placeholder="Telegram"
               variant="primary"
-              icon={<TelegramIcon className="text-icon-primary/50 invert" />}
+              icon={<TelegramIcon className=" invert" />}
               {...register("telegramUsername")}
             />
             <AppInput
               label="Twitter"
               placeholder="Twitter"
               variant="primary"
-              icon={<TwitterIcon className="text-icon-primary/50 invert" />}
+              icon={<TwitterIcon className=" invert" />}
               {...register("twitterUsername")}
             />
             <AppInput
               label="Instagram"
               placeholder="Instagram"
               variant="primary"
-              icon={<InstagramIcon className="text-icon-primary/50 invert" />}
+              icon={<InstagramIcon className=" invert" />}
               {...register("instagramUsername")}
             />
             <AppInput

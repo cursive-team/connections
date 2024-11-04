@@ -61,10 +61,10 @@ const FortuneModal = ({
             height={136}
             alt="ticket"
           />
-          <span className="font-sans text-center text-primary font-semibold text-[30px] leading-[30px]">
+          <span className="font-sans text-center text-label-primary font-semibold text-[30px] leading-[30px]">
             See your similarity
           </span>
-          <span className="text-base text-center font-medium text-primary">
+          <span className="text-base text-center font-medium text-label-primary">
             {`This fortune can’t be read alone. Team up with someone to unlock its shared meaning.`}
           </span>
         </div>
@@ -81,10 +81,10 @@ const FortuneModal = ({
             height={136}
             alt="arrow"
           />
-          <span className="font-sans text-center text-primary font-semibold text-[30px] leading-[30px]">
+          <span className="font-sans text-center text-label-primary font-semibold text-[30px] leading-[30px]">
             Check the crystal ball for your pair fortune.
           </span>
-          <span className="text-base text-center font-medium text-primary">
+          <span className="text-base text-center font-medium text-label-primary">
             {`It’s in the room. Probably in front of you. Tap again for a new ticket.`}
           </span>
         </div>
@@ -174,7 +174,7 @@ const FortuneModal = ({
                     {step > 0 && (
                       <ArrowBack
                         size={18}
-                        className="text-primary bg-white/20 p-0.5"
+                        className="text-label-primary bg-white/20 p-0.5"
                         onClick={() => {
                           handleBack();
                         }}
@@ -197,8 +197,8 @@ const FortuneModal = ({
                   >
                     {withBackButton ? (
                       <div className="flex items-center gap-1">
-                        <Icons.ArrowLeft className="text-white" />
-                        <span className="text-primary font-sans text-sm">
+                        <Icons.ArrowLeft className="text-icon-primary" />
+                        <span className="text-label-primary font-sans text-sm">
                           Back
                         </span>
                       </div>
@@ -214,7 +214,7 @@ const FortuneModal = ({
                   <div className="flex flex-col pt-4 grow pb-6 text-white">
                     <div className="flex flex-col">
                       {currentStep?.title && (
-                        <span className="text-primary text-center font-sans text-[20px] font-bold leading-none">
+                        <span className="text-label-primary text-center font-sans text-[20px] font-bold leading-none">
                           {currentStep?.title}
                         </span>
                       )}

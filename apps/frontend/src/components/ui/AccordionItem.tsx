@@ -21,7 +21,9 @@ export const AccordionItem = ({ label, children }: AccordionProps) => {
         className="w-full py-4 text-left flex justify-between items-center focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="font-medium text-primary text-base">{label}</span>
+        <span className="font-medium text-label-primary text-base">
+          {label}
+        </span>
         <GoChevronDown
           className={cn("text-black duration-300 size-4", {
             "rotate-180": isOpen,
@@ -33,7 +35,9 @@ export const AccordionItem = ({ label, children }: AccordionProps) => {
           isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <p className="py-4 pt-0 text-tertiary font-sans text-sm">{children}</p>
+        <p className="py-4 pt-0 text-label-tertiary font-sans text-sm">
+          {children}
+        </p>
       </div>
     </div>
   );

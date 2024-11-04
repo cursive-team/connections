@@ -500,7 +500,7 @@ export default function CommunityPage() {
       <AppLayout
         header={
           <>
-            <span className="text-primary font-medium">Community</span>
+            <span className="text-label-primary font-medium">Community</span>
             <div
               className="absolute left-0 right-0 bottom-0 h-[2px]"
               style={{
@@ -511,7 +511,7 @@ export default function CommunityPage() {
         }
       >
         <div className="flex flex-col py-4">
-          <span className="text-base font-bold text-primary font-sans">
+          <span className="text-base font-bold text-label-primary font-sans">
             {`Applications`}
           </span>
           <div className="flex  overflow-x-scroll gap-2 pt-2">
@@ -523,7 +523,7 @@ export default function CommunityPage() {
               },
               {
                 href: "https://app.sola.day/event/edgecitylanna/",
-                emoji: <Icons.SocialLayer size={18}/>,
+                emoji: <Icons.SocialLayer size={18} />,
                 text: "Social Layer",
                 label: "community-social-layer-link",
               },
@@ -538,7 +538,7 @@ export default function CommunityPage() {
                 emoji: <span className="text-[16px]">∈</span>,
                 text: "Edges",
                 label: "community-edges-link",
-              }
+              },
             ].map((item, index) => (
               <Link
                 key={index}
@@ -549,7 +549,7 @@ export default function CommunityPage() {
                 <Tag
                   emoji={item.emoji}
                   variant="gray"
-                  text={(item?.text) ? item.text : ""}
+                  text={item?.text ? item.text : ""}
                   external
                 />
               </Link>
@@ -564,7 +564,7 @@ export default function CommunityPage() {
         ) : (
           <div className="flex flex-col gap-6 pt-2 pb-6">
             <div className="flex flex-col gap-2">
-              <span className="text-base font-bold text-primary font-sans">
+              <span className="text-base font-bold text-label-primary font-sans">
                 {`Current dashboards`}
               </span>
               {cardProps?.map((prop: CommunityCardProps, index) => {
@@ -597,7 +597,7 @@ export default function CommunityPage() {
               })}
             </div>
             <div className="flex flex-col gap-2">
-              <span className="text-base font-bold text-primary font-sans">
+              <span className="text-base font-bold text-label-primary font-sans">
                 {`Past dashboards`}
               </span>
               {cardProps?.map((prop: CommunityCardProps, index) => {
