@@ -9,6 +9,10 @@ interface UpdateChipArgs {
   ownerBio: string | null;
   ownerTwitterUsername: string | null;
   ownerTelegramUsername: string | null;
+  ownerSignalUsername: string | null;
+  ownerInstagramUsername: string | null;
+  ownerFarcasterUsername: string | null;
+  ownerPronouns: string | null;
 }
 
 export async function updateChip(args: UpdateChipArgs): Promise<void> {
@@ -23,6 +27,26 @@ export async function updateChip(args: UpdateChipArgs): Promise<void> {
       username: args.ownerTelegramUsername,
     };
   }
+  if (args.ownerSignalUsername) {
+    ownerUserData.signal = {
+      username: args.ownerSignalUsername,
+    };
+  }
+  if (args.ownerInstagramUsername) {
+    ownerUserData.instagram = {
+      username: args.ownerInstagramUsername,
+    };
+  }
+  if (args.ownerFarcasterUsername) {
+    ownerUserData.farcaster = {
+      username: args.ownerFarcasterUsername,
+    };
+  }
+  if (args.ownerPronouns) {
+    ownerUserData.pronouns = args.ownerPronouns;
+  }
+
+
 
   const request: UpdateChipRequest = {
     authToken: args.authToken,
@@ -62,6 +86,16 @@ export async function updateChip(args: UpdateChipArgs): Promise<void> {
       telegram: {
         username: args.ownerTelegramUsername ?? undefined,
       },
+      signal: {
+        username: args.ownerSignalUsername ?? undefined,
+      },
+      instagram: {
+        username: args.ownerInstagramUsername ?? undefined,
+      },
+      farcaster: {
+        username: args.ownerFarcasterUsername ?? undefined,
+      },
+      pronouns: args.ownerPronouns ?? undefined,
     });
   } catch (error) {
     console.error("Error updating chip:", errorToString(error));

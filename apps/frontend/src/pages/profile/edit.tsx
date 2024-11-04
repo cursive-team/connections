@@ -7,6 +7,7 @@ import { AppTextarea } from "@/components/ui/Textarea";
 import { AppButton } from "@/components/ui/Button";
 import { useEffect, useState } from "react";
 import {
+  FaInstagram as InstagramIcon,
   FaTelegram as TelegramIcon,
   FaTwitter as TwitterIcon,
 } from "react-icons/fa";
@@ -23,6 +24,10 @@ type ChipEditFormData = {
   bio?: string;
   twitterUsername?: string;
   telegramUsername?: string;
+  signalUsername?: string;
+  instagramUsername?: string;
+  farcasterUsername?: string;
+  pronouns?: string;
 };
 
 const ProfileEdit = () => {
@@ -43,6 +48,10 @@ const ProfileEdit = () => {
           bio: user.userData?.bio || "",
           twitterUsername: user.userData?.twitter?.username || "",
           telegramUsername: user.userData?.telegram?.username || "",
+          signalUsername: user.userData?.signal?.username || "",
+          instagramUsername: user.userData?.instagram?.username || "",
+          farcasterUsername: user.userData?.farcaster?.username || "",
+          pronouns: user.userData?.pronouns || "",
         });
       } else {
         toast.error("User not found");
@@ -55,7 +64,7 @@ const ProfileEdit = () => {
 
   const onHandleSubmit = async (formData: ChipEditFormData) => {
     setLoading(true);
-    const { displayName, bio, twitterUsername, telegramUsername } = formData;
+    const { displayName, bio, twitterUsername, telegramUsername, signalUsername, instagramUsername, farcasterUsername, pronouns } = formData;
     try {
       await updateChip({
         authToken: session!.authTokenValue,
@@ -64,6 +73,10 @@ const ProfileEdit = () => {
         ownerBio: bio ?? null,
         ownerTwitterUsername: twitterUsername ?? null,
         ownerTelegramUsername: telegramUsername ?? null,
+        ownerSignalUsername: signalUsername ?? null,
+        ownerInstagramUsername: instagramUsername ?? null,
+        ownerFarcasterUsername: farcasterUsername ?? null,
+        ownerPronouns: pronouns ?? null,
       });
       toast.success("Chip updated successfully");
       router.push("/profile");
@@ -98,7 +111,7 @@ const ProfileEdit = () => {
 
             <div className="flex items-center justify-between gap-4">
               <div className="flex flex-col gap-2">
-                <span>
+                <span className="text-primary">
                   <b>Editing</b> Edge City Wristband
                 </span>
                 <span className="text-[14px] text-tertiary">
@@ -108,30 +121,55 @@ const ProfileEdit = () => {
               </div>
             </div>
             <AppInput
-              label="Display name"
-              variant="secondary"
-              placeholder="Display name"
+              label="Full name"
+              variant="primary"
+              placeholder="Full name"
               {...register("displayName")}
+            />
+            <AppInput
+              label="Pronouns"
+              variant="primary"
+              placeholder="They/them, She/her, He/him"
+              {...register("pronouns")}
             />
             <AppInput
               label="Telegram"
               placeholder="Telegram"
-              variant="secondary"
-              icon={<TelegramIcon className="text-icon-primary/50" />}
+              variant="primary"
+              icon={<TelegramIcon className="text-icon-primary/50 invert" />}
               {...register("telegramUsername")}
             />
             <AppInput
               label="Twitter"
               placeholder="Twitter"
-              variant="secondary"
-              icon={<TwitterIcon className="text-icon-primary/50" />}
+              variant="primary"
+              icon={<TwitterIcon className="text-icon-primary/50 invert" />}
               {...register("twitterUsername")}
+            />
+            <AppInput
+              label="Instagram"
+              placeholder="Instagram"
+              variant="primary"
+              icon={<InstagramIcon className="text-icon-primary/50 invert" />}
+              {...register("instagramUsername")}
+            />
+            <AppInput
+              label="Signal"
+              placeholder="Signal"
+              variant="primary"
+              {...register("signalUsername")}
+            />
+            <AppInput
+              label="Farcaster"
+              placeholder="Farcaster"
+              variant="primary"
+              {...register("farcasterUsername")}
             />
             <AppTextarea
               label="Bio"
               autoExpand
               placeholder="Bio"
-              variant="secondary"
+              variant="primary"
               {...register("bio")}
             />
             <AppButton

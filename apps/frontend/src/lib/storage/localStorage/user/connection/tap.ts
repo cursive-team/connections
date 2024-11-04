@@ -6,6 +6,12 @@ import {
   TelegramDataSchema,
   TwitterData,
   TwitterDataSchema,
+  SignalData,
+  SignalDataSchema,
+  InstagramData,
+  InstagramDataSchema,
+  FarcasterData,
+  FarcasterDataSchema,
 } from "@/lib/storage/types";
 import { createTapActivity } from "@/lib/activity";
 import { saveBackupAndUpdateStorage } from "../../utils";
@@ -33,6 +39,10 @@ export const addUserTap = async (
 
   let ownerTwitter: TwitterData | undefined;
   let ownerTelegram: TelegramData | undefined;
+  let ownerSignal: SignalData | undefined;
+  let ownerInstagram: InstagramData | undefined;
+  let ownerFarcaster: FarcasterData | undefined;
+  let ownerPronouns: string | undefined;
   if (
     tap.ownerUserData &&
     typeof tap.ownerUserData === "object" &&
@@ -58,6 +68,46 @@ export const addUserTap = async (
         console.error("Error parsing ownerUserData.telegram:", error);
       }
     }
+    if (
+      "signal" in tap.ownerUserData &&
+      typeof tap.ownerUserData.signal === "object"
+    ) {
+      try {
+        ownerSignal = SignalDataSchema.parse(tap.ownerUserData.signal);
+      } catch (error) {
+        console.error("Error parsing ownerUserData.signal:", error);
+      }
+    }
+    if (
+      "instagram" in tap.ownerUserData &&
+      typeof tap.ownerUserData.instagram === "object"
+    ) {
+      try {
+        ownerInstagram = InstagramDataSchema.parse(tap.ownerUserData.instagram);
+      } catch (error) {
+        console.error("Error parsing ownerUserData.instagram:", error);
+      }
+    }
+    if (
+      "farcaster" in tap.ownerUserData &&
+      typeof tap.ownerUserData.farcaster === "object"
+    ) {
+      try {
+        ownerFarcaster = FarcasterDataSchema.parse(tap.ownerUserData.farcaster);
+      } catch (error) {
+        console.error("Error parsing ownerUserData.farcaster:", error);
+      }
+    }
+    if (
+      "pronouns" in tap.ownerUserData &&
+      typeof tap.ownerUserData.pronouns === "string"
+    ) {
+      try {
+        ownerPronouns = tap.ownerUserData.pronouns;
+      } catch (error) {
+        console.error("Error parsing ownerUserData.pronouns:", error);
+      }
+    }
   }
 
   // NOTE: For now, tapping a connection's chip will overwrite the existing connection data
@@ -72,6 +122,10 @@ export const addUserTap = async (
     psiPublicKeyLink: tap.ownerPsiPublicKeyLink ?? undefined,
     twitter: ownerTwitter,
     telegram: ownerTelegram,
+    signal: ownerSignal,
+    instagram: ownerInstagram,
+    farcaster: ownerFarcaster,
+    pronouns: ownerPronouns,
   };
 
   // Taps will be appended to the existing taps
