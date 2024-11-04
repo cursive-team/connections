@@ -22,6 +22,7 @@ import {
   ERROR_SUPPORT_CONTACT,
   LANNA_HALLOWEEN_LOCATION_IDS_ARRAY,
 } from "@/constants";
+import { getUserShareableData } from "@/lib/storage/types";
 
 const TapPage: React.FC = () => {
   const router = useRouter();
@@ -153,7 +154,10 @@ const TapPage: React.FC = () => {
             // User logged in and unregistered chip is not locationChip, allow user to bind new chip to profile
             logClientEvent("tap-chip-logged-in-bind-new-chip", {});
 
-            const userData = JsonSchema.parse(user.userData);
+            // Only include shareable data
+            const shareableUserData = getUserShareableData(user.userData);
+            const userData = JsonSchema.parse(shareableUserData);
+
             await registerChip({
               authToken: session.authTokenValue,
               tapParams: tapParams,
