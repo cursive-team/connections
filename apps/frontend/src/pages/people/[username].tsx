@@ -393,8 +393,6 @@ const UserProfilePage: React.FC = () => {
     );
   }
 
-  console.log("Check pronouns", connection.user.pronouns)
-
   return (
     <>
       {showCommentModal && (
@@ -498,7 +496,7 @@ const UserProfilePage: React.FC = () => {
                   <LinkCardBox
                     label="Signal"
                     value={`@${connection.user.signal.username}`}
-                    href={`sgnl://signal.me/#u/${connection.user.signal.username}`}
+                    href={`https://signal.me/#u/${connection.user.signal.username}`}
                   />
                 </div>
               )}
