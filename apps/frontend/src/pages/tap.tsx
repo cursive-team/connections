@@ -5,7 +5,6 @@ import {
   ChipTapResponse,
   errorToString,
   ChipIssuer,
-  JsonSchema
 } from "@types";
 import { toast } from "sonner";
 import { storage } from "@/lib/storage";
@@ -22,7 +21,7 @@ import {
   ERROR_SUPPORT_CONTACT,
   LANNA_HALLOWEEN_LOCATION_IDS_ARRAY,
 } from "@/constants";
-import { getUserShareableData } from "@/lib/user";
+import { shareableUserDataToJson } from "@/lib/user";
 
 const TapPage: React.FC = () => {
   const router = useRouter();
@@ -155,8 +154,7 @@ const TapPage: React.FC = () => {
             logClientEvent("tap-chip-logged-in-bind-new-chip", {});
 
             // Only include shareable data
-            const shareableUserData = getUserShareableData(user.userData);
-            const userData = JsonSchema.parse(shareableUserData);
+            const shareableUserData = shareableUserDataToJson(user.userData);
 
             await registerChip({
               authToken: session.authTokenValue,
@@ -167,7 +165,7 @@ const TapPage: React.FC = () => {
               ownerSignaturePublicKey: user.userData.signaturePublicKey,
               ownerEncryptionPublicKey: user.userData.encryptionPublicKey,
               ownerPsiPublicKeyLink: user.userData.psiPublicKeyLink,
-              ownerUserData: userData,
+              ownerUserData: shareableUserData,
             });
 
             toast.success("Successfully bound a new chip to your account")
