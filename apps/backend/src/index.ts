@@ -8,8 +8,10 @@ import lannaRoutes from "./routes/lanna";
 import notificationRoutes from "./routes/notification";
 import dataHashRoutes from "./routes/dataHash";
 import { FRONTEND_URL } from "./constants";
+import { WebSocketServer } from 'ws';
 import { IntersectionState } from "@types";
 import { Controller } from "./lib/controller";
+import * as http from 'http';
 const cors = require("cors");
 
 const app = express();
@@ -41,7 +43,12 @@ controller
     console.error("Failed to initialize notification service: ", error);
   });
 
+const server = http.createServer(app);
+
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+// Use same server for websocket connection
+export const wsServer = new WebSocketServer({ server })

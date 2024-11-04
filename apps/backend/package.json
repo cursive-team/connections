@@ -13,6 +13,7 @@
   "dependencies": {
     "@aws-sdk/client-ses": "^3.662.0",
     "@prisma/client": "^5.19.1",
+    "@types/ws": "^8.5.13",
     "bn.js": "^5.2.1",
     "cors": "^2.8.5",
     "cross-fetch": "^4.0.0",
@@ -24,6 +25,7 @@
     "js-sha256": "^0.11.0",
     "unique-names-generator": "^4.7.1",
     "uuid": "^10.0.0",
+    "ws": "^8.18.0",
     "zod": "^3.23.8",
     "zod-validation-error": "^3.4.0"
   },
