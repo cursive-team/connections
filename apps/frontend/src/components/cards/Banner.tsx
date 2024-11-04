@@ -1,6 +1,5 @@
 "use client";
 
-import useSettings from "@/hooks/useSettings";
 import { cn } from "@/lib/frontend/util";
 import { ReactNode } from "react";
 
