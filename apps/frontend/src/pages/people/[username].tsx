@@ -180,6 +180,7 @@ const UserProfilePage: React.FC = () => {
   const [verifiedIntersection, setVerifiedIntersection] = useState<{
     tensions: string[];
     contacts: string[];
+    communities: string[];
   } | null>(null);
 
   useEffect(() => {
@@ -301,6 +302,17 @@ const UserProfilePage: React.FC = () => {
         );
       }
 
+      const communitySet = new Set<string>();
+      for (let chip of user.chips) {
+        communitySet.add(chip.issuer);
+      }
+      const communityData = Array.from(communitySet.keys());
+      const communities = await hashCommit(
+        user.encryptionPrivateKey,
+        connection.user.encryptionPublicKey,
+        communityData
+      );
+
       const contactData = Object.keys(user.connections);
       const contacts = await hashCommit(
         user.encryptionPrivateKey,
@@ -324,7 +336,7 @@ const UserProfilePage: React.FC = () => {
           body: JSON.stringify({
             secretHash,
             index: user.userData.username < connection.user.username ? 0 : 1,
-            intersectionState: { tensions, contacts },
+            intersectionState: { tensions, contacts, communities },
           }),
         }
       );
@@ -347,9 +359,22 @@ const UserProfilePage: React.FC = () => {
           }
         }
 
+        const translatedCommunities = [];
+        for (const hashCommunity of data.verifiedIntersectionState.communities) {
+          const index = communities.findIndex(
+            (community) => community === hashCommunity
+          );
+          if (index !== -1) {
+            translatedCommunities.push(communityData[index]);
+          }
+        }
+
+        console.log("Check community match", translatedCommunities)
+
         setVerifiedIntersection({
           contacts: translatedContacts,
           tensions: data.verifiedIntersectionState.tensions,
+          communities: translatedCommunities,
         });
         logClientEvent("user-finished-psi", {});
         if (!waitingForOtherUser) {
@@ -500,7 +525,7 @@ const UserProfilePage: React.FC = () => {
                     </div>
                   ) : (
                     <div className="text-sm text-link-primary font-sans font-normal">
-                      {verifiedIntersection.contacts.map((contact, index) => (
+                      {verifiedIntersection.contacts.map((contact: string, index: number) => (
                         <>
                           <span className="text-primary">
                             {index !== 0 && " | "}
@@ -521,7 +546,7 @@ const UserProfilePage: React.FC = () => {
                       Play the tensions game and refresh to see results!
                     </div>
                   ) : verifiedIntersection.tensions.every(
-                      (tension) => tension === "0"
+                      (tension: string) => tension === "0"
                     ) ? (
                     <div className="text-sm text-primary font-sans font-normal">
                       No tension disagreements!
@@ -533,7 +558,7 @@ const UserProfilePage: React.FC = () => {
                         side on these tensions. Below is what you picked.
                       </div>
                       {verifiedIntersection.tensions.map(
-                        (tension, index) =>
+                        (tension: string, index: number) =>
                           tension === "1" && (
                             <TensionSlider
                               key={index}

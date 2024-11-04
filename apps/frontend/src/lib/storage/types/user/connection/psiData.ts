@@ -4,6 +4,7 @@ import { z } from "zod";
 export const PSIDataSchema = z.object({
   sharedConnections: z.array(z.string()),
   sharedLannaInterests: z.array(z.string()),
+  sharedCommunities: z.array(z.string()),
   lastUpdatedAt: nullToUndefined(z.coerce.date()),
 });
 
