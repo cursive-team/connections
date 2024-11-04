@@ -5,16 +5,16 @@ import { saveUser } from "./user";
 import { appendBackupData } from "@/lib/backup";
 
 export const saveToLocalStorage = (key: string, value: string): void => {
-  window.localStorage.setItem(key, value);
+  localStorage.setItem(key, value);
 };
 
 // uncaughtException: ReferenceError: localStorage is not defined
 export const getFromLocalStorage = (key: string): string | null => {
-  return window.localStorage.getItem(key);
+  return localStorage.getItem(key);
 };
 
 export const deleteFromLocalStorage = (key: string): void => {
-  window.localStorage.removeItem(key);
+  localStorage.removeItem(key);
 };
 
 export interface SaveBackupAndUpdateStorageArgs {

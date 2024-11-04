@@ -17,23 +17,46 @@ import { getUserAndSession } from "@/lib/storage/localStorage/user";
 import { getUserSigPubKey } from "@/lib/user";
 import { storage } from "@/lib/storage";
 
+export const wsConnectUser = (authToken: string, senderSigPubKey: string): void => {
+  wsRequest(authToken, WebSocketRequestTypes.CONNECT, "", senderSigPubKey, "");
+  return;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const wsRequest = (authToken: string, type: string, targetSigPubKey: string, senderSigPubKey: string, payload: any): void => {
+
+  const req: WebSocketRequest = {
+    authToken,
+    type,
+    targetSigPubKey,
+    senderSigPubKey,
+    payload,
+  }
+
+  wsClient.send(JSON.stringify(req));
+  return;
+}
 
 export const wsClient: WebSocket = new WebSocket(`${BASE_API_WS}`);
 
 wsClient.onopen = async () => {
   console.log("Open ws server connection")
+  try {
+    const user = await storage.getUser();
+    const session = await storage.getSession();
 
-  const user = await storage.getUser();
-  const session = await storage.getSession();
-
-  if (user) {
-    const sigPubKey: string = getUserSigPubKey(user);
-    if (sigPubKey && session) {
-      // WS connection is established earlier but need user public key for any requests
-      wsConnectUser(session.authTokenValue, sigPubKey);
+    if (user) {
+      const sigPubKey: string = getUserSigPubKey(user);
+      if (sigPubKey && session) {
+        // WS connection is established earlier but need user public key for any requests
+        wsConnectUser(session.authTokenValue, sigPubKey);
+      }
+    } else {
+      console.warn("No user public signing key available, unable to establish websocket connection")
     }
-  } else {
-    console.warn("No user public signing key available, unable to establish websocket connection")
+  } catch (error) {
+    console.error(`Onopen socket client error: ${errorToString(error)}`)
+    return;
   }
 };
 
@@ -58,44 +81,29 @@ wsClient.onmessage = async (ev: WebSocket.MessageEvent) => {
           // processNewMessages handles updating user state and creating backups
           await storage.processNewMessages([message]);
         }
-
         return;
       case WebSocketResponseTypes.ERROR:
         const payload: WebSocketErrorPayload = WebSocketErrorPayloadSchema.parse(JSON.parse(resp.payload));
         throw Error(`WS message returned an error: ${payload.error}`);
         return;
       default:
+        return;
     }
   } catch (error) {
-    console.error("Error handling ws message:", errorToString(error));
+    console.error("Onmessage socket client error:", errorToString(error));
     return;
-  };
+  }
 };
 
 wsClient.onclose = async () => {
-  const { user, session } = await getUserAndSession();
-  const senderSigPubKey: string = getUserSigPubKey(user);
+  try {
+    const { user, session } = await getUserAndSession();
+    const senderSigPubKey: string = getUserSigPubKey(user);
 
-  // Close server's client socket
-  wsRequest(session.authTokenValue, WebSocketRequestTypes.CLOSE, "",  senderSigPubKey, "");
-};
-
-export const wsConnectUser = (authToken: string, senderSigPubKey: string): void => {
-  wsRequest(authToken, WebSocketRequestTypes.CONNECT, "", senderSigPubKey, "");
-  return;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const wsRequest = (authToken: string, type: string, targetSigPubKey: string, senderSigPubKey: string, payload: any): void => {
-
-  const req: WebSocketRequest = {
-    authToken,
-    type,
-    targetSigPubKey,
-    senderSigPubKey,
-    payload,
+    // Close server's client socket
+    wsRequest(session.authTokenValue, WebSocketRequestTypes.CLOSE, "",  senderSigPubKey, "");
+  } catch (error) {
+    console.error("Onclose socket client error:", errorToString(error));
+    return;
   }
-
-  wsClient.send(JSON.stringify(req));
-  return;
-}
+};

@@ -33,66 +33,80 @@ const handleError = (socket: WebSocket, target: string, error: string): void => 
 }
 
 wsServer.on('connection', (socket: WebSocket) => {
+  try {
+    socket.on('open', () => {
+      console.log("Open ws client connection")
+    });
 
-  socket.on('open', () => {
-    console.log("Open ws client connection")
-  });
+    socket.on('message', async (message: string) => {
+      const req: WebSocketRequest = WebSocketRequestSchema.parse(JSON.parse(message));
 
-  socket.on('message', async (message: string) => {
-    const req: WebSocketRequest = WebSocketRequestSchema.parse(JSON.parse(message));
+      if (!req.authToken) {
+        return handleError(socket, req.senderSigPubKey, "Missing auth token.")
+      }
 
-    if (!req.authToken) {
-      return handleError(socket, req.senderSigPubKey, "Missing auth token.")
-    }
+      // Fetch user by auth token
+      // While the user isn't specifically required, it ensures the request is from an authenticated user
+      const user = await controller.GetUserByAuthToken(req.authToken);
 
-    // Fetch user by auth token
-    // While the user isn't specifically required, it ensures the request is from an authenticated user
-    const user = await controller.GetUserByAuthToken(req.authToken);
+      if (!user) {
+        return handleError(socket, req.senderSigPubKey, "Invalid auth token.")
+      }
 
-    if (!user) {
-      return handleError(socket, req.senderSigPubKey, "Invalid auth token.")
-    }
+      try {
+        switch (req.type) {
+          case WebSocketRequestTypes.CONNECT:
+            console.log("CONNECT", req)
+            if (!req.senderSigPubKey) {
+              return handleError(socket, req.senderSigPubKey, "Missing target.")
+            }
 
-    try {
-      switch (req.type) {
-        case WebSocketRequestTypes.CONNECT:
-          if (!req.senderSigPubKey) {
-            return handleError(socket, req.senderSigPubKey, "Missing target.")
-          }
+            // Set record for future lookup
+            clients[req.senderSigPubKey] = socket;
+            console.log("Set key to socket", req.senderSigPubKey)
 
-          // Set record for future lookup
-          clients[req.senderSigPubKey] = socket;
+            // NOTE: do I need to return response to signal successful connection?
+            return;
+          case WebSocketRequestTypes.CLOSE:
+            console.log("CLOSE", req.senderSigPubKey)
+            if (!req.senderSigPubKey) {
+              return handleError(socket, req.senderSigPubKey, "Missing target.")
+            }
+            delete clients[req.senderSigPubKey];
+            socket.close();
+            return;
+          case WebSocketRequestTypes.MSG:
+            console.log("MSG")
 
-          // NOTE: do I need to return response to signal successful connection?
-          return;
-        case WebSocketRequestTypes.CLOSE:
-          if (!req.senderSigPubKey) {
-            return handleError(socket, req.senderSigPubKey, "Missing target.")
-          }
-          delete clients[req.senderSigPubKey];
-          socket.close();
-          return;
-        case WebSocketRequestTypes.MSG:
-          if (!req.targetSigPubKey) {
-            return handleError(socket, req.senderSigPubKey, "Invalid target")
-          }
+            if (!req.targetSigPubKey) {
+              return handleError(socket, req.senderSigPubKey, "Invalid target")
+            }
 
-          const resp: WebSocketResponse = MapRequestToResponse(req);
-          const stringResp: string = JSON.stringify(resp);
+            console.log("target key: ", req.targetSigPubKey)
 
-          if (clients[req.targetSigPubKey]) {
-            clients[req.targetSigPubKey].send(stringResp);
-          }
-          return;
-        default:
-      };
-    } catch (error) {
-      return handleError(socket, req.senderSigPubKey, `Error handling message: ${errorToString(error)}`)
-      return;
-    };
-  });
+            const resp: WebSocketResponse = MapRequestToResponse(req);
+            const stringResp: string = JSON.stringify(resp);
 
-  socket.on('close', () => {
-    console.log(`Close ws client connection`);
-  });
+            if (clients[req.targetSigPubKey]) {
+              clients[req.targetSigPubKey].send(stringResp);
+            }
+            return;
+          default:
+            return;
+        }
+        ;
+      } catch (error) {
+        return handleError(socket, req.senderSigPubKey, `Error handling message: ${errorToString(error)}`)
+        return;
+      }
+      ;
+    });
+
+    socket.on('close', () => {
+      console.log(`Close ws client connection`);
+    });
+  } catch (error) {
+    console.error(`Socket server error, fail gracefully: ${errorToString(error)}`)
+    return;
+  }
 });

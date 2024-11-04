@@ -8,22 +8,10 @@ import lannaRoutes from "./routes/lanna";
 import notificationRoutes from "./routes/notification";
 import dataHashRoutes from "./routes/dataHash";
 import { FRONTEND_URL } from "./constants";
-import {
-  errorToString,
-  IntersectionState,
-  WebSocketErrorPayload,
-  WebSocketResponse,
-  WebSocketResponseTypes,
-  WebSocketRequest,
-  WebSocketRequestTypes,
-  WebSocketRequestSchema,
-  MapRequestToResponse
-} from "@types";
-import {
-  WebSocketServer,
-  WebSocket
-} from 'ws';
+import { IntersectionState } from "@types";
+import { WebSocketServer } from 'ws';
 import { Controller } from "@/lib/controller";
+
 import * as http from 'http';
 const cors = require("cors");
 
