@@ -33,6 +33,7 @@ export interface ClientStorage {
   getSession(): Promise<Session | undefined>;
   saveOAuthAccessToken(app: string, token: AccessToken): Promise<void>;
   getOAuthAccessToken(app: string): Promise<AccessToken | undefined>;
+  deleteOAuthAccessToken(app: string): Promise<void>;
   saveTapInfo(tapInfo: TapInfo): Promise<void>;
   loadSavedTapInfo(): Promise<TapInfo | undefined>;
   deleteSavedTapInfo(): Promise<void>;

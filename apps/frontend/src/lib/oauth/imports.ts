@@ -11,6 +11,7 @@ import {
 import { toast } from "sonner";
 import { MapStravaActivityStatsToLeaderboardEntryRequest } from "./strava";
 import { MapGithubCommitContributionsToLeaderboardEntry } from "./github";
+import { storage } from "@/lib/storage";
 
 export function MapResponseToLeaderboardEntryRequest(
   authToken: string,
@@ -156,8 +157,11 @@ export async function importOAuthData(
       data
     );
   } catch (error) {
+    // If error delete access token -- the token may have been revoked
+    // By deleting the access token we'll fetch a new one on a re-attempt
+    storage.deleteOAuthAccessToken(options.type);
     console.error("Error importing data:", errorToString(error));
-    toast.error("Unable to import OAuth data");
+    toast.error("Import failed, token removed. Rerun if token was revoked.");
     return null;
   }
 }
