@@ -17,6 +17,8 @@ import { cn } from "@/lib/frontend/util";
 import { usePathname } from "next/navigation";
 import useSettings from "@/hooks/useSettings";
 
+// TODO: would have to disable server side render for entire project for web socket
+
 // Note: Hoist web socket code here so that it's run
 import("@/lib/ws/index");
 

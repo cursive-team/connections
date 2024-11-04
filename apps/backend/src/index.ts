@@ -14,6 +14,9 @@ import { Controller } from "./lib/controller";
 import * as http from 'http';
 const cors = require("cors");
 
+// Hoist websockets
+import("./ws");
+
 const app = express();
 const corsOptions = {
   origin: `${FRONTEND_URL}`,

@@ -1,6 +1,7 @@
 import {
   UserData,
   UserDataSchema,
+  User,
 } from "@/lib/storage/types";
 import { Json } from "@types";
 
@@ -26,7 +27,20 @@ export const getUserShareableData = (userData: UserData): UserData => {
 };
 
 export const shareableUserDataToJson = (userData: UserData): Json => {
-  const { username, displayName, bio, signaturePublicKey, encryptionPublicKey, psiPublicKeyLink, twitter, telegram, signal, instagram, farcaster, pronouns} = UserDataSchema.parse(userData);
+  const {
+    username,
+    displayName,
+    bio,
+    signaturePublicKey,
+    encryptionPublicKey,
+    psiPublicKeyLink,
+    twitter,
+    telegram,
+    signal,
+    instagram,
+    farcaster,
+    pronouns
+  } = UserDataSchema.parse(userData);
 
   return {
     username: username || null,
@@ -42,4 +56,14 @@ export const shareableUserDataToJson = (userData: UserData): Json => {
     farcaster: farcaster || null,
     pronouns: pronouns || null,
   };
+};
+
+// NOTE: other methods that depend on user object but not localstorage should be moved here
+export const getConnectionPubKey = (user: User, connectionUsername: string): string => {
+  const connection = user.connections[connectionUsername];
+  return connection.user.signaturePublicKey;
+};
+
+export const getUserSigPubKey = (user: User): string => {
+  return user.userData.signaturePublicKey;
 };
