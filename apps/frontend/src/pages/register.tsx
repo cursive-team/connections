@@ -173,7 +173,7 @@ const Register: React.FC = () => {
 
     // 3 # safely unguessable: moderate protection from offline slow-hash scenario. (guesses < 10^10) (https://github.com/dropbox/zxcvbn/blob/master/README.md)
     if (passwordCheck && passwordCheck.score < 3) {
-      toast.error("Weak password, submit new one.")
+      toast.error("Weak password, try adding numbers, symbols, and using less common words.")
       return;
     }
 
