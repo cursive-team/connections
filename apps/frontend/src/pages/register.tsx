@@ -26,9 +26,7 @@ import { cn } from "@/lib/frontend/util";
 import { IoIosArrowBack as BackIcon } from "react-icons/io";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const zxcvbn = require("zxcvbn");
+import { zxcvbn } from '@zxcvbn-ts/core';
 
 enum DisplayState {
   ENTER_EMAIL,
@@ -172,16 +170,10 @@ const Register: React.FC = () => {
 
     // Check password strength
     const passwordCheck = zxcvbn(password);
-    if (passwordCheck && passwordCheck.score < 3) {
-      let errorMsg: string = "Weak password, submit new one.";
-      if (passwordCheck.feedback?.warning) {
-        errorMsg += ` ${passwordCheck.feedback.warning}.`;
-      }
-      if (passwordCheck.feedback.suggestions.length > 0) {
-        errorMsg += ` ${passwordCheck.feedback.suggestions.join(" ")}`;
-      }
 
-      toast.error(errorMsg, {duration: 10000})
+    // 3 # safely unguessable: moderate protection from offline slow-hash scenario. (guesses < 10^10) (https://github.com/dropbox/zxcvbn/blob/master/README.md)
+    if (passwordCheck && passwordCheck.score < 3) {
+      toast.error("Weak password, submit new one.")
       return;
     }
 
