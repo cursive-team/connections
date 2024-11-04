@@ -45,6 +45,14 @@ const config: Config = {
         quaternary: "var(--color-quaternary)",
         cinnamon: "var(--color-cinnamon)",
 
+        label: {
+          primary: "var(--color-label-primary)",
+          secondary: "var(--color-label-secondary)",
+          tertiary: "var(--color-label-tertiary)",
+          quaternary: "var(--color-label-quaternary)",
+          cinnamon: "var(--color-label-cinnamon)",
+        },
+
         tag: {
           gray: "var(--color-tag-gray)",
           active: "var(--color-tag-active)",

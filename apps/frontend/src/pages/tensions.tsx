@@ -9,6 +9,8 @@ import { logClientEvent } from "@/lib/frontend/metrics";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { errorToString } from "@types";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
+import { cn } from "@/lib/frontend/util";
+import useSettings from "@/hooks/useSettings";
 
 export default function TensionsPage() {
   const router = useRouter();
@@ -106,10 +108,10 @@ export default function TensionsPage() {
     >
       <div className="flex flex-col p-4 gap-4">
         <div className="flex flex-col gap-2">
-          <span className="text-[14px] font-semibold text-primary">
+          <span className="text-[14px] font-semibold text-label-primary">
             Tensions
           </span>
-          <span className="text-[14px] font-normal text-tertiary">
+          <span className="text-[14px] font-normal text-label-tertiary">
             Practice your decision making skills by playing the Tensions game
             and <b>match with residents who hold opposing views upon tapping</b>{" "}
             to learn new perspectives.
@@ -132,9 +134,9 @@ export default function TensionsPage() {
               type="checkbox"
               checked={revealAnswers}
               onChange={(e) => setRevealAnswers(e.target.checked)}
-              className="form-checkbox h-5 w-5 text-primary"
+              className="form-checkbox h-5 w-5 text-label-primary"
             />
-            <span className="text-sm text-primary">
+            <span className="text-sm text-label-primary">
               Match with residents who hold opposing views upon tapping.
             </span>
           </label>
@@ -143,9 +145,9 @@ export default function TensionsPage() {
               type="checkbox"
               checked={contributeAnonymously}
               onChange={(e) => setContributeAnonymously(e.target.checked)}
-              className="form-checkbox h-5 w-5 text-primary"
+              className="form-checkbox h-5 w-5 text-label-primary"
             />
-            <span className="text-sm text-primary">
+            <span className="text-sm text-label-primary">
               Anonymously contribute my answers to community dashboards.
             </span>
           </label>
@@ -176,9 +178,15 @@ export function TensionSlider({
   value: number;
   onChange: (value: number) => void;
 }) {
+  const { darkTheme } = useSettings();
   return (
-    <div className="px-4 py-4 bg-gray-100 rounded-lg flex flex-col gap-4">
-      <div className="text-right text-gray-700 text-xs font-medium">
+    <div
+      className={cn(
+        "px-4 py-4 bg-card-gray rounded-lg flex flex-col gap-4",
+        darkTheme && "!border !border-white"
+      )}
+    >
+      <div className="text-right text-primary text-xs font-medium">
         {rightOption}
       </div>
       <input
@@ -187,9 +195,9 @@ export function TensionSlider({
         max="100"
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value))}
-        className="w-full h-2 bg-blue-500 rounded-lg appearance-none cursor-pointer"
+        className="w-full h-2 bg-primary rounded-lg appearance-none cursor-pointer"
       />
-      <div className="text-left text-gray-700 text-xs font-medium">
+      <div className="text-left text-primary text-xs font-medium">
         {leftOption}
       </div>
     </div>

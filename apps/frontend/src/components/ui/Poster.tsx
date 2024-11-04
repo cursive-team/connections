@@ -50,12 +50,12 @@ export const Poster = ({
         <Circle variant={variant} />
         <div className="flex flex-col gap-2">
           {label && (
-            <span className="text-primary text-lg font-sans font-medium leading-6">
+            <span className="text-label-primary text-lg font-sans font-medium leading-6">
               {label}
             </span>
           )}
           {description && (
-            <span className="text-primary text-sm font-sans font-normal tracking-[-0.084px] leading-[18px]">
+            <span className="text-label-primary text-sm font-sans font-normal tracking-[-0.084px] leading-[18px]">
               {description}
             </span>
           )}

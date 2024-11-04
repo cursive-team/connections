@@ -102,9 +102,9 @@ export const Icons: Record<string, any> = {
         <path
           id="Icon"
           d="M18 6L6 18M6 6L18 18"
-          stroke="black"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </g>
     </svg>
@@ -219,7 +219,7 @@ export const Icons: Record<string, any> = {
   Spinner: ({ iconSize }: any) => (
     <svg
       aria-hidden="true"
-      className={`${iconSize} inline mr-2 text-gray-200 animate-spin dark:text-tertiary fill-white`}
+      className={`${iconSize} inline mr-2 text-gray-200 animate-spin dark:text-label-tertiary fill-white`}
       viewBox="0 0 100 101"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

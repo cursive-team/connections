@@ -152,13 +152,13 @@ const FreakModal = ({
             height={160}
             className="mx-auto"
           />
-          <span className="font-sans text-primary font-semibold text-[30px] leading-[30px]">
+          <span className="font-sans text-label-primary font-semibold text-[30px] leading-[30px]">
             {`Who’s gonna match your freak?`}
           </span>
-          <span className="font-sans text-primary font-bold text-[20px] leading-[20px]">
+          <span className="font-sans text-label-primary font-bold text-[20px] leading-[20px]">
             Get matched with other guests
           </span>
-          <span className="font-sans text-tertiary font-medium text-base ">
+          <span className="font-sans text-label-tertiary font-medium text-base ">
             {`Add some private data, turn on notifications and we'll let you know
             when we find someone with similar interests!`}
           </span>
@@ -189,7 +189,7 @@ const FreakModal = ({
                 >
                   {isChecked && <Icons.Checked />}
                 </button>
-                <span className="text-sm text-primary font-medium leading-none">
+                <span className="text-sm text-label-primary font-medium leading-none">
                   {item.label}
                 </span>
               </div>
@@ -222,7 +222,7 @@ const FreakModal = ({
                 >
                   {isChecked && <Icons.Checked />}
                 </button>
-                <span className="text-sm text-primary font-medium leading-none">
+                <span className="text-sm text-label-primary font-medium leading-none">
                   {item.label}
                 </span>
               </div>
@@ -255,7 +255,7 @@ const FreakModal = ({
                 >
                   {isChecked && <Icons.Checked />}
                 </button>
-                <span className="text-sm text-primary font-medium leading-none">
+                <span className="text-sm text-label-primary font-medium leading-none">
                   {item.label}
                 </span>
               </div>
@@ -289,7 +289,7 @@ const FreakModal = ({
                 >
                   {isChecked && <Icons.Checked />}
                 </button>
-                <span className="text-sm text-primary font-medium leading-none">
+                <span className="text-sm text-label-primary font-medium leading-none">
                   {item.label}
                 </span>
               </div>
@@ -389,7 +389,7 @@ const FreakModal = ({
                     {step > 0 && (
                       <ArrowBack
                         size={18}
-                        className="text-primary bg-white/20 p-0.5"
+                        className="text-label-primary bg-white/20 p-0.5"
                         onClick={() => {
                           handleBack();
                         }}
@@ -412,8 +412,8 @@ const FreakModal = ({
                   >
                     {withBackButton ? (
                       <div className="flex items-center gap-1">
-                        <Icons.ArrowLeft className="text-white" />
-                        <span className="text-primary font-sans text-sm">
+                        <Icons.ArrowLeft className="text-icon-primary" />
+                        <span className="text-label-primary font-sans text-sm">
                           Back
                         </span>
                       </div>
@@ -430,7 +430,7 @@ const FreakModal = ({
                     <div className="flex flex-col gap-6 mb-2">
                       <div className="flex flex-col">
                         {currentStep?.title && (
-                          <span className="text-primary text-center font-sans text-[20px] font-bold leading-none">
+                          <span className="text-label-primary text-center font-sans text-[20px] font-bold leading-none">
                             {currentStep?.title}
                           </span>
                         )}

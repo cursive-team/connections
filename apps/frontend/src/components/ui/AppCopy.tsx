@@ -5,7 +5,10 @@ import Link from "next/link";
 export const AppCopy = ({ className }: any) => {
   return (
     <span
-      className={cn(className, "text-tertiary text-xs font-medium font-sans")}
+      className={cn(
+        className,
+        "text-label-tertiary text-xs font-medium font-sans"
+      )}
     >
       Built by{" "}
       <Link

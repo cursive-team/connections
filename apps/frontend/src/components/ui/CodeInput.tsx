@@ -48,7 +48,7 @@ const CodeInput = forwardRef<HTMLInputElement, any>(
           ))}
         </div>
         {props?.description && (
-          <span className="font-sans text-xs text-tertiary">
+          <span className="font-sans text-xs text-label-tertiary">
             {props?.description}
           </span>
         )}

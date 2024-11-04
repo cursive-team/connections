@@ -23,10 +23,11 @@ const TagBase = classed.div(
   {
     variants: {
       variant: {
-        selected: "border border-primary text-primary",
-        default: "bg-transparent border border-quaternary text-quaternary",
-        active: "border border-tag-border bg-tag-active text-primary",
-        gray: "border border-transparent bg-tag-gray text-primary",
+        selected: "border border-primary text-label-primary",
+        default:
+          "bg-transparent border border-quaternary text-label-quaternary",
+        active: "border border-tag-border bg-tag-active text-label-primary",
+        gray: "border border-transparent bg-tag-gray text-label-primary",
         transparent: "bg-transparent",
       },
       fullWidth: {

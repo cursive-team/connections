@@ -2,8 +2,6 @@ import { cn } from "@/lib/frontend/util";
 import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
-  const hasHalloweenTheme = process.env.NEXT_PUBLIC_HALLOWEEN_THEME === "true";
-
   return (
     <Html lang="en">
       <Head>
@@ -13,12 +11,7 @@ export default function Document() {
         />
         <link rel="icon" type="image/png" href="/favicon.png" />
       </Head>
-      <body
-        className={cn(
-          hasHalloweenTheme && "halloween-theme",
-          "antialiased bg-background"
-        )}
-      >
+      <body className={cn("antialiased h-full")}>
         <Main />
         <NextScript />
       </body>

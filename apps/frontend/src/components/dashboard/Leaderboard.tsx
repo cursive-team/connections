@@ -41,21 +41,21 @@ export function Leaderboard({
 
   return (
     <div>
-      <div className="px-4 py-2 bg-black items-center justify-between items-start inline-flex w-full">
-        <div className="grid grid-cols-[40px_1fr_1fr] justify-start items-start gap-3 flex w-full">
-          <div className="text-white/40 text-xs text-center font-medium leading-[140%]">
+      <div className="px-4 py-2 bg-background  justify-between items-start inline-flex w-full">
+        <div className="grid grid-cols-[40px_1fr_1fr] justify-start items-start gap-3 w-full">
+          <div className="text-label-tertiary text-xs text-center font-medium leading-[140%]">
             #
           </div>
-          <div className="text-white/40 text-xs font-medium leading-[140%]">
+          <div className="text-label-tertiary text-xs font-medium leading-[140%]">
             User name
           </div>
-          <div className="text-right text-white/40 text-xs font-medium leading-[140%]">
+          <div className="text-right text-label-tertiary text-xs font-medium leading-[140%]">
             Entry
           </div>
         </div>
       </div>
 
-      {leaderboardEntries.entries.map((entry: LeaderboardEntry, index) => {
+      {leaderboardEntries?.entries?.map((entry: LeaderboardEntry, index) => {
         let position = index + 1;
 
         // Handle ties
@@ -80,7 +80,7 @@ export function Leaderboard({
         const adjustedIndex = prize ? index - cursiveCount : index;
 
         if (adjustedIndex > markedRank - 1) {
-          styling.fontStyling = "text-white/40 text-[14px] font-normal";
+          styling.fontStyling = "text-label-tertiary text-[14px] font-normal";
         }
         if (adjustedIndex === markedRank - 1 && !dividerSet) {
           styling.divider = true;
@@ -105,7 +105,7 @@ export function Leaderboard({
           styling.fontStyling = "text-white text-[16px] font-medium";
           username += " (me)";
 
-          if (leaderboardDetails.userPosition != tiedPosition) {
+          if (leaderboardDetails?.userPosition != tiedPosition) {
             // Update position if you're tied with another user
             leaderboardDetails.username = entry.username;
             leaderboardDetails.userPosition = tiedPosition;

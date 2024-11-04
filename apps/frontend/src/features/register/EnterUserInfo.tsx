@@ -123,7 +123,15 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
       });
     } catch (error) {
       console.error(error);
-      toast(SupportToast("", true, "An error occurred while submitting the form", ERROR_SUPPORT_CONTACT, errorToString(error)));
+      toast(
+        SupportToast(
+          "",
+          true,
+          "An error occurred while submitting the form",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
     }
   };
 
@@ -139,7 +147,15 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
         }
       } catch (error) {
         console.error(error);
-        toast(SupportToast("", true, "Username must be alphanumeric and between 3-20 characters", ERROR_SUPPORT_CONTACT, errorToString(error)));
+        toast(
+          SupportToast(
+            "",
+            true,
+            "Username must be alphanumeric and between 3-20 characters",
+            ERROR_SUPPORT_CONTACT,
+            errorToString(error)
+          )
+        );
         return;
       }
     } else if (step === 2 || step === 3) {
@@ -178,7 +194,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
       }}
     >
       <div className="flex flex-col gap-2 py-4">
-        <span className="text-[20px] font-semibold font-sans text-primary ">
+        <span className="text-[20px] font-semibold font-sans text-label-primary ">
           Link your contact info
         </span>
         <span className="font-sans text-sm font-normal">
@@ -192,7 +208,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
           <div className="relative mb-6">
             {steps?.[step]?.field === "bio" ? (
               <>
-                <ArrowRightIcon className="absolute size-6 left-0 top-0 transform text-primary" />
+                <ArrowRightIcon className="absolute size-6 left-0 top-0 transform text-label-primary" />
                 <div className="flex items-start gap-4">
                   <textarea
                     ref={textareaRef}
@@ -220,7 +236,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
               </>
             ) : (
               <>
-                <ArrowRightIcon className="absolute size-6 left-0 top-1/2 transform -translate-y-1/2 text-primary" />
+                <ArrowRightIcon className="absolute size-6 left-0 top-1/2 transform -translate-y-1/2 text-label-primary" />
                 <div className="flex items-start gap-4">
                   <input
                     type="text"
@@ -263,23 +279,23 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
                 >
                   {fieldValue ? (
                     <CheckIcon
-                      className="size-5 text-quaternary"
+                      className="size-5 text-label-quaternary"
                       width={24}
                       height={24}
                     />
                   ) : (
                     <CloseIcon
-                      className="size-5 text-quaternary"
+                      className="size-5 text-label-quaternary"
                       width={24}
                       height={24}
                     />
                   )}
 
-                  <span className="font-sans text-[14px] w-full font-semibold text-quaternary">
+                  <span className="font-sans text-[14px] w-full font-semibold text-label-quaternary">
                     {fieldValue || s.placeholder || "-"}
                   </span>
 
-                  <Icons.Pencil className="ml-auto text-quaternary" />
+                  <Icons.Pencil className="ml-auto text-label-quaternary" />
                 </div>
               )
             );

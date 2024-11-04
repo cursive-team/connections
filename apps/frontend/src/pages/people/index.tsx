@@ -37,7 +37,7 @@ const PeoplePage: React.FC = () => {
       seoTitle="People"
       header={
         <>
-          <span className="text-primary font-medium">People</span>
+          <span className="text-label-primary font-medium">People</span>
           <div
             className="absolute left-0 right-0 bottom-0 h-[2px]"
             style={{
@@ -71,7 +71,7 @@ const PeoplePage: React.FC = () => {
         />
       </div>
       {Object.keys(connections).length === 0 ? (
-        <div className="p-4 text-center text-secondary px-16">
+        <div className="p-4 text-center text-label-secondary px-16">
           {`No connections yet.`}
         </div>
       ) : (
@@ -92,10 +92,10 @@ const PeoplePage: React.FC = () => {
                 <div className="flex items-center gap-4">
                   <ProfileImage user={connection.user} />
                   <div className="flex flex-col gap-1">
-                    <span className="text-sm font-medium text-primary">
+                    <span className="text-sm font-medium text-label-primary">
                       {connection.user.displayName}
                     </span>
-                    <span className="text-xs text-secondary font-medium">
+                    <span className="text-xs text-label-secondary font-medium">
                       @{connection.user.username}
                     </span>
                   </div>

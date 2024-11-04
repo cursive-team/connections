@@ -10,7 +10,7 @@ import { InputWrapper, InputWrapperProps } from "./InputWrapper";
 import { cn } from "@/lib/frontend/util";
 
 const InputComponent = classed.input(
-  "rounded-[7px] min-h-5 py-2 px-3 placeholder-black/50 text-sm leading-[20px] w-full text-primary !outline-none shadow-none focus:border focus:ring-0 focus:outline-none focus:shadow-none focus:outline-offset-0 focus:ring-offset-0 disabled:opacity-50",
+  "rounded-[7px] min-h-5 py-2 px-3 placeholder-black/50 text-sm leading-[20px] w-full text-label-primary !outline-none shadow-none focus:border focus:ring-0 focus:outline-none focus:shadow-none focus:outline-offset-0 focus:ring-offset-0 disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -76,7 +76,7 @@ const AppInput = forwardRef<HTMLInputElement, InputProps>(
               />
               {icon && (
                 <div className="pointer-events-none w-8 h-8 absolute transform right-0 top-3">
-                  <span className="text-gray-10">{icon}</span>
+                  <span className="text-icon-primary">{icon}</span>
                 </div>
               )}
             </div>

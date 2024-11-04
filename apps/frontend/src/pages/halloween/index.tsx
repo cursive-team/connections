@@ -62,10 +62,12 @@ export const VaultCard = ({
   return (
     <VaultCardBase active={active}>
       <div className="flex items-center justify-between">
-        <span className="text-primary text-sm font-normal">{title}</span>
+        <span className="text-label-primary text-sm font-normal">{title}</span>
         {icon && <div>{icon}</div>}
       </div>
-      <span className="text-tertiary text-sm font-normal">{description}</span>
+      <span className="text-label-tertiary text-sm font-normal">
+        {description}
+      </span>
     </VaultCardBase>
   );
 };
@@ -771,17 +773,17 @@ export default function HalloweenPage() {
         />
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4">
-            <span className="text-primary text-lg font-sans font-bold">
+            <span className="text-label-primary text-lg font-sans font-bold">
               Edge City Lanna Halloween Party
             </span>
-            <span className="text-tertiary text-base font-sans font-normal">
+            <span className="text-label-tertiary text-base font-sans font-normal">
               {`Happy Halloween! Find Curtis around
               the venue to tap into social connection. Be sure to visit the fortune 
               teller once you find your special someone to see if you two are compatible!`}
             </span>
           </div>
           <div className="flex flex-col gap-4">
-            <span className="text-primary text-base font-sans font-bold">
+            <span className="text-label-primary text-base font-sans font-bold">
               Vault entries
             </span>
             <div className="flex flex-col gap-2">
@@ -842,10 +844,10 @@ export default function HalloweenPage() {
             </div>
           </div>
           <div className="flex flex-col gap-4 mb-10">
-            <span className="text-primary text-base font-sans font-bold">
+            <span className="text-label-primary text-base font-sans font-bold">
               Connections
             </span>
-            <span className="text-tertiary text-base font-sans font-normal">
+            <span className="text-label-tertiary text-base font-sans font-normal">
               {`Here's where you'll see your best fit connections. Message to meet up!`}
             </span>
             {user ? (
@@ -883,7 +885,7 @@ export default function HalloweenPage() {
                       }}
                     />
                     <div className="flex flex-col">
-                      <span className="text-sm font-medium font-sans text-primary">
+                      <span className="text-sm font-medium font-sans text-label-primary">
                         {connection.username}
                       </span>
                       <span className="text-xs font-medium font-sans text-[#FF9DF8]">
