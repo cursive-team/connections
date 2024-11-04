@@ -24,7 +24,7 @@ const TabButton = classed.div("font-medium px-3 py-[6px] rounded-[3px]", {
 });
 
 const TabBadge = classed.div(
-  "absolute -top-0.5 -right-2 bg-[#D40018] rounded-full text-white w-[6px] h-[6px] text-[8px]"
+  "absolute -top-0.5 -right-2 bg-[#D40018] rounded-full text-label-primary w-[6px] h-[6px] text-[8px]"
 );
 
 const Tabs = ({ items }: TabsProps) => {

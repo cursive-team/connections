@@ -215,14 +215,15 @@ const ProfilePage: React.FC = () => {
                   </div>
                 )}
                 {user.userData.tensionsRating && (
-                  <div
+                  <Card.Base
+                    variant="gray"
                     className="p-4 !rounded-lg !border !border-white"
                     onClick={() => {
                       logClientEvent("edit_tensions", {});
                       router.push("/tensions");
                     }}
                   >
-                    <div className="flex flex-col gap-[10px]">
+                    <div className="flex flex-col gap-[10px] ">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
                           <Icons.Clip className="text-icon-primary" />
@@ -232,13 +233,13 @@ const ProfilePage: React.FC = () => {
                         </div>
                         <Icons.Pencil className="text-icon-primary" />
                       </div>
-                      <span className="text-xs font-medium text-white/50">
+                      <span className="text-xs font-medium text-label-tertiary">
                         Practice your decision making skills by playing the
                         Tensions game, match with residents who hold opposing
                         views to learn new perspectives.
                       </span>
                     </div>
-                  </div>
+                  </Card.Base>
                 )}
               </div>
             </div>

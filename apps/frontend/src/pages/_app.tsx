@@ -90,8 +90,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           "You registered early! Please tap your chip to register for the main experience.",
           {
             duration: 5000,
-            className:
-              "font-sans text-label-primary dark:text-iron-50 bg-white dark:bg-iron-800",
+            className: "font-sans text-label-primary bg-background",
           }
         );
         router.push("/");

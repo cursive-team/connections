@@ -116,14 +116,14 @@ const CommentModal: React.FC<CommentModalProps> = ({
               </AppButton>
             </div>
           )}
-          <span className="text-center text-xs text-label-tertiary text-label-tertiary font-medium font-sans">
+          <span className="text-center text-xs text-label-tertiary font-medium font-sans">
             Add details to remember this connection. <br />
             They stay <strong className="font-bold">private to you.</strong>
           </span>
         </div>
 
         <div className="flex flex-col gap-3 mt-4">
-          <span className="text-sm font-semibold text-label-primary text-white font-sans">
+          <span className="text-sm font-semibold text-label-primary font-sans">
             Labels
           </span>
           <div className="flex space-x-2 justify-around">
@@ -436,11 +436,11 @@ const UserProfilePage: React.FC = () => {
           <div className="flex flex-col w-full">
             <div className="flex items-center justify-between w-full pb-4">
               <div className="flex flex-col gap-1 pt-4">
-                <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans leading-none text-label-primary dark:text-white">{`${connection?.user?.username}`}</span>
-                <span className="text-sm font-medium font-sans text-label-tertiary dark:text-label-tertiary leading-none">
+                <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans leading-none text-label-primary">{`${connection?.user?.username}`}</span>
+                <span className="text-sm font-medium font-sans text-label-tertiary leading-none">
                   {connection?.user?.displayName}
                 </span>
-                <span className="text-sm font-medium font-sans text-label-tertiary dark:text-label-tertiary leading-none">
+                <span className="text-sm font-medium font-sans text-label-tertiary leading-none">
                   {connection?.user?.pronouns}
                 </span>
               </div>
