@@ -5,6 +5,7 @@ export const LiteralSchema = z.union([
   z.number(),
   z.boolean(),
   z.null(),
+  z.undefined(),
 ]);
 
 export type Literal = z.infer<typeof LiteralSchema>;
