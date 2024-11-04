@@ -77,7 +77,8 @@ export default function CommunityPage() {
       }
       setUser(user);
 
-      const communityIssuer: ChipIssuer = user.chips[0].issuer;
+      // Currently will only be EDGE_CITY_LANNA
+      const communityIssuer: ChipIssuer = ChipIssuer.EDGE_CITY_LANNA;
 
       let details: LeaderboardDetails | null = null;
       let entries: LeaderboardEntries | null = null;

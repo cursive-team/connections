@@ -4,28 +4,11 @@ import {
   generateSerializedTapBackMessage,
 } from "@/lib/message";
 import { getUserAndSession } from "@/lib/storage/localStorage/user";
-import { SentMessage, SentMessageSchema, UserData } from "@/lib/storage/types";
+import { SentMessage, SentMessageSchema } from "@/lib/storage/types";
+import { getUserShareableData } from "@/lib/user";
 import { createActivityBackup, createConnectionBackup } from "@/lib/backup";
 import { saveBackupAndUpdateStorage } from "../../../utils";
 import { createTapBackSentActivity } from "@/lib/activity";
-
-// TODO: Generalize this based on user preferences
-export const getUserShareableData = (userData: UserData): UserData => {
-  return {
-    username: userData.username,
-    displayName: userData.displayName,
-    bio: userData.bio,
-    signaturePublicKey: userData.signaturePublicKey,
-    encryptionPublicKey: userData.encryptionPublicKey,
-    psiPublicKeyLink: userData.psiPublicKeyLink,
-    twitter: userData.twitter,
-    telegram: userData.telegram,
-    signal: userData.signal,
-    instagram: userData.instagram,
-    farcaster: userData.farcaster,
-    pronouns: userData.pronouns,
-  };
-};
 
 export const createTapBackMessage = async (
   connectionUsername: string,
