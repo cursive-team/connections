@@ -173,7 +173,15 @@ const Register: React.FC = () => {
     // Check password strength
     const passwordCheck = zxcvbn(password);
     if (passwordCheck && passwordCheck.score < 3) {
-      toast.error(`${passwordCheck.feedback?.warning} ${passwordCheck.feedback?.suggestions?.join(" ")}`, {duration: 10000})
+      let errorMsg: string = "Weak password, submit new one.";
+      if (passwordCheck.feedback?.warning) {
+        errorMsg += ` ${passwordCheck.feedback.warning}.`;
+      }
+      if (passwordCheck.feedback.suggestions.length > 0) {
+        errorMsg += ` ${passwordCheck.feedback.suggestions.join(" ")}`;
+      }
+
+      toast.error(errorMsg, {duration: 10000})
       return;
     }
 
