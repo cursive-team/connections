@@ -184,7 +184,6 @@ const ProfileEdit = () => {
             />
             <AppTextarea
               label="Bio"
-              autoExpand
               placeholder="Bio"
               variant="primary"
               {...register("bio")}
