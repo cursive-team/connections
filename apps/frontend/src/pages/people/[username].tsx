@@ -208,7 +208,7 @@ const HumanReadableValues: Record<string, string> = {
   "DEVCON": "Devcon",
   "TOTAL_TAP_COUNT": "total tap count",
   "STRAVA_PREVIOUS_MONTH_RUN_DISTANCE": "running distance over last month",
-  "GITHUB_LANNA_COMMITS": "total Github commits",
+  "GITHUB_LANNA_COMMITS": "total Github contributions",
   "LANNA_TOTAL_WORKOUT_COUNT": "total workouts"
 }
 
@@ -234,13 +234,14 @@ const UserProfilePage: React.FC = () => {
   const [gotLeaderboardPositions, setGotLeaderboardPositions] = useState(false);
   const [leaderboardPositions, setLeaderboardPositions] = useState<LeaderboardPositionRecord>({});
 
+  // NOTE: should leaderboard position state be added to useEffect dependency array?
   useEffect(() => {
     const fetchLeaderboardDetailsForCommunities = async () => {
       if (verifiedIntersection?.communities && !gotLeaderboardPositions) {
 
         // Only run computation once there's a community overlap
-        for (let issuer of verifiedIntersection?.communities) {
-          let community: ChipIssuer =  ChipIssuerSchema.parse(issuer);
+        for (const issuer of verifiedIntersection?.communities) {
+          const community: ChipIssuer =  ChipIssuerSchema.parse(issuer);
 
           let leaderboardTypes: LeaderboardEntryType[] = SharedLeaderboards;
           switch(community) {
@@ -255,7 +256,7 @@ const UserProfilePage: React.FC = () => {
           }
 
           // Shared leaderboards should be run for each shared communities
-          for (let entryType of leaderboardTypes) {
+          for (const entryType of leaderboardTypes) {
             try {
               const details: LeaderboardDetails | null = await getUserLeaderboardDetails(community, entryType);
               if (details && details.userPosition > 0 && details.userPosition < 11) {
@@ -396,7 +397,7 @@ const UserProfilePage: React.FC = () => {
       }
 
       const communitySet = new Set<string>();
-      for (let chip of user.chips) {
+      for (const chip of user.chips) {
         communitySet.add(chip.issuer);
       }
       const communityData = Array.from(communitySet.keys());
@@ -662,11 +663,11 @@ const UserProfilePage: React.FC = () => {
                       {/* After communities are ironed out add links to community page and / or dashboards */}
                       {
                         Object.keys(leaderboardPositions).map((community: string) => {
-                          let messages: string[] = [];
-                          let name: string = HumanReadableValues[community];
+                          const messages: string[] = [];
+                          const name: string = HumanReadableValues[community];
 
-                          for (let entry of leaderboardPositions[community]) {
-                            let board: string = HumanReadableValues[entry.type];
+                          for (const entry of leaderboardPositions[community]) {
+                            const board: string = HumanReadableValues[entry.type];
 
                             const message = `#${entry.position} for ${board} at ${name}.`;
                             messages.push(message);
