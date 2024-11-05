@@ -1,11 +1,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import {
-  TapParams,
-  ChipTapResponse,
-  errorToString,
-  ChipIssuer,
-} from "@types";
+import { TapParams, ChipTapResponse, errorToString, ChipIssuer } from "@types";
 import { toast } from "sonner";
 import { storage } from "@/lib/storage";
 import {
@@ -17,10 +12,7 @@ import {
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { SupportToast } from "@/components/ui/SupportToast";
-import {
-  ERROR_SUPPORT_CONTACT,
-  LANNA_HALLOWEEN_LOCATION_IDS_ARRAY,
-} from "@/constants";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { shareableUserDataToJson } from "@/lib/user";
 
 const TapPage: React.FC = () => {
@@ -79,19 +71,7 @@ const TapPage: React.FC = () => {
             // Save tap to populate modal upon redirect
             await storage.saveTapInfo({ tapParams, tapResponse: response });
 
-            // Routes for halloween party
-            if (
-              LANNA_HALLOWEEN_LOCATION_IDS_ARRAY.includes(
-                response.locationTap.locationId
-              )
-            ) {
-              logClientEvent("tap-halloween-chip", {
-                id: response.locationTap.locationId,
-              });
-              router.push(`/halloween`);
-            } else {
-              router.push(`/locations/${response.locationTap.locationId}`);
-            }
+            router.push(`/locations/${response.locationTap.locationId}`);
             return;
           } else {
             // Process valid user taps
@@ -149,7 +129,11 @@ const TapPage: React.FC = () => {
 
             router.push("/register");
             return;
-          } else if (response.isLocationChip !== true && session && user?.userData) {
+          } else if (
+            response.isLocationChip !== true &&
+            session &&
+            user?.userData
+          ) {
             const isOn: boolean = false;
 
             if (isOn) {
@@ -171,13 +155,15 @@ const TapPage: React.FC = () => {
                 ownerUserData: shareableUserData,
               });
 
-              toast.success("Successfully bound a new chip to your account")
+              toast.success("Successfully bound a new chip to your account");
             }
 
             router.push("/profile");
             return;
           } else if (response.isLocationChip === true && !session) {
-            toast.error("Cannot register a location chip, please pick up your nfc wristband.");
+            toast.error(
+              "Cannot register a location chip, please pick up your nfc wristband."
+            );
             router.push("/");
             return;
           }
