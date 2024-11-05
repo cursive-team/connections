@@ -10,12 +10,7 @@ export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
     redirect_uri: `${FRONTEND_URL}/oauth/exchange_token&approval_prompt=force&scope=read`,
     id: process.env.OAUTH_STRAVA_CLIENT_ID || "",
     secret: process.env.OAUTH_STRAVA_CLIENT_SECRET || "",
-    data_options: [
-      {
-        type: ImportDataType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
-        scope: "read",
-      },
-    ],
+    data_options: [],
   },
   github: {
     client_side_fetching: false,
@@ -24,12 +19,6 @@ export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
     redirect_uri: `${FRONTEND_URL}/oauth/exchange_token&approval_prompt=force&scope=read`,
     id: process.env.OAUTH_GITHUB_CLIENT_ID || "",
     secret: process.env.OAUTH_GITHUB_CLIENT_SECRET || "",
-    data_options: [
-      {
-        type: ImportDataType.GITHUB_LANNA_CONTRIBUTIONS,
-        scope: "read",
-      },
-      // TODO: Add annual contributions
-    ],
+    data_options: [],
   },
 };
