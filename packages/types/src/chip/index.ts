@@ -108,7 +108,8 @@ export type ChipTapResponse = z.infer<typeof ChipTapResponseSchema>;
 
 // Should be separation between leaderboard type and import data type, e.g. may use a single import type for multiple leaderboards
 export enum ImportDataType {
-  GITHUB_LANNA_COMMITS = "GITHUB_LANNA_COMMITS",
+  GITHUB_LANNA_CONTRIBUTIONS = "GITHUB_LANNA_CONTRIBUTIONS",
+  GITHUB_CONTRIBUTIONS_LAST_YEAR = "GITHUB_CONTRIBUTIONS_LAST_YEAR",
   STRAVA_PREVIOUS_MONTH_RUN_DISTANCE = "STRAVA_PREVIOUS_MONTH_RUN_DISTANCE",
 }
 

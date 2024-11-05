@@ -8,7 +8,7 @@ import {
 } from "@types";
 
 
-export async function ghFetch(token: AccessToken): Promise<Response | null> {
+export async function ghFetchContributions(token: AccessToken, from: Date, to: Date): Promise<Response | null> {
   const user = await fetch("https://api.github.com/user", {
     method: "GET",
     headers: {
@@ -22,9 +22,6 @@ export async function ghFetch(token: AccessToken): Promise<Response | null> {
   const resp: GithubUserResponse = GithubUserResponseSchema.parse(rawUser);
 
   const username = resp.login;
-  // NOTE: month is 0-indexed
-  const from = new Date(2024, 9, 10); // Oct 10, 2024
-  const to = new Date(2024, 10, 10); // Nov 10, 2024
 
   // TODO: find graphgl library for handling query / variables
   const query = `

@@ -35,9 +35,10 @@ export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
     secret: "",
     data_options: [
       {
-        type: ImportDataType.GITHUB_LANNA_COMMITS,
+        type: ImportDataType.GITHUB_LANNA_CONTRIBUTIONS,
         scope: "read",
       },
+      // TODO: Add annual contributions
     ],
   },
 };

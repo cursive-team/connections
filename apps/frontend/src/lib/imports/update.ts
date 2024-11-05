@@ -20,13 +20,24 @@ export const updateUserDataFromImportData = async (
           },
         },
       };
-    case ImportDataType.GITHUB_LANNA_COMMITS:
+    case ImportDataType.GITHUB_LANNA_CONTRIBUTIONS:
       let value2: number = data;
       return {
         ...userData,
         github: {
           lannaCommits: {
             value: value2,
+            lastUpdated: new Date()
+          },
+        },
+      };
+    case ImportDataType.GITHUB_CONTRIBUTIONS_LAST_YEAR:
+      let value3: number = data;
+      return {
+        ...userData,
+        github: {
+          annualCommits: {
+            value: value3,
             lastUpdated: new Date()
           },
         },
