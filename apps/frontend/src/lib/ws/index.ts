@@ -1,4 +1,3 @@
-"use client";
 import { BASE_API_WS } from "@/config";
 import { IMessageEvent } from "websocket";
 import { storage } from "@/lib/storage";
@@ -41,9 +40,39 @@ export const wsRequest = (authToken: string, type: string, targetSigPubKey: stri
   return;
 }
 
-export const wsConnectUser = (authToken: string, senderSigPubKey: string): void => {
+export const wsConnectRequest = (authToken: string, senderSigPubKey: string): void => {
   wsRequest(authToken, WebSocketRequestTypes.CONNECT, "", senderSigPubKey, "");
   return;
+}
+
+export const WebsocketConnectUser = async (): Promise<void> => {
+  try {
+    // Onopen websocket client error: localStorage is not defined
+    // hypothesis: server-side rendering of component
+    // unfortunately this is at the root of the app, so that would mean all the components
+
+    // TODO: how to remove storage dependency for ws?
+    const user = await storage.getUser();
+    const session = await storage.getSession();
+
+    if (user) {
+      const sender: string = getUserSigPubKey(user);
+      if (sender && session) {
+        expectConnectResp = true;
+
+        // First step after creating connection is sending server sender public signing key for client socket lookup
+        wsConnectRequest(session.authTokenValue, sender);
+
+        // Expect CONNECT_SUCCESS response
+        expectConnectResp = true;
+      }
+    } else {
+      throw new Error("No user public signing key available, unable to establish websocket connection");
+    }
+  } catch (error) {
+    console.error(`Onopen websocket client error: ${errorToString(error)}`);
+    return;
+  }
 }
 
 export const wsClient: WebSocket = new WebSocket(`${BASE_API_WS}`);
@@ -66,7 +95,7 @@ wsClient.onopen = async () => {
         expectConnectResp = true;
 
         // First step after creating connection is sending server sender public signing key for client socket lookup
-        wsConnectUser(session.authTokenValue, sender);
+        wsConnectRequest(session.authTokenValue, sender);
 
         // Expect CONNECT_SUCCESS response
         expectConnectResp = true;
