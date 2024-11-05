@@ -135,7 +135,7 @@ export async function updateTapLeaderboardEntry(
     const updateWeekTapsRequest: UpdateLeaderboardEntryRequest = {
       authToken: session.authTokenValue,
       chipIssuer,
-      entryType: LeaderboardEntryType.WEEK_OCT_27_TAP_COUNT,
+      entryType: LeaderboardEntryType.WEEK_NOV_$_TAP_COUNT,
       entryValue: weekOct27TapCount,
     };
 

@@ -10,6 +10,8 @@ export enum DisplayedDashboard {
   STRAVA = "strava",
   GITHUB = "github",
   LANNA_TOTAL_WORKOUTS = "lanna-total-workouts",
+  WEEKLY_TAPS_NOV_4 = "weekly-taps-nov-4",
+
 }
 
 export interface CommunityCardProps {
