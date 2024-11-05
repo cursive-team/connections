@@ -148,14 +148,6 @@ export default function CommunityPage() {
           communityIssuer,
           LeaderboardEntryType.LANNA_TOTAL_WORKOUT_COUNT
         );
-        weekNov4TapDetails = await getUserLeaderboardDetails(
-          communityIssuer,
-          LeaderboardEntryType.WEEK_NOV_4_TAP_COUNT
-        );
-        weekNov4TapEntries = await getTopLeaderboardEntries(
-          communityIssuer,
-          LeaderboardEntryType.WEEK_NOV_4_TAP_COUNT
-        );
       } catch (error) {
         console.error("Error getting user leaderboard info:", error);
         toast.error("Error getting user leaderboard info.");
@@ -175,8 +167,6 @@ export default function CommunityPage() {
         !weekOct27TapEntries ||
         !lannaTotalWorkoutDetails ||
         !lannaTotalWorkoutEntries ||
-        !weekNov4TapDetails ||
-        !weekNov4TapEntries
       ) {
         toast.error("User leaderboard info not found.");
         router.push("/profile");
@@ -195,23 +185,8 @@ export default function CommunityPage() {
       setWeekOct27TapLeaderboardEntries(weekOct27TapEntries);
       setLannaTotalWorkoutDetails(lannaTotalWorkoutDetails);
       setLannaTotalWorkoutEntries(lannaTotalWorkoutEntries);
-      setWeekNov4TapLeaderboardDetails(weekNov4TapDetails);
-      setWeekNov4TapLeaderboardEntries(weekNov4TapEntries);
 
       const props: CommunityCardProps[] = [
-        {
-          image: "/images/week.png",
-          title: "Social Graph, Week of Nov 4 💍",
-          description: `${weekNov4TapDetails.totalValue} of 500 taps`,
-          type: "active",
-          position: weekNov4TapDetails.userPosition,
-          totalContributors: weekNov4TapDetails.totalContributors,
-          progressPercentage: Math.min(
-            100,
-            Math.round((weekNov4TapDetails.totalValue / 500) * 100)
-          ),
-          dashboard: DisplayedDashboard.WEEKLY_TAPS_NOV_4,
-        },
         {
           image: "/images/runclub.png",
           title: "Lanna Run Club 🏃‍♂️",
@@ -417,44 +392,6 @@ export default function CommunityPage() {
         }
         leaderboardDetails={weekOct27TapLeaderboardDetails}
         leaderboardEntries={weekOct27TapLeaderboardEntries}
-        goal={500}
-        unit="tap"
-        organizer="Cursive"
-        organizerDescription="Cryptography for human connection"
-        type="active"
-        returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
-        prize={true}
-        prizeRank={5}
-      />
-    );
-  }
-
-  if (
-    weekNov4TapLeaderboardDetails &&
-    weekNov4TapLeaderboardEntries &&
-    displayedDashboard === DisplayedDashboard.WEEKLY_TAPS_NOV_4
-  ) {
-    return (
-      <DashboardDetail
-        image="/images/week-wide.png"
-        title="Social Graph, Week of 11/4"
-        description={
-          <div className="flex flex-col gap-4">
-            <span>
-              Weekly tapping challenge to grow the Lanna Social Graph.{" "}
-              <b>
-                The top 5 contributors will win an exclusive Cursive NFC ring!
-              </b>
-            </span>
-            <span>
-              Make sure your tapping is natural, we want to incentive evangelism
-              of the app experience and genuine connection. Not just tapping for
-              the sake of tapping.
-            </span>
-          </div>
-        }
-        leaderboardDetails={weekNov4TapLeaderboardDetails}
-        leaderboardEntries={weekNov4TapLeaderboardEntries}
         goal={500}
         unit="tap"
         organizer="Cursive"
