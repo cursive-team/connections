@@ -24,6 +24,11 @@ import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { sendMessages } from "@/lib/message";
 import useSettings from "@/hooks/useSettings";
 import { cn } from "@/lib/frontend/util";
+import { wsRequest } from "@/lib/ws";
+import {
+  getConnectionSigPubKey,
+  getUserSigPubKey
+} from "@/lib/user";
 
 interface CommentModalProps {
   username: string;
@@ -244,20 +249,35 @@ const UserProfilePage: React.FC = () => {
 
   const handleTapBack = async () => {
     logClientEvent("user-profile-tap-back-clicked", {});
-    if (!session || !connection || !tapInfo?.tapResponse.chipIssuer) {
+    console.log("handleTapBack", session, connection, )
+    //if (!session || !connection || !tapInfo?.tapResponse.chipIssuer) {
+    if (!session || !connection) {
       toast.error("Failed to tap back");
       return;
     }
 
     const message = await storage.createTapBackMessage(
       connection.user.username,
-      tapInfo.tapResponse.chipIssuer
+      // tapInfo.tapResponse.chipIssuer
+      ChipIssuer.TESTING,
     );
     try {
       await sendMessages({
         authToken: session.authTokenValue,
         messages: [message],
       });
+
+      if (user) {
+        // Get target and sender id (pub keys)
+        const target: string = getConnectionSigPubKey(user, connection.user.username);
+
+        const sender: string = getUserSigPubKey(user);
+        wsRequest(session.authTokenValue, WebSocketRequestTypes.MSG, target, sender, message);
+      } else {
+        // This case should never happen but it should be handled
+        console.error("Unable to find user, cannot send ws message request")
+      }
+
       toast.success("Tap back sent successfully!");
     } catch (error) {
       console.error("Error sending tap back:", error);

@@ -8,9 +8,13 @@ import {
   WebSocketResponseTypes,
   WebSocketResponse,
   WebSocketResponseSchema,
+  errorToString,
   WebSocketErrorPayload,
   WebSocketErrorPayloadSchema,
-  errorToString
+  CreateMessageDataSchema,
+  CreateMessageData,
+  MessageData,
+  MapCreateMessageDataToMessageData,
 } from "@types";
 
 // Global variables for connection status
@@ -48,6 +52,10 @@ export const wsConnectRequest = (authToken: string, senderSigPubKey: string): vo
 // Call in a context where localstorage is available client-side.
 // localstorage cannot be used with server-side rendering.
 export const WebsocketConnectUser = async (): Promise<void> => {
+  if (successfulConnection) {
+    return;
+  }
+
   try {
     const user = await storage.getUser();
     const session = await storage.getSession();
@@ -106,6 +114,16 @@ wsClient.onmessage = async (ev: IMessageEvent) => {
         expectConnectResp = false;
         successfulConnection = true;
         return;
+      case WebSocketResponseTypes.MSG:
+        const createMessage: CreateMessageData = CreateMessageDataSchema.parse(resp.payload);
+
+        // Convert to message by adding created at
+        const message: MessageData = MapCreateMessageDataToMessageData(createMessage);
+        if (message) {
+          // processNewMessages handles updating user state and creating backups
+          await storage.processNewMessages([message]);
+        }
+        return;
       case WebSocketResponseTypes.ERROR:
         const payload: WebSocketErrorPayload = WebSocketErrorPayloadSchema.parse(JSON.parse(resp.payload));
         throw Error(`Websocket message returned an error: ${payload.error}`);
@@ -122,5 +140,4 @@ wsClient.onmessage = async (ev: IMessageEvent) => {
 
 wsClient.onclose = async () => {
   console.log("Close websocket connection")
-  WebsocketCloseUser();
 };

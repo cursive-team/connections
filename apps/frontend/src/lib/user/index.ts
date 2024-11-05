@@ -59,7 +59,7 @@ export const shareableUserDataToJson = (userData: UserData): Json => {
 };
 
 // NOTE: other methods that depend on user object but not localstorage should be moved here
-export const getConnectionPubKey = (user: User, connectionUsername: string): string => {
+export const getConnectionSigPubKey = (user: User, connectionUsername: string): string => {
   const connection = user.connections[connectionUsername];
   return connection.user.signaturePublicKey;
 };

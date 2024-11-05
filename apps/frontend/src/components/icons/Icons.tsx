@@ -334,7 +334,7 @@ export const Icons: Record<string, any> = {
       <path
         d="M6.4 9.28L7.68 12.16L8.96 9.28H10.88L7.68 16L4.48 9.28H6.4Z"
         fill="white"
-        fill-opacity="0.5"
+        fillOpacity="0.5"
       />
     </svg>
   ),

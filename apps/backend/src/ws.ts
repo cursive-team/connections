@@ -24,7 +24,7 @@ const handleError = (socket: WebSocket, target: string, error: string): void => 
     targetSigPubKey: target,
     senderSigPubKey: "",
     payload
-  }
+  };
 
   socket.send(JSON.stringify(resp))
   return;
@@ -39,16 +39,18 @@ wsServer.on('connection', (socket: WebSocket) => {
   socket.on('message', async (message: string) => {
     console.log("Received websocket message");
     let sender: string = "";
+    let target: string = "";
     try {
       const req: WebSocketRequest = WebSocketRequestSchema.parse(JSON.parse(message));
 
       if (!req.senderSigPubKey) {
         throw new Error("Missing sender");
       }
-      sender = req.senderSigPubKey
+      sender = req.senderSigPubKey;
+      target = req.targetSigPubKey;
 
       if (!req.authToken) {
-        return handleError(socket, sender, "Missing auth token.")
+        return handleError(socket, sender, "Missing auth token.");
       }
 
       switch (req.type) {
@@ -57,15 +59,26 @@ wsServer.on('connection', (socket: WebSocket) => {
           clientsSockets[sender] = socket;
 
           // Return CONNECT_SUCCESS response
-          const resp: WebSocketResponse = MapRequestToResponse(req);
-          const stringResp: string = JSON.stringify(resp);
+          const connectResponse: WebSocketResponse = MapRequestToResponse(req);
 
           if (clientsSockets[sender]) {
-            clientsSockets[sender].send(stringResp);
+            clientsSockets[sender].send(JSON.stringify(connectResponse));
           } else {
             throw new Error("Sender socket missing");
           }
 
+          return;
+        case WebSocketRequestTypes.MSG:
+          if (!target) {
+            return handleError(socket, sender, "Invalid target");
+          }
+
+          // Return MSG response
+          const msgResponse: WebSocketResponse = MapRequestToResponse(req);
+          
+          if (clientsSockets[target]) {
+            clientsSockets[target].send(JSON.stringify(msgResponse));
+          }
           return;
         case WebSocketRequestTypes.CLOSE:
           if (!sender) {
@@ -77,7 +90,7 @@ wsServer.on('connection', (socket: WebSocket) => {
         default:
       };
     } catch (error) {
-      const errMsg: string = `Error handling message: ${errorToString(error)}`
+      const errMsg: string = `Error handling message: ${errorToString(error)}`;
       console.error(errMsg);
       return handleError(socket, sender, errMsg);
     }

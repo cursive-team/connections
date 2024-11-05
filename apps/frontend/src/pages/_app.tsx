@@ -16,7 +16,10 @@ import { fetchMessages } from "@/lib/message";
 import { cn } from "@/lib/frontend/util";
 import { usePathname } from "next/navigation";
 import useSettings from "@/hooks/useSettings";
-import { WebsocketConnectUser } from "@/lib/ws";
+import {
+  WebsocketConnectUser,
+  WebsocketCloseUser
+} from "@/lib/ws";
 
 // TODO: would have to disable server side render for entire project for web socket
 
@@ -46,6 +49,13 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   if (pathname?.includes("/fortune")) {
     isFortunePage = pathname.includes("/fortune");
   }
+
+  useEffect(() => {
+    // Before closing tab or refreshing connection, expunge user from server
+    window.addEventListener("beforeunload", () => {
+      WebsocketCloseUser();
+    });
+  }, []);
 
   // Send user public key to web socket server to set up connection
   useEffect(() => {
