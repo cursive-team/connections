@@ -62,10 +62,6 @@ export default function CommunityPage() {
     useState<LeaderboardDetails | null>(null);
   const [lannaTotalWorkoutEntries, setLannaTotalWorkoutEntries] =
     useState<LeaderboardEntries | null>(null);
-  const [weekNov4TapLeaderboardDetails, setWeekNov4TapLeaderboardDetails] =
-    useState<LeaderboardDetails | null>(null);
-  const [weekNov4TapLeaderboardEntries, setWeekNov4TapLeaderboardEntries] =
-    useState<LeaderboardEntries | null>(null);
 
   const [cardProps, setCardProps] = useState<CommunityCardProps[]>([]);
   const [displayedDashboard, setDisplayedDashboard] =
@@ -97,8 +93,6 @@ export default function CommunityPage() {
       let weekOct27TapEntries: LeaderboardEntries | null = null;
       let lannaTotalWorkoutDetails: LeaderboardDetails | null = null;
       let lannaTotalWorkoutEntries: LeaderboardEntries | null = null;
-      let weekNov4TapDetails: LeaderboardDetails | null = null;
-      let weekNov4TapEntries: LeaderboardEntries | null = null;
       try {
         details = await getUserLeaderboardDetails(
           communityIssuer,
@@ -166,7 +160,7 @@ export default function CommunityPage() {
         !weekOct27TapDetails ||
         !weekOct27TapEntries ||
         !lannaTotalWorkoutDetails ||
-        !lannaTotalWorkoutEntries ||
+        !lannaTotalWorkoutEntries
       ) {
         toast.error("User leaderboard info not found.");
         router.push("/profile");
