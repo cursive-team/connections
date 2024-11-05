@@ -150,25 +150,30 @@ const TapPage: React.FC = () => {
             router.push("/register");
             return;
           } else if (response.isLocationChip !== true && session && user?.userData) {
-            // User logged in and unregistered chip is not locationChip, allow user to bind new chip to profile
-            logClientEvent("tap-chip-logged-in-bind-new-chip", {});
+            const isOn: boolean = false;
 
-            // Only include shareable data
-            const shareableUserData = shareableUserDataToJson(user.userData);
+            if (isOn) {
+              // User logged in and unregistered chip is not locationChip, allow user to bind new chip to profile
+              logClientEvent("tap-chip-logged-in-bind-new-chip", {});
 
-            await registerChip({
-              authToken: session.authTokenValue,
-              tapParams: tapParams,
-              ownerUsername: user.userData.username,
-              ownerDisplayName: user.userData.displayName,
-              ownerBio: user.userData.bio,
-              ownerSignaturePublicKey: user.userData.signaturePublicKey,
-              ownerEncryptionPublicKey: user.userData.encryptionPublicKey,
-              ownerPsiPublicKeyLink: user.userData.psiPublicKeyLink,
-              ownerUserData: shareableUserData,
-            });
+              // Only include shareable data
+              const shareableUserData = shareableUserDataToJson(user.userData);
 
-            toast.success("Successfully bound a new chip to your account")
+              await registerChip({
+                authToken: session.authTokenValue,
+                tapParams: tapParams,
+                ownerUsername: user.userData.username,
+                ownerDisplayName: user.userData.displayName,
+                ownerBio: user.userData.bio,
+                ownerSignaturePublicKey: user.userData.signaturePublicKey,
+                ownerEncryptionPublicKey: user.userData.encryptionPublicKey,
+                ownerPsiPublicKeyLink: user.userData.psiPublicKeyLink,
+                ownerUserData: shareableUserData,
+              });
+
+              toast.success("Successfully bound a new chip to your account")
+            }
+
             router.push("/profile");
             return;
           } else if (response.isLocationChip === true && !session) {
