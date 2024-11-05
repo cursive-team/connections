@@ -117,6 +117,19 @@ export enum LeaderboardEntryType {
   LANNA_TOTAL_WORKOUT_COUNT = "LANNA_TOTAL_WORKOUT_COUNT",
 }
 
+export const SharedLeaderboards: LeaderboardEntryType[] = [
+  LeaderboardEntryType.TOTAL_TAP_COUNT,
+  LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
+  LeaderboardEntryType.GITHUB_WEEK_OCT_20_COMMITS,
+];
+
+export const LannaLeaderboards: LeaderboardEntryType[] = [
+  LeaderboardEntryType.WEEK_OCT_20_TAP_COUNT,
+  LeaderboardEntryType.WEEK_OCT_27_TAP_COUNT,
+  LeaderboardEntryType.GITHUB_LANNA_COMMITS,
+  LeaderboardEntryType.LANNA_TOTAL_WORKOUT_COUNT,
+]
+
 export const LeaderboardEntryTypeSchema = z.nativeEnum(LeaderboardEntryType);
 
 export const UpdateLeaderboardEntryRequestSchema = z.object({

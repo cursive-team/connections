@@ -4,7 +4,17 @@ import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
 import { Connection, Session, User } from "@/lib/storage/types";
 import { toast } from "sonner";
-import { TapParams, ChipTapResponse, errorToString } from "@types";
+import {
+  ChipIssuer,
+  ChipIssuerSchema,
+  ChipTapResponse,
+  errorToString,
+  LannaLeaderboards,
+  LeaderboardDetails,
+  LeaderboardEntryType,
+  SharedLeaderboards,
+  TapParams
+} from "@types";
 import { AppButton } from "@/components/ui/Button";
 import Image from "next/image";
 import AppLayout from "@/layouts/AppLayout";
@@ -24,6 +34,7 @@ import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { sendMessages } from "@/lib/message";
 import useSettings from "@/hooks/useSettings";
 import { cn } from "@/lib/frontend/util";
+import { getUserLeaderboardDetails } from "@/lib/chip";
 
 interface CommentModalProps {
   username: string;
@@ -185,6 +196,22 @@ const CommentModal: React.FC<CommentModalProps> = ({
   );
 };
 
+type LeaderboardPosition = {
+  type: string,
+  position: number,
+}
+
+type LeaderboardPositionRecord = Record<string, LeaderboardPosition[]>;
+
+const HumanReadableValues: Record<string, string> = {
+  "EDGE_CITY_LANNA": "Edge City Lanna",
+  "DEVCON": "Devcon",
+  "TOTAL_TAP_COUNT": "total tap count",
+  "STRAVA_PREVIOUS_MONTH_RUN_DISTANCE": "running distance over last month",
+  "GITHUB_LANNA_COMMITS": "total Github commits",
+  "LANNA_TOTAL_WORKOUT_COUNT": "total workouts"
+}
+
 const UserProfilePage: React.FC = () => {
   const router = useRouter();
   const { username } = router.query;
@@ -201,7 +228,53 @@ const UserProfilePage: React.FC = () => {
   const [verifiedIntersection, setVerifiedIntersection] = useState<{
     tensions: string[];
     contacts: string[];
+    communities: string[];
   } | null>(null);
+
+  const [gotLeaderboardPositions, setGotLeaderboardPositions] = useState(false);
+  const [leaderboardPositions, setLeaderboardPositions] = useState<LeaderboardPositionRecord>({});
+
+  useEffect(() => {
+    const fetchLeaderboardDetailsForCommunities = async () => {
+      if (verifiedIntersection?.communities && !gotLeaderboardPositions) {
+
+        // Only run computation once there's a community overlap
+        for (let issuer of verifiedIntersection?.communities) {
+          let community: ChipIssuer =  ChipIssuerSchema.parse(issuer);
+
+          let leaderboardTypes: LeaderboardEntryType[] = SharedLeaderboards;
+          switch(community) {
+            case ChipIssuer.EDGE_CITY_LANNA:
+              leaderboardTypes = leaderboardTypes.concat(LannaLeaderboards);
+              break;
+            case ChipIssuer.TESTING:
+              break;
+            default:
+              // Should be one of the options, abort
+              return;
+          }
+
+          // Shared leaderboards should be run for each shared communities
+          for (let entryType of leaderboardTypes) {
+            try {
+              const details: LeaderboardDetails | null = await getUserLeaderboardDetails(community, entryType);
+              if (details && details.userPosition > 0 && details.userPosition < 11) {
+                if (!leaderboardPositions[community.toString()]) {
+                  leaderboardPositions[community.toString()] = [];
+                  setLeaderboardPositions(leaderboardPositions);
+                }
+                leaderboardPositions[community.toString()].push({type: entryType, position: details.userPosition});
+              }
+            } catch (error) {
+              console.error(`Error getting leaderboard position for ${entryType}: `, errorToString(error));
+            }
+          }
+        }
+        setGotLeaderboardPositions(true);
+      }
+    };
+    fetchLeaderboardDetailsForCommunities();
+  }, [verifiedIntersection]);
 
   useEffect(() => {
     const fetchConnectionAndTapInfo = async () => {
@@ -322,6 +395,17 @@ const UserProfilePage: React.FC = () => {
         );
       }
 
+      const communitySet = new Set<string>();
+      for (let chip of user.chips) {
+        communitySet.add(chip.issuer);
+      }
+      const communityData = Array.from(communitySet.keys());
+      const communities = await hashCommit(
+        user.encryptionPrivateKey,
+        connection.user.encryptionPublicKey,
+        communityData
+      );
+
       const contactData = Object.keys(user.connections);
       const contacts = await hashCommit(
         user.encryptionPrivateKey,
@@ -345,7 +429,7 @@ const UserProfilePage: React.FC = () => {
           body: JSON.stringify({
             secretHash,
             index: user.userData.username < connection.user.username ? 0 : 1,
-            intersectionState: { tensions, contacts },
+            intersectionState: { tensions, contacts, communities },
           }),
         }
       );
@@ -368,9 +452,20 @@ const UserProfilePage: React.FC = () => {
           }
         }
 
+        const translatedCommunities = [];
+        for (const hashCommunity of data.verifiedIntersectionState.communities) {
+          const index = communities.findIndex(
+            (community) => community === hashCommunity
+          );
+          if (index !== -1) {
+            translatedCommunities.push(communityData[index]);
+          }
+        }
+
         setVerifiedIntersection({
           contacts: translatedContacts,
           tensions: data.verifiedIntersectionState.tensions,
+          communities: translatedCommunities,
         });
         logClientEvent("user-finished-psi", {});
         if (!waitingForOtherUser) {
@@ -398,6 +493,9 @@ const UserProfilePage: React.FC = () => {
       );
     } finally {
       setRefreshLoading(false);
+
+      // Refresh the leaderboard positions
+      setGotLeaderboardPositions(false);
     }
   };
 
@@ -554,8 +652,43 @@ const UserProfilePage: React.FC = () => {
 
             {verifiedIntersection && (
               <>
-                <div className="px-2 pt-2 pb-4 bg-white rounded-lg border border-black/80 flex-col justify-start items-start gap-2 inline-flex">
-                  <div className="text-sm font-semibold text-label-primary font-sans">
+              {(verifiedIntersection.communities.length > 0 && Object.keys(leaderboardPositions).length > 0) ?
+                <div
+                  className="px-2 pt-2 pb-4 bg-white rounded-lg border border-black/80 flex-col justify-start items-start gap-2 inline-flex">
+                  <div className="text-sm font-semibold text-primary font-sans">
+                    📈Shared community leaderboards
+                  </div>
+                    <div className="text-sm text-link-primary font-sans font-normal">
+                      {/* After communities are ironed out add links to community page and / or dashboards */}
+                      {
+                        Object.keys(leaderboardPositions).map((community: string) => {
+                          let messages: string[] = [];
+                          let name: string = HumanReadableValues[community];
+
+                          for (let entry of leaderboardPositions[community]) {
+                            let board: string = HumanReadableValues[entry.type];
+
+                            const message = `#${entry.position} for ${board} at ${name}.`;
+                            messages.push(message);
+                          }
+
+                          return messages.map((message: string ) => {
+                            return <>
+                                <span className="text-secondary">
+                                  {message}
+                                </span>
+                              <br/>
+                            </>;
+                          })
+                        })
+                      }
+                  </div>
+                </div> : <></>
+              }
+
+                <div
+                  className="px-2 pt-2 pb-4 bg-white rounded-lg border border-black/80 flex-col justify-start items-start gap-2 inline-flex">
+                  <div className="text-sm font-semibold text-primary font-sans">
                     📇 Common contacts
                   </div>
                   {verifiedIntersection.contacts.length === 0 ? (
@@ -564,7 +697,7 @@ const UserProfilePage: React.FC = () => {
                     </div>
                   ) : (
                     <div className="text-sm text-link-primary font-sans font-normal">
-                      {verifiedIntersection.contacts.map((contact, index) => (
+                      {verifiedIntersection.contacts.map((contact: string, index: number) => (
                         <>
                           <span className="text-label-primary">
                             {index !== 0 && " | "}
@@ -585,9 +718,9 @@ const UserProfilePage: React.FC = () => {
                       Play the tensions game and refresh to see results!
                     </div>
                   ) : verifiedIntersection.tensions.every(
-                      (tension) => tension === "0"
-                    ) ? (
-                    <div className="text-sm text-label-primary font-sans font-normal">
+                    (tension: string) => tension === "0"
+                  ) ? (
+                    <div className="text-sm text-primary font-sans font-normal">
                       No tension disagreements!
                     </div>
                   ) : (
@@ -597,7 +730,7 @@ const UserProfilePage: React.FC = () => {
                         side on these tensions. Below is what you picked.
                       </div>
                       {verifiedIntersection.tensions.map(
-                        (tension, index) =>
+                        (tension: string, index: number) =>
                           tension === "1" && (
                             <TensionSlider
                               key={index}

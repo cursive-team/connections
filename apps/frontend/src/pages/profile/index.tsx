@@ -94,11 +94,11 @@ const ProfilePage: React.FC = () => {
           <div className="flex flex-col  mt-[38px] px-3 pb-4">
             <div className="flex flex-col gap-4 w-full">
               <div className="flex flex-col">
-                <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans text-label-primary">
-                  {user?.userData.displayName}
-                </span>
-                <span className="text-[14px] font-medium font-sans text-label-tertiary">
+                <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans text-primary">
                   {`${user?.userData.username}`}
+                </span>
+                <span className="text-[14px] font-medium font-sans text-tertiary">
+                  {user?.userData.displayName}
                 </span>
               </div>
               <div className="flex items-center gap-2">

@@ -62,11 +62,11 @@ export default function ProfileOverview() {
     >
       <div className="flex flex-col gap-3 mt-[46px]">
         <div className="flex flex-col px-4">
-          <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans text-label-primary">
-            {user?.userData.displayName}
+          <span className="text-[30px] font-semibold tracking-[-0.22px] font-sans">
+            {`${user?.userData.username}`}
           </span>
-          <span className="text-[14px] font-medium font-sans text-label-tertiary">
-            {`@${user?.userData.username}`}
+          <span className="text-[14px] font-medium font-sans text-tertiary">
+            {user?.userData.displayName}
           </span>
           {user?.userData?.pronouns && (
             <span className="text-[14px] font-medium font-sans text-label-tertiary">

@@ -24,14 +24,15 @@ router.post(
       }
 
       req.app.locals.intersectionState[secretHash][index] = intersectionState;
-      const { tensions: tensions0, contacts: contacts0 } = intersectionState;
+      const { tensions: tensions0, contacts: contacts0, communities: communities0 } = intersectionState;
 
       if (req.app.locals.intersectionState[secretHash][1 - index]) {
-        const { tensions: tensions1, contacts: contacts1 } =
+        const { tensions: tensions1, contacts: contacts1, communities: communities1 } =
           req.app.locals.intersectionState[secretHash][1 - index];
 
         const newTensions: string[] = [];
         const newContacts: string[] = [];
+        const newCommunities: string[] = [];
 
         if (
           tensions0.length !== 0 &&
@@ -59,11 +60,22 @@ router.post(
           }
         }
 
+        // Create a Set from communities0 for efficient lookup
+        const communitiesSet = new Set(communities0);
+
+        // Find intersection by checking each contact in contacts1
+        for (const community of communities1) {
+          if (communitiesSet.has(community)) {
+            newCommunities.push(community);
+          }
+        }
+
         return res.status(200).json({
           success: true,
           verifiedIntersectionState: {
             tensions: newTensions,
             contacts: newContacts,
+            communities: newCommunities,
           },
         });
       }
@@ -73,6 +85,7 @@ router.post(
         verifiedIntersectionState: {
           tensions: [],
           contacts: [],
+          communities: [],
         },
       });
     } catch (error) {
