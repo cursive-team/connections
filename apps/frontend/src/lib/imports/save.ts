@@ -3,6 +3,7 @@ import {
   DataOption,
   UpdateLeaderboardEntryRequest,
   ImportDataType,
+  errorToString,
 } from "@types";
 import {
   MapStravaActivityStatsToLeaderboardEntryRequest,
@@ -43,6 +44,7 @@ export function MapResponseToLeaderboardEntryRequest(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function saveLeaderboardEntries(options: DataOption, authToken: string, user: User, chipIssuer: ChipIssuer, data: any): Promise<void> {
   const leaderboardEntryRequest: UpdateLeaderboardEntryRequest | null = MapResponseToLeaderboardEntryRequest(
     authToken,
@@ -85,7 +87,7 @@ export async function saveImportedData(authToken: string, user: User, option: Da
         return;
     }
   } catch (error) {
-    // TODO: handle error
+    console.error(`Error while saving imported data: ${errorToString(error)}`)
     return;
   }
 }

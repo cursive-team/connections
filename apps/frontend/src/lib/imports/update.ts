@@ -10,7 +10,7 @@ export const updateUserDataFromImportData = async (
 ): Promise<UserData> => {
   switch (type) {
     case ImportDataType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
-      let value1: number = data;
+      const value1: number = data;
       return {
         ...userData,
         strava: {
@@ -21,7 +21,7 @@ export const updateUserDataFromImportData = async (
         },
       };
     case ImportDataType.GITHUB_LANNA_CONTRIBUTIONS:
-      let value2: number = data;
+      const value2: number = data;
       return {
         ...userData,
         github: {
@@ -32,7 +32,7 @@ export const updateUserDataFromImportData = async (
         },
       };
     case ImportDataType.GITHUB_CONTRIBUTIONS_LAST_YEAR:
-      let value3: number = data;
+      const value3: number = data;
       return {
         ...userData,
         github: {

@@ -72,12 +72,9 @@ export async function importData(app: string, code: string): Promise<void> {
   if (accessToken && details.can_import) {
     const { user, session } = await storage.getUserAndSession();
 
-    for (let option of details.data_options) {
-      // TODO: Better data import option selection, which would include scope selection *before* the authorization code is fetched
-
+    for (const option of details.data_options) {
       try {
-        // TODO: Better chipIssuer selection when more communities added, how to decide community? Most recent?
-        // get data once, save to each relevant communities?
+        // TODO: Need to specify data imports per community
 
         // Unlike access token fetching, all data importing will be from client
         await fetchAndSaveImportedData(
