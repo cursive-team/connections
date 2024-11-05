@@ -500,7 +500,7 @@ const AstrologyModal = ({
                     ) : (
                       <Close
                         size={18}
-                        className="text-white bg-white/20 p-0.5"
+                        className="text-icon-primary bg-icon-primary/20 p-0.5"
                       />
                     )}
                   </button>

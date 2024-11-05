@@ -6,8 +6,10 @@ import AppLayout from "@/layouts/AppLayout";
 import { MdKeyboardArrowRight as ArrowRight } from "react-icons/md";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import { Banner } from "@/components/cards/Banner";
+import useSettings from "@/hooks/useSettings";
 
 const PeoplePage: React.FC = () => {
+  const { darkTheme } = useSettings();
   const [connections, setConnections] = useState<Record<string, Connection>>(
     {}
   );
@@ -76,13 +78,19 @@ const PeoplePage: React.FC = () => {
         </div>
       ) : (
         <ul className="flex flex-col">
-          {Object.values(connections).map((connection) => (
+          {Object.values(connections).map((connection, index) => (
             <li
               key={connection.user.username}
               className="p-4"
               style={{
+                borderTop:
+                  index === 0 && darkTheme
+                    ? "0.5px solid rgba(255, 255, 255, 0.20)"
+                    : "0.5px solid rgba(0, 0, 0, 0.20)",
                 // for some reason tailwind not applying
-                borderBottom: "0.5px solid rgba(0, 0, 0, 0.20)",
+                borderBottom: darkTheme
+                  ? "0.5px solid rgba(255, 255, 255, 0.20)"
+                  : "0.5px solid rgba(0, 0, 0, 0.20)",
               }}
             >
               <Link

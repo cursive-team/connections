@@ -71,9 +71,9 @@ export function Leaderboard({
         lastEntryValue = entry.entryValue;
 
         const styling = {
-          positionColor: "bg-white/20",
+          positionColor: "bg-background/20",
           positionTextColor: "",
-          fontStyling: "text-white/60 text-[14px] font-normal",
+          fontStyling: "text-label-primary/60 text-[14px] font-normal",
           divider: false,
         };
 
@@ -94,15 +94,15 @@ export function Leaderboard({
         const entryValue = entry.entryValue;
 
         if (position == 1) {
-          styling.positionColor = "bg-white";
-          styling.positionTextColor = "text-black";
-          styling.fontStyling = "text-white text-[16px] font-medium";
+          styling.positionColor = "bg-background";
+          styling.positionTextColor = "text-label-primary";
+          styling.fontStyling = "text-label-secondary text-[16px] font-medium";
         }
 
         if (entry.username == leaderboardDetails.username) {
           styling.positionColor = "bg-[#FF9DF8]";
-          styling.positionTextColor = "text-black";
-          styling.fontStyling = "text-white text-[16px] font-medium";
+          styling.positionTextColor = "text-label-primary";
+          styling.fontStyling = "text-label-primary text-[16px] font-medium";
           username += " (me)";
 
           if (leaderboardDetails?.userPosition != tiedPosition) {

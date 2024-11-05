@@ -1,3 +1,4 @@
+"use client";
 import { Icons } from "@/components/icons/Icons";
 import { AppButton } from "@/components/ui/Button";
 import { CursiveLogo } from "@/components/ui/HeaderCover";

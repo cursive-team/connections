@@ -1,3 +1,4 @@
+"use client";
 import { APP_CONFIG } from "@/config";
 import useSettings from "@/hooks/useSettings";
 import { AppButton } from "./ui/Button";

@@ -1,4 +1,5 @@
-import useSettings from "@/hooks/useSettings";
+"use client";
+
 import { cn } from "@/lib/frontend/util";
 import { ReactNode } from "react";
 
@@ -16,7 +17,6 @@ export const Banner = ({
   textCenter = true,
   italic = true,
 }: BannerProps) => {
-  const { darkTheme } = useSettings();
   return (
     <div
       className={cn(
@@ -26,21 +26,9 @@ export const Banner = ({
         className
       )}
     >
-      <span
-        className={cn(
-          "text-base font-bold ",
-          !darkTheme ? "text-black" : "text-label-secondary"
-        )}
-      >
-        {title}
-      </span>
+      <span className={cn("text-base font-bold  text-black/80")}>{title}</span>
       {description && (
-        <span
-          className={cn(
-            "text-base font-normal",
-            !darkTheme ? "text-black" : "text-label-secondary"
-          )}
-        >
+        <span className={cn("text-base font-normal text-black/60")}>
           {description}
         </span>
       )}

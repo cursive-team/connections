@@ -41,7 +41,9 @@ export const CheckInWeek = ({
               <button
                 key={day.abbr}
                 className={`min-w-10 h-6 py-2 rounded-full flex items-center justify-center text-sm font-medium ${
-                  isActive ? "bg-black text-white" : "bg-black/20 text-white"
+                  isActive
+                    ? "bg-background text-label-primary"
+                    : "bg-background/20 text-label-primary"
                 }`}
                 aria-label={day.full}
               >
