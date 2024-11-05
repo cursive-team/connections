@@ -149,11 +149,11 @@ export default function CommunityPage() {
         );
         weekNov4TapDetails = await getUserLeaderboardDetails(
           communityIssuer,
-          LeaderboardEntryType.WEEK_NOV_$_TAP_COUNT
+          LeaderboardEntryType.WEEK_NOV_4_TAP_COUNT
         );
         weekNov4TapEntries = await getTopLeaderboardEntries(
           communityIssuer,
-          LeaderboardEntryType.WEEK_NOV_$_TAP_COUNT
+          LeaderboardEntryType.WEEK_NOV_4_TAP_COUNT
         );
       } catch (error) {
         console.error("Error getting user leaderboard info:", error);
