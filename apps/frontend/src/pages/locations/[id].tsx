@@ -205,8 +205,8 @@ export default function LocationPage() {
         showFooter={false}
         header={
           <div>
-            <div className="flex-row w-full px-1 pt-8 pb-4 bg-white justify-between items-center inline-flex">
-              <div className="text-[#090909] text-xl font-semibold font-['DM Sans'] leading-tight">
+            <div className="flex-row w-full px-1 pt-8 pb-4 bg-background justify-between items-center inline-flex">
+              <div className="text-label-primary text-xl font-semibold font-sans leading-tight">
                 {`Total (${
                   Number.isInteger(leaderboardDetails?.totalValue)
                     ? leaderboardDetails?.totalValue
@@ -221,16 +221,16 @@ export default function LocationPage() {
               </div>
             </div>
             <div className="py-4 px-1 flex-col justify-center items-start gap-2 inline-flex">
-              <div className="text-[#090909] text-base font-bold font-['DM Sans'] leading-snug">
+              <div className="text-label-primary text-base font-bold font-sans leading-snug">
                 {contributorMsg}
               </div>
               {prize && (
                 <>
-                  <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
+                  <div className="self-stretch text-label-secondary text-sm font-normal font-sans leading-tight">
                     Win an NFC ring by ranking in the top 10 this week! Winners
                     are announced at Sunday dinner.
                   </div>
-                  <div className="self-stretch text-[#090909]/50 text-sm font-normal font-['DM Sans'] leading-tight">
+                  <div className="self-stretch text-label-secondary text-sm font-normal font-sans leading-tight">
                     People who already have a ring are marked with a 💍.
                     {prize && " They do not count in the top 10."}
                   </div>

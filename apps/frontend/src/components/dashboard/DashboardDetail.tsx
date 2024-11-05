@@ -70,7 +70,7 @@ export function DashboardDetail({
         header={
           <div>
             <div className="flex-row w-full px-1 pt-8 pb-4 bg-background justify-between items-center inline-flex">
-              <div className="text-label-primary text-xl font-semibold font-['DM Sans'] leading-tight">
+              <div className="text-label-primary text-xl font-semibold font-sans leading-tight">
                 {`Total (${
                   Number.isInteger(leaderboardDetails?.totalValue)
                     ? leaderboardDetails?.totalValue
@@ -151,7 +151,7 @@ export function DashboardDetail({
             }
           ></div>
           <div className="flex flex-col flex-1 gap-2">
-            <p className="text-xs font-normal text-label-quaternary text-label-tertiary">{`${
+            <p className="text-xs font-normal text-label-quaternary">{`${
               (leaderboardDetails?.userPosition ?? 0) > 0
                 ? `#${leaderboardDetails?.userPosition} of `
                 : ""
@@ -175,7 +175,7 @@ export function DashboardDetail({
                 style={{ width: `${progress}%` }}
               ></div>
             </div>
-            <div className="text-label-tertiary text-xs font-bold font-['DM Sans'] leading-none">
+            <div className="text-label-tertiary text-xs font-bold font-sans leading-none">
               {leaderboardDetails?.totalValue} of {goal} {unit} goal
             </div>
           </div>
@@ -234,7 +234,7 @@ export function DashboardDetail({
                 <span className="text-sm font-medium text-label-primary font-sans">
                   {organizer}
                 </span>
-                <span className="text-xs font-medium text-label-secondary text-label-tertiary font-sans">
+                <span className="text-xs font-medium text-label-tertiary font-sans">
                   {organizerDescription}
                 </span>
               </div>

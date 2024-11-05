@@ -73,7 +73,7 @@ export function Leaderboard({
         const styling = {
           positionColor: "bg-background/20",
           positionTextColor: "",
-          fontStyling: "text-label-primary/60 text-[14px] font-normal",
+          fontStyling: "text-label-secondary text-[14px] font-normal",
           divider: false,
         };
 
@@ -120,20 +120,20 @@ export function Leaderboard({
                   className={`w-10 h-6 px-1 py-2 ${styling.positionColor} rounded-[67px] justify-center items-center gap-2 flex`}
                 >
                   <div
-                    className={`text-center ${styling.positionTextColor} text-sm font-medium leading-[140%]`}
+                    className={`text-center text-label-primary ${styling.positionTextColor}  text-sm font-medium leading-[140%]`}
                   >
                     {position}
                   </div>
                 </div>
                 <div
-                  className={`flex flex-row grow shrink basis-0 ${styling.fontStyling} leading-[140%]`}
+                  className={`flex flex-row grow shrink basis-0 text-label-secondary ${styling.fontStyling} leading-[140%]`}
                 >
                   {username}
                   {prize && RING_USERNAMES.includes(username) && <>{" 💍"}</>}
                 </div>
                 <div className="justify-start items-start gap-[5px] flex">
                   <div
-                    className={`text-right ${styling.fontStyling} font-['DM Sans'] leading-[140%]`}
+                    className={`text-right text-label-secondary ${styling.fontStyling} font-sans leading-[140%]`}
                   >
                     {Number.isInteger(entryValue)
                       ? entryValue
