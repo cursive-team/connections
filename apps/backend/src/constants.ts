@@ -1,4 +1,4 @@
-import { LeaderboardEntryType, OAuthAppDetails } from "@types";
+import { ImportDataType, OAuthAppDetails } from "@types";
 
 export const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
@@ -12,7 +12,7 @@ export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
     secret: process.env.OAUTH_STRAVA_CLIENT_SECRET || "",
     data_options: [
       {
-        type: LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
+        type: ImportDataType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
         scope: "read",
       },
     ],
@@ -26,7 +26,7 @@ export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
     secret: process.env.OAUTH_GITHUB_CLIENT_SECRET || "",
     data_options: [
       {
-        type: LeaderboardEntryType.GITHUB_LANNA_COMMITS,
+        type: ImportDataType.GITHUB_LANNA_COMMITS,
         scope: "read",
       },
     ],

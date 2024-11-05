@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import { RouterItem } from "@/lib/frontend/types";
 import { Icons } from "@/components/icons/Icons";
-import { LeaderboardEntryType, OAuthAppDetails } from "@types";
+import { ImportDataType, OAuthAppDetails } from "@types";
 
 export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
 
@@ -21,7 +21,7 @@ export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
     secret: process.env.NEXT_PUBLIC_OAUTH_STRAVA_CLIENT_SECRET || "",
     data_options: [
       {
-        type: LeaderboardEntryType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
+        type: ImportDataType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
         scope: "read",
       },
     ],
@@ -35,7 +35,7 @@ export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
     secret: "",
     data_options: [
       {
-        type: LeaderboardEntryType.GITHUB_LANNA_COMMITS,
+        type: ImportDataType.GITHUB_LANNA_COMMITS,
         scope: "read",
       },
     ],
