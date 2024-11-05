@@ -67,6 +67,13 @@ wsServer.on('connection', (socket: WebSocket) => {
           }
 
           return;
+        case WebSocketRequestTypes.CLOSE:
+          if (!sender) {
+            return handleError(socket, sender, "Missing target.")
+          }
+          delete clientsSockets[sender];
+          socket.close();
+          return;
         default:
       };
     } catch (error) {
