@@ -202,12 +202,13 @@ export type VerifySigninTokenResponse = z.infer<
  *   1: second user, sorted by username ->
  *     tensions: array of hash commitments
  *     contacts: array of hash commitments
+ *     journeys: array of hash commitments
  */
 export const IntersectionStateSchema = z.record(
   z.string(),
   z.record(
     z.number().int(),
-    z.object({ tensions: z.array(z.string()), contacts: z.array(z.string()) })
+    z.object({ tensions: z.array(z.string()), contacts: z.array(z.string()), journeys: z.array(z.string()) })
   )
 );
 
@@ -220,6 +221,7 @@ export const RefreshIntersectionRequestSchema = z.object({
   intersectionState: z.object({
     tensions: z.array(z.string()),
     contacts: z.array(z.string()),
+    journeys: z.array(z.string()),
   }),
 });
 
@@ -232,6 +234,7 @@ export const RefreshIntersectionResponseSchema = z.object({
   verifiedIntersectionState: z.object({
     tensions: z.array(z.string()),
     contacts: z.array(z.string()),
+    journeys: z.array(z.string()),
   }),
 });
 

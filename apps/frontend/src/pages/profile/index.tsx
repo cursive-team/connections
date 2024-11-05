@@ -63,7 +63,8 @@ const ProfilePage: React.FC = () => {
 
   const hasVaultData =
     (user.oauth && Object.keys(user.oauth).length > 0) ||
-    user.userData.tensionsRating;
+    user.userData.tensionsRating ||
+    user.userData.journeys;
 
   return (
     <>
@@ -183,6 +184,34 @@ const ProfilePage: React.FC = () => {
                     </div>
                   </Card.Base>
                 )}
+
+                {!user.userData.journeys && (
+                  <Card.Base
+                    variant="gray"
+                    className="p-4 !rounded-lg !border !border-white"
+                    onClick={() => {
+                      logClientEvent("start_journeys", {});
+                      router.push("/goDeeper");
+                    }}
+                  >
+                    <div className="flex flex-col gap-[10px]">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                          <Icons.Clip className="text-icon-primary" />
+                          <span className="text-sm text-label-primary font-medium">
+                            Go Deeper
+                          </span>
+                        </div>
+                        <Icons.Plus className="text-icon-primary" />
+                      </div>
+                      <span className="text-xs font-medium text-label-tertiary">
+                        Connect privately with others who share similar mental health 
+                        and/or neurodivergent journeys, fostering meaningful relationships
+                        built on mutual understanding and shared vulnerability.
+                      </span>
+                    </div>
+                  </Card.Base>
+                )}
               </div>
             </div>
           )}
@@ -240,6 +269,32 @@ const ProfilePage: React.FC = () => {
                       </span>
                     </div>
                   </Card.Base>
+                )}
+                {user.userData.journeys && (
+                  <div
+                    className="p-4 !rounded-lg !border !border-white"
+                    onClick={() => {
+                      logClientEvent("edit_goDeeper", {});
+                      router.push("/goDeeper");
+                    }}
+                  >
+                    <div className="flex flex-col gap-[10px]">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                          <Icons.Clip className="text-icon-primary" />
+                          <span className="text-sm text-label-primary font-medium">
+                            Go Deeper
+                          </span>
+                        </div>
+                        <Icons.Pencil className="text-icon-primary" />
+                      </div>
+                      <span className="text-xs font-medium text-white/50">
+                      Connect privately with others who share similar mental health 
+                      and/or neurodivergent journeys, fostering meaningful relationships
+                      built on mutual understanding and shared vulnerability.
+                      </span>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

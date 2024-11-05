@@ -13,7 +13,7 @@ import { AppTextarea } from "@/components/ui/Textarea";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
-import { tensionPairs } from "@/common/constants";
+import { tensionPairs, GO_DEEPER_DETAILED_MAPPING } from "@/common/constants";
 import { hashCommit } from "@/lib/psi/hash";
 import { BASE_API_URL } from "@/config";
 import Link from "next/link";
@@ -22,13 +22,10 @@ import { Icons } from "@/components/icons/Icons";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { sendMessages } from "@/lib/message";
-import useSettings from "@/hooks/useSettings";
-import { cn } from "@/lib/frontend/util";
 
 interface CommentModalProps {
   username: string;
   displayName: string;
-  pronouns: string;
   previousEmoji: string | undefined;
   previousNote: string | undefined;
   tapResponse: ChipTapResponse | undefined;
@@ -40,7 +37,6 @@ interface CommentModalProps {
 const CommentModal: React.FC<CommentModalProps> = ({
   username,
   displayName,
-  pronouns,
   previousEmoji,
   previousNote,
   tapResponse,
@@ -48,7 +44,6 @@ const CommentModal: React.FC<CommentModalProps> = ({
   onTapBack,
   onSubmit,
 }) => {
-  const { darkTheme } = useSettings();
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
   const [privateNote, setPrivateNote] = useState("");
   const [hasTappedBack, setHasTappedBack] = useState(false);
@@ -67,18 +62,16 @@ const CommentModal: React.FC<CommentModalProps> = ({
   };
 
   return (
-    <div
-      className={cn(
-        "fixed inset-0 bg-black/75 flex items-center justify-center z-50",
-        darkTheme ? "bg-white/20" : "bg-black/75"
-      )}
-    >
-      <div className="flex flex-col bg-background p-6 pb-10 rounded-[32px] w-full max-w-[90vw] overflow-y-auto relative">
+    <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-50">
+      <div className="flex flex-col bg-white dark:bg-gray-900 p-6 pb-10 rounded-[32px] w-full max-w-[90vw] overflow-y-auto relative">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-label-tertiary hover:text-label-primary hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-tertiary hover:text-primary text-gray-400 hover:text-white transition-colors"
         >
-          <Icons.XClose size={24} className="text-icon-primary bg-background" />
+          <Icons.XClose
+            size={24}
+            className="text-primary bg-white text-white"
+          />
         </button>
         <div className="size-[80px] relative flex mx-auto">
           <div className="absolute -left-3 size-8 rounded-full bg-[#9DE8FF] z-0 top-[28px] border border-quaternary/10"></div>
@@ -93,14 +86,11 @@ const CommentModal: React.FC<CommentModalProps> = ({
         </div>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col text-center">
-            <span className="text-[20px] font-semibold text-label-primary tracking-[-0.1px] font-sans">
+            <span className="text-[20px] font-semibold text-primary text-white tracking-[-0.1px] font-sans">
               {username}
             </span>
-            <span className="text-label-secondary text-label-tertiary text-sm font-medium font-sans text-center">
+            <span className="text-secondary text-gray-400 text-sm font-medium font-sans text-center">
               {displayName}
-            </span>
-            <span className="text-label-secondary text-label-tertiary text-sm font-medium font-sans text-center">
-              {pronouns}
             </span>
           </div>
           {tapResponse && (
@@ -136,20 +126,9 @@ const CommentModal: React.FC<CommentModalProps> = ({
                   });
                   handleEmojiSelect(emoji);
                 }}
-                className={cn(
-                  `p-2 size-12 rounded-full border border-transparent duration-200 ${
-                    selectedEmoji === emoji
-                      ? "!border-primary !border-white"
-                      : ""
-                  }`,
-                  darkTheme
-                    ? selectedEmoji === emoji
-                      ? "bg-[#FF9DF8] !border-[#FF9DF8]"
-                      : "bg-transparent !border-white"
-                    : selectedEmoji === emoji
-                    ? "bg-[#FF9DF8]"
-                    : "bg-[#f1f1f1]"
-                )}
+                className={`p-2 size-12 rounded-full bg-[#F1F1F1] bg-gray-800 border border-transparent duration-200 ${
+                  selectedEmoji === emoji ? "!border-primary !border-white" : ""
+                }`}
               >
                 {emoji}
               </button>
@@ -158,7 +137,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
         </div>
 
         <div className="flex flex-col gap-3 mt-4">
-          <span className="text-sm font-semibold text-label-primary font-sans">
+          <span className="text-sm font-semibold text-primary text-white font-sans">
             Notes
           </span>
           <AppTextarea
@@ -198,9 +177,14 @@ const UserProfilePage: React.FC = () => {
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [waitingForOtherUser, setWaitingForOtherUser] = useState(false);
+  const [waitingForOtherUserDeeper, setWaitingForOtherUserDeeper] = useState(false);
   const [verifiedIntersection, setVerifiedIntersection] = useState<{
     tensions: string[];
     contacts: string[];
+    goDeeper: string[];
+  } | null>(null);
+  const [verifiedIntersectionDeeper, setVerifiedIntersectionDeeper] = useState<{
+    goDeeper: string[];
   } | null>(null);
 
   useEffect(() => {
@@ -268,7 +252,7 @@ const UserProfilePage: React.FC = () => {
   const handleSubmitComment = async (emoji: string | null, note: string) => {
     logClientEvent("user-profile-comment-modal-saved", {
       label: emoji,
-      privateNoteSet: note !== "",
+      privateNoteSet: note !== "", 
     });
     if (!connection) return;
 
@@ -300,7 +284,7 @@ const UserProfilePage: React.FC = () => {
     }
   };
 
-  const updatePSIOverlap = async () => {
+  const updatePSIOverlapIcebreaker = async () => {
     setRefreshLoading(true);
     if (!connection || !user) {
       setRefreshLoading(false);
@@ -329,6 +313,8 @@ const UserProfilePage: React.FC = () => {
         contactData
       );
 
+      let journeys: string[] = [];
+
       const [secretHash] = await hashCommit(
         user.encryptionPrivateKey,
         connection.user.encryptionPublicKey,
@@ -336,7 +322,7 @@ const UserProfilePage: React.FC = () => {
       );
 
       const response = await fetch(
-        `${BASE_API_URL}/user/refresh_intersection`,
+        `${BASE_API_URL}/user/refresh_intersection_icebreaker`,
         {
           method: "POST",
           headers: {
@@ -345,7 +331,7 @@ const UserProfilePage: React.FC = () => {
           body: JSON.stringify({
             secretHash,
             index: user.userData.username < connection.user.username ? 0 : 1,
-            intersectionState: { tensions, contacts },
+            intersectionState: { tensions, contacts, journeys },
           }),
         }
       );
@@ -371,6 +357,7 @@ const UserProfilePage: React.FC = () => {
         setVerifiedIntersection({
           contacts: translatedContacts,
           tensions: data.verifiedIntersectionState.tensions,
+          goDeeper: [],
         });
         logClientEvent("user-finished-psi", {});
         if (!waitingForOtherUser) {
@@ -401,6 +388,100 @@ const UserProfilePage: React.FC = () => {
     }
   };
 
+  const updatePSIOverlapGoDeeper = async () => {
+    setRefreshLoading(true);
+    if (!connection || !user) {
+      setRefreshLoading(false);
+      return;
+    }
+
+    try {   
+      const tensions: string[] = []
+      const contacts: string[] = []
+      let journeys: string[] = [];
+      let journeysData: string[] = [];
+      if (user.userData.journeys) {
+        journeysData = Object.keys(user.userData.journeys).filter((k) => user.userData.journeys![k as keyof typeof user.userData.journeys] === true) as string[];
+        journeys = await hashCommit(
+          user.encryptionPrivateKey,
+          connection.user.encryptionPublicKey,
+          journeysData
+        ); 
+      }
+
+      const [secretHash] = await hashCommit(
+        user.encryptionPrivateKey,
+        connection.user.encryptionPublicKey,
+        [""]
+      );
+
+      const response = await fetch(
+        `${BASE_API_URL}/user/refresh_intersection_go_deeper`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            secretHash,
+            index: user.userData.username < connection.user.username ? 0 : 1,
+            intersectionState: { tensions, contacts, journeys },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`HTTP error! status: ${errorData.error}`);
+      }
+
+      const dataDeeper = await response.json();
+
+      if (dataDeeper.success) {
+
+        const translatedGoDeeper = [];
+        for (const hashJourney of dataDeeper.verifiedIntersectionState.journeys) {
+          const index = journeys.findIndex(
+            (journey) => journey === hashJourney
+          );
+          if (index !== -1) {
+            translatedGoDeeper.push(journeysData[index]);
+          }
+        }
+
+        setVerifiedIntersectionDeeper({
+          goDeeper: translatedGoDeeper,
+        });
+        logClientEvent("user-finished-psi", {});
+        if (!waitingForOtherUserDeeper) {
+          toast.info(
+            `Ask ${connection.user.username} to refresh to see results!`
+          );
+        }
+        setWaitingForOtherUserDeeper(false);
+      } else {
+        toast.info(
+          `Ask ${connection.user.username} to press "Discover" after tapping!`
+        );
+        setWaitingForOtherUserDeeper(true);
+      }
+    } catch (error) {
+      console.error("Error updating PSI overlap:", error);
+      toast(
+        SupportToast(
+          "",
+          true,
+          "Failed to update overlap. Please try again",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
+      );
+    } finally {
+      setRefreshLoading(false);
+    }
+  };
+
+
   if (!connection || !user || !session) {
     return (
       <div className="flex min-h-screen justify-center items-center text-center">
@@ -415,7 +496,6 @@ const UserProfilePage: React.FC = () => {
         <CommentModal
           username={connection.user.username}
           displayName={connection.user.displayName}
-          pronouns={connection.user.pronouns || ""}
           previousEmoji={connection.comment?.emoji}
           previousNote={connection.comment?.note}
           tapResponse={tapInfo?.tapResponse}
@@ -455,7 +535,7 @@ const UserProfilePage: React.FC = () => {
                     setShowCommentModal(true);
                   }}
                 >
-                  {<Icons.Pencil className="text-icon-primary" />}{" "}
+                  {<Icons.Pencil />}{" "}
                   {connection?.comment?.emoji || connection?.comment?.note
                     ? "Edit Notes"
                     : "Add Notes"}
@@ -467,12 +547,12 @@ const UserProfilePage: React.FC = () => {
       >
         <div className="!divide-y !divide-quaternary/20">
           <div className="flex flex-col gap-2 py-4 px-4">
-            <span className="text-sm font-semibold text-label-primary font-sans">
+            <span className="text-sm font-semibold text-primary font-sans">
               Socials
             </span>
             <div className="flex flex-col gap-4">
               {!connection?.user?.telegram && !connection?.user?.twitter && (
-                <span className="text-sm text-label-secondary font-sans font-normal">
+                <span className="text-sm text-secondary font-sans font-normal">
                   No socials shared.
                 </span>
               )}
@@ -502,52 +582,13 @@ const UserProfilePage: React.FC = () => {
                   />
                 </div>
               )}
-              {connection?.user?.signal?.username && (
-                <div
-                  onClick={() => {
-                    logClientEvent("user-profile-signal-clicked", {});
-                  }}
-                >
-                  <LinkCardBox
-                    label="Signal"
-                    value={`@${connection.user.signal.username}`}
-                    href={`https://signal.me/#u/${connection.user.signal.username}`}
-                  />
-                </div>
-              )}
-              {connection?.user?.instagram?.username && (
-                <div
-                  onClick={() => {
-                    logClientEvent("user-profile-instagram-clicked", {});
-                  }}
-                >
-                  <LinkCardBox
-                    label="Instagram"
-                    value={`@${connection.user.instagram.username}`}
-                    href={`https://www.instagram.com/${connection.user.instagram.username}`}
-                  />
-                </div>
-              )}
-              {connection?.user?.farcaster?.username && (
-                <div
-                  onClick={() => {
-                    logClientEvent("user-profile-farcaster-clicked", {});
-                  }}
-                >
-                  <LinkCardBox
-                    label="Farcaster"
-                    value={`@${connection.user.farcaster.username}`}
-                    href={`https://warpcast.com/${connection.user.farcaster.username}`}
-                  />
-                </div>
-              )}
             </div>
           </div>
 
           <div className="flex flex-col gap-4 py-4 px-4">
-            <span className="text-sm font-semibold text-label-primary font-sans">
+            <span className="text-sm font-semibold text-primary font-sans">
               Overlap icebreaker{" "}
-              <span className="font-normal text-label-tertiary">
+              <span className="font-normal text-tertiary">
                 Find common contacts & opposing tensions to spark conversation
               </span>
             </span>
@@ -555,18 +596,18 @@ const UserProfilePage: React.FC = () => {
             {verifiedIntersection && (
               <>
                 <div className="px-2 pt-2 pb-4 bg-white rounded-lg border border-black/80 flex-col justify-start items-start gap-2 inline-flex">
-                  <div className="text-sm font-semibold text-label-primary font-sans">
+                  <div className="text-sm font-semibold text-primary font-sans">
                     📇 Common contacts
                   </div>
                   {verifiedIntersection.contacts.length === 0 ? (
-                    <div className="text-sm text-label-primary font-sans font-normal">
+                    <div className="text-sm text-primary font-sans font-normal">
                       No common contacts.
                     </div>
                   ) : (
                     <div className="text-sm text-link-primary font-sans font-normal">
                       {verifiedIntersection.contacts.map((contact, index) => (
                         <>
-                          <span className="text-label-primary">
+                          <span className="text-primary">
                             {index !== 0 && " | "}
                           </span>
                           <Link href={`/people/${contact}`}>{contact}</Link>
@@ -576,23 +617,23 @@ const UserProfilePage: React.FC = () => {
                   )}
                 </div>
                 <div className="w-full px-2 pt-2 pb-4 bg-white rounded-lg border border-black/80 flex flex-col gap-2">
-                  <div className="text-sm font-semibold text-label-primary font-sans">
+                  <div className="text-sm font-semibold text-primary font-sans">
                     🪢 Your Tension disagreements
                   </div>
 
                   {verifiedIntersection.tensions.length === 0 ? (
-                    <div className="text-sm text-label-primary font-sans font-normal">
+                    <div className="text-sm text-primary font-sans font-normal">
                       Play the tensions game and refresh to see results!
                     </div>
                   ) : verifiedIntersection.tensions.every(
                       (tension) => tension === "0"
                     ) ? (
-                    <div className="text-sm text-label-primary font-sans font-normal">
+                    <div className="text-sm text-primary font-sans font-normal">
                       No tension disagreements!
                     </div>
                   ) : (
                     <>
-                      <div className="text-sm font-normal text-label-primary font-sans">
+                      <div className="text-sm font-normal text-primary font-sans">
                         {connection.user.username} leaned towards the opposite
                         side on these tensions. Below is what you picked.
                       </div>
@@ -621,7 +662,7 @@ const UserProfilePage: React.FC = () => {
             <AppButton
               onClick={() => {
                 logClientEvent("user-started-psi", {});
-                updatePSIOverlap();
+                updatePSIOverlapIcebreaker();
               }}
               variant="outline"
               loading={refreshLoading}
@@ -632,8 +673,63 @@ const UserProfilePage: React.FC = () => {
               {}
             </AppButton>
             {waitingForOtherUser && (
-              <div className="text-[12px] text-center text-label-primary font-sans font-normal">
+              <div className="text-[12px] text-center text-primary font-sans font-normal">
                 Waiting for {connection.user.username} to press discover after
+                tapping...
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-4 py-4 px-4">
+            <span className="text-sm font-semibold text-primary font-sans">
+              Do you want to dive deeper into this connection?{" "}
+              <span className="font-normal text-tertiary">
+                Find out if you share similar mental health 
+                and/or neurodivergent journeys.
+              </span>
+            </span>
+
+            {verifiedIntersectionDeeper && (
+              <>
+                <div className="px-2 pt-2 pb-4 bg-white rounded-lg border border-black/80 flex-col justify-start items-start gap-2 inline-flex">
+                  <div className="text-sm font-semibold text-primary font-sans">
+                    Shared journeys
+                  </div>
+                  {verifiedIntersectionDeeper.goDeeper?.length === 0 ? (
+                    <div className="text-sm text-primary font-sans font-normal">
+                      No common journeys.
+                    </div>
+                  ) : (
+                    <div className="text-sm text-link-primary font-sans font-normal">
+                      {verifiedIntersectionDeeper.goDeeper.map((journey, index) => (
+                        <>
+                          <span className="text-primary">
+                            {index !== 0 && " | "}
+                          </span>{GO_DEEPER_DETAILED_MAPPING[journey]}
+                        </>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            <AppButton
+              onClick={() => {
+                logClientEvent("user-started-psi", {});
+                updatePSIOverlapGoDeeper();
+              }}
+              variant="outline"
+              loading={refreshLoading}
+            >
+              {verifiedIntersectionDeeper || waitingForOtherUser
+                ? "Refresh"
+                : "Go Deeper"}
+              {}
+            </AppButton>
+            {waitingForOtherUser && (
+              <div className="text-[12px] text-center text-primary font-sans font-normal">
+                Waiting for {connection.user.username} to press Go Deeper after
                 tapping...
               </div>
             )}
@@ -642,10 +738,10 @@ const UserProfilePage: React.FC = () => {
           {connection?.user?.bio && (
             <div className="flex flex-col gap-2 py-4 px-4">
               <>
-                <span className="text-sm font-semibold text-label-primary font-sans">
+                <span className="text-sm font-semibold text-primary font-sans">
                   Bio
                 </span>
-                <span className="text-sm text-label-secondary font-sans font-normal">
+                <span className="text-sm text-secondary font-sans font-normal">
                   {connection?.user?.bio}
                 </span>
               </>

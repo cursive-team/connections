@@ -10,7 +10,7 @@ import {
 const router = express.Router();
 
 router.post(
-  "/refresh_intersection",
+  "/refresh_intersection_icebreaker",
   async (
     req: Request<{}, {}, RefreshIntersectionRequest>,
     res: Response<RefreshIntersectionResponse | ErrorResponse>
@@ -64,6 +64,7 @@ router.post(
           verifiedIntersectionState: {
             tensions: newTensions,
             contacts: newContacts,
+            journeys: [],
           },
         });
       }
@@ -73,6 +74,7 @@ router.post(
         verifiedIntersectionState: {
           tensions: [],
           contacts: [],
+          journeys: [],
         },
       });
     } catch (error) {

@@ -6,7 +6,8 @@ import getSigninTokenRoute from "./get_signin_token";
 import verifySigninTokenRoute from "./verify_signin_token";
 import verifyEmailUniqueRoute from "./verify_email_unique";
 import verifyUsernameUniqueRoute from "./verify_username_unique";
-import refreshIntersectionRoute from "./refresh_intersection";
+import refreshIntersectionIcebreakerRoute from "./refresh_intersection_icebreaker";
+import refreshIntersectionGoDeeperRoute from "./refresh_intersection_go_deeper";
 
 const router = express.Router();
 
@@ -17,6 +18,7 @@ router.use(getSigninTokenRoute);
 router.use(verifyEmailUniqueRoute);
 router.use(verifySigninTokenRoute);
 router.use(verifyUsernameUniqueRoute);
-router.use(refreshIntersectionRoute);
+router.use(refreshIntersectionIcebreakerRoute);
+router.use(refreshIntersectionGoDeeperRoute);
 
 export default router;

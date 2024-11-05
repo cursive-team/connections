@@ -20,6 +20,21 @@ export const LANNA_INTERESTS_LIST = [
   "doMentalWorkouts",
 ];
 
+// the most common mental health disorders listed 
+// at https://www.nimh.nih.gov/health/statistics
+export const GO_DEEPER_DETAILED_MAPPING: Record<string, string> = {
+  adhd: "ADHD",
+  asd: "ASD",
+  bipolar: "Bipolar Disorder",
+  depression: "Depression",
+  eatingDisorder: "Eating Disorder",
+  generalizedAnxiety: "Generalized Anxiety Disorder",
+  ocd: "OCD",
+  ptsd: "PTSD",
+  schizophrenia: "Schizophrenia",
+  personalityDisorder: "Personality Disorder",
+}
+
 export const tensionPairs = [
   ["💵 Paid content", "Free content with ads 🧃"],
   [`😈 Devil's advocacy`, "Yes-and protocol 🧐"],

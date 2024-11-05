@@ -8,6 +8,22 @@ export const TensionsRatingSchema = z.object({
 
 export type TensionsRating = z.infer<typeof TensionsRatingSchema>;
 
+export const GoDeeperSchema = z.object({
+    adhd: z.boolean(),
+    asd: z.boolean(),
+    bipolar: z.boolean(),
+    depression: z.boolean(),
+    eatingDisorder: z.boolean(),
+    generalizedAnxiety: z.boolean(),
+    ocd: z.boolean(),
+    ptsd: z.boolean(),
+    schizophrenia: z.boolean(),
+    personalityDisorder: z.boolean(),
+});
+
+
+export type GoDeeper = z.infer<typeof GoDeeperSchema>;
+
 export const LannaDesiredConnectionsSchema = z.object({
   getHealthy: z.boolean(),
   cowork: z.boolean(),
