@@ -25,10 +25,10 @@ let successfulConnection: boolean = false;
 export const wsRequest = (authToken: string, type: string, targetSigPubKey: string, senderSigPubKey: string, payload: any): void => {
 
   if (expectConnectResp && type !== WebSocketRequestTypes.CONNECT) {
-    console.warn("While waiting for successful connection response no other websocket requests are allowed, abort");
+    console.warn("While waiting for successful user connection response no other websocket requests are allowed, abort.");
     return;
   } else if (!successfulConnection && type !== WebSocketRequestTypes.CONNECT) {
-    console.error("Websocket connection was not successfully established, abort");
+    console.error("Websocket user connection was not successfully established, abort.");
     return;
   }
 
@@ -63,8 +63,6 @@ export const WebsocketConnectUser = async (): Promise<void> => {
     if (user) {
       const sender: string = getUserSigPubKey(user);
       if (sender && session) {
-        expectConnectResp = true;
-
         // First step after creating connection is sending server sender public signing key for client socket lookup
         wsConnectRequest(session.authTokenValue, sender);
 
@@ -72,7 +70,7 @@ export const WebsocketConnectUser = async (): Promise<void> => {
         expectConnectResp = true;
       }
     } else {
-      throw new Error("No user public signing key available, unable to establish websocket connection");
+      throw new Error("No user public signing key available, unable to establish websocket connection.");
     }
   } catch (error) {
     console.error(`Onopen websocket client error: ${errorToString(error)}`);
@@ -96,7 +94,7 @@ export const WebsocketCloseUser = async (): Promise<void> => {
 export const wsClient: WebSocket = new WebSocket(`${BASE_API_WS}`);
 
 wsClient.onopen = async () => {
-  console.log("Open websocket connection")
+  console.log("Open websocket connection");
 };
 
 wsClient.onmessage = async (ev: IMessageEvent) => {
@@ -110,7 +108,7 @@ wsClient.onmessage = async (ev: IMessageEvent) => {
 
     switch (resp.type) {
       case WebSocketResponseTypes.SUCCESS_CONNECT:
-        // Allow client websocket messages now
+        // Enable other message types now
         expectConnectResp = false;
         successfulConnection = true;
         return;
@@ -139,5 +137,5 @@ wsClient.onmessage = async (ev: IMessageEvent) => {
 };
 
 wsClient.onclose = async () => {
-  console.log("Close websocket connection")
+  console.log("Close websocket connection");
 };

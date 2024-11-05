@@ -21,8 +21,6 @@ import {
   WebsocketCloseUser
 } from "@/lib/ws";
 
-// TODO: would have to disable server side render for entire project for web socket
-
 // Note: Hoist web socket code here so that it's run
 import("@/lib/ws/index");
 

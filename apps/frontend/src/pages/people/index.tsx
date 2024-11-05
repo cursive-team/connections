@@ -32,7 +32,7 @@ const PeoplePage: React.FC = () => {
     };
 
     fetchConnections();
-  }, []);
+  }, [connections]);
 
   return (
     <AppLayout

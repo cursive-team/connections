@@ -9,8 +9,11 @@ import {
   MapRequestToResponse,
   errorToString
 } from "@types";
+import { Controller } from "@/lib/controller";
 
 import { wsServer } from "@/index";
+
+const controller = new Controller();
 
 const clientsSockets: Record<string, WebSocket> = {};
 
@@ -53,8 +56,18 @@ wsServer.on('connection', (socket: WebSocket) => {
         return handleError(socket, sender, "Missing auth token.");
       }
 
+      // Fetch user by auth token, ensure the request is from an authenticated user
+      const user = await controller.GetUserByAuthToken(req.authToken);
+      if (!user) {
+        return handleError(socket, sender, "Invalid auth token.");
+      }
+
       switch (req.type) {
         case WebSocketRequestTypes.CONNECT:
+          if (!sender) {
+            return handleError(socket, sender, "Missing sender.");
+          }
+
           // Set record for future lookup
           clientsSockets[sender] = socket;
 
@@ -64,18 +77,18 @@ wsServer.on('connection', (socket: WebSocket) => {
           if (clientsSockets[sender]) {
             clientsSockets[sender].send(JSON.stringify(connectResponse));
           } else {
-            throw new Error("Sender socket missing");
+            throw new Error("Sender client socket missing.");
           }
 
           return;
         case WebSocketRequestTypes.MSG:
           if (!target) {
-            return handleError(socket, sender, "Invalid target");
+            return handleError(socket, sender, "Missing target.");
           }
 
           // Return MSG response
           const msgResponse: WebSocketResponse = MapRequestToResponse(req);
-          
+
           if (clientsSockets[target]) {
             clientsSockets[target].send(JSON.stringify(msgResponse));
           }
@@ -88,6 +101,7 @@ wsServer.on('connection', (socket: WebSocket) => {
           socket.close();
           return;
         default:
+          return;
       };
     } catch (error) {
       const errMsg: string = `Error handling message: ${errorToString(error)}`;

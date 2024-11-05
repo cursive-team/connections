@@ -1,10 +1,19 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { Connection, Session, User } from "@/lib/storage/types";
+import {
+  Connection,
+  Session,
+  User
+} from "@/lib/storage/types";
 import { toast } from "sonner";
-import { TapParams, ChipTapResponse, errorToString } from "@types";
+import {
+  ChipTapResponse,
+  errorToString,
+  TapParams,
+  WebSocketRequestTypes
+} from "@types";
 import { AppButton } from "@/components/ui/Button";
 import Image from "next/image";
 import AppLayout from "@/layouts/AppLayout";
@@ -250,16 +259,14 @@ const UserProfilePage: React.FC = () => {
   const handleTapBack = async () => {
     logClientEvent("user-profile-tap-back-clicked", {});
     console.log("handleTapBack", session, connection, )
-    //if (!session || !connection || !tapInfo?.tapResponse.chipIssuer) {
-    if (!session || !connection) {
+    if (!session || !connection || !tapInfo?.tapResponse.chipIssuer) {
       toast.error("Failed to tap back");
       return;
     }
 
     const message = await storage.createTapBackMessage(
       connection.user.username,
-      // tapInfo.tapResponse.chipIssuer
-      ChipIssuer.TESTING,
+      tapInfo.tapResponse.chipIssuer
     );
     try {
       await sendMessages({
@@ -270,12 +277,11 @@ const UserProfilePage: React.FC = () => {
       if (user) {
         // Get target and sender id (pub keys)
         const target: string = getConnectionSigPubKey(user, connection.user.username);
-
         const sender: string = getUserSigPubKey(user);
         wsRequest(session.authTokenValue, WebSocketRequestTypes.MSG, target, sender, message);
       } else {
         // This case should never happen but it should be handled
-        console.error("Unable to find user, cannot send ws message request")
+        console.error("Unable to find user, cannot send ws message request.");
       }
 
       toast.success("Tap back sent successfully!");
