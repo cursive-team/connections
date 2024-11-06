@@ -23,6 +23,7 @@ model User {
   createdAt             DateTime    @default(now())
   notificationUserId    String?
   notificationUsername  String?
+  notificationsEnabled  Boolean?
   AuthToken             AuthToken[]
   Backup                Backup[]
 }
