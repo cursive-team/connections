@@ -21,6 +21,7 @@ import ImportStravaButton from "@/features/oauth/ImportStravaButton";
 import AddNotificationButton from "@/features/notification/AddNotificationButton";
 import ToggleSwitch from "@/components/ui/Switch";
 import useSettings from "@/hooks/useSettings";
+import { storeAddChipRequest } from "@/lib/chip/addChip";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -101,19 +102,35 @@ const ProfilePage: React.FC = () => {
                   {`${user?.userData.username}`}
                 </span>
               </div>
-              <div className="flex items-center gap-2">
-                <Link href="/profile/overview">
-                  <AppButton className="w-fit">
-                    <span className="text-[14px]">View profile</span>
-                  </AppButton>
-                </Link>
-                <Link href="/activity">
-                  <AppButton variant="outline" className="w-fit">
-                    <span className="text-[14px]">Activity</span>
-                  </AppButton>
-                </Link>
-                <div className="w-fit">
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+                <div className="shrink-0">
+                  <Link href="/profile/overview">
+                    <AppButton className="w-fit">
+                      <span className="text-[14px]">View profile</span>
+                    </AppButton>
+                  </Link>
+                </div>
+                <div className="shrink-0">
+                  <Link href="/activity">
+                    <AppButton variant="outline" className="w-fit">
+                      <span className="text-[14px]">Activity</span>
+                    </AppButton>
+                  </Link>
+                </div>
+                <div className="w-fit shrink-0">
                   <AddNotificationButton />
+                </div>
+                <div className="shrink-0">
+                  <AppButton
+                    onClick={() => {
+                      storeAddChipRequest();
+                      toast.success("Please tap your new chip to add it!");
+                    }}
+                    variant="outline"
+                    className="w-fit"
+                  >
+                    <span className="text-[14px]">Add Chip</span>
+                  </AppButton>
                 </div>
               </div>
             </div>

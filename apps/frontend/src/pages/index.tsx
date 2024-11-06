@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { AppCopy } from "@/components/ui/AppCopy";
 import { HeaderCover } from "@/components/ui/HeaderCover";
-import { RegisterHeader } from "@/features/register/RegisterHeader";
+import { RegisterHeader } from "@/components/ui/RegisterHeader";
 import { storage } from "@/lib/storage";
 import { AppButton } from "@/components/ui/Button";
 import useSettings from "@/hooks/useSettings";

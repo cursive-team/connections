@@ -53,15 +53,6 @@ router.post(
         });
       }
 
-      if (
-        validatedData.ownerPsiPublicKeyLink &&
-        validatedData.ownerPsiPublicKeyLink !== user.psiPublicKeyLink
-      ) {
-        return res.status(400).json({
-          error: "Submitted PSI public key link does not match user's key",
-        });
-      }
-
       const newChip = await controller.RegisterChip(validatedData);
 
       if (

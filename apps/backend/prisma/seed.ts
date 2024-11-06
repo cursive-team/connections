@@ -23,6 +23,44 @@ async function main() {
     skipDuplicates: true,
   });
 
+  const testEdgeCityLannaChips = [
+    { chipId: "TESTLANNA001" },
+    { chipId: "TESTLANNA002" },
+    { chipId: "TESTLANNA003" },
+    { chipId: "TESTLANNA004" },
+    { chipId: "TESTLANNA005" },
+  ];
+
+  await prisma.chip.createMany({
+    data: testEdgeCityLannaChips.map((chip) => ({
+      chipIssuer: "EDGE_CITY_LANNA",
+      chipId: chip.chipId,
+      chipVariant: "NTAG212",
+      chipIsRegistered: false,
+      chipTapCount: 0,
+    })),
+    skipDuplicates: true,
+  });
+
+  const testDevcon2024Chips = [
+    { chipId: "TESTDEVCON001" },
+    { chipId: "TESTDEVCON002" },
+    { chipId: "TESTDEVCON003" },
+    { chipId: "TESTDEVCON004" },
+    { chipId: "TESTDEVCON005" },
+  ];
+
+  await prisma.chip.createMany({
+    data: testDevcon2024Chips.map((chip) => ({
+      chipIssuer: "DEVCON_2024",
+      chipId: chip.chipId,
+      chipVariant: "NTAG424",
+      chipIsRegistered: false,
+      chipTapCount: 0,
+    })),
+    skipDuplicates: true,
+  });
+
   const testLocationChips = [
     { chipId: "TESTLOC001" },
     { chipId: "TESTLOC002" },

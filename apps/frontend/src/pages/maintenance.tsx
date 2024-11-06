@@ -1,6 +1,6 @@
 import { AppCopy } from "@/components/ui/AppCopy";
 import { HeaderCover } from "@/components/ui/HeaderCover";
-import { RegisterHeader } from "@/features/register/RegisterHeader";
+import { RegisterHeader } from "@/components/ui/RegisterHeader";
 import { logoutUser } from "@/lib/auth";
 import { useEffect } from "react";
 
