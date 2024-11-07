@@ -3,7 +3,7 @@ import { EmailSchema, errorToString } from "@types";
 import { toast } from "sonner";
 import { AppButton } from "@/components/ui/Button";
 import { AppInput } from "@/components/ui/AppInput";
-import { RegisterHeader } from "@/features/register/RegisterHeader";
+import { RegisterHeader } from "@/components/ui/RegisterHeader";
 import { AppCopy } from "@/components/ui/AppCopy";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";

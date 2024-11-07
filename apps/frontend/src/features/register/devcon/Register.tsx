@@ -327,7 +327,7 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
         DisplayState.CREATING_ACCOUNT,
       ].includes(displayState) && (
         <HeaderCover
-          image="edge-city"
+          image="devcon"
           isLoading={[DisplayState.CREATING_ACCOUNT].includes(displayState)}
         />
       )}
