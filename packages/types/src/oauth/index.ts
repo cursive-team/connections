@@ -4,7 +4,7 @@ import { z } from "zod";
 export * from "./strava";
 export * from "./github";
 
-import { LeaderboardEntryTypeSchema } from "../chip";
+import { ImportDataType, ImportDataTypeSchema } from "../chip";
 
 export const StravaAtheleteSchema = z.object({
   id: z.number(),
@@ -41,7 +41,7 @@ export const AccessTokenSchema = z.object({
 export type AccessToken = z.infer<typeof AccessTokenSchema>;
 
 export const DataOptionSchema = z.object({
-  type: LeaderboardEntryTypeSchema,
+  type: ImportDataTypeSchema,
   scope: z.string(),
 });
 
