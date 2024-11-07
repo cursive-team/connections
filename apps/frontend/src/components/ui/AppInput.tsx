@@ -8,14 +8,19 @@ import {
 } from "react";
 import { InputWrapper, InputWrapperProps } from "./InputWrapper";
 import { cn } from "@/lib/frontend/util";
+import useSettings from "@/hooks/useSettings";
 
 const InputComponent = classed.input(
-  "rounded-[7px] min-h-5 py-2 px-3 placeholder-black/50 text-sm leading-[20px] w-full text-label-primary !outline-none shadow-none focus:border focus:ring-0 focus:outline-none focus:shadow-none focus:outline-offset-0 focus:ring-offset-0 disabled:opacity-50",
+  "rounded-[7px] min-h-5 py-2 px-3 text-sm leading-[20px] w-full text-label-primary !outline-none shadow-none focus:border focus:ring-0 focus:outline-none focus:shadow-none focus:outline-offset-0 focus:ring-offset-0 disabled:opacity-50",
   {
     variants: {
       variant: {
         primary: "bg-surface-primary border border-stroke-secondary",
         secondary: "bg-surface-quaternary border border-transparent",
+      },
+      darkMode: {
+        true: "placeholder-white/50",
+        false: "placeholder-black/50",
       },
       hasError: {
         true: "!border-b-error",
@@ -54,6 +59,7 @@ const AppInput = forwardRef<HTMLInputElement, InputProps>(
       labelPosition = "top",
       action = null,
     } = props;
+    const { darkTheme } = useSettings();
 
     return (
       <div className={cn(action && "grid grid-cols-[1fr_100px] gap-1")}>
@@ -70,6 +76,7 @@ const AppInput = forwardRef<HTMLInputElement, InputProps>(
                 ref={ref}
                 {...props}
                 placeholder={placeholder}
+                darkMode={darkTheme}
                 variant={variant}
                 hasError={!!error}
                 autoComplete="off"
