@@ -8,7 +8,8 @@
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "build": "prisma generate && tsc --project tsconfig.json && tsc-alias",
     "serve": "pnpm ts-node -r tsconfig-paths/register dist/apps/backend/src/index.js",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "postinstall": "prisma migrate deploy && prisma generate"
   },
   "dependencies": {
     "@aws-sdk/client-ses": "^3.662.0",
