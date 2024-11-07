@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { RegisterHeader } from "@/features/register/RegisterHeader";
+import { RegisterHeader } from "@/components/ui/RegisterHeader";
 import { AppInput } from "@/components/ui/AppInput";
 import { AppButton } from "@/components/ui/Button";
 import { AppCopy } from "@/components/ui/AppCopy";

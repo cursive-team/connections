@@ -42,7 +42,7 @@ export async function updateLeaderboardEntry(
   }
 }
 
-export async function updateWorkoutLeaderboardEntry(): Promise<void> {
+export async function updateLannaWorkoutLeaderboardEntry(): Promise<void> {
   const { user, session } = await storage.getUserAndSession();
 
   // Count total workouts for Edge City Lanna
@@ -125,21 +125,24 @@ export async function updateTapLeaderboardEntry(
   });
 
   try {
+    const requests = [];
     const updateTotalTapsRequest: UpdateLeaderboardEntryRequest = {
       authToken: session.authTokenValue,
       chipIssuer,
       entryType: LeaderboardEntryType.TOTAL_TAP_COUNT,
       entryValue: totalTapCount,
     };
+    requests.push(updateTotalTapsRequest);
 
-    const updateWeekTapsRequest: UpdateLeaderboardEntryRequest = {
-      authToken: session.authTokenValue,
-      chipIssuer,
-      entryType: LeaderboardEntryType.WEEK_NOV_4_TAP_COUNT,
-      entryValue: weekOct27TapCount,
-    };
-
-    const requests = [updateTotalTapsRequest, updateWeekTapsRequest];
+    if (chipIssuer === ChipIssuer.EDGE_CITY_LANNA) {
+      const updateWeekTapsRequest: UpdateLeaderboardEntryRequest = {
+        authToken: session.authTokenValue,
+        chipIssuer,
+        entryType: LeaderboardEntryType.WEEK_NOV_4_TAP_COUNT,
+        entryValue: weekOct27TapCount,
+      };
+      requests.push(updateWeekTapsRequest);
+    }
 
     for (const request of requests) {
       const response = await fetch(

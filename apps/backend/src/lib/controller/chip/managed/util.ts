@@ -44,9 +44,7 @@ export async function getChipFromTapParams(
         throw error;
       }
     }
-  } catch (error) {
-    console.error("error:", errorToString(error));
-  }
+  } catch (error) {}
 
   // Try to parse the tapParams as an NTAG424
   try {

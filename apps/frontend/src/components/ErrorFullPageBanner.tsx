@@ -3,8 +3,8 @@ import { APP_CONFIG } from "@/config";
 import useSettings from "@/hooks/useSettings";
 import { AppButton } from "./ui/Button";
 import { useState, useRef } from "react";
-import { CursiveLogo, HeaderCover } from "./ui/HeaderCover";
-import { RegisterHeader as Header } from "@/features/register/RegisterHeader";
+import { CursiveLogo, HeaderCover } from "@/components/ui/HeaderCover";
+import { RegisterHeader as Header } from "@/components/ui/RegisterHeader";
 
 interface ErrorFullPageBannerProps {
   isIncognito: boolean;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { errorToString, SigninTokenSchema } from "@types";
 import { toast } from "sonner";
-import { RegisterHeader } from "@/features/register/RegisterHeader";
+import { RegisterHeader } from "@/components/ui/RegisterHeader";
 import { AppButton } from "@/components/ui/Button";
 import { AppCopy } from "@/components/ui/AppCopy";
 import { SupportToast } from "@/components/ui/SupportToast";

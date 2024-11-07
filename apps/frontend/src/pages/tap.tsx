@@ -1,19 +1,20 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { TapParams, ChipTapResponse, errorToString, ChipIssuer } from "@types";
+import { ChipTapResponse, errorToString, ChipIssuer } from "@types";
 import { toast } from "sonner";
 import { storage } from "@/lib/storage";
 import {
   registerChip,
   tapChip,
   updateTapLeaderboardEntry,
-  updateWorkoutLeaderboardEntry,
+  updateLannaWorkoutLeaderboardEntry,
 } from "@/lib/chip";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { shareableUserDataToJson } from "@/lib/user";
+import { hasRecentAddChipRequest } from "@/lib/chip/addChip";
 
 const TapPage: React.FC = () => {
   const router = useRouter();
@@ -21,10 +22,14 @@ const TapPage: React.FC = () => {
   useEffect(() => {
     const handleTap = async () => {
       logClientEvent("tap-chip", {});
-      const { chipId } = router.query;
+      const tapParams = Object.fromEntries(
+        Object.entries(router.query)
+          .filter(([, value]) => typeof value === "string")
+          .map(([key, value]) => [key, value as string])
+      );
 
-      if (!chipId || typeof chipId !== "string") {
-        logClientEvent("tap-chip-invalid-chip-id", {});
+      if (Object.keys(tapParams).length === 0) {
+        logClientEvent("tap-chip-invalid-tap-params", {});
         toast.error("Invalid tap! Please try again.");
         router.push("/");
         return;
@@ -33,8 +38,15 @@ const TapPage: React.FC = () => {
       const user = await storage.getUser();
       const session = await storage.getSession();
 
+      // If the auth token is expired, tell them to sign in again
+      if (session && session.authTokenExpiresAt < new Date()) {
+        logClientEvent("tap-chip-session-expired", {});
+        toast.error("Your session has expired! Please sign in again.");
+        router.push("/login");
+        return;
+      }
+
       try {
-        const tapParams: TapParams = { chipId };
         const response: ChipTapResponse = await tapChip(tapParams);
 
         if (response.chipIsRegistered) {
@@ -53,7 +65,7 @@ const TapPage: React.FC = () => {
 
             // If user is not logged in, direct them to sign in
             // TODO: Allow users to tap without being signed in
-            if (!user || !session || session.authTokenExpiresAt < new Date()) {
+            if (!user || !session) {
               logClientEvent("tap-location-chip-not-logged-in", {});
               toast.error("You must be logged in to tap this chip!");
               router.push("/login");
@@ -65,7 +77,7 @@ const TapPage: React.FC = () => {
 
             // Update workout leaderboard entry if the chip issuer is Edge City Lanna
             if (response.chipIssuer === ChipIssuer.EDGE_CITY_LANNA) {
-              await updateWorkoutLeaderboardEntry();
+              await updateLannaWorkoutLeaderboardEntry();
             }
 
             // Save tap to populate modal upon redirect
@@ -90,14 +102,6 @@ const TapPage: React.FC = () => {
               logClientEvent("tap-chip-not-logged-in", {});
               toast.error("Please tap a new chip to register!");
               router.push("/");
-              return;
-            }
-
-            // If the auth token is expired, tell them to sign in again
-            if (session.authTokenExpiresAt < new Date()) {
-              logClientEvent("tap-chip-session-expired", {});
-              toast.error("Your session has expired! Please sign in again.");
-              router.push("/login");
               return;
             }
 
@@ -129,43 +133,58 @@ const TapPage: React.FC = () => {
 
             router.push("/register");
             return;
-          } else if (
-            response.isLocationChip !== true &&
-            session &&
-            user?.userData
-          ) {
-            const isOn: boolean = false;
-
-            if (isOn) {
-              // User logged in and unregistered chip is not locationChip, allow user to bind new chip to profile
-              logClientEvent("tap-chip-logged-in-bind-new-chip", {});
-
-              // Only include shareable data
-              const shareableUserData = shareableUserDataToJson(user.userData);
-
-              await registerChip({
-                authToken: session.authTokenValue,
-                tapParams: tapParams,
-                ownerUsername: user.userData.username,
-                ownerDisplayName: user.userData.displayName,
-                ownerBio: user.userData.bio,
-                ownerSignaturePublicKey: user.userData.signaturePublicKey,
-                ownerEncryptionPublicKey: user.userData.encryptionPublicKey,
-                ownerPsiPublicKeyLink: user.userData.psiPublicKeyLink,
-                ownerUserData: shareableUserData,
-              });
-
-              toast.success("Successfully bound a new chip to your account");
+          } else if (response.isLocationChip !== true && session) {
+            if (!user?.userData) {
+              toast.error("Please sign in to bind a new chip!");
+              router.push("/login");
+              return;
             }
 
+            const wantsToAddChip = hasRecentAddChipRequest();
+            if (!wantsToAddChip) {
+              logClientEvent(
+                "tap-chip-logged-in-bind-new-chip-no-add-request",
+                {}
+              );
+              toast.error(
+                `Please tell your friend to tap their chip first! If you are adding a new chip, go to your profile and click "Add Chip" first!`
+              );
+              router.push("/profile");
+              return;
+            }
+
+            // User logged in and unregistered chip is not locationChip, allow user to bind new chip to profile
+            logClientEvent("tap-chip-logged-in-bind-new-chip", {});
+
+            // Only include shareable data
+            const shareableUserData = shareableUserDataToJson(user.userData);
+
+            await registerChip({
+              authToken: session.authTokenValue,
+              tapParams: tapParams,
+              ownerUsername: user.userData.username,
+              ownerDisplayName: user.userData.displayName,
+              ownerBio: user.userData.bio,
+              ownerSignaturePublicKey: user.userData.signaturePublicKey,
+              ownerEncryptionPublicKey: user.userData.encryptionPublicKey,
+              ownerPsiPublicKeyLink: user.userData.psiPublicKeyLink,
+              ownerUserData: shareableUserData,
+            });
+
+            toast.success("Successfully bound a new chip to your account");
             router.push("/profile");
             return;
-          } else if (response.isLocationChip === true && !session) {
+          } else if (response.isLocationChip === true) {
             toast.error(
-              "Cannot register a location chip, please pick up your nfc wristband."
+              "Cannot register a location chip, please pick up your NFC chip."
             );
-            router.push("/");
-            return;
+            if (session) {
+              router.push("/profile");
+              return;
+            } else {
+              router.push("/");
+              return;
+            }
           }
         }
       } catch (error) {
