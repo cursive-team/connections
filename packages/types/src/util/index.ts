@@ -47,3 +47,19 @@ export const HashableFieldSchema = z.object({
 });
 
 export type HashableField = z.infer<typeof HashableFieldSchema>;
+
+// Represents a string array that has an update date
+export const UpdatableStringArraySchema = z.object({
+  value: z.array(z.string()),
+  lastUpdated: z.coerce.date(),
+});
+
+export type UpdatableStringArray = z.infer<typeof UpdatableStringArraySchema>;
+
+// Represents a record from string to strinct array that has an update date
+export const UpdatableRecordStringToStringArraySchema = z.object({
+  value: z.record(z.string(), z.array(z.string())),
+  lastUpdated: z.coerce.date(),
+});
+
+export type UpdatableRecordStringToStringArray = z.infer<typeof UpdatableRecordStringToStringArraySchema>;

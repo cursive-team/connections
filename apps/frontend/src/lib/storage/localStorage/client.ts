@@ -20,7 +20,7 @@ import {
   User,
   UserData,
 } from "@/lib/storage/types";
-import { addChip } from "@/lib/storage/localStorage/user/chip";
+import { addChip, getChipIssuers } from "@/lib/storage/localStorage/user/chip";
 import { updateUserData } from "@/lib/storage/localStorage/user/userData";
 import {
   AccessToken,
@@ -118,6 +118,10 @@ export class LocalStorage implements ClientStorage {
 
   async addLocationTap(tapResponse: ChipTapResponse): Promise<void> {
     return addLocationTap(tapResponse);
+  }
+
+  async getChipIssuers(): Promise<ChipIssuer[]> {
+    return getChipIssuers();
   }
 
   async updateComment(

@@ -4,6 +4,9 @@ import {
   BackupData,
   BackupEntryType,
   CreateBackupData,
+  DataImportSourceSchema,
+  DataImportSource,
+  ChipIssuerSchema
 } from "@types";
 import {
   Activity,
@@ -52,7 +55,7 @@ export const processUserBackup = ({
     throw new Error("No backup data found");
   }
 
-  let user = existingUser;
+  let user: User | undefined = existingUser;
   let submittedAt = previousSubmittedAt || backupData[0].submittedAt;
 
   if (!user && backupData[0].backupEntryType !== BackupEntryType.INITIAL) {

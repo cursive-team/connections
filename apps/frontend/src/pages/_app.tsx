@@ -16,6 +16,7 @@ import { fetchMessages } from "@/lib/message";
 import { cn } from "@/lib/frontend/util";
 import { usePathname } from "next/navigation";
 import useSettings from "@/hooks/useSettings";
+import { refreshData } from "@/lib/imports";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -40,6 +41,14 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   if (pathname?.includes("/fortune")) {
     isFortunePage = pathname.includes("/fortune");
   }
+
+  // Refresh imports when the page is refreshed
+  useEffect(() => {
+    const refreshImports = async () => {
+      refreshData();
+    }
+    refreshImports();
+  });
 
   // Refresh messages when the page is refreshed
   useEffect(() => {
