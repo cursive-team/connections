@@ -4,12 +4,12 @@ import { toast } from "sonner";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
 import { errorToString, Json, UsernameSchema } from "@types";
-import EnterEmail from "@/features/register/lanna/EnterEmail";
-import EnterCode from "@/features/register/lanna/EnterCode";
-import EnterUserInfo from "@/features/register/lanna/EnterUserInfo";
-import RegisterWithPasskey from "@/features/register/lanna/RegisterWithPasskey";
-import RegisterWithPassword from "@/features/register/lanna/RegisterWithPassword";
-import CreatingAccount from "@/features/register/lanna/CreatingAccount";
+import EnterEmail from "@/features/register/devcon/EnterEmail";
+import EnterCode from "@/features/register/devcon/EnterCode";
+import EnterUserInfo from "@/features/register/devcon/EnterUserInfo";
+import RegisterWithPasskey from "@/features/register/devcon/RegisterWithPasskey";
+import RegisterWithPassword from "@/features/register/devcon/RegisterWithPassword";
+import CreatingAccount from "@/features/register/devcon/CreatingAccount";
 import {
   requestSigninToken,
   verifyEmailIsUnique,
@@ -35,14 +35,13 @@ enum DisplayState {
   REGISTER_WITH_PASSKEY,
   REGISTER_WITH_PASSWORD,
   CREATING_ACCOUNT,
-  LANNA_DISCOVER_CONNECTIONS,
 }
 
-interface RegisterLannaProps {
+interface RegisterDevconProps {
   savedTap: TapInfo;
 }
 
-const RegisterLanna: React.FC<RegisterLannaProps> = ({ savedTap }) => {
+const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
   const router = useRouter();
   const { pageHeight } = useSettings();
   const [displayState, setDisplayState] = useState<DisplayState>(
@@ -326,7 +325,6 @@ const RegisterLanna: React.FC<RegisterLannaProps> = ({ savedTap }) => {
         DisplayState.REGISTER_WITH_PASSKEY,
         DisplayState.REGISTER_WITH_PASSWORD,
         DisplayState.CREATING_ACCOUNT,
-        DisplayState.LANNA_DISCOVER_CONNECTIONS,
       ].includes(displayState) && (
         <HeaderCover
           image="edge-city"
@@ -369,4 +367,4 @@ const RegisterLanna: React.FC<RegisterLannaProps> = ({ savedTap }) => {
   );
 };
 
-export default RegisterLanna;
+export default RegisterDevcon;
