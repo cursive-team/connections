@@ -101,6 +101,7 @@ PrismaPostgresClient.prototype.CreateUser = async function (
       ...createUser,
       usernameLowercase: createUser.username.toLowerCase(),
       email: createUser.email.toLowerCase(),
+      notificationsEnabled: false,
     },
   });
 
