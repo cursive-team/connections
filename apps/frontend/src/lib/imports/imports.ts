@@ -44,9 +44,7 @@ export async function fetchAndSaveImportedData(
   }
 }
 
-// TODO: only will be able to import data types with same scope
 export async function importData(app: string, code: string): Promise<void> {
-
   // This should never happen
   if (!OAUTH_APP_DETAILS || !OAUTH_APP_DETAILS[app]) {
     toast.error("Application integration details are not available");
@@ -70,11 +68,8 @@ export async function importData(app: string, code: string): Promise<void> {
 
   if (accessToken && details.can_import) {
     const { user, session } = await storage.getUserAndSession();
-
     for (const option of details.data_options) {
       try {
-        // TODO: Need to specify data imports per community
-
         // Unlike access token fetching, all data importing will be from client
         await fetchAndSaveImportedData(
           session.authTokenValue,
