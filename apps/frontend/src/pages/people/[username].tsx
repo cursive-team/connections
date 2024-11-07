@@ -24,6 +24,7 @@ import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { sendMessages } from "@/lib/message";
 import useSettings from "@/hooks/useSettings";
 import { cn } from "@/lib/frontend/util";
+import { Card } from "@/components/cards/Card";
 
 interface CommentModalProps {
   username: string;
@@ -189,6 +190,7 @@ const UserProfilePage: React.FC = () => {
   const router = useRouter();
   const { username } = router.query;
   const [user, setUser] = useState<User | null>(null);
+  const { darkTheme } = useSettings();
   const [session, setSession] = useState<Session | null>(null);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [tapInfo, setTapInfo] = useState<{
@@ -554,7 +556,15 @@ const UserProfilePage: React.FC = () => {
 
             {verifiedIntersection && (
               <>
-                <div className="px-2 pt-2 pb-4 bg-white rounded-lg border border-black/80 flex-col justify-start items-start gap-2 inline-flex">
+                <Card.Base
+                  variant="gray"
+                  className={cn(
+                    "px-2 pt-2 pb-4 rounded-lg w-full  flex-col justify-start items-start gap-2 inline-flex",
+                    darkTheme
+                      ? "border !border-white"
+                      : "border border-black/80"
+                  )}
+                >
                   <div className="text-sm font-semibold text-label-primary font-sans">
                     📇 Common contacts
                   </div>
@@ -574,8 +584,16 @@ const UserProfilePage: React.FC = () => {
                       ))}
                     </div>
                   )}
-                </div>
-                <div className="w-full px-2 pt-2 pb-4 bg-white rounded-lg border border-black/80 flex flex-col gap-2">
+                </Card.Base>
+                <Card.Base
+                  variant="gray"
+                  className={cn(
+                    "px-2 pt-2 pb-4 rounded-lg w-full  flex-col justify-start items-start gap-2 inline-flex",
+                    darkTheme
+                      ? "border !border-white"
+                      : "border border-black/80"
+                  )}
+                >
                   <div className="text-sm font-semibold text-label-primary font-sans">
                     🪢 Your Tension disagreements
                   </div>
@@ -614,7 +632,7 @@ const UserProfilePage: React.FC = () => {
                       )}
                     </>
                   )}
-                </div>
+                </Card.Base>
               </>
             )}
 

@@ -21,6 +21,7 @@ interface AppLayoutProps {
     content?: React.ReactNode;
   };
   header?: React.ReactNode;
+  footer?: React.ReactNode;
   headerDivider?: boolean;
   headerContainer?: boolean;
 }
@@ -36,6 +37,7 @@ export default function AppLayout({
   back = undefined,
   withContainer = true,
   seoTitle = undefined,
+  footer = undefined,
 }: AppLayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -81,6 +83,7 @@ export default function AppLayout({
         {children}
       </div>
       {!isMenuOpen && showFooter && <AppFooter />}
+      {footer}
     </div>
   );
 }
