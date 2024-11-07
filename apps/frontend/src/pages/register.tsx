@@ -1,3 +1,4 @@
+import RegisterDevcon from "@/features/register/devcon/Register";
 import RegisterLanna from "@/features/register/lanna/Register";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { storage } from "@/lib/storage";
@@ -43,6 +44,8 @@ const Register: React.FC = () => {
 
   if (savedTap.tapResponse.chipIssuer === ChipIssuer.EDGE_CITY_LANNA) {
     return <RegisterLanna savedTap={savedTap} />;
+  } else if (savedTap.tapResponse.chipIssuer === ChipIssuer.DEVCON_2024) {
+    return <RegisterDevcon savedTap={savedTap} />;
   }
 
   return null;

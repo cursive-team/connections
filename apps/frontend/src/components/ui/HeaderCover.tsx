@@ -64,11 +64,13 @@ export const HeaderCover = ({ isLoading = false, image }: HeaderCoverProps) => {
             height={200}
           />
         )}
-        <CursiveLogo
-          className="position absolute -bottom-8 left-1/2 -ml-[30px]"
-          isLoading={isLoading}
-          image={image}
-        />
+        {image !== "devcon" && (
+          <CursiveLogo
+            className="position absolute -bottom-8 left-1/2 -ml-[30px]"
+            isLoading={isLoading}
+            image={image}
+          />
+        )}
       </div>
     </div>
   );

@@ -54,7 +54,7 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
           <div className="flex flex-col gap-2">
             <span>
               {`Use programmable cryptography to safely connect & efficiently coordinate with 
-              Edge City residents. Make sure you've tapped your own chip to register it.`}
+              Devcon attendees. Make sure you've tapped your own chip to register it.`}
             </span>
           </div>
         }
@@ -71,7 +71,7 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
               required
               value={email}
               onChange={handleChange}
-              description="Use your Edge City email for additional features."
+              description="Use your Devcon email for additional features."
             />
           </div>
 
