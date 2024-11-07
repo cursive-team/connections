@@ -32,7 +32,13 @@ export function MapResponseToLeaderboardEntryRequest(
         chipIssuer,
         resp
       );
-    case ImportDataType.GITHUB_LANNA_CONTRIBUTIONS, ImportDataType.GITHUB_CONTRIBUTIONS_LAST_YEAR:
+    case ImportDataType.GITHUB_LANNA_CONTRIBUTIONS:
+      return MapGithubCommitContributionsToLeaderboardEntry(
+        authToken,
+        chipIssuer,
+        resp
+      );
+    case ImportDataType.GITHUB_CONTRIBUTIONS_LAST_YEAR:
       return MapGithubCommitContributionsToLeaderboardEntry(
         authToken,
         chipIssuer,
@@ -80,7 +86,10 @@ export async function saveImportedData(authToken: string, user: User, option: Da
       case ImportDataType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
         await saveLeaderboardEntries(option, authToken, user, chipIssuer, data);
         return;
-      case ImportDataType.GITHUB_LANNA_CONTRIBUTIONS, ImportDataType.GITHUB_CONTRIBUTIONS_LAST_YEAR:
+      case ImportDataType.GITHUB_LANNA_CONTRIBUTIONS:
+        await saveLeaderboardEntries(option, authToken, user, chipIssuer, data);
+        return;
+      case ImportDataType.GITHUB_CONTRIBUTIONS_LAST_YEAR:
         await saveLeaderboardEntries(option, authToken, user, chipIssuer, data);
         return;
       default:

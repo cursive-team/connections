@@ -35,7 +35,6 @@ export async function fetchAndSaveImportedData(
       );
     }
 
-    // TODO: save data for each chip issuer?
     await saveImportedData(authToken, user, options, chipIssuer, response);
     return;
   } catch (error) {
