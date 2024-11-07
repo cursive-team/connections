@@ -4,13 +4,17 @@ import {
   ImportDataType
 } from "@types";
 import { stravaFetch } from "@/lib/imports/integrations/strava";
-import { ghFetchContributions } from "@/lib/imports/integrations/github";
+import {
+  ghFetchContributions,
+  ghFetchRepos,
+  ghFetchStarredRepos,
+} from "@/lib/imports/integrations/github";
 
 export async function fetchImportedData(
   token: AccessToken | null,
-  options: DataOption
+  option: DataOption
 ): Promise<Response | null> {
-  switch (options.type) {
+  switch (option.type) {
     case ImportDataType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
       if (!token) {
         throw new Error("Missing oauth token")
@@ -37,6 +41,19 @@ export async function fetchImportedData(
       const to2 = new Date(2024, 10, 15); // Nov 15, 2024
 
       return await ghFetchContributions(token, from2, to2);
+    case ImportDataType.GITHUB_STARRED_REPOS:
+      if (!token) {
+        throw new Error("Missing oauth token")
+        return null;
+      }
+      return await ghFetchStarredRepos(token);
+    case ImportDataType.GITHUB_PROGRAMMING_LANGUAGES:
+      console.log("Programming languages")
+      if (!token) {
+        throw new Error("Missing oauth token")
+        return null;
+      }
+      return await ghFetchRepos(token);
     default:
       return null;
   }

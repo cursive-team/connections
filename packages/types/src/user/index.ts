@@ -17,6 +17,8 @@ export enum BackupEntryType {
   OAUTH = "OAUTH",
   LOCATION = "LOCATION",
   DELETE_OAUTH = "DELETE_OAUTH",
+  APP_IMPORT_REFRESH = "APP_IMPORT_REFRESH",
+  TOGGLE_APP_CONSENT = "TOGGLE_APP_CONSENT",
 }
 
 export const BackupEntryTypeSchema = z.nativeEnum(BackupEntryType);

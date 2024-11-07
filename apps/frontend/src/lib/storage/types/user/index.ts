@@ -3,8 +3,13 @@ import { UserDataSchema } from "./userData";
 import { ChipSchema } from "./chip";
 import { ConnectionSchema } from "./connection";
 import { ActivitySchema } from "./activity";
-import { AccessTokenSchema, EmailSchema, nullToUndefined } from "@types";
+import {
+  AccessTokenSchema,
+  EmailSchema,
+  nullToUndefined
+} from "@types";
 import { LocationSchema } from "./location";
+import { AppImportsSchema, ChipIssuerAppConsentSchema, ChipIssuerImportsSchema, } from "@/lib/storage/types";
 
 export const UserSchema = z.object({
   email: EmailSchema,
@@ -18,6 +23,8 @@ export const UserSchema = z.object({
   locations: nullToUndefined(z.record(z.string(), LocationSchema)),
   activities: z.array(ActivitySchema),
   oauth: nullToUndefined(z.record(z.string(), AccessTokenSchema)),
+  appImports: nullToUndefined(AppImportsSchema),
+  chipIssuerAppConsent: nullToUndefined(ChipIssuerAppConsentSchema),
 });
 
 export type User = z.infer<typeof UserSchema>;
@@ -28,3 +35,4 @@ export * from "./connection";
 export * from "./activity";
 export * from "./oauth";
 export * from "./location";
+export * from "./imports";

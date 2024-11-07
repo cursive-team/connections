@@ -3,8 +3,8 @@ import {
   AccessTokenSchema,
   OAuthAppDetails,
   mapResponseToAccessToken,
-  DATA_IMPORT_SOURCE,
   errorToString,
+  DataImportSource,
 } from "@types";
 import { BASE_API_URL, OAUTH_APP_DETAILS } from "@/config";
 import { storage } from "@/lib/storage";
@@ -17,7 +17,7 @@ async function fetchToken(
 ): Promise<Response | null> {
   // Apps that use client-side fetching
   switch (app) {
-    case DATA_IMPORT_SOURCE.STRAVA:
+    case DataImportSource.STRAVA:
       return await stravaFetchToken(mapping, code);
     default:
       return null;
@@ -130,7 +130,7 @@ export async function getOAuthAccessToken(
   if (token) {
     // NOTE: when there are more scopes, check token scope, XOR save token by $app_$scope
 
-    if (app === DATA_IMPORT_SOURCE.GITHUB) {
+    if (app === DataImportSource.GITHUB) {
       // Github OAuth tokens do not expire, unless they have not been used for a year
       return token;
     }

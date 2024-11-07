@@ -33,7 +33,7 @@ const OAuthAccessTokenPage: React.FC = () => {
           return;
         }
 
-        router.push("/community");
+        router.push("/profile");
       }
     };
 

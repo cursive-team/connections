@@ -4,6 +4,9 @@ import {
   BackupData,
   BackupEntryType,
   CreateBackupData,
+  DataImportSourceSchema,
+  DataImportSource,
+  ChipIssuerSchema
 } from "@types";
 import {
   Activity,
@@ -19,7 +22,13 @@ import {
   UserDataSchema,
   UserSchema,
   OAuthAppSchema,
-  OAuthApp
+  OAuthApp,
+  AppImports,
+  AppImportsSchema,
+  AppImport,
+  ChipIssuerAppConsentSchema,
+  ChipIssuerAppConsent,
+  AppConsents, Consent,
 } from "@/lib/storage/types";
 import { decryptBackupString, encryptBackupString } from "@/lib/crypto/backup";
 import { BASE_API_URL } from "@/config";
@@ -154,6 +163,62 @@ export const processUserBackup = ({
         if (user.oauth) {
           delete user.oauth[oauthApp.app];
         }
+        break;
+      case BackupEntryType.APP_IMPORT_REFRESH:
+        if (!user) {
+          throw new Error("APP_IMPORT_REFRESH backup entry found before INITIAL");
+        }
+
+        const appImport: AppImports = AppImportsSchema.parse(
+          JSON.parse(decryptedData)
+        );
+
+        user.appImports = appImport;
+        break;
+      case BackupEntryType.TOGGLE_APP_CONSENT:
+        if (!user) {
+          throw new Error("TOGGLE_APP_CONSENT backup entry found before INITIAL");
+        }
+
+        if (!user.chipIssuerAppConsent) {
+          user.chipIssuerAppConsent = {};
+        }
+
+        const chipIssuerAppConsent: ChipIssuerAppConsent = ChipIssuerAppConsentSchema.parse(JSON.parse(decryptedData));
+
+        const issuers: string[] = Object.keys(chipIssuerAppConsent);
+        if (issuers.length !== 1) {
+          // Should only be one, handle
+          break;
+        }
+        const chipIssuer = ChipIssuerSchema.parse(issuers[0]);
+
+        if (!user.chipIssuerAppConsent[chipIssuer]) {
+          user.chipIssuerAppConsent[chipIssuer] = {};
+        }
+
+        const appConsents: AppConsents | undefined = chipIssuerAppConsent[chipIssuer];
+
+        if (!appConsents) {
+          // TODO handle
+          break;
+        }
+
+        const importSources: string[] = Object.keys(appConsents);
+        if (importSources.length !== 1) {
+          // Should only be one, handle
+          break;
+        }
+        const importSource = DataImportSourceSchema.parse(importSources[0]);
+
+        const appConsent: Consent | undefined = appConsents[importSource];
+
+        if (!appConsent) {
+          // TODO handle
+          break;
+        }
+
+        user.chipIssuerAppConsent[chipIssuer][importSource] = appConsent;
         break;
       default:
         throw new Error(`Invalid backup entry type: ${data.backupEntryType}`);
@@ -470,6 +535,34 @@ export const createOAuthDeletionBackup = ({
     iv,
     encryptedData,
     backupEntryType: BackupEntryType.DELETE_OAUTH,
+    clientCreatedAt: new Date(),
+  };
+};
+
+export interface CreateChipIssuerImportBackupArgs {
+  email: string;
+  password: string;
+
+  // Currently assumes only a single issuer-app import, in theory could be multiple
+  appImport: AppImport;
+}
+
+export const createAppImportBackup = ({
+    email,
+    password,
+    appImport,
+  }: CreateChipIssuerImportBackupArgs): CreateBackupData => {
+  const { authenticationTag, iv, encryptedData } = encryptBackupString({
+    backup: JSON.stringify(appImport),
+    email,
+    password,
+  });
+
+  return {
+    authenticationTag,
+    iv,
+    encryptedData,
+    backupEntryType: BackupEntryType.APP_IMPORT_REFRESH,
     clientCreatedAt: new Date(),
   };
 };

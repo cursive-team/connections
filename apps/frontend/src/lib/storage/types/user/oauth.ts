@@ -2,7 +2,7 @@ import { AccessTokenSchema } from "@types";
 import { z } from "zod";
 
 export const OAuthDataSchema = z.object({
-  app: z.string(),
+  app: z.string(), // TODO ImportDataType?
   token: AccessTokenSchema,
 });
 

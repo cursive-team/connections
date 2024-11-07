@@ -13,8 +13,9 @@ import {
 } from "./integrations/github";
 import { updateUserDataFromImportData } from "@/lib/imports/update";
 import { storage } from "@/lib/storage";
-import { User } from "@/lib/storage/types";
+import { AppImport, User } from "@/lib/storage/types";
 import { updateLeaderboardEntry } from "@/lib/chip";
+import { addAppImport } from "@/lib/storage/localStorage/user/imports";
 
 
 // Map response to entry for leaderboard
@@ -57,6 +58,8 @@ async function saveLeaderboardEntries(options: DataOption, authToken: string, us
     throw new Error("Imported leaderboard entry is null");
   }
 
+  // Do not have backup type because leaderboard is chipIssuer-scoped, not user-scoped
+
   const newUserData = await updateUserDataFromImportData(
     user.userData,
     options.type,
@@ -67,7 +70,7 @@ async function saveLeaderboardEntries(options: DataOption, authToken: string, us
   return;
 }
 
-export async function saveImportedData(authToken: string, user: User, option: DataOption, chipIssuer: ChipIssuer, resp: Response): Promise<void> {
+export async function saveImportedData(authToken: string, user: User, option: DataOption, chipIssuers: ChipIssuer[], resp: Response): Promise<void> {
   try {
     const data = await resp.json();
     if (data && data.error) {
@@ -78,10 +81,27 @@ export async function saveImportedData(authToken: string, user: User, option: Da
 
     switch (option.type) {
       case ImportDataType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
-        await saveLeaderboardEntries(option, authToken, user, chipIssuer, data);
+        for (const issuer of chipIssuers) {
+          await saveLeaderboardEntries(option, authToken, user, issuer, data);
+        }
         return;
       case ImportDataType.GITHUB_LANNA_CONTRIBUTIONS, ImportDataType.GITHUB_CONTRIBUTIONS_LAST_YEAR:
-        await saveLeaderboardEntries(option, authToken, user, chipIssuer, data);
+        for (const issuer of chipIssuers) {
+          await saveLeaderboardEntries(option, authToken, user, issuer, data);
+        }
+        return;
+      case ImportDataType.GITHUB_STARRED_REPOS:
+
+        // TODO: need to handle specific data type here, just do with one type, just to show how it's done
+
+        // Save imported data at the level of the user
+        const appImport: AppImport = {
+          serializedData: "",
+          saveToLocalStorage: true,
+          lastImportedAt: new Date(),
+        }
+
+        await addAppImport(appImport);
         return;
       default:
         return;

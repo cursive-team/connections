@@ -54,6 +54,7 @@ const ProfilePage: React.FC = () => {
     );
   }
 
+  // TODO: use enum
   const hasStravaToAdd =
     !user.oauth || !Object.keys(user.oauth).includes("strava");
   const hasGithubToAdd =
@@ -201,6 +202,7 @@ const ProfilePage: React.FC = () => {
                 {user.oauth && Object.keys(user.oauth).length > 0 && (
                   <div className="py-2">
                     <div className="w-full flex gap-2 overflow-x-auto">
+                      {/* TODO: use enum */}
                       {Object.keys(user.oauth).includes("strava") && (
                         <div>
                           <ImportStravaButton addElement={false} />

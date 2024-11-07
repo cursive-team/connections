@@ -1,14 +1,26 @@
 import {
   AccessToken,
-  ChipIssuer,
+  ChipIssuer, GithubStarredRepo,
   GithubUserResponse,
   GithubUserResponseSchema,
+  GithubReposResponse,
+  GithubReposResponseSchema,
   LeaderboardEntryType,
   UpdateLeaderboardEntryRequest,
 } from "@types";
 
+/*
+GITHUB RATELIMITS:
 
-export async function ghFetchContributions(token: AccessToken, from: Date, to: Date): Promise<Response | null> {
+```
+You can use a personal access token to make API requests. Additionally, you can authorize a GitHub App or OAuth app, which can then make API requests on your behalf.
+
+All of these requests count towards your personal rate limit of 5,000 requests per hour.
+```
+(https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api?apiVersion=2022-11-28#primary-rate-limit-for-authenticated-users)
+ */
+
+export async function ghFetchUsername(token: AccessToken): Promise<string> {
   const user = await fetch("https://api.github.com/user", {
     method: "GET",
     headers: {
@@ -21,7 +33,57 @@ export async function ghFetchContributions(token: AccessToken, from: Date, to: D
 
   const resp: GithubUserResponse = GithubUserResponseSchema.parse(rawUser);
 
-  const username = resp.login;
+  return resp.login;
+}
+
+// TODO: just return Response
+export async function ghFetchUserStarredRepos(token: AccessToken, username: string): Promise<GithubStarredRepo[]> {
+  const user = await fetch(`https://api.github.com/users/${username}/starred`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      Authorization: `Bearer ${token.access_token}`,
+    },
+  });
+
+  const rawRepos = await user.json();
+
+  const resp: GithubReposResponse = GithubReposResponseSchema.parse(rawRepos);
+
+  /*
+
+  TODO: iterate through, tally languages, sort by order
+
+   */
+
+  return resp.repos;
+}
+
+// TODO: to get programming languages: https://stackoverflow.com/a/70349623
+export async function ghFetchUserRepos(token: AccessToken, username: string): Promise<Response | null> {
+  console.log("User repos")
+
+  const user = await fetch(`https://api.github.com/users/${username}/repos`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      Authorization: `Bearer ${token.access_token}`,
+    },
+  });
+
+  const rawRepos = await user.json();
+
+  const resp: GithubReposResponse = GithubReposResponseSchema.parse(rawRepos);
+
+  return null;
+}
+
+export async function ghFetchContributions(token: AccessToken, from: Date, to: Date): Promise<Response | null> {
+  const username = await ghFetchUsername(token);
 
   // TODO: find graphgl library for handling query / variables
   const query = `
@@ -55,6 +117,8 @@ export async function ghFetchContributions(token: AccessToken, from: Date, to: D
     },
     body: JSON.stringify(body),
   });
+
+  console.log("Fetch GH contributions: ", response)
 
   return response;
 }
@@ -94,4 +158,20 @@ export function MapGithubCommitContributionsToLeaderboardEntry(
     entryValue: commits,
     entryType: LeaderboardEntryType.GITHUB_LANNA_COMMITS,
   };
+}
+
+export async function ghFetchStarredRepos(token: AccessToken): Promise<Response | null> {
+  const username = await ghFetchUsername(token);
+
+  const repos: string = await ghFetchUserStarredRepos(token, username);
+
+  return null;
+}
+
+export async function ghFetchRepos(token: AccessToken): Promise<Response | null> {
+  const username = await ghFetchUsername(token);
+
+  const repos: string = await ghFetchUserRepos(token, username);
+
+  return null;
 }

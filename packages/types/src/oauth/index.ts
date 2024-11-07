@@ -4,8 +4,6 @@ import { z } from "zod";
 export * from "./strava";
 export * from "./github";
 
-import { ImportDataType, ImportDataTypeSchema } from "../chip";
-
 export const StravaAtheleteSchema = z.object({
   id: z.number(),
 });
@@ -40,9 +38,37 @@ export const AccessTokenSchema = z.object({
 
 export type AccessToken = z.infer<typeof AccessTokenSchema>;
 
+// TODO: should this be in chips? Will this be only in backend or also in frontend? For now put here to consolidate with other options. If it belongs in shared packages move into separate imports file
+export enum DataImportSource {
+  STRAVA = "strava",
+  GITHUB = "github",
+}
+
+export const DataImportSourceSchema = z.nativeEnum(DataImportSource)
+
+// Should be separation between leaderboard type and import data type, e.g. may use a single import type for multiple leaderboards
+export enum ImportDataType {
+  GITHUB_LANNA_CONTRIBUTIONS = "GITHUB_LANNA_CONTRIBUTIONS",
+  GITHUB_CONTRIBUTIONS_LAST_YEAR = "GITHUB_CONTRIBUTIONS_LAST_YEAR",
+  GITHUB_STARRED_REPOS = "GITHUB_STARRED_REPOS",
+  GITHUB_PROGRAMMING_LANGUAGES = "GITHUB_PROGRAMMING_LANGUAGES",
+  STRAVA_PREVIOUS_MONTH_RUN_DISTANCE = "STRAVA_PREVIOUS_MONTH_RUN_DISTANCE",
+}
+
+export const ImportDataTypeSchema = z.nativeEnum(ImportDataType);
+
+export enum RefreshRateType {
+  DAILY = "DAILY",
+  WEEKLY = "WEEKLY",
+  MONTHLY = "MONTHLY"
+}
+
+export const RefreshRateTypeSchema = z.nativeEnum(RefreshRateType);
+
 export const DataOptionSchema = z.object({
   type: ImportDataTypeSchema,
   scope: z.string(),
+  refreshRate: RefreshRateTypeSchema,
 });
 
 export type DataOption = z.infer<typeof DataOptionSchema>;
@@ -108,19 +134,14 @@ export async function githubMapResponseToAccessToken(
   };
 }
 
-export enum DATA_IMPORT_SOURCE {
-  STRAVA = "strava",
-  GITHUB = "github",
-}
-
 export async function mapResponseToAccessToken(
   app: string,
   data: any
 ): Promise<AccessToken | null> {
   switch (app) {
-    case DATA_IMPORT_SOURCE.STRAVA:
+    case DataImportSource.STRAVA:
       return await stravaMapResponseToAccessToken(data);
-    case DATA_IMPORT_SOURCE.GITHUB:
+    case DataImportSource.GITHUB:
       return await githubMapResponseToAccessToken(data);
     default:
       return null;

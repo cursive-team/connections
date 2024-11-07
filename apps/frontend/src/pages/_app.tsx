@@ -43,6 +43,22 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
   // Refresh messages when the page is refreshed
   useEffect(() => {
+    const refreshImports = async () => {
+      const user = await storage.getUser();
+      user?.appImports
+    }
+    refreshImports();
+  });
+
+  // Refresh messages when the page is refreshed
+  useEffect(() => {
+
+    // TODO: add refresh loop
+    //  - have refresh logic
+    //  - backup for whether something has been imported and when
+    //  - will use import information for PSI section
+    //  - will also use for deciding when to backup next
+
     const refreshMessages = async () => {
       console.log("Refreshing messages...");
       const user = await storage.getUser();
