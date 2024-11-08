@@ -4,6 +4,8 @@ import {
   UpdateLeaderboardEntryRequest,
   ImportDataType,
   errorToString,
+  GithubReposResponseSchema,
+  GithubReposResponse,
 } from "@types";
 import {
   MapStravaActivityStatsToLeaderboardEntryRequest,
@@ -13,7 +15,7 @@ import {
 } from "./integrations/github";
 import { updateUserDataFromImportData } from "@/lib/imports/update";
 import { storage } from "@/lib/storage";
-import { User } from "@/lib/storage/types";
+import { User, UserData } from "@/lib/storage/types";
 import { updateLeaderboardEntry } from "@/lib/chip";
 
 
@@ -51,6 +53,18 @@ export function MapResponseToLeaderboardEntryRequest(
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function updateUserData(userData: UserData, importType: ImportDataType, data: any): Promise<void> {
+  // Do not have backup type because leaderboard is chipIssuer-scoped, not user-scoped
+  const newUserData = await updateUserDataFromImportData(
+    userData,
+    importType,
+    data
+  );
+  await storage.updateUserData(newUserData);
+  return;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function saveLeaderboardEntries(options: DataOption, authToken: string, user: User, chipIssuer: ChipIssuer, data: any): Promise<void> {
   const leaderboardEntryRequest: UpdateLeaderboardEntryRequest | null = MapResponseToLeaderboardEntryRequest(
     authToken,
@@ -63,17 +77,13 @@ async function saveLeaderboardEntries(options: DataOption, authToken: string, us
     throw new Error("Imported leaderboard entry is null");
   }
 
-  const newUserData = await updateUserDataFromImportData(
-    user.userData,
-    options.type,
-    leaderboardEntryRequest.entryValue
-  );
-  await storage.updateUserData(newUserData);
+  await updateUserData(user.userData, options.type, leaderboardEntryRequest.entryValue);
+
   await updateLeaderboardEntry(leaderboardEntryRequest);
   return;
 }
 
-export async function saveImportedData(authToken: string, user: User, option: DataOption, chipIssuer: ChipIssuer, resp: Response): Promise<void> {
+export async function saveImportedData(authToken: string, user: User, option: DataOption, chipIssuers: ChipIssuer[], resp: Response): Promise<void> {
   try {
     const data = await resp.json();
     if (data && data.error) {
@@ -84,13 +94,47 @@ export async function saveImportedData(authToken: string, user: User, option: Da
 
     switch (option.type) {
       case ImportDataType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
-        await saveLeaderboardEntries(option, authToken, user, chipIssuer, data);
+        for (const issuer of chipIssuers) {
+          await saveLeaderboardEntries(option, authToken, user, issuer, data);
+        }
         return;
       case ImportDataType.GITHUB_LANNA_CONTRIBUTIONS:
-        await saveLeaderboardEntries(option, authToken, user, chipIssuer, data);
+        for (const issuer of chipIssuers) {
+          await saveLeaderboardEntries(option, authToken, user, issuer, data);
+        }
         return;
       case ImportDataType.GITHUB_CONTRIBUTIONS_LAST_YEAR:
-        await saveLeaderboardEntries(option, authToken, user, chipIssuer, data);
+        for (const issuer of chipIssuers) {
+          await saveLeaderboardEntries(option, authToken, user, issuer, data);
+        }
+        return;
+      case ImportDataType.GITHUB_STARRED_REPOS:
+        const repos1: GithubReposResponse = GithubReposResponseSchema.parse(data);
+        const starredRepos: string[] = [];
+        for (const repo of repos1) {
+          const name: string | null = repo.full_name;
+          if (!name) {
+            continue;
+          }
+          starredRepos.push(name);
+        }
+        await updateUserData(user.userData, option.type, starredRepos);
+        return;
+      case ImportDataType.GITHUB_PROGRAMMING_LANGUAGES:
+        const repos2: GithubReposResponse = GithubReposResponseSchema.parse(data);
+        const languages: Record<string, string[]> = {};
+        for (const repo of repos2) {
+          const lang: string | null = repo.language;
+          if (!lang) {
+            continue;
+          }
+
+          if (!languages[lang]) {
+            languages[lang] = [];
+          }
+          languages[lang].push(repo.full_name);
+        }
+        await updateUserData(user.userData, option.type, languages);
         return;
       default:
         return;

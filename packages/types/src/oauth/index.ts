@@ -1,10 +1,10 @@
 import { z } from "zod";
 
+import { DataImportSource } from "../imports";
+
 // Export app-specific types
 export * from "./strava";
 export * from "./github";
-
-import { ImportDataType, ImportDataTypeSchema } from "../chip";
 
 export const StravaAtheleteSchema = z.object({
   id: z.number(),
@@ -39,25 +39,6 @@ export const AccessTokenSchema = z.object({
 });
 
 export type AccessToken = z.infer<typeof AccessTokenSchema>;
-
-export const DataOptionSchema = z.object({
-  type: ImportDataTypeSchema,
-  scope: z.string(),
-});
-
-export type DataOption = z.infer<typeof DataOptionSchema>;
-
-export const OAuthAppDetailsSchema = z.object({
-  client_side_fetching: z.boolean(),
-  can_import: z.boolean(),
-  redirect_uri: z.string(),
-  id: z.string(),
-  secret: z.string(),
-  token_url: z.string(),
-  data_options: z.array(DataOptionSchema),
-});
-
-export type OAuthAppDetails = z.infer<typeof OAuthAppDetailsSchema>;
 
 export const OAuthExchangeTokensRequestSchema = z.object({
   code: z.string(),
@@ -108,19 +89,14 @@ export async function githubMapResponseToAccessToken(
   };
 }
 
-export enum DATA_IMPORT_SOURCE {
-  STRAVA = "strava",
-  GITHUB = "github",
-}
-
 export async function mapResponseToAccessToken(
   app: string,
   data: any
 ): Promise<AccessToken | null> {
   switch (app) {
-    case DATA_IMPORT_SOURCE.STRAVA:
+    case DataImportSource.STRAVA:
       return await stravaMapResponseToAccessToken(data);
-    case DATA_IMPORT_SOURCE.GITHUB:
+    case DataImportSource.GITHUB:
       return await githubMapResponseToAccessToken(data);
     default:
       return null;

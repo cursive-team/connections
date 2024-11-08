@@ -3,7 +3,11 @@ import { UserDataSchema } from "./userData";
 import { ChipSchema } from "./chip";
 import { ConnectionSchema } from "./connection";
 import { ActivitySchema } from "./activity";
-import { AccessTokenSchema, EmailSchema, nullToUndefined } from "@types";
+import {
+  AccessTokenSchema,
+  EmailSchema,
+  nullToUndefined
+} from "@types";
 import { LocationSchema } from "./location";
 
 export const UserSchema = z.object({

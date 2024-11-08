@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import { RouterItem } from "@/lib/frontend/types";
 import { Icons } from "@/components/icons/Icons";
-import { ImportDataType, OAuthAppDetails } from "@types";
+import { ImportDataType, OAuthAppDetails, RefreshRateType } from "@types";
 
 export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
 
@@ -23,6 +23,7 @@ export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
       {
         type: ImportDataType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE,
         scope: "read",
+        refreshRate: RefreshRateType.DAILY,
       },
     ],
   },
@@ -37,8 +38,23 @@ export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
       {
         type: ImportDataType.GITHUB_LANNA_CONTRIBUTIONS,
         scope: "read",
+        refreshRate: RefreshRateType.DAILY,
       },
-      // TODO: Add annual contributions
+      {
+        type: ImportDataType.GITHUB_CONTRIBUTIONS_LAST_YEAR,
+        scope: "read",
+        refreshRate: RefreshRateType.WEEKLY,
+      },
+      {
+        type: ImportDataType.GITHUB_STARRED_REPOS,
+        scope: "read",
+        refreshRate: RefreshRateType.WEEKLY,
+      },
+      {
+        type: ImportDataType.GITHUB_PROGRAMMING_LANGUAGES,
+        scope: "read",
+        refreshRate: RefreshRateType.WEEKLY,
+      }
     ],
   },
 };

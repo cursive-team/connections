@@ -1,4 +1,4 @@
-import { OAuthAppDetails, DATA_IMPORT_SOURCE } from "@types";
+import { OAuthAppDetails, DataImportSource } from "@types";
 
 export async function stravaFetchToken(
   mapping: OAuthAppDetails,
@@ -48,9 +48,9 @@ export async function fetchToken(
 ): Promise<globalThis.Response | null> {
   // Apps that can use server-side fetching
   switch (app) {
-    case DATA_IMPORT_SOURCE.STRAVA:
+    case DataImportSource.STRAVA:
       return await stravaFetchToken(mapping, code);
-    case DATA_IMPORT_SOURCE.GITHUB:
+    case DataImportSource.GITHUB:
       return await ghFetchToken(mapping, code);
     default:
       return null;

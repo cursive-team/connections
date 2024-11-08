@@ -3,6 +3,7 @@ import { Chip } from "@/lib/storage/types";
 import { createRegisterChipActivity } from "@/lib/activity";
 import { saveBackupAndUpdateStorage } from "../utils";
 import { getUserAndSession } from ".";
+import { ChipIssuer } from "@types";
 
 export const addChip = async (chip: Chip): Promise<void> => {
   const { user, session } = await getUserAndSession();
@@ -27,3 +28,14 @@ export const addChip = async (chip: Chip): Promise<void> => {
     newBackupData: [chipBackup, registerChipActivityBackup],
   });
 };
+
+export const getChipIssuers = async (): Promise<ChipIssuer[]> => {
+  const { user } = await getUserAndSession();
+
+  const issuerSet = new Set<ChipIssuer>();
+  for (const chip of user.chips) {
+    issuerSet.add(chip.issuer);
+  }
+
+  return Array.from(issuerSet);
+}
