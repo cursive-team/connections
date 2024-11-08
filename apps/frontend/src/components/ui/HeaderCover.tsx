@@ -47,13 +47,20 @@ export const HeaderCover = ({ isLoading = false, image }: HeaderCoverProps) => {
           />
         )}
         {image === "devcon" && (
-          <Image
-            src="/images/devcon_register_cover.svg"
-            alt="devcon register main"
-            className=" object-cover w-full"
-            width={100}
-            height={200}
-          />
+          <>
+            <Image
+              src="/images/devcon_register_cover.png"
+              alt="devcon register main"
+              className="object-cover w-full"
+              width={400}
+              height={300}
+            />
+            <CursiveLogo
+              className="position absolute -bottom-9 left-1/2 -ml-[30px]"
+              isLoading={isLoading}
+              image={image}
+            />
+          </>
         )}
         {image === undefined && (
           <Image
@@ -62,13 +69,6 @@ export const HeaderCover = ({ isLoading = false, image }: HeaderCoverProps) => {
             className=" object-cover w-full"
             width={100}
             height={200}
-          />
-        )}
-        {image !== "devcon" && (
-          <CursiveLogo
-            className="position absolute -bottom-8 left-1/2 -ml-[30px]"
-            isLoading={isLoading}
-            image={image}
           />
         )}
       </div>

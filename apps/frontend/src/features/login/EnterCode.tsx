@@ -6,6 +6,8 @@ import { AppButton } from "@/components/ui/Button";
 import { AppCopy } from "@/components/ui/AppCopy";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
+import useSettings from "@/hooks/useSettings";
+import { cn } from "@/lib/frontend/util";
 
 interface EnterCodeProps {
   email: string;
@@ -14,6 +16,7 @@ interface EnterCodeProps {
 
 const EnterCode: React.FC<EnterCodeProps> = ({ email, submitCode }) => {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const { darkTheme } = useSettings();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +98,12 @@ const EnterCode: React.FC<EnterCodeProps> = ({ email, submitCode }) => {
                     onChange={(e) => handleChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
                     onPaste={handlePaste}
-                    className="w-12 h-12 text-2xl text-center border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className={cn(
+                      "w-12 h-12 text-2xl text-center  rounded-md ",
+                      darkTheme
+                        ? "bg-black border border-white focus:outline-none focus:ring-2 focus:ring-primary"
+                        : "focus:outline-none focus:ring-2 focus:ring-primary border border-gray-300"
+                    )}
                   />
                 ))}
               </div>

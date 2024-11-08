@@ -55,6 +55,8 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
   const [telegramHandle, setTelegramHandle] = useState("");
   const [twitterHandle, setTwitterHandle] = useState("");
 
+  const { darkTheme } = useSettings();
+
   const handleEmailSubmit = async (submittedEmail: string) => {
     logClientEvent("register-email-submit", {
       chipIssuer: savedTap.tapResponse.chipIssuer,
@@ -288,7 +290,7 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
 
   return (
     <div
-      className="min-h-screen bg-gray-100 flex flex-col"
+      className="min-h-screen bg-background flex flex-col"
       style={{
         minHeight: `${pageHeight}px`,
       }}
@@ -301,7 +303,8 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
         <div
           className={cn(
             "hidden", // back button not needed for now
-            "flex px-3 justify-between border-b border-b-primary w-full backdrop-blur-md top-0 z-50 items-center h-[50px] xs:h-[60px] bg-white"
+            "flex px-3 justify-between border-b  w-full backdrop-blur-md top-0 z-50 items-center h-[50px] xs:h-[60px] bg-background",
+            darkTheme ? "border-b-white/20" : "border-b-black"
           )}
         >
           <button

@@ -212,7 +212,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
                 <div className="flex items-start gap-4">
                   <textarea
                     ref={textareaRef}
-                    className="w-full pl-8 pr-4 text-[14px] font-semibold font-sans focus:outline-none min-h-[30px] resize-none bg-transparent"
+                    className="w-full pl-8 pr-4 text-[14px] text-label-primary font-semibold font-sans focus:outline-none min-h-[30px] resize-none bg-transparent"
                     placeholder={steps[step].question}
                     value={formData.bio}
                     onChange={(e) => handleInputChange(e.target.value)}
@@ -240,7 +240,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
                 <div className="flex items-start gap-4">
                   <input
                     type="text"
-                    className="w-full pl-8 pr-4 py-2 text-[14px] bg-transparent font-semibold font-sans focus:outline-none "
+                    className="w-full pl-8 pr-4 py-2 text-[14px] text-label-primary bg-transparent font-semibold font-sans focus:outline-none "
                     placeholder={steps[step].question}
                     value={formData[steps[step].field as keyof FormData]}
                     onChange={(e) => handleInputChange(e.target.value)}
