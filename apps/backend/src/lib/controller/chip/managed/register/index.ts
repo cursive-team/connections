@@ -9,7 +9,8 @@ ManagedChipClient.prototype.RegisterChip = async function (
 ): Promise<Chip> {
   const chip = await getChipFromTapParams(
     this.prismaClient,
-    registerChip.tapParams
+    registerChip.tapParams,
+    true
   );
 
   if (!chip) {

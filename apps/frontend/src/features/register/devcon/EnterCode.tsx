@@ -100,7 +100,7 @@ const EnterCode: React.FC<EnterCodeProps> = ({ email, submitCode }) => {
                     onKeyDown={(e) => handleKeyDown(index, e)}
                     onPaste={handlePaste}
                     className={cn(
-                      "w-12 h-12 text-2xl text-center  rounded-md ",
+                      "w-12 h-12 text-2xl text-center rounded-md text-label-primary",
                       darkTheme
                         ? "bg-black border border-white focus:outline-none focus:ring-2 focus:ring-primary"
                         : "focus:outline-none focus:ring-2 focus:ring-primary border border-gray-300"

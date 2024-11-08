@@ -12,6 +12,7 @@ import {
 } from "@/lib/controller/chip/types";
 import { PrismaClient } from "@prisma/client";
 import { getCounterMessage, sign } from "@/lib/util";
+import { ZodError } from "zod";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const crypto = require("crypto");
 
@@ -25,7 +26,8 @@ const crypto = require("crypto");
  */
 export async function getChipFromTapParams(
   prisma: PrismaClient,
-  tapParams: TapParams
+  tapParams: TapParams,
+  registration: boolean
 ): Promise<Chip | null> {
   // Try to parse the tapParams as an NTAG212
   try {
@@ -48,18 +50,54 @@ export async function getChipFromTapParams(
 
   // Try to parse the tapParams as an NTAG424
   try {
-    const validatedTapParams = NTAG424TapParamsSchema.parse(tapParams);
+    const { encryptedChipId } = NTAG424TapParamsSchema.parse(tapParams);
 
-    // TODO: Decrypt the chipId and validate the cmac
+    let data;
+    let retries = 0;
+    const maxRetries = 3;
 
-    const chip = await prisma.chip.findUnique({
-      where: { chipId: validatedTapParams.encryptedChipId },
-    });
-
-    if (chip) {
-      return ChipSchema.parse(chip);
+    while (retries < maxRetries) {
+      try {
+        const response = await fetch(
+          `http://ec2-13-215-189-29.ap-southeast-1.compute.amazonaws.com:9091/api/validate?e=${encryptedChipId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization:
+                "Bearer 466b9db251785c2cc815a327ca4547e06222cc24af377cbb0729d543896ea599",
+            },
+          }
+        );
+        data = await response.json();
+        break; // If successful, exit the loop
+      } catch (error) {
+        retries++;
+        if (retries === maxRetries) {
+          throw new Error(`Failed to fetch, please try tapping again.`);
+        }
+        // Wait for a short time before retrying
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
     }
-  } catch (error) {}
+
+    const chipId = data.tag.uid.toString();
+    if (data.valid) {
+      if (data.tag.used && !registration) {
+        throw new Error("Tap link already used, please try tapping again.");
+      }
+      const chip = await prisma.chip.findUnique({
+        where: { chipId },
+      });
+      if (chip) {
+        return ChipSchema.parse(chip);
+      }
+    }
+  } catch (error) {
+    // Only surface non-validation errors for N424 chips
+    if (!(error instanceof ZodError)) {
+      throw error;
+    }
+  }
 
   // All schemas failed, return null
   return null;
@@ -80,9 +118,18 @@ export async function getChipFromTapParams(
  */
 export const generateTapSignatureFromChip = async (
   prisma: PrismaClient,
-  tapParams: TapParams
+  tapParams: TapParams,
+  registration: boolean = false
 ): Promise<ChipTapResponse> => {
-  const chip = await getChipFromTapParams(prisma, tapParams);
+  let chip;
+  try {
+    chip = await getChipFromTapParams(prisma, tapParams, registration);
+  } catch (error) {
+    // We want to surface tap errors to user
+    console.error("error:", errorToString(error));
+    throw error;
+  }
+
   // If chip does not exist, throw an error
   if (!chip) {
     throw new Error("Chip not found");

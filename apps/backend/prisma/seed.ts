@@ -48,6 +48,8 @@ async function main() {
     { chipId: "TESTDEVCON003" },
     { chipId: "TESTDEVCON004" },
     { chipId: "TESTDEVCON005" },
+    { chipId: "04A28DEA637380" },
+    { chipId: "04479DEA637380" },
   ];
 
   await prisma.chip.createMany({

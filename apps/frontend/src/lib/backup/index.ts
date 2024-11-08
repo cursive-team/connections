@@ -19,7 +19,7 @@ import {
   UserDataSchema,
   UserSchema,
   OAuthAppSchema,
-  OAuthApp
+  OAuthApp,
 } from "@/lib/storage/types";
 import { decryptBackupString, encryptBackupString } from "@/lib/crypto/backup";
 import { BASE_API_URL } from "@/config";
@@ -455,10 +455,10 @@ export interface CreateOAuthDeletionBackupArgs {
 }
 
 export const createOAuthDeletionBackup = ({
-    email,
-    password,
-    oauthApp,
-  }: CreateOAuthDeletionBackupArgs): CreateBackupData => {
+  email,
+  password,
+  oauthApp,
+}: CreateOAuthDeletionBackupArgs): CreateBackupData => {
   const { authenticationTag, iv, encryptedData } = encryptBackupString({
     backup: JSON.stringify(oauthApp),
     email,

@@ -193,7 +193,7 @@ const TapPage: React.FC = () => {
           SupportToast(
             "",
             true,
-            "Error tapping chip",
+            errorToString(error),
             ERROR_SUPPORT_CONTACT,
             errorToString(error)
           )

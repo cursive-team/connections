@@ -40,5 +40,4 @@ export const NTAG212TapParamsSchema = z.object({
 
 export const NTAG424TapParamsSchema = z.object({
   encryptedChipId: z.string(),
-  cmac: z.string(),
 });
