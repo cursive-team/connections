@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import { RouterItem } from "@/lib/frontend/types";
 import { Icons } from "@/components/icons/Icons";
-import { DataImportSource, DataOptionSchema, ImportDataType, OAuthAppDetails, RefreshRateType } from "@types";
+import { ImportDataType, OAuthAppDetails, RefreshRateType } from "@types";
 
 export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
 

@@ -1,6 +1,6 @@
 import {
   AccessToken,
-  ChipIssuer, DataImportSource,
+  ChipIssuer,
   DataOption,
   errorToString,
   ImportDataType,
@@ -76,7 +76,7 @@ export function getUserDataUpdatedAt(userData: UserData, dataType: ImportDataTyp
 export function isOverdueToReimport(lastImportedAt: Date, refreshRate: RefreshRateType): boolean {
   const now: Date = new Date();
 
-  let millisecondDiff = now.getTime() - lastImportedAt.getTime();
+  const millisecondDiff = now.getTime() - lastImportedAt.getTime();
   let dayDiff: number = 0;
 
   switch(refreshRate) {
@@ -89,21 +89,21 @@ export function isOverdueToReimport(lastImportedAt: Date, refreshRate: RefreshRa
       return false;
     case RefreshRateType.WEEKLY:
       // if (now - lastImportedAt) > 1 week, return true
-      let weekDiff = millisecondDiff / (1000 * 60 * 60 * 24 * 7);
+      const weekDiff = millisecondDiff / (1000 * 60 * 60 * 24 * 7);
       if (weekDiff > 1) {
         return true;
       }
       return false;
     case RefreshRateType.MONTHLY:
       // if (now - lastImportedAt) > 1 month, return true
-      let monthDiff = millisecondDiff / (1000 * 60 * 60 * 24 * 30);
+      const monthDiff = millisecondDiff / (1000 * 60 * 60 * 24 * 30);
       if (monthDiff > 1) {
         return true;
       }
       return false;
     case RefreshRateType.TESTING:
       // if (now - lastImportedAt) > 30 seconds, return true
-      let secondsDiff = millisecondDiff / 1000;
+      const secondsDiff = millisecondDiff / 1000;
       if (secondsDiff > 30) {
         return true;
       }

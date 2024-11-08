@@ -4,9 +4,6 @@ import {
   BackupData,
   BackupEntryType,
   CreateBackupData,
-  DataImportSourceSchema,
-  DataImportSource,
-  ChipIssuerSchema
 } from "@types";
 import {
   Activity,

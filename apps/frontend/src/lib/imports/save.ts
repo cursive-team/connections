@@ -122,7 +122,7 @@ export async function saveImportedData(authToken: string, user: User, option: Da
         return;
       case ImportDataType.GITHUB_PROGRAMMING_LANGUAGES:
         const repos2: GithubReposResponse = GithubReposResponseSchema.parse(data);
-        let languages: Record<string, string[]> = {};
+        const languages: Record<string, string[]> = {};
         for (const repo of repos2) {
           const lang: string | null = repo.language;
           if (!lang) {
