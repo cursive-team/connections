@@ -45,6 +45,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   // Refresh imports when the page is refreshed
   useEffect(() => {
     const refreshImports = async () => {
+      const user = await storage.getUser();
+      const session = await storage.getSession();
+      if (!user || !session) {
+        return;
+      }
+
       refreshData();
     }
     refreshImports();

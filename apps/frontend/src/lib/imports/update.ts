@@ -25,6 +25,7 @@ export const updateUserDataFromImportData = async (
       return {
         ...userData,
         github: {
+          ...userData.github,
           lannaCommits: {
             value: value2,
             lastUpdated: new Date()
@@ -36,6 +37,7 @@ export const updateUserDataFromImportData = async (
       return {
         ...userData,
         github: {
+          ...userData.github,
           annualCommits: {
             value: value3,
             lastUpdated: new Date()
@@ -50,6 +52,7 @@ export const updateUserDataFromImportData = async (
       return {
         ...userData,
         github: {
+          ...userData.github,
           starredRepos: {
             value: value4,
             lastUpdated: new Date()
@@ -64,6 +67,7 @@ export const updateUserDataFromImportData = async (
       return {
         ...userData,
         github: {
+          ...userData.github,
           programmingLanguages: {
             value: value5,
             lastUpdated: new Date()
