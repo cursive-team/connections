@@ -16,6 +16,8 @@ import { OAUTH_APP_DETAILS } from "@/config";
 import { storage } from "@/lib/storage";
 import { getOAuthAccessToken } from "@/lib/oauth";
 import { getChipIssuers } from "@/lib/storage/localStorage/user/chip";
+import { SupportToast } from "@/components/ui/SupportToast";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 export async function fetchAndSaveImportedData(
   authToken: string,
@@ -48,6 +50,7 @@ export async function fetchAndSaveImportedData(
     // If it got to this stage, the token should not have expired
     storage.deleteOAuthAccessToken(option.type);
     console.error("Error importing data:", errorToString(error));
+    // As this toast will only be shown once, keep it
     toast.error("Import failed, token removed. Rerun if token was revoked.");
     return;
   }
@@ -178,6 +181,7 @@ export async function refreshData(): Promise<void> {
         if (accessToken.expires_at && now > expiresAt) {
           // TODO: swap to use refresh token
           storage.deleteOAuthAccessToken(option.type);
+          // As this toast will only be shown once, keep it
           toast.error(`${capitalized} token has expired, go through OAuth flow again.`, {duration: 5000});
           continue;
         }
@@ -200,11 +204,11 @@ export async function refreshData(): Promise<void> {
   }
 }
 
+// Used for OAuth flow, as the operation is
 export async function importData(app: string, code: string): Promise<void> {
 
   // This should never happen
   if (!OAUTH_APP_DETAILS || !OAUTH_APP_DETAILS[app]) {
-    toast.error("Application integration details are not available");
     return;
   }
 
@@ -218,7 +222,13 @@ export async function importData(app: string, code: string): Promise<void> {
     details
   );
   if (!accessToken) {
-    toast.error("Unable to mint OAuth access token");
+    SupportToast(
+      "",
+      true,
+      "Unable to mint OAuth access token.",
+      ERROR_SUPPORT_CONTACT,
+      ""
+    )
     throw new Error("Unable to mint OAuth access token")
     return;
   }
@@ -240,12 +250,18 @@ export async function importData(app: string, code: string): Promise<void> {
           option
         );
       } catch (error) {
-        toast.error("Data import failed.");
+        SupportToast(
+          "",
+          true,
+          "Data import failed.",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
         console.error("Data import failed:", errorToString(error));
         throw new Error(`Data import failed: ${errorToString(error)}`);
         return;
       }
     }
-    toast.success("Successfully imported application data");
+    toast.success("Successfully imported application data.");
   }
 }
