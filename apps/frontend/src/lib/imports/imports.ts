@@ -16,6 +16,8 @@ import { OAUTH_APP_DETAILS } from "@/config";
 import { storage } from "@/lib/storage";
 import { getOAuthAccessToken } from "@/lib/oauth";
 import { getChipIssuers } from "@/lib/storage/localStorage/user/chip";
+import { SupportToast } from "@/components/ui/SupportToast";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 export async function fetchAndSaveImportedData(
   authToken: string,
@@ -48,6 +50,7 @@ export async function fetchAndSaveImportedData(
     // If it got to this stage, the token should not have expired
     storage.deleteOAuthAccessToken(option.type);
     console.error("Error importing data:", errorToString(error));
+    // As this toast will only be shown once, keep it
     toast.error("Import failed, token removed. Rerun if token was revoked.");
     return;
   }
@@ -143,6 +146,9 @@ export async function refreshData(): Promise<void> {
 
     for (const app of apps) {
 
+      const appStr: string = app.toString();
+      const capitalized: string = appStr.charAt(0).toUpperCase() + appStr.substring(1);
+
       const details: OAuthAppDetails = OAUTH_APP_DETAILS[app];
 
       for (const option of details.data_options) {
@@ -152,15 +158,14 @@ export async function refreshData(): Promise<void> {
           continue;
         }
 
+        // This may be empty if the token expired and needs to be regranted
         const accessToken: AccessToken | undefined = await storage.getOAuthAccessToken(app.toString())
 
         if (!accessToken && (!user.oauth || !user.oauth[app])) {
           // In this case, have not consented to importing data yet. Skip.
           continue;
         } else if (!accessToken) {
-          const appStr: string = app.toString();
-          const capitalized: string = appStr.charAt(0).toUpperCase() + appStr.substring(1);
-          toast.error(`${capitalized} token is empty. Follow import flow on profile page.`, {duration: 5000});
+          console.error("Access token is empty.");
           continue;
         }
 
@@ -175,7 +180,9 @@ export async function refreshData(): Promise<void> {
 
         if (accessToken.expires_at && now > expiresAt) {
           // TODO: swap to use refresh token
-          toast.error(`${app.toString()} token has expired, go through OAuth flow again`);
+          storage.deleteOAuthAccessToken(option.type);
+          // As this toast will only be shown once, keep it
+          toast.error(`${capitalized} token has expired, go through OAuth flow again.`, {duration: 5000});
           continue;
         }
 
@@ -191,18 +198,17 @@ export async function refreshData(): Promise<void> {
     }
     return;
   } catch (error) {
-    toast.error("Data import failed");
     console.error("Data import failed:", errorToString(error));
     throw new Error(`Data import failed: ${errorToString(error)}`);
     return;
   }
 }
 
+// Used for OAuth flow, as the operation is
 export async function importData(app: string, code: string): Promise<void> {
 
   // This should never happen
   if (!OAUTH_APP_DETAILS || !OAUTH_APP_DETAILS[app]) {
-    toast.error("Application integration details are not available");
     return;
   }
 
@@ -216,7 +222,13 @@ export async function importData(app: string, code: string): Promise<void> {
     details
   );
   if (!accessToken) {
-    toast.error("Unable to mint OAuth access token");
+    SupportToast(
+      "",
+      true,
+      "Unable to mint OAuth access token.",
+      ERROR_SUPPORT_CONTACT,
+      ""
+    )
     throw new Error("Unable to mint OAuth access token")
     return;
   }
@@ -238,12 +250,17 @@ export async function importData(app: string, code: string): Promise<void> {
           option
         );
       } catch (error) {
-        toast.error("Data import failed.");
+        SupportToast(
+          "",
+          true,
+          "Data import failed.",
+          ERROR_SUPPORT_CONTACT,
+          errorToString(error)
+        )
         console.error("Data import failed:", errorToString(error));
         throw new Error(`Data import failed: ${errorToString(error)}`);
         return;
       }
     }
-    toast.success("Successfully imported application data");
   }
 }
