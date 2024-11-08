@@ -104,6 +104,7 @@ export async function ghFetchContributions(token: AccessToken, from: Date, to: D
 export function MapGithubCommitContributionsToLeaderboardEntry(
   authToken: string,
   chipIssuer: ChipIssuer,
+  entryType: LeaderboardEntryType,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resp: any
 ): UpdateLeaderboardEntryRequest {
@@ -134,7 +135,7 @@ export function MapGithubCommitContributionsToLeaderboardEntry(
     authToken: authToken,
     chipIssuer: chipIssuer,
     entryValue: commits,
-    entryType: LeaderboardEntryType.GITHUB_LANNA_COMMITS,
+    entryType: entryType,
   };
 }
 
