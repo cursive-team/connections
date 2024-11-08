@@ -143,6 +143,9 @@ export async function refreshData(): Promise<void> {
 
     for (const app of apps) {
 
+      const appStr: string = app.toString();
+      const capitalized: string = appStr.charAt(0).toUpperCase() + appStr.substring(1);
+
       const details: OAuthAppDetails = OAUTH_APP_DETAILS[app];
 
       for (const option of details.data_options) {
@@ -158,9 +161,7 @@ export async function refreshData(): Promise<void> {
           // In this case, have not consented to importing data yet. Skip.
           continue;
         } else if (!accessToken) {
-          const appStr: string = app.toString();
-          const capitalized: string = appStr.charAt(0).toUpperCase() + appStr.substring(1);
-          toast.error(`${capitalized} token is empty. Follow import flow on profile page.`, {duration: 5000});
+          console.error("Access token is empty.");
           continue;
         }
 
@@ -175,7 +176,8 @@ export async function refreshData(): Promise<void> {
 
         if (accessToken.expires_at && now > expiresAt) {
           // TODO: swap to use refresh token
-          toast.error(`${app.toString()} token has expired, go through OAuth flow again`);
+          storage.deleteOAuthAccessToken(option.type);
+          toast.error(`${capitalized} token has expired, go through OAuth flow again.`, {duration: 5000});
           continue;
         }
 
@@ -191,7 +193,6 @@ export async function refreshData(): Promise<void> {
     }
     return;
   } catch (error) {
-    toast.error("Data import failed");
     console.error("Data import failed:", errorToString(error));
     throw new Error(`Data import failed: ${errorToString(error)}`);
     return;
