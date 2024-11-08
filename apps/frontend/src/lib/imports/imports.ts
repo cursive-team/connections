@@ -1,6 +1,7 @@
 import {
   AccessToken,
   ChipIssuer,
+  DataImportSource,
   DataOption,
   errorToString,
   ImportDataType,
@@ -42,8 +43,12 @@ export async function fetchAndSaveImportedData(
     await saveImportedData(authToken, user, option, chipIssuers, response);
     return;
   } catch (error) {
+    // On error, delete access token -- the token may have been revoked
+    // By deleting the access token we'll fetch a new one on a re-attempt
+    // If it got to this stage, the token should not have expired
+    storage.deleteOAuthAccessToken(option.type);
     console.error("Error importing data:", errorToString(error));
-    toast.error("Unable to import data");
+    toast.error("Import failed, token removed. Rerun if token was revoked.");
     return;
   }
 }
@@ -141,7 +146,6 @@ export async function refreshData(): Promise<void> {
       const details: OAuthAppDetails = OAUTH_APP_DETAILS[app];
 
       for (const option of details.data_options) {
-        console.log("Option:", option)
 
         // Check if it's time to refresh import
         if (!shouldRefreshImport(user, option.type, option.refreshRate)) {
@@ -161,7 +165,13 @@ export async function refreshData(): Promise<void> {
         }
 
         const now: Date = new Date();
-        const expiresAt: Date = new Date(accessToken.expires_at);
+        // Assume expires at is in milliseconds
+        let expiresAt: Date = new Date(accessToken.expires_at);
+
+        // Strava's expiration is seconds rather than milliseconds
+        if (app === DataImportSource.STRAVA) {
+          expiresAt = new Date(accessToken.expires_at * 1000);
+        }
 
         if (accessToken.expires_at && now > expiresAt) {
           // TODO: swap to use refresh token
@@ -183,7 +193,7 @@ export async function refreshData(): Promise<void> {
   } catch (error) {
     toast.error("Data import failed");
     console.error("Data import failed:", errorToString(error));
-    throw new Error(`Unable to mint OAuth access token: ${errorToString(error)}`);
+    throw new Error(`Data import failed: ${errorToString(error)}`);
     return;
   }
 }
@@ -228,9 +238,9 @@ export async function importData(app: string, code: string): Promise<void> {
           option
         );
       } catch (error) {
-        toast.error("Data import failed");
+        toast.error("Data import failed.");
         console.error("Data import failed:", errorToString(error));
-        throw new Error(`Unable to mint OAuth access token: ${errorToString(error)}`);
+        throw new Error(`Data import failed: ${errorToString(error)}`);
         return;
       }
     }
