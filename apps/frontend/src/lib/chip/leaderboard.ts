@@ -104,7 +104,7 @@ export async function updateTapLeaderboardEntry(
   // Count total taps and taps for the week starting Nov 4
   const weekNov4StartDate = new Date("2024-11-04T00:00:00Z");
   let totalTapCount = 0;
-  let weekOct27TapCount = 0;
+  let weekNov4TapCount = 0;
 
   Object.values(user.connections).forEach((connection) => {
     const tapsFromIssuer = connection.taps.filter(
@@ -119,7 +119,7 @@ export async function updateTapLeaderboardEntry(
       });
 
       if (validWeeklyTaps.length > 0) {
-        weekOct27TapCount++;
+        weekNov4TapCount++;
       }
     }
   });
@@ -139,7 +139,7 @@ export async function updateTapLeaderboardEntry(
         authToken: session.authTokenValue,
         chipIssuer,
         entryType: LeaderboardEntryType.WEEK_NOV_4_TAP_COUNT,
-        entryValue: weekOct27TapCount,
+        entryValue: weekNov4TapCount,
       };
       requests.push(updateWeekTapsRequest);
     }

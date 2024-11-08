@@ -57,7 +57,7 @@ const PeoplePage: React.FC = () => {
           italic={false}
           title={
             <span className="!font-normal text-center">
-              <b>Tap wristbands </b> -- share socials, organize contacts, and
+              <b>Tap NFC chips </b> -- share socials, organize contacts, and
               discover shared interests! Troubleshoot tapping{" "}
               <a
                 href="https://cursive.team/tap-help"
