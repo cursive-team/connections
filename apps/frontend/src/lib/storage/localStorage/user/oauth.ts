@@ -1,4 +1,4 @@
-import { AccessToken, AccessTokenSchema } from "@types";
+import { AccessToken, AccessTokenSchema, DataImportSource } from "@types";
 import { getUserAndSession } from ".";
 import { saveBackupAndUpdateStorage } from "../utils";
 import {
@@ -7,7 +7,7 @@ import {
 } from "@/lib/backup";
 
 export const saveOAuthAccessToken = async (
-  app: string,
+  app: DataImportSource,
   token: AccessToken
 ): Promise<void> => {
   const { user, session } = await getUserAndSession();
@@ -29,7 +29,7 @@ export const saveOAuthAccessToken = async (
 };
 
 export const getOAuthAccessToken = async (
-  app: string
+  app: DataImportSource
 ): Promise<AccessToken | undefined> => {
   const { user } = await getUserAndSession();
 
@@ -41,7 +41,7 @@ export const getOAuthAccessToken = async (
 };
 
 export const deleteOAuthAccessToken = async (
-  app: string
+  app: DataImportSource
 ): Promise<void> => {
   const { user, session } = await getUserAndSession();
 

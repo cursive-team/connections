@@ -1,5 +1,5 @@
-import {AccessToken} from "@types";
+import { AccessToken, DataImportSource } from "@types";
 
 export interface iOAuthClient {
-  MintOAuthToken(app: string, code: string): Promise<AccessToken | null>;
+  MintOAuthToken(app: DataImportSource, code: string): Promise<AccessToken | null>;
 }

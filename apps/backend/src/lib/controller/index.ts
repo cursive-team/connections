@@ -27,6 +27,7 @@ import {
   LeaderboardEntry,
   LeaderboardEntryType,
   AccessToken,
+  DataImportSource,
 } from "@types";
 import { Chip } from "@/lib/controller/chip/types";
 import { iChipClient } from "@/lib/controller/chip/interfaces";
@@ -281,7 +282,7 @@ export class Controller {
   }
 
   // OAuth
-  MintOAuthToken(app: string, code: string): Promise<AccessToken | null> {
+  MintOAuthToken(app: DataImportSource, code: string): Promise<AccessToken | null> {
     return this.oauthClient.MintOAuthToken(app, code);
   }
 

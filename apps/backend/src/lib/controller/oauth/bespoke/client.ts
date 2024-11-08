@@ -1,6 +1,7 @@
 import {iOAuthClient} from "@/lib/controller/oauth/interfaces";
 import {
   AccessToken,
+  DataImportSource,
   mapResponseToAccessToken,
   OAuthAppDetails
 } from "@types";
@@ -11,7 +12,7 @@ import { fetchToken } from "@/lib/controller/oauth/bespoke/token";
 export class BespokeOAuthClient implements iOAuthClient {
 
   // NOTE: I attempted to use the same pattern (set method via prototype) but in this case it wasn't having it. Given that there is only one method, I figured it was okay to embed the method within the class.
-  async MintOAuthToken(app: string, code: string): Promise<AccessToken | null> {
+  async MintOAuthToken(app: DataImportSource, code: string): Promise<AccessToken | null> {
    try {
       if (!OAUTH_APP_DETAILS[app]) {
         throw new Error("OAuth app integration details are not available");

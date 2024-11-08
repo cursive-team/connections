@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import { RouterItem } from "@/lib/frontend/types";
 import { Icons } from "@/components/icons/Icons";
-import { ImportDataType, OAuthAppDetails, RefreshRateType } from "@types";
+import { DataImportSource, ImportDataType, OAuthAppDetails, RefreshRateType } from "@types";
 
 export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
 
@@ -11,7 +11,7 @@ export const FRONTEND_URL =
 export const BASE_API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
 
-export const OAUTH_APP_DETAILS: Record<string, OAuthAppDetails> = {
+export const OAUTH_APP_DETAILS: Record<DataImportSource, OAuthAppDetails> = {
   strava: {
     client_side_fetching: true,
     can_import: true,

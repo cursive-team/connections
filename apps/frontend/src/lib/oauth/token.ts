@@ -11,7 +11,7 @@ import { storage } from "@/lib/storage";
 import { toast } from "sonner";
 
 async function fetchToken(
-  app: string,
+  app: DataImportSource,
   mapping: OAuthAppDetails,
   code: string
 ): Promise<Response | null> {
@@ -45,7 +45,7 @@ async function stravaFetchToken(
 }
 
 export async function getOAuthTokenViaClient(
-  app: string,
+  app: DataImportSource,
   code: string
 ): Promise<AccessToken | null> {
   try {
@@ -86,7 +86,7 @@ export async function getOAuthTokenViaClient(
 }
 
 export async function getOAuthTokenViaServer(
-  app: string,
+  app: DataImportSource,
   code: string
 ): Promise<AccessToken> {
   try {
@@ -119,7 +119,7 @@ export async function getOAuthTokenViaServer(
 }
 
 export async function getOAuthAccessToken(
-  app: string,
+  app: DataImportSource,
   code: string,
   details: OAuthAppDetails
 ): Promise<AccessToken | null> {
