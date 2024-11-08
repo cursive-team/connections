@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
-import { errorToString } from "@types";
+import { DataImportSourceSchema, errorToString } from "@types";
 import { storage } from "@/lib/storage";
 import { importData } from "@/lib/imports";
 
@@ -22,7 +22,7 @@ const OAuthAccessTokenPage: React.FC = () => {
       }
 
       if (code && state) {
-        const app = String(state);
+        const app = DataImportSourceSchema.parse(state);
         const authCode = String(code);
 
         try {

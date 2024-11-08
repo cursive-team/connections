@@ -2,6 +2,7 @@ import {
   AccessToken,
   ChipIssuer,
   DataImportSource,
+  DataImportSourceSchema,
   DataOption,
   errorToString,
   ImportDataType,
@@ -24,6 +25,7 @@ export async function fetchAndSaveImportedData(
   user: User,
   chipIssuers: ChipIssuer[],
   token: AccessToken | null,
+  app: DataImportSource,
   option: DataOption
 ): Promise<void> {
   try {
@@ -48,10 +50,16 @@ export async function fetchAndSaveImportedData(
     // On error, delete access token -- the token may have been revoked
     // By deleting the access token we'll fetch a new one on a re-attempt
     // If it got to this stage, the token should not have expired
-    storage.deleteOAuthAccessToken(option.type);
+
+    const tokenExists = await storage.getOAuthAccessToken(app);
+    if (tokenExists) {
+      storage.deleteOAuthAccessToken(app);
+      // As this toast will only be shown once, keep it
+      toast.error("Import failed, token removed. Reauth application to refresh token.", {duration: 5000});
+    }
+
+
     console.error("Error importing data:", errorToString(error));
-    // As this toast will only be shown once, keep it
-    toast.error("Import failed, token removed. Rerun if token was revoked.");
     return;
   }
 }
@@ -144,10 +152,9 @@ export async function refreshData(): Promise<void> {
     const apps = Object.keys(OAUTH_APP_DETAILS);
     const chipIssuers: ChipIssuer[] = await getChipIssuers();
 
-    for (const app of apps) {
-
-      const appStr: string = app.toString();
+    for (const appStr of apps) {
       const capitalized: string = appStr.charAt(0).toUpperCase() + appStr.substring(1);
+      const app = DataImportSourceSchema.parse(appStr);
 
       const details: OAuthAppDetails = OAUTH_APP_DETAILS[app];
 
@@ -159,7 +166,7 @@ export async function refreshData(): Promise<void> {
         }
 
         // This may be empty if the token expired and needs to be regranted
-        const accessToken: AccessToken | undefined = await storage.getOAuthAccessToken(app.toString())
+        const accessToken: AccessToken | undefined = await storage.getOAuthAccessToken(app)
 
         if (!accessToken && (!user.oauth || !user.oauth[app])) {
           // In this case, have not consented to importing data yet. Skip.
@@ -180,9 +187,12 @@ export async function refreshData(): Promise<void> {
 
         if (accessToken.expires_at && now > expiresAt) {
           // TODO: swap to use refresh token
-          storage.deleteOAuthAccessToken(option.type);
-          // As this toast will only be shown once, keep it
-          toast.error(`${capitalized} token has expired, go through OAuth flow again.`, {duration: 5000});
+          const tokenExists = await storage.getOAuthAccessToken(app);
+          if (tokenExists) {
+            storage.deleteOAuthAccessToken(app);
+            // As this toast will only be shown once, keep it
+            toast.error(`${capitalized} token has expired, reauth app to refresh token.`, {duration: 5000});
+          }
           continue;
         }
 
@@ -192,7 +202,8 @@ export async function refreshData(): Promise<void> {
           user,
           chipIssuers,
           accessToken,
-          option
+          app,
+          option,
         );
       }
     }
@@ -205,7 +216,7 @@ export async function refreshData(): Promise<void> {
 }
 
 // Used for OAuth flow, as the operation is
-export async function importData(app: string, code: string): Promise<void> {
+export async function importData(app: DataImportSource, code: string): Promise<void> {
 
   // This should never happen
   if (!OAUTH_APP_DETAILS || !OAUTH_APP_DETAILS[app]) {
@@ -247,6 +258,7 @@ export async function importData(app: string, code: string): Promise<void> {
           user,
           chipIssuers,
           accessToken,
+          app,
           option
         );
       } catch (error) {

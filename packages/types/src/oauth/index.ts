@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { DataImportSource } from "../imports";
+import { DataImportSource, DataImportSourceSchema } from "../imports";
 
 // Export app-specific types
 export * from "./strava";
@@ -42,7 +42,7 @@ export type AccessToken = z.infer<typeof AccessTokenSchema>;
 
 export const OAuthExchangeTokensRequestSchema = z.object({
   code: z.string(),
-  state: z.string(),
+  state: DataImportSourceSchema,
 });
 
 export type OAuthExchangeTokensRequest = z.infer<
@@ -90,7 +90,7 @@ export async function githubMapResponseToAccessToken(
 }
 
 export async function mapResponseToAccessToken(
-  app: string,
+  app: DataImportSource,
   data: any
 ): Promise<AccessToken | null> {
   switch (app) {

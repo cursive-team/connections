@@ -14,6 +14,7 @@ import {
   ChipIssuer,
   ChipTapResponse,
   CreateMessageData,
+  DataImportSource,
   MessageData,
 } from "@types";
 
@@ -31,9 +32,9 @@ export interface ClientStorage {
   getUserAndSession(): Promise<{ user: User; session: Session }>;
   getUser(): Promise<User | undefined>;
   getSession(): Promise<Session | undefined>;
-  saveOAuthAccessToken(app: string, token: AccessToken): Promise<void>;
-  getOAuthAccessToken(app: string): Promise<AccessToken | undefined>;
-  deleteOAuthAccessToken(app: string): Promise<void>;
+  saveOAuthAccessToken(app: DataImportSource, token: AccessToken): Promise<void>;
+  getOAuthAccessToken(app: DataImportSource): Promise<AccessToken | undefined>;
+  deleteOAuthAccessToken(app: DataImportSource): Promise<void>;
   saveTapInfo(tapInfo: TapInfo): Promise<void>;
   loadSavedTapInfo(): Promise<TapInfo | undefined>;
   deleteSavedTapInfo(): Promise<void>;

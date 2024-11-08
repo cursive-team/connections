@@ -27,6 +27,7 @@ import {
   ChipIssuer,
   ChipTapResponse,
   CreateMessageData,
+  DataImportSource,
   MessageData,
 } from "@types";
 import { addUserTap } from "@/lib/storage/localStorage/user/connection/tap";
@@ -80,15 +81,15 @@ export class LocalStorage implements ClientStorage {
     return getSession();
   }
 
-  async saveOAuthAccessToken(app: string, token: AccessToken): Promise<void> {
+  async saveOAuthAccessToken(app: DataImportSource, token: AccessToken): Promise<void> {
     return saveOAuthAccessToken(app, token);
   }
 
-  async getOAuthAccessToken(app: string): Promise<AccessToken | undefined> {
+  async getOAuthAccessToken(app: DataImportSource): Promise<AccessToken | undefined> {
     return getOAuthAccessToken(app);
   }
 
-  async deleteOAuthAccessToken(app: string): Promise<void> {
+  async deleteOAuthAccessToken(app: DataImportSource): Promise<void> {
     return deleteOAuthAccessToken(app);
   }
 

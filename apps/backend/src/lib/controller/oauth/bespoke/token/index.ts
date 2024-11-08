@@ -42,7 +42,7 @@ export async function ghFetchToken(
 }
 
 export async function fetchToken(
-  app: string,
+  app: DataImportSource,
   mapping: OAuthAppDetails,
   code: string
 ): Promise<globalThis.Response | null> {
