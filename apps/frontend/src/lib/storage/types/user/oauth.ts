@@ -1,4 +1,4 @@
-import { AccessTokenSchema, DataImportSource, DataImportSourceSchema } from "@types";
+import { AccessTokenSchema, DataImportSourceSchema } from "@types";
 import { z } from "zod";
 
 export const OAuthDataSchema = z.object({
