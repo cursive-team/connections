@@ -1,10 +1,11 @@
 import { BASE_API_URL } from "@/config";
-import { errorToString, Json, UpdateChipRequest } from "@types";
+import { ChipIssuer, errorToString, Json, UpdateChipRequest } from "@types";
 import { storage } from "../storage";
 
 interface UpdateChipArgs {
   authToken: string;
-  tapParams: Record<string, string>;
+  chipIssuer: ChipIssuer;
+  chipId: string;
   ownerDisplayName: string | null;
   ownerBio: string | null;
   ownerTwitterUsername: string | null;
@@ -46,11 +47,10 @@ export async function updateChip(args: UpdateChipArgs): Promise<void> {
     ownerUserData.pronouns = args.ownerPronouns;
   }
 
-
-
   const request: UpdateChipRequest = {
     authToken: args.authToken,
-    tapParams: args.tapParams,
+    chipIssuer: args.chipIssuer,
+    chipId: args.chipId,
     ownerDisplayName: args.ownerDisplayName ?? null,
     ownerBio: args.ownerBio ?? null,
     ownerUserData,

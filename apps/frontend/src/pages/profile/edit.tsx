@@ -75,19 +75,22 @@ const ProfileEdit = () => {
       pronouns,
     } = formData;
     try {
-      await updateChip({
-        authToken: session!.authTokenValue,
-        tapParams: { chipId: user!.chips[0].id },
-        ownerDisplayName: displayName ?? null,
-        ownerBio: bio ?? null,
-        ownerTwitterUsername: twitterUsername ?? null,
-        ownerTelegramUsername: telegramUsername ?? null,
-        ownerSignalUsername: signalUsername ?? null,
-        ownerInstagramUsername: instagramUsername ?? null,
-        ownerFarcasterUsername: farcasterUsername ?? null,
-        ownerPronouns: pronouns ?? null,
-      });
-      toast.success("Chip updated successfully");
+      for (const chip of user!.chips) {
+        await updateChip({
+          authToken: session!.authTokenValue,
+          chipIssuer: chip.issuer,
+          chipId: chip.id,
+          ownerDisplayName: displayName ?? null,
+          ownerBio: bio ?? null,
+          ownerTwitterUsername: twitterUsername ?? null,
+          ownerTelegramUsername: telegramUsername ?? null,
+          ownerSignalUsername: signalUsername ?? null,
+          ownerInstagramUsername: instagramUsername ?? null,
+          ownerFarcasterUsername: farcasterUsername ?? null,
+          ownerPronouns: pronouns ?? null,
+        });
+      }
+      toast.success("Chip(s) updated successfully");
       router.push("/profile");
     } catch (error) {
       console.error(error);

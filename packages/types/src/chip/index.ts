@@ -2,6 +2,7 @@ import { JsonSchema } from "../util";
 import { z } from "zod";
 
 export enum ChipIssuer {
+  USER = "USER",
   EDGE_CITY_LANNA = "EDGE_CITY_LANNA",
   DEVCON_2024 = "DEVCON_2024",
   TESTING = "TESTING",
@@ -57,7 +58,8 @@ export type RegisterChipResponse = z.infer<typeof RegisterChipResponseSchema>;
 
 export const UpdateChipRequestSchema = z.object({
   authToken: z.string(),
-  tapParams: TapParamsSchema,
+  chipIssuer: ChipIssuerSchema,
+  chipId: z.string(),
   ownerDisplayName: z.string().nullable(),
   ownerBio: z.string().nullable(),
   ownerUserData: JsonSchema.nullable(),
