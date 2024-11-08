@@ -6,6 +6,7 @@ import {
   errorToString,
   GithubReposResponseSchema,
   GithubReposResponse,
+  LeaderboardEntryType,
 } from "@types";
 import {
   MapStravaActivityStatsToLeaderboardEntryRequest,
@@ -38,12 +39,14 @@ export function MapResponseToLeaderboardEntryRequest(
       return MapGithubCommitContributionsToLeaderboardEntry(
         authToken,
         chipIssuer,
+        LeaderboardEntryType.GITHUB_LANNA_COMMITS,
         resp
       );
     case ImportDataType.GITHUB_CONTRIBUTIONS_LAST_YEAR:
       return MapGithubCommitContributionsToLeaderboardEntry(
         authToken,
         chipIssuer,
+        LeaderboardEntryType.GITHUB_CONTRIBUTIONS_LAST_YEAR,
         resp
       );
     default:
