@@ -13,7 +13,7 @@ export enum DisplayedDashboard {
   GITHUB = "github",
   LANNA_TOTAL_WORKOUTS = "lanna-total-workouts",
   WEEKLY_TAPS_NOV_4 = "weekly-taps-nov-4",
-
+  DEVCON_TOTAL_TAPS = "devcon-total-taps",
 }
 
 export interface CommunityCardProps {

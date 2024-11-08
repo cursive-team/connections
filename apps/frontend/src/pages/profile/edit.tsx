@@ -129,7 +129,7 @@ const ProfileEdit = () => {
             <div className="flex items-center justify-between gap-4">
               <div className="flex flex-col gap-2">
                 <span className="text-label-primary">
-                  <b>Editing</b> Edge City Wristband
+                  <b>Editing</b> your Cursive NFC chips
                 </span>
                 <span className="text-[14px] text-label-tertiary">
                   This information is shared when someone taps your NFC chip
