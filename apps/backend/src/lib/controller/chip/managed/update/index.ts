@@ -1,15 +1,13 @@
 import { UpdateChipRequest } from "@types";
 import { Chip, ChipSchema } from "../../types";
 import { ManagedChipClient } from "../client";
-import { getChipFromTapParams } from "../util";
 
 ManagedChipClient.prototype.UpdateChip = async function (
   updateChip: UpdateChipRequest
 ): Promise<Chip> {
-  const chip = await getChipFromTapParams(
-    this.prismaClient,
-    updateChip.tapParams
-  );
+  const chip = await this.prismaClient.chip.findFirst({
+    where: { chipIssuer: updateChip.chipIssuer, chipId: updateChip.chipId },
+  });
   if (!chip) {
     throw new Error("Chip not found");
   }

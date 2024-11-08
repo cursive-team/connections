@@ -37,6 +37,7 @@ const parseActivity = (activity: Activity): ActivityDisplayItem => {
         JSON.parse(activity.serializedData)
       );
       const chipIssuerMap: Record<ChipIssuer, string> = {
+        USER: "user",
         EDGE_CITY_LANNA: "Edge City Lanna",
         DEVCON_2024: "Devcon 2024",
         TESTING: "Testing",

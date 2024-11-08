@@ -21,17 +21,27 @@ export const createTapBackMessage = async (
     throw new Error(`Connection not found for username: ${connectionUsername}`);
   }
 
+  // Find the chip for the issuer
+  // Use user chip if no matching chip exists
+  let tapBackChipPrivateKey: string | undefined;
+  let tapBackChipPublicKey: string | undefined;
+  let tapBackChipIssuer: ChipIssuer = chipIssuer;
   const chip = user.chips.find((chip) => chip.issuer === chipIssuer);
   if (!chip) {
-    throw new Error(`Chip not found for issuer: ${chipIssuer}`);
+    tapBackChipPrivateKey = user.signaturePrivateKey;
+    tapBackChipPublicKey = user.userData.signaturePublicKey;
+    tapBackChipIssuer = ChipIssuer.USER;
+  } else {
+    tapBackChipPrivateKey = chip.privateKey;
+    tapBackChipPublicKey = chip.publicKey;
   }
 
   const { serializedMessage, messageTimestamp } =
     await generateSerializedTapBackMessage({
       user: getUserShareableData(user.userData),
-      chipPrivateKey: chip.privateKey,
-      chipPublicKey: chip.publicKey,
-      chipIssuer,
+      chipPrivateKey: tapBackChipPrivateKey,
+      chipPublicKey: tapBackChipPublicKey,
+      chipIssuer: tapBackChipIssuer,
     });
 
   const newSentMessage: SentMessage = SentMessageSchema.parse({
