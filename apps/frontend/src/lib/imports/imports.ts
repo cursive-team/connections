@@ -55,7 +55,7 @@ export async function fetchAndSaveImportedData(
     if (tokenExists) {
       storage.deleteOAuthAccessToken(app);
       // As this toast will only be shown once, keep it
-      toast.error("Import failed, token removed. Rerun if token was revoked.", {duration: 5000});
+      toast.error("Import failed, token removed. Reauth application to refresh token.", {duration: 5000});
     }
 
 
@@ -191,7 +191,7 @@ export async function refreshData(): Promise<void> {
           if (tokenExists) {
             storage.deleteOAuthAccessToken(app);
             // As this toast will only be shown once, keep it
-            toast.error(`${capitalized} token has expired, go through OAuth flow again.`, {duration: 5000});
+            toast.error(`${capitalized} token has expired, reauth app to refresh token.`, {duration: 5000});
           }
           continue;
         }
