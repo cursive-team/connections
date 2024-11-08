@@ -155,6 +155,7 @@ export async function refreshData(): Promise<void> {
           continue;
         }
 
+        // This may be empty if the token expired and needs to be regranted
         const accessToken: AccessToken | undefined = await storage.getOAuthAccessToken(app.toString())
 
         if (!accessToken && (!user.oauth || !user.oauth[app])) {
