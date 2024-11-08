@@ -262,6 +262,5 @@ export async function importData(app: string, code: string): Promise<void> {
         return;
       }
     }
-    toast.success("Successfully imported application data.");
   }
 }
