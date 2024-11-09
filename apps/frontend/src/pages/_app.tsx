@@ -12,7 +12,6 @@ import OnlyMobileLayout from "@/layouts/OnlyMobileLayout";
 import { DefaultSeo } from "next-seo";
 // import { AnimatePresence, motion } from "framer-motion";
 import { preMigrationSignaturePublicKeys } from "@/common/constants";
-import { fetchMessages } from "@/lib/message";
 import { cn } from "@/lib/frontend/util";
 import { usePathname } from "next/navigation";
 import useSettings from "@/hooks/useSettings";

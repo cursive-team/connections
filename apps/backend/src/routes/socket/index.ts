@@ -99,7 +99,7 @@ wsServer.on('connection', (socket: Socket) => {
             clientsSockets[recipient].send(JSON.stringify(msgResponse));
           }
           return;
-        case SocketRequestType.CLOSE:
+        case SocketRequestType.EXPUNGE:
           delete clientsSockets[sender];
           socket.disconnect();
           return;

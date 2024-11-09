@@ -25,7 +25,7 @@ import { sendMessages } from "@/lib/message";
 import useSettings from "@/hooks/useSettings";
 import { cn } from "@/lib/frontend/util";
 import { Card } from "@/components/cards/Card";
-import { getConnectionSigPubKey, getUserSigPubKey } from "@/lib/user";
+import { getConnectionSigPubKey } from "@/lib/user";
 import { useSocket, socketEmit } from "@/lib/socket";
 
 interface CommentModalProps {
@@ -206,7 +206,7 @@ const UserProfilePage: React.FC = () => {
     tensions: string[];
     contacts: string[];
   } | null>(null);
-  const { socket, connected } = useSocket();
+  const { socket } = useSocket();
 
   useEffect(() => {
     const fetchConnectionAndTapInfo = async () => {
@@ -266,17 +266,13 @@ const UserProfilePage: React.FC = () => {
 
       // Only need to emit, do not need response from server
       if (socket && user) {
-        // Get recipient and sender id (pub keys)
-        const sender: string = getUserSigPubKey(user);
+        // Get recipient id (pub key)
         const recipient: string | null = getConnectionSigPubKey(user, connection.user.username);
 
         if (recipient) {
           socketEmit({
             socketInstance: socket,
-            connected,
-            authToken: session.authTokenValue,
             type: SocketRequestType.TAP_BACK,
-            senderSigPubKey: sender,
             recipientSigPubKey: recipient,
           });
         }

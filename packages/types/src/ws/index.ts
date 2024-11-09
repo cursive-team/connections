@@ -2,7 +2,7 @@ import {z} from "zod";
 
 export enum SocketRequestType {
   TAP_BACK = "TAP_BACK",
-  CLOSE = "CLOSE", // HERE: may not be necessary
+  EXPUNGE = "EXPUNGE",
 }
 
 export const SocketRequestTypeSchema = z.nativeEnum(SocketRequestType);

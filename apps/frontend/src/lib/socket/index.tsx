@@ -106,13 +106,12 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       // Expunge client from server
       SocketExpungeConnection({
         socketInstance,
-        connected
       });
 
       socketInstance.disconnect();
       console.log('Socket disconnected.');
     };
-  }, [setConnected]);
+  }, []);
 
 
 
