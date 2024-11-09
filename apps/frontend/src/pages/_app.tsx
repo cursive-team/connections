@@ -17,6 +17,7 @@ import { cn } from "@/lib/frontend/util";
 import { usePathname } from "next/navigation";
 import useSettings from "@/hooks/useSettings";
 import { refreshData } from "@/lib/imports";
+import { SocketProvider } from "@/lib/socket";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -129,14 +130,15 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       )}
     >
       <DefaultSeo titleTemplate="%s | Cursive Connections" />
-      <PlausibleProvider
-        domain={process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN!}
-        trackOutboundLinks
-      >
-        <OnlyMobileLayout ignoreMobile={isFortunePage}>
-          <Component {...pageProps} />
-        </OnlyMobileLayout>
-      </PlausibleProvider>
+      <SocketProvider>
+        <PlausibleProvider
+          domain={process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN!}
+          trackOutboundLinks>
+          <OnlyMobileLayout ignoreMobile={isFortunePage}>
+            <Component {...pageProps} />
+          </OnlyMobileLayout>
+        </PlausibleProvider>
+      </SocketProvider>
       <Analytics />
       <Toaster
         position="top-center"
