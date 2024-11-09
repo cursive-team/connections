@@ -24,6 +24,10 @@ declare module 'socket.io' {
 
 export const wsServer = new Server(server);
 
+const controller = new Controller();
+
+const clientsSockets: Record<string, Socket> = {};
+
 // Middleware to authenticate the socket connection
 wsServer.use(async(socket, next) => {
   const token = socket.handshake.auth.token;
@@ -40,6 +44,10 @@ wsServer.use(async(socket, next) => {
   } else {
     // Attach user info to socket object
     socket.user = user;
+
+    // Set client lookup record
+    clientsSockets[user.signaturePublicKey] = socket;
+
     return next();
   }
 
@@ -47,19 +55,14 @@ wsServer.use(async(socket, next) => {
 });
 
 
-const controller = new Controller();
-
-const clientsSockets: Record<string, Socket> = {};
-
-const handleError = (socket: Socket, recipient: string, error: string): void => {
+const handleError = (socket: Socket, error: string): void => {
   const payload: SocketErrorPayload = {
     error,
   }
 
   const resp: SocketResponse = {
     type: SocketResponseType.ERROR,
-    recipientSigPubKey: recipient,
-    senderSigPubKey: "",
+    recipientSigPubKey: socket.user.signaturePublicKey,
     payload
   };
 
@@ -69,7 +72,7 @@ const handleError = (socket: Socket, recipient: string, error: string): void => 
 
 wsServer.on('connection', (socket: Socket) => {
   socket.on('open', () => {
-    console.log("Open socket client connection.");
+    console.log("Open authenticated socket client connection.");
   });
 
   socket.on('disconnect', () => {
@@ -77,64 +80,26 @@ wsServer.on('connection', (socket: Socket) => {
   });
 
   socket.on('message', async (message: string) => {
-    let sender: string | null = null;
+    let sender = socket.user.signaturePublicKey;
     let recipient: string | null = null;
     try {
       const req: SocketRequest = SocketRequestSchema.parse(JSON.parse(message));
 
-      if (!req.senderSigPubKey) {
-        throw new Error("Missing sender");
-      }
-
-      sender = req.senderSigPubKey;
       recipient = req.recipientSigPubKey;
-
-      if (!req.authToken) {
-        return handleError(socket, sender, "Missing auth token.");
-      }
-
-      // Fetch user by auth token, ensure the request is from an authenticated user
-      const user = await controller.GetUserByAuthToken(req.authToken);
-      if (!user) {
-        return handleError(socket, sender, "Invalid auth token.");
-      } else if (user.signaturePublicKey !== sender) {
-        return handleError(socket, sender, "Incorrect user key");
-      }
-
       switch (req.type) {
-        case SocketRequestType.CONNECT:
-          if (!sender) {
-            return handleError(socket, sender, "Missing sender.");
-          }
-
-          // Set record for future lookup
-          clientsSockets[sender] = socket;
-
-          // Return CONNECT_SUCCESS response
-          const connectResponse: SocketResponse = MapRequestToResponse(req);
-
-          if (clientsSockets[sender]) {
-            clientsSockets[sender].send(JSON.stringify(connectResponse));
-          } else {
-            throw new Error("Sender client socket missing.");
-          }
-          return;
         case SocketRequestType.TAP_BACK:
           if (!recipient) {
-            return handleError(socket, sender, "Missing recipient.");
+            return handleError(socket, "Missing recipient.");
           }
 
           const msgResponse: SocketResponse = MapRequestToResponse(req);
 
           if (clientsSockets[recipient]) {
-            console.log("recipient socket exists")
+            console.log("Recipient socket exists")
             clientsSockets[recipient].send(JSON.stringify(msgResponse));
           }
           return;
         case SocketRequestType.CLOSE:
-          if (!sender) {
-            return handleError(socket, sender, "Missing target.")
-          }
           delete clientsSockets[sender];
           socket.disconnect();
           return;
@@ -145,7 +110,7 @@ wsServer.on('connection', (socket: Socket) => {
       const errMsg: string = `Error handling message: ${errorToString(error)}`;
       console.error(errMsg);
       if (sender) {
-        return handleError(socket, sender, errMsg);
+        return handleError(socket, errMsg);
       }
       return;
     }

@@ -1,7 +1,6 @@
 import {z} from "zod";
 
 export enum SocketRequestType {
-  CONNECT = "CONNECT",
   TAP_BACK = "TAP_BACK",
   CLOSE = "CLOSE", // HERE: may not be necessary
 }
@@ -9,7 +8,6 @@ export enum SocketRequestType {
 export const SocketRequestTypeSchema = z.nativeEnum(SocketRequestType);
 
 export enum SocketResponseType {
-  SUCCESS_CONNECT = "CONNECT_SUCCESS",
   TAP_BACK = "TAP_BACK",
   ERROR = "ERROR"
 }
@@ -26,9 +24,7 @@ export type SocketErrorPayload = z.infer<
 >;
 
 export const SocketRequestSchema = z.object({
-  authToken: z.string(),
   type: SocketRequestTypeSchema,
-  senderSigPubKey: z.coerce.string().nullable(),
   recipientSigPubKey: z.coerce.string().nullable(),
   payload: z.any(),
 });
@@ -39,7 +35,6 @@ export type SocketRequest = z.infer<
 
 export const SocketResponseSchema = z.object({
   type: SocketResponseTypeSchema,
-  senderSigPubKey: z.string().nullable(),
   recipientSigPubKey: z.string().nullable(),
   payload: z.any(),
 });
@@ -52,9 +47,6 @@ export const MapRequestToResponse = (req: SocketRequest): SocketResponse => {
   let respType: SocketResponseType | null = null;
 
   switch (req.type) {
-    case SocketRequestType.CONNECT:
-      respType = SocketResponseType.SUCCESS_CONNECT;
-      break;
     case SocketRequestType.TAP_BACK:
       respType = SocketResponseType.TAP_BACK;
       break;
@@ -68,7 +60,7 @@ export const MapRequestToResponse = (req: SocketRequest): SocketResponse => {
 
   return {
     type: respType,
-    senderSigPubKey: req.senderSigPubKey,
     recipientSigPubKey: req.recipientSigPubKey,
+    payload: req.payload,
   }
 }
