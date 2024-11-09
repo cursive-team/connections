@@ -17,6 +17,16 @@ export enum ChipVariant {
 
 export const ChipVariantSchema = z.nativeEnum(ChipVariant);
 
+export const ChipPublicKeySignatureSchema = z.object({
+  R8xHex: z.string(),
+  R8yHex: z.string(),
+  SHex: z.string(),
+});
+
+export type ChipPublicKeySignature = z.infer<
+  typeof ChipPublicKeySignatureSchema
+>;
+
 export const TapParamsSchema = z.record(z.string(), z.string());
 
 export type TapParams = z.infer<typeof TapParamsSchema>;

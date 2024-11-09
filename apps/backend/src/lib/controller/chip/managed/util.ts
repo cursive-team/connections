@@ -63,8 +63,7 @@ export async function getChipFromTapParams(
           {
             method: "GET",
             headers: {
-              Authorization:
-                "Bearer 466b9db251785c2cc815a327ca4547e06222cc24af377cbb0729d543896ea599",
+              Authorization: `Bearer ${process.env.ARX_SERVER_AUTHORIZATION_TOKEN}`,
             },
           }
         );
