@@ -15,6 +15,7 @@ import {
 export * from "./tapBack";
 
 import { BASE_API_URL } from "@/config";
+import { storage } from "@/lib/storage";
 
 export const sendMessages = async (
   request: CreateMessagesRequest
@@ -178,4 +179,22 @@ export const decryptReceivedMessage = async ({
     serializedData,
     senderSignaturePublicKey,
   };
+};
+
+export const refreshMessages = async () => {
+  console.log("Refreshing messages...");
+  const user = await storage.getUser();
+  const session = await storage.getSession();
+  if (!user || !session) {
+    return;
+  }
+
+  const messages = await fetchMessages({
+    authToken: session.authTokenValue,
+    lastMessageFetchedAt: user.lastMessageFetchedAt,
+  });
+  console.log(`Found ${messages.length} messages`);
+  if (messages.length > 0) {
+    await storage.processNewMessages(messages);
+  }
 };

@@ -18,6 +18,7 @@ import { usePathname } from "next/navigation";
 import useSettings from "@/hooks/useSettings";
 import { refreshData } from "@/lib/imports";
 import { SocketProvider } from "@/lib/socket";
+import { refreshMessages } from "@/lib/message";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -35,6 +36,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [isPreMigrationSessionChecked, setIsPreMigrationSessionChecked] =
     useState(false);
+  const [runRefreshMessageLoop, setRunRefreshMessageLoop] = useState(true);
 
   const { darkTheme } = useSettings();
 
@@ -59,24 +61,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
   // Refresh messages when the page is refreshed
   useEffect(() => {
-    const refreshMessages = async () => {
-      console.log("Refreshing messages...");
-      const user = await storage.getUser();
-      const session = await storage.getSession();
-      if (!user || !session) {
-        return;
-      }
-
-      const messages = await fetchMessages({
-        authToken: session.authTokenValue,
-        lastMessageFetchedAt: user.lastMessageFetchedAt,
-      });
-      console.log(`Found ${messages.length} messages`);
-      if (messages.length > 0) {
-        await storage.processNewMessages(messages);
-      }
-    };
-
     refreshMessages();
   }, []);
 
