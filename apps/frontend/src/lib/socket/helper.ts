@@ -100,7 +100,7 @@ export const SocketFinalizeConnection = async ({
   }
 }
 
-export const SocketCloseConnection = async ({
+export const SocketExpungeConnection = async ({
   socketInstance,
   connected,
 }: {

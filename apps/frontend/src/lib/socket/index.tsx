@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { BASE_API_WS } from "@/config";
 import {
-  SocketCloseConnection,
+  SocketExpungeConnection,
 } from "@/lib/socket/helper";
 import {
   SocketResponseSchema,
@@ -17,6 +17,7 @@ import {
 } from "@/lib/message";
 
 import { SocketFinalizeConnection } from "@/lib/socket/helper";
+import { storage } from "@/lib/storage";
 
 export * from "./helper";
 
@@ -32,16 +33,32 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [connected, setConnected] = useState<boolean>(false);
 
   useEffect(() => {
-    // HERE: fix this:
-    const socketInstance = io(BASE_API_WS, { transports: ['websocket'] });
+    // Setup steps:
+    // 1. authenticated connection, refuse to establish connection until session available
+    // 2. establish connection
+    // 3. send user public key info, for socket lookup in backend service
+    // 4. messaging
+    // 5. close -- expunge public key info
+    // 6. close connection
+
+    const session = storage.syncGetSession();
+    if (!session) {
+      // Do not establish connection until session is available
+      return;
+    }
+
+    const socketInstance = io(BASE_API_WS, {
+      transports: ['websocket'],
+      auth: {
+        token: session?.authTokenValue,
+      }
+    });
+
+    socketInstance.on('error', (err) => {
+      console.error(`Socket connection error: ${errorToString(err)}`);
+    });
 
     socketInstance.on('connect', () => {
-      // 1: connect
-      // 2: expectConnection -> true
-      // 3: call SocketFinalizeConnection
-      // 4: connected -> true
-      // 5: expectConnection -> false
-
       if (!connected) {
         // Send user public key information to server for socket lookups
         SocketFinalizeConnection({
@@ -66,7 +83,6 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             setConnected(true);
             return;
           case SocketResponseType.TAP_BACK:
-            console.log("TAP_BACK")
             refreshMessages();
             return;
           case SocketResponseType.ERROR:
@@ -93,7 +109,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Cleanup on unmount
     return () => {
       // Expunge client from server
-      SocketCloseConnection({
+      SocketExpungeConnection({
         socketInstance,
         connected
       });

@@ -8,11 +8,44 @@ import {
   SocketResponse,
   SocketErrorPayload,
   MapRequestToResponse,
-  errorToString
+  errorToString,
 } from "@types";
+import {
+  User,
+} from "@/lib/controller/postgres/types";
 import { Controller } from "@/lib/controller";
 
+// Extend the interface to include User info -- with the User info attached we do not need sender info in request
+declare module 'socket.io' {
+  interface Socket {
+    user: User;
+  }
+}
+
 export const wsServer = new Server(server);
+
+// Middleware to authenticate the socket connection
+wsServer.use(async(socket, next) => {
+  const token = socket.handshake.auth.token;
+
+  if (!token) {
+    return next(new Error("Authentication error"));
+  }
+
+  // Fetch user by auth token
+  const user = await controller.GetUserByAuthToken(token);
+
+  if (!user) {
+    return next(new Error("Authentication error"));
+  } else {
+    // Attach user info to socket object
+    socket.user = user;
+    return next();
+  }
+
+  return next(new Error("Authentication error"));
+});
+
 
 const controller = new Controller();
 

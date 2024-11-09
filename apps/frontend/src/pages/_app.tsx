@@ -36,7 +36,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [isPreMigrationSessionChecked, setIsPreMigrationSessionChecked] =
     useState(false);
-  const [runRefreshMessageLoop, setRunRefreshMessageLoop] = useState(true);
 
   const { darkTheme } = useSettings();
 
