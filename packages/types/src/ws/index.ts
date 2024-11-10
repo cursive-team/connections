@@ -2,6 +2,7 @@ import {z} from "zod";
 
 export enum SocketRequestType {
   TAP_BACK = "TAP_BACK",
+  PSI = "PSI",
   EXPUNGE = "EXPUNGE",
 }
 
@@ -9,6 +10,7 @@ export const SocketRequestTypeSchema = z.nativeEnum(SocketRequestType);
 
 export enum SocketResponseType {
   TAP_BACK = "TAP_BACK",
+  PSI = "PSI",
   ERROR = "ERROR"
 }
 
@@ -49,6 +51,9 @@ export const MapRequestToResponse = (req: SocketRequest): SocketResponse => {
   switch (req.type) {
     case SocketRequestType.TAP_BACK:
       respType = SocketResponseType.TAP_BACK;
+      break;
+    case SocketRequestType.PSI:
+      respType = SocketResponseType.PSI;
       break;
     default:
       throw new Error("Invalid socket request type");

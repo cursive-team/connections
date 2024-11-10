@@ -10,7 +10,7 @@ import {
   SocketResponseType,
   SocketErrorPayloadSchema,
   SocketErrorPayload,
-  errorToString
+  errorToString, SocketRequestType
 } from "@types";
 import {
   refreshMessages
@@ -71,6 +71,9 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         switch (resp.type) {
           case SocketResponseType.TAP_BACK:
             refreshMessages();
+            return;
+          case SocketResponseType.PSI:
+            console.log("received PSI refresh message")
             return;
           case SocketResponseType.ERROR:
             const payload: SocketErrorPayload = SocketErrorPayloadSchema.parse(JSON.parse(resp.payload));

@@ -92,11 +92,21 @@ wsServer.on('connection', (socket: Socket) => {
             return handleError(socket, "Missing recipient.");
           }
 
-          const msgResponse: SocketResponse = MapRequestToResponse(req);
+          const tapBackResponse: SocketResponse = MapRequestToResponse(req);
 
           if (clientsSockets[recipient]) {
-            console.log("Recipient socket exists")
-            clientsSockets[recipient].send(JSON.stringify(msgResponse));
+            clientsSockets[recipient].send(JSON.stringify(tapBackResponse));
+          }
+          return;
+        case SocketRequestType.PSI:
+          if (!recipient) {
+            return handleError(socket, "Missing recipient.");
+          }
+
+          const psiResponse: SocketResponse = MapRequestToResponse(req);
+
+          if (clientsSockets[recipient]) {
+            clientsSockets[recipient].send(JSON.stringify(psiResponse));
           }
           return;
         case SocketRequestType.EXPUNGE:

@@ -370,9 +370,23 @@ const UserProfilePage: React.FC = () => {
         }
       );
 
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(`HTTP error! status: ${errorData.error}`);
+      }
+
+      if (socket && connection) {
+        // Get recipient id (pub key)
+        const recipient: string | null = getConnectionSigPubKey(user, connection.user.username);
+
+        if (recipient) {
+          socketEmit({
+            socketInstance: socket,
+            type: SocketRequestType.PSI,
+            recipientSigPubKey: recipient,
+          });
+        }
       }
 
       const data = await response.json();
