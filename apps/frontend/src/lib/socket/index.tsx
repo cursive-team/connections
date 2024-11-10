@@ -32,14 +32,6 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [connected, setConnected] = useState<boolean>(false);
 
   useEffect(() => {
-    // Setup steps:
-    // 1. authenticated connection, refuse to establish connection until session available
-    // 2. establish connection
-    // 3. send user public key info, for socket lookup in backend service
-    // 4. messaging
-    // 5. close -- expunge public key info
-    // 6. close connection
-
     const session = storage.syncGetSession();
     if (!session) {
       // Do not establish connection until session is available
