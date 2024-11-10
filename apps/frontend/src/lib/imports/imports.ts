@@ -9,13 +9,12 @@ import {
   OAuthAppDetails,
   RefreshRateType,
 } from "@types";
-import { toast } from "sonner";
 import { User, UserData } from "@/lib/storage/types";
 import { fetchImportedData } from "./fetch";
 import { saveImportedData } from "./save";
 import { OAUTH_APP_DETAILS } from "@/config";
 import { storage } from "@/lib/storage";
-import { getOAuthAccessToken } from "@/lib/oauth";
+import { getOAuthAccessToken, refreshAndSaveToken } from "@/lib/oauth";
 import { getChipIssuers } from "@/lib/storage/localStorage/user/chip";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
@@ -54,11 +53,6 @@ export async function fetchAndSaveImportedData(
     const tokenExists = await storage.getOAuthAccessToken(app);
     if (tokenExists) {
       storage.deleteOAuthAccessToken(app);
-      // As this toast will only be shown once, keep it
-      toast.error(
-        "Import failed, token removed. Reauth application to refresh token.",
-        { duration: 5000 }
-      );
     }
 
     console.error("Error importing data:", errorToString(error));
@@ -126,9 +120,9 @@ export function isOverdueToReimport(
       }
       return false;
     case RefreshRateType.TESTING:
-      // if (now - lastImportedAt) > 30 seconds, return true
+      // if (now - lastImportedAt) > 10 seconds, return true
       const secondsDiff = millisecondDiff / 1000;
-      if (secondsDiff > 30) {
+      if (secondsDiff > 10) {
         return true;
       }
       return false;
@@ -172,8 +166,6 @@ export async function refreshData(): Promise<void> {
     const chipIssuers: ChipIssuer[] = await getChipIssuers();
 
     for (const appStr of apps) {
-      const capitalized: string =
-        appStr.charAt(0).toUpperCase() + appStr.substring(1);
       const app = DataImportSourceSchema.parse(appStr);
 
       const details: OAuthAppDetails = OAUTH_APP_DETAILS[app];
@@ -185,7 +177,7 @@ export async function refreshData(): Promise<void> {
         }
 
         // This may be empty if the token expired and needs to be regranted
-        const accessToken: AccessToken | undefined =
+        let accessToken: AccessToken | undefined =
           await storage.getOAuthAccessToken(app);
 
         if (!accessToken && (!user.oauth || !user.oauth[app])) {
@@ -206,15 +198,16 @@ export async function refreshData(): Promise<void> {
         }
 
         if (accessToken.expires_at && now > expiresAt) {
-          // TODO: swap to use refresh token
-          const tokenExists = await storage.getOAuthAccessToken(app);
-          if (tokenExists) {
-            storage.deleteOAuthAccessToken(app);
-            // As this toast will only be shown once, keep it
-            toast.error(
-              `${capitalized} token has expired, reauth app to refresh token.`,
-              { duration: 5000 }
-            );
+          // If token expired, use refresh token, else warn user and delete token
+          try {
+            accessToken = await refreshAndSaveToken(app, details, accessToken);
+          } catch (error) {
+            const tokenExists = await storage.getOAuthAccessToken(app);
+            if (tokenExists) {
+              storage.deleteOAuthAccessToken(app);
+              // As this toast will only be shown once, keep it
+              console.error("Token refresh failed:", errorToString(error));
+            }
           }
           continue;
         }
