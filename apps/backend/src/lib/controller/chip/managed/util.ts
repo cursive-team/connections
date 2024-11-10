@@ -153,6 +153,7 @@ export const generateTapSignatureFromChip = async (
     locationName,
     locationDescription,
     locationData,
+    chipPublicKeySignature,
   } = chip;
 
   // If chip is not registered, return a response indicating so
@@ -209,6 +210,7 @@ export const generateTapSignatureFromChip = async (
     isLocationChip,
     userTap: {
       chipPublicKey,
+      chipPublicKeySignature,
       message,
       signature,
       tapCount: chipTapCount + 1,

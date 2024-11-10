@@ -18,7 +18,7 @@ export const generateSignatureForPublicKey = (
   ]);
 
   // Generate Cursive EdDSA key pair
-  const cursivePrivKey = process.env.CURSIVE_ED25519_PRIVATE_KEY_SEED!;
+  const cursivePrivKey = process.env.CURSIVE_BBJJ_PRIVATE_KEY_SEED!;
   const cursivePubKey = derivePublicKey(cursivePrivKey);
   const cursivePubKeyAx = cursivePubKey[0];
   const cursivePubKeyAy = cursivePubKey[1];
