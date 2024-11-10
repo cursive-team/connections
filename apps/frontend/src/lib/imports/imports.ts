@@ -194,6 +194,7 @@ export async function refreshData(): Promise<void> {
             if (tokenExists) {
               storage.deleteOAuthAccessToken(app);
               // As this toast will only be shown once, keep it
+              console.error("Token refresh failed:", errorToString(error));
               toast.error(`${capitalized} token has expired, reauth app to refresh token.`, {duration: 5000});
             }
           }
