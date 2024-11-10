@@ -216,7 +216,7 @@ const ProfilePage: React.FC = () => {
                     Your vault
                   </span>
                   <span className="text-sm font-normal text-label-tertiary">
-                    {`Change which features use your data or remove your data altogether.`}
+                    {`This data can be used to discover commonalities and try digital pheromone experiments.`}
                   </span>
                 </div>
                 {user.oauth && Object.keys(user.oauth).length > 0 && (
