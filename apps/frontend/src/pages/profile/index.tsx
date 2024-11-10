@@ -18,7 +18,6 @@ import { logoutUser } from "@/lib/auth";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import ImportGithubButton from "@/features/oauth/ImportGithubButton";
 import ImportStravaButton from "@/features/oauth/ImportStravaButton";
-import AddNotificationButton from "@/features/notification/AddNotificationButton";
 import ToggleSwitch from "@/components/ui/Switch";
 import useSettings from "@/hooks/useSettings";
 import { storeAddChipRequest } from "@/lib/chip/addChip";
