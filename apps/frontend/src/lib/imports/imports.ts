@@ -9,7 +9,6 @@ import {
   OAuthAppDetails,
   RefreshRateType
 } from "@types";
-import { toast } from "sonner";
 import { User, UserData } from "@/lib/storage/types";
 import { fetchImportedData } from "./fetch";
 import { saveImportedData } from "./save";
@@ -54,8 +53,6 @@ export async function fetchAndSaveImportedData(
     const tokenExists = await storage.getOAuthAccessToken(app);
     if (tokenExists) {
       storage.deleteOAuthAccessToken(app);
-      // As this toast will only be shown once, keep it
-      toast.error("Import failed, token removed. Reauth application to refresh token.", {duration: 5000});
     }
 
 
@@ -153,7 +150,6 @@ export async function refreshData(): Promise<void> {
     const chipIssuers: ChipIssuer[] = await getChipIssuers();
 
     for (const appStr of apps) {
-      const capitalized: string = appStr.charAt(0).toUpperCase() + appStr.substring(1);
       const app = DataImportSourceSchema.parse(appStr);
 
       const details: OAuthAppDetails = OAUTH_APP_DETAILS[app];
@@ -195,7 +191,6 @@ export async function refreshData(): Promise<void> {
               storage.deleteOAuthAccessToken(app);
               // As this toast will only be shown once, keep it
               console.error("Token refresh failed:", errorToString(error));
-              toast.error(`${capitalized} token has expired, reauth app to refresh token.`, {duration: 5000});
             }
           }
           continue;
