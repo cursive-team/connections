@@ -3,12 +3,14 @@ import * as React from "react";
 import { RouterItem } from "@/lib/frontend/types";
 import { cn } from "@/lib/frontend/util";
 import { classed } from "@tw-classed/react";
+import useSettings from "@/hooks/useSettings";
 
-export const MenuBarItem = ({ label, href, isActive, icon }: RouterItem) => {
+export const MenuBarItem = ({ href, isActive, icon }: RouterItem) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Icon: any = icon;
+  const { darkTheme } = useSettings();
 
-  const iconColor = isActive ? "text-icon-primary" : "text-icon-primary";
+  const iconColor = darkTheme ? "text-black" : "text-white";
 
   return (
     <Link href={href}>
@@ -26,14 +28,19 @@ export const MenuBarItem = ({ label, href, isActive, icon }: RouterItem) => {
             isActive && "!opacity-100"
           )}
         />
-        <span className="text-center text-xs font-medium leading-4 text-label-primary">
-          {label}
-        </span>
       </div>
     </Link>
   );
 };
 
 export const MenuBar = classed.div(
-  "flex flex-col p-[1px] border border-t-stroke-secondary bg-surface-primary"
+  "flex flex-col p-[1px] border border-t-stroke-secondary",
+  {
+    variants: {
+      darkTheme: {
+        true: "bg-[#FF9DF8]",
+        false: "bg-black",
+      },
+    },
+  }
 );

@@ -9,7 +9,9 @@ const ButtonComponent = classed.button(
   {
     variants: {
       size: {
+        lg: "py-2 px-6 text-base leading-[19px] font-medium",
         md: "py-2 px-4 text-sm leading-[19px] font-medium",
+        sm: "py-2 px-2 text-xs leading-[19px] font-medium",
       },
       variant: {
         primary:
@@ -61,7 +63,9 @@ export interface ButtonProps
 }
 
 const IconVariants: Record<NonNullable<ButtonVariants["size"]>, string> = {
+  lg: "w-3 h-3",
   md: "w-3 h-3",
+  sm: "w-3 h-3",
 };
 const LoadingSpinner = ({ size }: Pick<ButtonProps, "size">) => {
   const iconSize = IconVariants[size ?? "md"];
