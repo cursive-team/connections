@@ -69,7 +69,6 @@ export async function refreshToken(
   mapping: OAuthAppDetails,
   refreshToken: string
 ): Promise<Response | null> {
-  // Apps that use client-side fetching
   switch (app) {
     case DataImportSource.STRAVA:
       return await stravaRefreshToken(mapping, refreshToken);
@@ -90,8 +89,6 @@ export async function refreshAndSaveToken(
   }
 
   if (!response.ok || response.type == "error") {
-    console.log("response invalid", response)
-
     const errorResponse = await response.json();
     console.error(
       `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
