@@ -16,7 +16,7 @@ export const StravaBearerTokenSchema = z.object({
   access_token: z.string(),
   refresh_token: z.string(),
   expires_at: z.number(),
-  athlete: StravaAtheleteSchema,
+  athlete: StravaAtheleteSchema.optional(),
 });
 
 export type StravaBearerToken = z.infer<typeof StravaBearerTokenSchema>;
@@ -51,12 +51,23 @@ export type OAuthExchangeTokensRequest = z.infer<
 
 // Mapping access token types
 export async function stravaMapResponseToAccessToken(
-  data: any
+  data: any,
+  oldAccessToken: AccessToken | null,
 ): Promise<AccessToken> {
   // Convert StravaBearerToken into generic AuthToken
   const parsedData = StravaBearerTokenSchema.parse(data);
   const { access_token, refresh_token, expires_at, athlete } = parsedData;
-  const { id } = athlete;
+
+  let id: number = 0;
+  if (!athlete && oldAccessToken) {
+    // Athlete not available, means we're in the refresh flow. Use existing value.
+    id = oldAccessToken.user_id;
+  } else if (athlete) {
+    // Athlete available, use it
+    id = athlete.id;
+  } else {
+    throw new Error("Required user Id output is missing.")
+  }
 
   return {
     access_token,
@@ -91,11 +102,12 @@ export async function githubMapResponseToAccessToken(
 
 export async function mapResponseToAccessToken(
   app: DataImportSource,
+  oldAccessToken: AccessToken | null, // Used in refresh case
   data: any
 ): Promise<AccessToken | null> {
   switch (app) {
     case DataImportSource.STRAVA:
-      return await stravaMapResponseToAccessToken(data);
+      return await stravaMapResponseToAccessToken(data, oldAccessToken);
     case DataImportSource.GITHUB:
       return await githubMapResponseToAccessToken(data);
     default:
