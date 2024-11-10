@@ -58,19 +58,26 @@ const EnterUsername: React.FC<EnterUsernameProps> = ({
   return (
     <div className="flex flex-col grow">
       <RegisterHeader
-        title="Discover & deepen connection with residents!"
+        title="Discover & deepen connection at Devcon!"
         description={
           <div className="flex flex-col gap-2">
-            <span>
-              {`Use programmable cryptography to safely connect & efficiently coordinate with 
-              Devcon attendees. Make sure you've tapped your own chip to register it.`}
-            </span>
+            <ul className="list-disc pl-4 space-y-2">
+              <li>Easily share socials with your NFC chip</li>
+              <li>
+                Discover overlapping events and hot takes with private set
+                intersections
+              </li>
+              <li>
+                Receive high-quality opportunites while maintaining data privacy
+                with MPC
+              </li>
+            </ul>
           </div>
         }
       />
       <div className="flex flex-col mt-auto">
         <form onSubmit={handleSubmit} className="space-y-4 pb-2">
-          <div className="text-center mt-1">
+          <div className="mt-1">
             <AppInput
               id="username"
               name="username"
@@ -80,7 +87,6 @@ const EnterUsername: React.FC<EnterUsernameProps> = ({
               required
               value={username}
               onChange={handleChange}
-              description="Choose your unique Cursive username."
             />
           </div>
 
