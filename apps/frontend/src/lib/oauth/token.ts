@@ -10,20 +10,6 @@ import { BASE_API_URL, OAUTH_APP_DETAILS } from "@/config";
 import { storage } from "@/lib/storage";
 import { toast } from "sonner";
 
-async function fetchToken(
-  app: DataImportSource,
-  mapping: OAuthAppDetails,
-  code: string
-): Promise<Response | null> {
-  // Apps that use client-side fetching
-  switch (app) {
-    case DataImportSource.STRAVA:
-      return await stravaFetchToken(mapping, code);
-    default:
-      return null;
-  }
-}
-
 async function stravaFetchToken(
   mapping: OAuthAppDetails,
   code: string
@@ -42,6 +28,91 @@ async function stravaFetchToken(
       grant_type: "authorization_code",
     }),
   });
+}
+
+async function fetchToken(
+  app: DataImportSource,
+  mapping: OAuthAppDetails,
+  code: string
+): Promise<Response | null> {
+  // Apps that use client-side fetching
+  switch (app) {
+    case DataImportSource.STRAVA:
+      return await stravaFetchToken(mapping, code);
+    default:
+      return null;
+  }
+}
+
+async function stravaRefreshToken(
+  mapping: OAuthAppDetails,
+  refreshToken: string
+): Promise<Response> {
+  const { id, secret, token_url } = mapping;
+
+  return fetch(token_url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      client_id: id,
+      client_secret: secret,
+      refresh_token: refreshToken,
+      grant_type: "refresh_token",
+    }),
+  });
+}
+
+export async function refreshToken(
+  app: DataImportSource,
+  mapping: OAuthAppDetails,
+  refreshToken: string
+): Promise<Response | null> {
+  switch (app) {
+    case DataImportSource.STRAVA:
+      return await stravaRefreshToken(mapping, refreshToken);
+    default:
+      return null;
+  }
+}
+
+export async function refreshAndSaveToken(
+  app: DataImportSource,
+  details: OAuthAppDetails,
+  currentAccessToken: AccessToken): Promise<AccessToken> {
+  const response = await refreshToken(app, details, currentAccessToken.refresh_token);
+  if (!response) {
+    throw new Error(
+      `HTTP error! empty response.`
+    );
+  }
+
+  if (!response.ok || response.type == "error") {
+    const errorResponse = await response.json();
+    console.error(
+      `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+    );
+    throw new Error(
+      `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+    );
+  }
+
+  const data = await response.json();
+  if (data && data.error) {
+    throw new Error(
+      `HTTP error! status: ${response.status}, message: ${data.error}, consider checking environment variables or redirect_uri`
+    );
+  }
+
+  const token: AccessToken | null = await mapResponseToAccessToken(app, currentAccessToken, data);
+  if (token) {
+    // Successful refresh. Save token and continue with data import.
+    await storage.saveOAuthAccessToken(app, token);
+    return token;
+  } else {
+    throw new Error("Token refresh did not succeed, delete token.")
+  }
 }
 
 export async function getOAuthTokenViaClient(
@@ -78,7 +149,7 @@ export async function getOAuthTokenViaClient(
     }
 
     // Convert app-specific token format into generic AccessToken
-    return await mapResponseToAccessToken(app, data);
+    return await mapResponseToAccessToken(app, null, data);
   } catch (error) {
     console.error("Error fetching access token:", error);
     throw error;

@@ -44,7 +44,7 @@ export class BespokeOAuthClient implements iOAuthClient {
         );
       }
 
-      const accessToken = await mapResponseToAccessToken(app, data)
+      const accessToken = await mapResponseToAccessToken(app, null, data)
       return accessToken || null;
     } catch (error) {
       console.error("Error fetching access token:", error);
