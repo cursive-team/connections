@@ -13,7 +13,9 @@ const AppFooter = () => {
   return (
     <footer
       id="footer"
-      className={cn("fixed w-full bottom-0 z-[50] overflow-hidden p-[10px]")}
+      className={cn(
+        "fixed w-full bottom-0 z-[50] overflow-hidden p-[10px] pb-[20px]"
+      )}
     >
       <div
         className={cn("", darkTheme ? "bg-white" : "bg-black")}
@@ -38,6 +40,7 @@ const AppFooter = () => {
 
             // is home or the first part of the path matches the first part of the href
             const isActive =
+              index === 0 ||
               isHome ||
               (pathname !== null && pathParts[0] === pathname.split("/")[1]);
 

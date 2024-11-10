@@ -38,7 +38,7 @@ export const MenuBar = classed.div(
   {
     variants: {
       darkTheme: {
-        true: "bg-white",
+        true: "bg-[#FF9DF8]",
         false: "bg-black",
       },
     },

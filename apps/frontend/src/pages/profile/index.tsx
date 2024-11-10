@@ -105,27 +105,31 @@ const ProfilePage: React.FC = () => {
               <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
                 <div className="shrink-0">
                   <Link href="/profile/overview">
-                    <AppButton className="w-fit">
+                    <AppButton size="lg" className="w-fit">
                       <span className="text-[14px]">View profile</span>
                     </AppButton>
                   </Link>
                 </div>
                 <div className="shrink-0">
                   <Link href="/activity">
-                    <AppButton variant="outline" className="w-fit">
+                    <AppButton
+                      icon={<Icons.Activity size={16} className="mr-1" />}
+                      variant="outline"
+                      className="w-fit"
+                      size="sm"
+                    >
                       <span className="text-[14px]">Activity</span>
                     </AppButton>
                   </Link>
                 </div>
-                <div className="w-fit shrink-0">
-                  <AddNotificationButton />
-                </div>
                 <div className="shrink-0">
                   <AppButton
+                    icon={<Icons.Sparkles size={16} className="mr-1" />}
                     onClick={() => {
                       storeAddChipRequest();
                       toast.success("Please tap your new chip to add it!");
                     }}
+                    size="sm"
                     variant="outline"
                     className="w-fit"
                   >

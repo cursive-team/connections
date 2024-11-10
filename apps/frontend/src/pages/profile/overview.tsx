@@ -59,6 +59,10 @@ export default function ProfileOverview() {
           </div>
         </div>
       }
+      back={{
+        href: "/profile",
+        label: "Back",
+      }}
     >
       <div className="flex flex-col gap-3 mt-[46px]">
         <div className="flex flex-col px-4">

@@ -9,7 +9,9 @@ const ButtonComponent = classed.button(
   {
     variants: {
       size: {
+        lg: "py-2 px-6 text-base leading-[19px] font-medium",
         md: "py-2 px-4 text-sm leading-[19px] font-medium",
+        sm: "py-2 px-2 text-xs leading-[19px] font-medium",
       },
       variant: {
         primary:

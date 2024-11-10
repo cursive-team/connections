@@ -1,7 +1,12 @@
 import { Inter } from "next/font/google";
 import { RouterItem } from "@/lib/frontend/types";
 import { Icons } from "@/components/icons/Icons";
-import { DataImportSource, ImportDataType, OAuthAppDetails, RefreshRateType } from "@types";
+import {
+  DataImportSource,
+  ImportDataType,
+  OAuthAppDetails,
+  RefreshRateType,
+} from "@types";
 
 export const fontBase = Inter({ subsets: ["latin"], variable: "--font-base" });
 
@@ -54,7 +59,7 @@ export const OAUTH_APP_DETAILS: Record<DataImportSource, OAuthAppDetails> = {
         type: ImportDataType.GITHUB_PROGRAMMING_LANGUAGES,
         scope: "read",
         refreshRate: RefreshRateType.WEEKLY,
-      }
+      },
     ],
   },
 };
@@ -90,7 +95,7 @@ export const ROUTER_ITEMS: RouterItem[] = [
   {
     label: "Community",
     href: "/community",
-    icon: Icons.Activity,
+    icon: Icons.Devcon,
     iconSize: 20,
   },
   {
