@@ -10,7 +10,7 @@ import {
   SocketResponseType,
   SocketErrorPayloadSchema,
   SocketErrorPayload,
-  errorToString, SocketRequestType
+  errorToString
 } from "@types";
 import {
   refreshMessages
