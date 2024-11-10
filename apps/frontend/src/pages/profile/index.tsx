@@ -18,10 +18,12 @@ import { logoutUser } from "@/lib/auth";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import ImportGithubButton from "@/features/oauth/ImportGithubButton";
 import ImportStravaButton from "@/features/oauth/ImportStravaButton";
+import ImportSpotifyButton from "@/features/oauth/ImportSpotifyButton";
 import AddNotificationButton from "@/features/notification/AddNotificationButton";
 import ToggleSwitch from "@/components/ui/Switch";
 import useSettings from "@/hooks/useSettings";
 import { storeAddChipRequest } from "@/lib/chip/addChip";
+import { DataImportSource } from "@types";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -56,10 +58,12 @@ const ProfilePage: React.FC = () => {
   }
 
   const hasStravaToAdd =
-    !user.oauth || !Object.keys(user.oauth).includes("strava");
+    !user.oauth || !Object.keys(user.oauth).includes(DataImportSource.STRAVA);
   const hasGithubToAdd =
-    !user.oauth || !Object.keys(user.oauth).includes("github");
-  const hasOauthToAdd = hasStravaToAdd || hasGithubToAdd;
+    !user.oauth || !Object.keys(user.oauth).includes(DataImportSource.GITHUB);
+  const hasSpotifyToAdd =
+    !user.oauth || !Object.keys(user.oauth).includes(DataImportSource.SPOTIFY);
+  const hasOauthToAdd = hasStravaToAdd || hasGithubToAdd || hasSpotifyToAdd;
   const hasDataToAdd = hasOauthToAdd || !user.userData.tensionsRating;
 
   const hasVaultData =
@@ -169,6 +173,15 @@ const ProfilePage: React.FC = () => {
                           <ImportGithubButton />
                         </div>
                       )}
+                      {hasSpotifyToAdd && (
+                        <div
+                          onClick={() =>
+                            logClientEvent("user-profile-spotify-clicked", {})
+                          }
+                        >
+                          <ImportSpotifyButton />
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -219,14 +232,19 @@ const ProfilePage: React.FC = () => {
                   <div className="py-2">
                     <div className="w-full flex gap-2 overflow-x-auto">
                       {/* TODO: use enum */}
-                      {Object.keys(user.oauth).includes("strava") && (
+                      {Object.keys(user.oauth).includes(DataImportSource.STRAVA) && (
                         <div>
                           <ImportStravaButton addElement={false} />
                         </div>
                       )}
-                      {Object.keys(user.oauth).includes("github") && (
+                      {Object.keys(user.oauth).includes(DataImportSource.GITHUB) && (
                         <div>
                           <ImportGithubButton addElement={false} />
+                        </div>
+                      )}
+                      {Object.keys(user.oauth).includes(DataImportSource.SPOTIFY) && (
+                        <div>
+                          <ImportSpotifyButton addElement={false} />
                         </div>
                       )}
                     </div>

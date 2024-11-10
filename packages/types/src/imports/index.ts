@@ -3,16 +3,24 @@ import { z } from "zod";
 export enum DataImportSource {
   STRAVA = "strava",
   GITHUB = "github",
+  SPOTIFY = "spotify"
 }
 
 export const DataImportSourceSchema = z.nativeEnum(DataImportSource)
 
 export enum ImportDataType {
+  STRAVA_PREVIOUS_MONTH_RUN_DISTANCE = "STRAVA_PREVIOUS_MONTH_RUN_DISTANCE",
   GITHUB_LANNA_CONTRIBUTIONS = "GITHUB_LANNA_CONTRIBUTIONS",
   GITHUB_CONTRIBUTIONS_LAST_YEAR = "GITHUB_CONTRIBUTIONS_LAST_YEAR",
   GITHUB_STARRED_REPOS = "GITHUB_STARRED_REPOS",
   GITHUB_PROGRAMMING_LANGUAGES = "GITHUB_PROGRAMMING_LANGUAGES",
-  STRAVA_PREVIOUS_MONTH_RUN_DISTANCE = "STRAVA_PREVIOUS_MONTH_RUN_DISTANCE",
+
+  // Import options:
+  SPOTIFY_STUB = "SPOTIFY_STUB"
+
+  // Leaderboard options:
+  // 
+
 }
 
 export const ImportDataTypeSchema = z.nativeEnum(ImportDataType);

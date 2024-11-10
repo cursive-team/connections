@@ -57,6 +57,21 @@ export const OAUTH_APP_DETAILS: Record<DataImportSource, OAuthAppDetails> = {
       }
     ],
   },
+  spotify: {
+    client_side_fetching: true,
+    can_import: true,
+    token_url: "https://accounts.spotify.com/authorize",
+    redirect_uri: `${FRONTEND_URL}/oauth/exchange_token&approval_prompt=force&scope=read`,
+    id: process.env.NEXT_PUBLIC_OAUTH_SPOTIFY_CLIENT_ID || "",
+    secret: process.env.NEXT_PUBLIC_OAUTH_SPOTIFY_CLIENT_SECRET || "",
+    data_options: [
+      {
+        type: ImportDataType.SPOTIFY_STUB,
+        scope: "read",
+        refreshRate: RefreshRateType.DAILY,
+      },
+    ],
+  },
 };
 
 export const APP_CONFIG = {

@@ -82,6 +82,8 @@ export function getUserDataUpdatedAt(userData: UserData, dataType: ImportDataTyp
       case ImportDataType.GITHUB_PROGRAMMING_LANGUAGES:
         lastImportedAt = userData?.github?.programmingLanguages?.lastUpdated;
         break;
+      case ImportDataType.SPOTIFY_STUB:
+        break;
       default:
         console.error("Import type not recognized.")
         throw new Error("Import type not recognized.")
