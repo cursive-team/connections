@@ -70,6 +70,12 @@ export const APP_CONFIG = {
 
 export const ROUTER_ITEMS: RouterItem[] = [
   {
+    label: "About",
+    href: "/about",
+    icon: Icons.CursiveFooter,
+    iconSize: 20,
+  },
+  {
     label: "Narrowcast",
     href: "/narrowcast",
     icon: Icons.NarrowCast,
