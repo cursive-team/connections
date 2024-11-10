@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { EmailSchema, errorToString } from "@types";
+import { UsernameSchema, errorToString } from "@types";
 import { toast } from "sonner";
 import { AppButton } from "@/components/ui/Button";
 import { AppInput } from "@/components/ui/AppInput";
@@ -8,24 +8,33 @@ import { AppCopy } from "@/components/ui/AppCopy";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
-interface EnterEmailProps {
-  submitEmail: (email: string) => Promise<void>;
-  defaultEmail?: string;
+interface EnterUsernameProps {
+  submitUsername: (username: string) => Promise<void>;
+  defaultUsername?: string;
 }
 
-const EnterEmail: React.FC<EnterEmailProps> = ({
-  submitEmail,
-  defaultEmail = "",
+const EnterUsername: React.FC<EnterUsernameProps> = ({
+  submitUsername,
+  defaultUsername = "",
 }) => {
-  const [email, setEmail] = useState(defaultEmail);
+  const [username, setUsername] = useState(defaultUsername);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      UsernameSchema.parse(username);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        "Username must be alphanumeric and between 3 and 20 characters."
+      );
+      return;
+    }
+
+    try {
       setLoading(true);
-      EmailSchema.parse(email);
-      await submitEmail(email);
+      await submitUsername(username);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -33,7 +42,7 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
         SupportToast(
           "",
           true,
-          "Please enter a valid email address",
+          "Unexpected error submitting username",
           ERROR_SUPPORT_CONTACT,
           errorToString(error)
         )
@@ -42,8 +51,8 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newEmail = e.target.value;
-    setEmail(newEmail);
+    const newUsername = e.target.value;
+    setUsername(newUsername);
   };
 
   return (
@@ -63,15 +72,15 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4 pb-2">
           <div className="text-center mt-1">
             <AppInput
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              placeholder="Email"
+              id="username"
+              name="username"
+              type="text"
+              autoComplete="username"
+              placeholder="Username"
               required
-              value={email}
+              value={username}
               onChange={handleChange}
-              description="Use your Devcon email for additional features."
+              description="Choose your unique Cursive username."
             />
           </div>
 
@@ -85,4 +94,4 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
   );
 };
 
-export default EnterEmail;
+export default EnterUsername;

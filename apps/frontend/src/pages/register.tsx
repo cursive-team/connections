@@ -1,5 +1,4 @@
 import RegisterDevcon from "@/features/register/devcon/Register";
-import RegisterLanna from "@/features/register/lanna/Register";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { storage } from "@/lib/storage";
 import { TapInfo } from "@/lib/storage/types";
@@ -23,6 +22,8 @@ const Register: React.FC = () => {
         router.push("/");
         return;
       } else {
+        await storage.deleteSavedTapInfo();
+
         if (tap.tapResponse.chipIsRegistered) {
           logClientEvent("register-chip-already-registered", {});
           toast.error("Chip is already registered!");
@@ -30,7 +31,12 @@ const Register: React.FC = () => {
           return;
         }
 
-        await storage.deleteSavedTapInfo();
+        if (tap.tapResponse.chipIssuer === ChipIssuer.EDGE_CITY_LANNA) {
+          toast.error("Edge City Lanna registration has ended.");
+          router.push("/");
+          return;
+        }
+
         setSavedTap(tap);
       }
       setAttemptedToLoadSavedTap(true);
@@ -42,9 +48,7 @@ const Register: React.FC = () => {
     return null;
   }
 
-  if (savedTap.tapResponse.chipIssuer === ChipIssuer.EDGE_CITY_LANNA) {
-    return <RegisterLanna savedTap={savedTap} />;
-  } else if (savedTap.tapResponse.chipIssuer === ChipIssuer.DEVCON_2024) {
+  if (savedTap.tapResponse.chipIssuer === ChipIssuer.DEVCON_2024) {
     return <RegisterDevcon savedTap={savedTap} />;
   }
 

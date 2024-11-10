@@ -1,31 +1,34 @@
 import React, { useState } from "react";
-import { EmailSchema, errorToString } from "@types";
+import { UsernameSchema, errorToString } from "@types";
 import { toast } from "sonner";
 import { AppButton } from "@/components/ui/Button";
 import { AppInput } from "@/components/ui/AppInput";
-import { RegisterHeader } from "../../../components/ui/RegisterHeader";
+import { RegisterHeader } from "@/components/ui/RegisterHeader";
 import { AppCopy } from "@/components/ui/AppCopy";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
-interface EnterEmailProps {
-  submitEmail: (email: string) => Promise<void>;
-  defaultEmail?: string;
+interface EnterUsernameProps {
+  submitUsername: (username: string) => Promise<void>;
 }
 
-const EnterEmail: React.FC<EnterEmailProps> = ({
-  submitEmail,
-  defaultEmail = "",
-}) => {
-  const [email, setEmail] = useState(defaultEmail);
+const EnterUsername: React.FC<EnterUsernameProps> = ({ submitUsername }) => {
+  const [username, setUsername] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      UsernameSchema.parse(username);
+    } catch (error) {
+      console.error(error);
+      toast.error("Please enter a valid username");
+      return;
+    }
+
+    try {
       setLoading(true);
-      EmailSchema.parse(email);
-      await submitEmail(email);
+      await submitUsername(username);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -33,7 +36,7 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
         SupportToast(
           "",
           true,
-          "Please enter a valid email address",
+          "Please enter a valid username",
           ERROR_SUPPORT_CONTACT,
           errorToString(error)
         )
@@ -42,39 +45,31 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newEmail = e.target.value;
-    setEmail(newEmail);
+    const newUsername = e.target.value;
+    setUsername(newUsername);
   };
 
   return (
     <div className="flex flex-col grow">
       <RegisterHeader
-        title="Discover & deepen connection with residents!"
-        description={
-          <div className="flex flex-col gap-2">
-            <span>
-              {`Use programmable cryptography to safely connect & efficiently coordinate with 
-              Edge City residents. Make sure you've tapped your own chip to register it.`}
-            </span>
-          </div>
-        }
+        title="Welcome back!"
+        description="Log in to your account to continue your Cursive Connections journey. You will be able to retrieve your data from your encrypted backup."
       />
       <div className="flex flex-col mt-auto">
         <form onSubmit={handleSubmit} className="space-y-4 pb-2">
           <div className="text-center mt-1">
             <AppInput
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              placeholder="Email"
+              id="username"
+              name="username"
+              type="text"
+              autoComplete="username"
+              placeholder="Username"
               required
-              value={email}
+              value={username}
               onChange={handleChange}
-              description="Use your Edge City email for additional features."
+              description="Enter your username."
             />
           </div>
-
           <AppButton loading={loading} type="submit">
             Next
           </AppButton>
@@ -85,4 +80,4 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
   );
 };
 
-export default EnterEmail;
+export default EnterUsername;

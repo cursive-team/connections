@@ -6,17 +6,13 @@ import {
   UserLoginRequest,
   UserLoginResponse,
   UserLoginResponseSchema,
-  SigninToken,
   errorToString,
 } from "@types";
 import { hashPassword } from "@/lib/crypto/backup";
 
-export async function loginUser(
-  email: string,
-  signinToken: SigninToken
-): Promise<UserLoginResponse> {
+export async function loginUser(username: string): Promise<UserLoginResponse> {
   try {
-    const request: UserLoginRequest = { email, signinToken };
+    const request: UserLoginRequest = { username };
     const response = await fetch(`${BASE_API_URL}/user/login`, {
       method: "POST",
       headers: {
@@ -45,7 +41,7 @@ export async function loginUser(
 
 export async function processLoginResponse(
   loginResponse: UserLoginResponse,
-  email: string,
+  backupSalt: string,
   password: string
 ): Promise<void> {
   const { authToken, backupData, passwordSalt, passwordHash } = loginResponse;
@@ -56,7 +52,7 @@ export async function processLoginResponse(
   }
 
   const { user, submittedAt } = processUserBackup({
-    email,
+    email: backupSalt,
     password,
     backupData,
   });

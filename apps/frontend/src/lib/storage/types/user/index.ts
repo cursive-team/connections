@@ -3,15 +3,11 @@ import { UserDataSchema } from "./userData";
 import { ChipSchema } from "./chip";
 import { ConnectionSchema } from "./connection";
 import { ActivitySchema } from "./activity";
-import {
-  AccessTokenSchema,
-  EmailSchema,
-  nullToUndefined
-} from "@types";
+import { AccessTokenSchema, nullToUndefined } from "@types";
 import { LocationSchema } from "./location";
 
 export const UserSchema = z.object({
-  email: EmailSchema,
+  email: z.string(), // Email here is actually used as a backup salt for backwards compatibility reasons.
   signaturePrivateKey: z.string(),
   encryptionPrivateKey: z.string(),
   serializedPsiPrivateKey: nullToUndefined(z.string()),

@@ -1,4 +1,4 @@
-import { ChipIssuerSchema, EmailSchema, UsernameSchema } from "@types";
+import { ChipIssuerSchema, UsernameSchema } from "@types";
 import { z } from "zod";
 
 // These values represent controller-level types, e.g. prisma types will be converted to these
@@ -7,7 +7,7 @@ export const UserSchema = z.object({
   id: z.string(),
   username: UsernameSchema,
   usernameLowercase: z.string(),
-  email: EmailSchema,
+  email: z.string(),
   signaturePublicKey: z.string(),
   encryptionPublicKey: z.string(),
   psiPublicKeyLink: z.string().nullable(),
@@ -22,7 +22,7 @@ export const UserSchema = z.object({
 
 export const UserCreateRequestSchema = z.object({
   username: UsernameSchema,
-  email: EmailSchema,
+  email: z.string(),
   signaturePublicKey: z.string(),
   encryptionPublicKey: z.string(),
   psiPublicKeyLink: z.string().optional(),

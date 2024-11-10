@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { errorToString, UsernameSchema } from "@types";
-import { verifyUsernameIsUnique } from "@/lib/auth/util";
+import { errorToString } from "@types";
 import { toast } from "sonner";
 import { MdKeyboardArrowRight as ArrowRightIcon } from "react-icons/md";
 import { IoMdCheckmark as CheckIcon } from "react-icons/io";
@@ -13,7 +12,6 @@ import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 interface FormData {
-  username: string;
   displayName: string;
   bio: string;
   telegramHandle: string;
@@ -22,7 +20,6 @@ interface FormData {
 
 interface EnterUserInfoProps {
   onSubmit: (userInfo: FormData) => Promise<void>;
-  username?: string;
   displayName?: string;
   bio?: string;
   telegramHandle?: string;
@@ -31,7 +28,6 @@ interface EnterUserInfoProps {
 
 const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
   onSubmit,
-  username = "",
   displayName = "",
   bio = "",
   telegramHandle = "",
@@ -41,7 +37,6 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const { pageHeight } = useSettings();
   const [formData, setFormData] = useState<FormData>({
-    username,
     displayName,
     bio,
     telegramHandle,
@@ -54,7 +49,6 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
     placeholder?: string;
     required: boolean;
   }[] = [
-    { field: "username", question: "Choose a username....", required: true },
     {
       field: "displayName",
       question: "What's your full name?",
@@ -111,11 +105,9 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
       return; // Don't submit if not on the last step
     }
 
-    const { username, bio, telegramHandle, twitterHandle, displayName } =
-      formData ?? {};
+    const { bio, telegramHandle, twitterHandle, displayName } = formData ?? {};
     try {
       await onSubmit({
-        username,
         displayName: displayName.trim(),
         bio: bio.trim(),
         telegramHandle: telegramHandle.trim(),
@@ -136,29 +128,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
   };
 
   const handleNext = async (e: unknown) => {
-    if (step === 0) {
-      // Validate username
-      try {
-        UsernameSchema.parse(formData.username);
-        const isUnique = await verifyUsernameIsUnique(formData.username);
-        if (!isUnique) {
-          toast.error("Username is already taken");
-          return;
-        }
-      } catch (error) {
-        console.error(error);
-        toast(
-          SupportToast(
-            "",
-            true,
-            "Username must be alphanumeric and between 3-20 characters",
-            ERROR_SUPPORT_CONTACT,
-            errorToString(error)
-          )
-        );
-        return;
-      }
-    } else if (step === 2 || step === 3) {
+    if (step === 2 || step === 3) {
       // Validate Telegram and Twitter handles
       const handle = formData[steps[step].field as keyof FormData];
       if (handle.includes("@")) {
