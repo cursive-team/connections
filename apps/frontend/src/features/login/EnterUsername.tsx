@@ -57,17 +57,17 @@ const EnterUsername: React.FC<EnterUsernameProps> = ({ submitUsername }) => {
       />
       <div className="flex flex-col mt-auto">
         <form onSubmit={handleSubmit} className="space-y-4 pb-2">
-          <div className="text-center mt-1">
+          <div className="mt-1">
             <AppInput
               id="username"
               name="username"
               type="text"
               autoComplete="username"
               placeholder="Username"
+              variant="primary"
               required
               value={username}
               onChange={handleChange}
-              description="Enter your username."
             />
           </div>
           <AppButton loading={loading} type="submit">
