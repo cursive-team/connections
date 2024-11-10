@@ -9,15 +9,23 @@ ManagedChipClient.prototype.RegisterChip = async function (
 ): Promise<Chip> {
   const chip = await getChipFromTapParams(
     this.prismaClient,
-    registerChip.tapParams
+    registerChip.tapParams,
+    true
   );
 
   if (!chip) {
     throw new Error("Chip not found");
   }
 
-  // Generate a new public/private key pair
-  const { signingKey, verifyingKey } = generateSignatureKeyPair();
+  let updateSigningKey: string | undefined;
+  let updateVerifyingKey: string | undefined;
+
+  // Generate a new public/private key pair if none exists
+  if (!chip.chipPrivateKey || !chip.chipPublicKey) {
+    const { signingKey, verifyingKey } = generateSignatureKeyPair();
+    updateSigningKey = signingKey;
+    updateVerifyingKey = verifyingKey;
+  }
 
   // Update the chip with registration information
   const updatedChip = await this.prismaClient.chip.update({
@@ -25,8 +33,8 @@ ManagedChipClient.prototype.RegisterChip = async function (
     data: {
       chipIsRegistered: true,
       chipRegisteredAt: new Date(),
-      chipPublicKey: verifyingKey,
-      chipPrivateKey: signingKey,
+      chipPublicKey: updateVerifyingKey,
+      chipPrivateKey: updateSigningKey,
       chipTapCount: 0, // Reset tap count on registration
       ownerUsername: registerChip.ownerUsername,
       ownerDisplayName: registerChip.ownerDisplayName,

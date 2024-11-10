@@ -197,7 +197,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
         <span className="text-[20px] font-semibold font-sans text-label-primary ">
           Link your contact info
         </span>
-        <span className="font-sans text-sm font-normal">
+        <span className="font-sans text-sm font-normal text-label-primary">
           The info you enter will be saved to your Cursive chip, allowing you to
           share it instantly with a tap. You can always add, remove, or change
           this data in the app.
@@ -212,14 +212,13 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
                 <div className="flex items-start gap-4">
                   <textarea
                     ref={textareaRef}
-                    className="w-full pl-8 pr-4 text-[14px] text-label-primary font-semibold font-sans focus:outline-none min-h-[30px] resize-none bg-transparent"
+                    className="w-full pl-8 pr-4 pt-0.5 text-[14px] text-label-primary font-semibold font-sans focus:outline-none min-h-[30px] resize-none bg-transparent"
                     placeholder={steps[step].question}
-                    value={formData.bio}
+                    value={formData[steps[step].field as keyof FormData]}
                     onChange={(e) => handleInputChange(e.target.value)}
                     onKeyDown={handleKeyDown}
                     aria-label={steps[step].question}
                     required={steps[step].required}
-                    autoFocus
                   />
                   <button
                     className="text-sm text-link-primary font-sans font-semibold"

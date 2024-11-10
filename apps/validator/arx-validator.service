@@ -1,0 +1,13 @@
+[Unit]
+Description=ARX Validator Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/bin/bash /home/ubuntu/setup_and_run.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

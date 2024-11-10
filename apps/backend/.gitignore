@@ -5,3 +5,7 @@ dist
 # Lanna chips
 src/scripts/lanna/chips.ts
 src/scripts/lanna/locationChips.ts
+
+# Devcon chips
+src/scripts/devcon/chips.ts
+src/scripts/devcon/locationChips.ts

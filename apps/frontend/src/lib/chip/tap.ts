@@ -18,7 +18,9 @@ export async function tapChip(tapParams: TapParams): Promise<ChipTapResponse> {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // Want to surface specific tap error to user
+      const error = await response.json();
+      throw new Error(error.error);
     }
 
     const data = await response.json();

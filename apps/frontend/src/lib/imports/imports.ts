@@ -7,7 +7,7 @@ import {
   errorToString,
   ImportDataType,
   OAuthAppDetails,
-  RefreshRateType
+  RefreshRateType,
 } from "@types";
 import { User, UserData } from "@/lib/storage/types";
 import { fetchImportedData } from "./fetch";
@@ -55,44 +55,49 @@ export async function fetchAndSaveImportedData(
       storage.deleteOAuthAccessToken(app);
     }
 
-
     console.error("Error importing data:", errorToString(error));
     return;
   }
 }
 
-export function getUserDataUpdatedAt(userData: UserData, dataType: ImportDataType): Date | undefined {
-    let lastImportedAt: Date | undefined = undefined;
-    switch (dataType) {
-      case ImportDataType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
-        lastImportedAt = userData?.strava?.previousMonthRunDistance?.lastUpdated;
-        break;
-      case ImportDataType.GITHUB_LANNA_CONTRIBUTIONS:
-        lastImportedAt = userData?.github?.lannaCommits?.lastUpdated;
-        break;
-      case ImportDataType.GITHUB_CONTRIBUTIONS_LAST_YEAR:
-        lastImportedAt = userData?.github?.annualCommits?.lastUpdated;
-        break;
-      case ImportDataType.GITHUB_STARRED_REPOS:
-        lastImportedAt = userData?.github?.starredRepos?.lastUpdated;
-        break;
-      case ImportDataType.GITHUB_PROGRAMMING_LANGUAGES:
-        lastImportedAt = userData?.github?.programmingLanguages?.lastUpdated;
-        break;
-      default:
-        console.error("Import type not recognized.")
-        throw new Error("Import type not recognized.")
-    }
-    return lastImportedAt;
+export function getUserDataUpdatedAt(
+  userData: UserData,
+  dataType: ImportDataType
+): Date | undefined {
+  let lastImportedAt: Date | undefined = undefined;
+  switch (dataType) {
+    case ImportDataType.STRAVA_PREVIOUS_MONTH_RUN_DISTANCE:
+      lastImportedAt = userData?.strava?.previousMonthRunDistance?.lastUpdated;
+      break;
+    case ImportDataType.GITHUB_LANNA_CONTRIBUTIONS:
+      lastImportedAt = userData?.github?.lannaCommits?.lastUpdated;
+      break;
+    case ImportDataType.GITHUB_CONTRIBUTIONS_LAST_YEAR:
+      lastImportedAt = userData?.github?.annualCommits?.lastUpdated;
+      break;
+    case ImportDataType.GITHUB_STARRED_REPOS:
+      lastImportedAt = userData?.github?.starredRepos?.lastUpdated;
+      break;
+    case ImportDataType.GITHUB_PROGRAMMING_LANGUAGES:
+      lastImportedAt = userData?.github?.programmingLanguages?.lastUpdated;
+      break;
+    default:
+      console.error("Import type not recognized.");
+      throw new Error("Import type not recognized.");
+  }
+  return lastImportedAt;
 }
 
-export function isOverdueToReimport(lastImportedAt: Date, refreshRate: RefreshRateType): boolean {
+export function isOverdueToReimport(
+  lastImportedAt: Date,
+  refreshRate: RefreshRateType
+): boolean {
   const now: Date = new Date();
 
   const millisecondDiff = now.getTime() - lastImportedAt.getTime();
   let dayDiff: number = 0;
 
-  switch(refreshRate) {
+  switch (refreshRate) {
     case RefreshRateType.DAILY:
       // if (now - lastImportedAt) > 1 day, return true
       dayDiff = millisecondDiff / (1000 * 60 * 60 * 24);
@@ -126,9 +131,16 @@ export function isOverdueToReimport(lastImportedAt: Date, refreshRate: RefreshRa
   }
 }
 
-export function shouldRefreshImport(user: User, dataType: ImportDataType, refreshRate: RefreshRateType): boolean {
+export function shouldRefreshImport(
+  user: User,
+  dataType: ImportDataType,
+  refreshRate: RefreshRateType
+): boolean {
   try {
-    const lastImportedAt: Date | undefined = getUserDataUpdatedAt(user.userData, dataType);
+    const lastImportedAt: Date | undefined = getUserDataUpdatedAt(
+      user.userData,
+      dataType
+    );
 
     if (!lastImportedAt) {
       // This case happens when value needs to be backfilled
@@ -137,7 +149,11 @@ export function shouldRefreshImport(user: User, dataType: ImportDataType, refres
 
     return isOverdueToReimport(lastImportedAt, refreshRate);
   } catch (error) {
-    console.error(`Error while evaluating if data type should be refreshed: ${errorToString(error)}`);
+    console.error(
+      `Error while evaluating if data type should be refreshed: ${errorToString(
+        error
+      )}`
+    );
     return false;
   }
 }
@@ -155,14 +171,14 @@ export async function refreshData(): Promise<void> {
       const details: OAuthAppDetails = OAUTH_APP_DETAILS[app];
 
       for (const option of details.data_options) {
-
         // Check if it's time to refresh import
         if (!shouldRefreshImport(user, option.type, option.refreshRate)) {
           continue;
         }
 
         // This may be empty if the token expired and needs to be regranted
-        let accessToken: AccessToken | undefined = await storage.getOAuthAccessToken(app)
+        let accessToken: AccessToken | undefined =
+          await storage.getOAuthAccessToken(app);
 
         if (!accessToken && (!user.oauth || !user.oauth[app])) {
           // In this case, have not consented to importing data yet. Skip.
@@ -203,21 +219,22 @@ export async function refreshData(): Promise<void> {
           chipIssuers,
           accessToken,
           app,
-          option,
+          option
         );
       }
     }
     return;
   } catch (error) {
     console.error("Data import failed:", errorToString(error));
-    throw new Error(`Data import failed: ${errorToString(error)}`);
     return;
   }
 }
 
 // Used for OAuth flow, as the operation is
-export async function importData(app: DataImportSource, code: string): Promise<void> {
-
+export async function importData(
+  app: DataImportSource,
+  code: string
+): Promise<void> {
   // This should never happen
   if (!OAUTH_APP_DETAILS || !OAUTH_APP_DETAILS[app]) {
     return;
@@ -227,11 +244,7 @@ export async function importData(app: DataImportSource, code: string): Promise<v
   const details: OAuthAppDetails = OAUTH_APP_DETAILS[app];
 
   let accessToken: AccessToken | null = null;
-  accessToken = await getOAuthAccessToken(
-    app,
-    code,
-    details
-  );
+  accessToken = await getOAuthAccessToken(app, code, details);
   if (!accessToken) {
     SupportToast(
       "",
@@ -239,9 +252,8 @@ export async function importData(app: DataImportSource, code: string): Promise<v
       "Unable to mint OAuth access token.",
       ERROR_SUPPORT_CONTACT,
       ""
-    )
-    throw new Error("Unable to mint OAuth access token")
-    return;
+    );
+    throw new Error("Unable to mint OAuth access token");
   }
 
   if (accessToken && details.can_import) {
@@ -250,7 +262,6 @@ export async function importData(app: DataImportSource, code: string): Promise<v
     // Import all data options for given app and app access token
     for (const option of details.data_options) {
       try {
-
         const chipIssuers: ChipIssuer[] = await storage.getChipIssuers();
 
         await fetchAndSaveImportedData(
@@ -268,10 +279,9 @@ export async function importData(app: DataImportSource, code: string): Promise<v
           "Data import failed.",
           ERROR_SUPPORT_CONTACT,
           errorToString(error)
-        )
+        );
         console.error("Data import failed:", errorToString(error));
         throw new Error(`Data import failed: ${errorToString(error)}`);
-        return;
       }
     }
   }

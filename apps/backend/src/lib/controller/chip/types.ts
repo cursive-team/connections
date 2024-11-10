@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { ChipIssuerSchema, ChipVariantSchema, JsonSchema } from "@types";
+import {
+  ChipIssuerSchema,
+  ChipPublicKeySignatureSchema,
+  ChipVariantSchema,
+  JsonSchema,
+} from "@types";
 
 export const ChipSchema = z.object({
   id: z.string(),
@@ -10,6 +15,7 @@ export const ChipSchema = z.object({
   chipRegisteredAt: z.date().nullable(),
   chipPublicKey: z.string().nullable(),
   chipPrivateKey: z.string().nullable(),
+  chipPublicKeySignature: ChipPublicKeySignatureSchema.nullable(),
   chipTapCount: z.number().int().nonnegative(),
   ownerUsername: z.string().nullable(),
   ownerDisplayName: z.string().nullable(),
@@ -40,5 +46,4 @@ export const NTAG212TapParamsSchema = z.object({
 
 export const NTAG424TapParamsSchema = z.object({
   encryptedChipId: z.string(),
-  cmac: z.string(),
 });

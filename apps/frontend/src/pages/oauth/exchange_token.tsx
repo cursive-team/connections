@@ -5,6 +5,8 @@ import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { DataImportSourceSchema, errorToString } from "@types";
 import { storage } from "@/lib/storage";
 import { importData } from "@/lib/imports";
+import { SupportToast } from "@/components/ui/SupportToast";
+import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
 const OAuthAccessTokenPage: React.FC = () => {
   const router = useRouter();
@@ -29,6 +31,15 @@ const OAuthAccessTokenPage: React.FC = () => {
           await importData(app, authCode);
         } catch (error) {
           console.error("Data import failed:", errorToString(error));
+          toast(
+            SupportToast(
+              "",
+              true,
+              "Data import failed",
+              ERROR_SUPPORT_CONTACT,
+              errorToString(error)
+            )
+          );
           router.push("/profile");
           return;
         }
