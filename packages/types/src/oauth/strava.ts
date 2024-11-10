@@ -1,5 +1,4 @@
 import {z} from "zod";
-import {ChipIssuer, LeaderboardEntry, LeaderboardEntryType} from "../chip";
 
 /*
 {

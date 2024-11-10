@@ -81,6 +81,10 @@ export class LocalStorage implements ClientStorage {
     return getSession();
   }
 
+  syncGetSession(): Session | undefined {
+    return getSession();
+  }
+
   async saveOAuthAccessToken(app: DataImportSource, token: AccessToken): Promise<void> {
     return saveOAuthAccessToken(app, token);
   }

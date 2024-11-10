@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
 import { Connection, Session, User } from "@/lib/storage/types";
 import { toast } from "sonner";
-import { TapParams, ChipTapResponse, errorToString } from "@types";
+import { TapParams, ChipTapResponse, errorToString, SocketRequestType } from "@types";
 import { AppButton } from "@/components/ui/Button";
 import Image from "next/image";
 import AppLayout from "@/layouts/AppLayout";
@@ -25,6 +25,8 @@ import { sendMessages } from "@/lib/message";
 import useSettings from "@/hooks/useSettings";
 import { cn } from "@/lib/frontend/util";
 import { Card } from "@/components/cards/Card";
+import { getConnectionSigPubKey } from "@/lib/user";
+import { useSocket, socketEmit } from "@/lib/socket";
 
 interface CommentModalProps {
   username: string;
@@ -204,6 +206,7 @@ const UserProfilePage: React.FC = () => {
     tensions: string[];
     contacts: string[];
   } | null>(null);
+  const { socket } = useSocket();
 
   useEffect(() => {
     const fetchConnectionAndTapInfo = async () => {
@@ -260,6 +263,21 @@ const UserProfilePage: React.FC = () => {
         authToken: session.authTokenValue,
         messages: [message],
       });
+
+      // Only need to emit, do not need response from server
+      if (socket && user) {
+        // Get recipient id (pub key)
+        const recipient: string | null = getConnectionSigPubKey(user, connection.user.username);
+
+        if (recipient) {
+          socketEmit({
+            socketInstance: socket,
+            type: SocketRequestType.TAP_BACK,
+            recipientSigPubKey: recipient,
+          });
+        }
+      }
+
       toast.success("Tap back sent successfully!");
     } catch (error) {
       console.error("Error sending tap back:", error);
@@ -352,9 +370,23 @@ const UserProfilePage: React.FC = () => {
         }
       );
 
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(`HTTP error! status: ${errorData.error}`);
+      }
+
+      if (socket && connection) {
+        // Get recipient id (pub key)
+        const recipient: string | null = getConnectionSigPubKey(user, connection.user.username);
+
+        if (recipient) {
+          socketEmit({
+            socketInstance: socket,
+            type: SocketRequestType.PSI,
+            recipientSigPubKey: recipient,
+          });
+        }
       }
 
       const data = await response.json();

@@ -12,6 +12,11 @@ import { IntersectionState } from "@types";
 import { Controller } from "./lib/controller";
 const cors = require("cors");
 
+import * as http from 'http';
+
+// Hoist websockets
+import("./routes/socket");
+
 const app = express();
 const corsOptions = {
   origin: `${FRONTEND_URL}`,
@@ -41,7 +46,9 @@ controller
     console.error("Failed to initialize notification service: ", error);
   });
 
+export const server = http.createServer(app);
+
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
