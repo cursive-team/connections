@@ -21,7 +21,7 @@ import ImportStravaButton from "@/features/oauth/ImportStravaButton";
 import ToggleSwitch from "@/components/ui/Switch";
 import useSettings from "@/hooks/useSettings";
 import { storeAddChipRequest } from "@/lib/chip/addChip";
-import { AddGraphConsentButton } from "@/features/graph/AddConsentButton";
+import { toggleGraphConsent } from "@/lib/storage/localStorage/graph";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -31,6 +31,10 @@ const ProfilePage: React.FC = () => {
   const handleLogout = async () => {
     await logoutUser();
     router.push("/login");
+  };
+
+  const toggleGraph = async () => {
+    await toggleGraphConsent();
   };
 
   useEffect(() => {
@@ -135,9 +139,6 @@ const ProfilePage: React.FC = () => {
                   >
                     <span className="text-[14px]">Add Chip</span>
                   </AppButton>
-                </div>
-                <div className="w-fit">
-                  <AddGraphConsentButton/>
                 </div>
               </div>
             </div>
@@ -270,7 +271,7 @@ const ProfilePage: React.FC = () => {
             </div>
           )}
         </div>
-        <div className="px-4 py-6">
+        <div className="px-4 py-3">
           <ToggleSwitch
             label="Dark theme"
             checked={darkTheme}
@@ -279,11 +280,20 @@ const ProfilePage: React.FC = () => {
             }}
           />
         </div>
-        <div className="px-4 py-6">
-          <AppButton onClick={handleLogout} variant="outline">
-            Log out
-          </AppButton>
+        <div className="px-4 py-0">
+          <ToggleSwitch
+            label="Tap graph"
+            checked={!!user?.tapGraphEnabled}
+            onChange={() => {
+              toggleGraph();
+            }}
+          />
         </div>
+        <div className="px-4 py-6">
+            <AppButton onClick={handleLogout} variant="outline">
+              Log out
+            </AppButton>
+          </div>
       </AppLayout>
     </>
   );
