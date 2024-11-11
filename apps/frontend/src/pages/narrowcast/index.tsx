@@ -1,7 +1,26 @@
 import { Banner } from "@/components/cards/Banner";
 import AppLayout from "@/layouts/AppLayout";
+import { useEffect } from "react";
+import { storage } from "@/lib/storage";
+import { useRouter } from "next/router";
 
 export default function NarrowcastPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const gateUser = async () => {
+      // Gate off for users that are not logged in and don't have an unregistered user
+      const user = await storage.getUser();
+      const unregisteredUser = await storage.getUnregisteredUser();
+      if (!user && !unregisteredUser) {
+        router.push("/");
+        return;
+      }
+    };
+
+    gateUser();
+  }, [router]);
+
   return (
     <AppLayout
       seoTitle="Narrowcast"

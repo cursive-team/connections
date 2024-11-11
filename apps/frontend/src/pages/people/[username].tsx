@@ -206,6 +206,7 @@ const UserProfilePage: React.FC = () => {
     tensions: string[];
     contacts: string[];
   } | null>(null);
+  const [isUnregistered, setIsUnregistered] = useState(false);
   const { socket } = useSocket();
 
   useEffect(() => {
@@ -213,27 +214,49 @@ const UserProfilePage: React.FC = () => {
       if (typeof username === "string") {
         const user = await storage.getUser();
         const session = await storage.getSession();
-        if (!user || !session || !user.connections[username]) {
+        const unregisteredUser = await storage.getUnregisteredUser();
+        if ((!user || !session || !user.connections[username]) && !unregisteredUser) {
           console.error("User not found");
           toast.error("User not found");
           router.push("/people");
           return;
         }
 
-        setUser(user);
-        setSession(session);
-        setConnection(user.connections[username]);
-        const savedTapInfo = await storage.loadSavedTapInfo();
-        // Delete saved tap info after fetching
-        await storage.deleteSavedTapInfo();
-        // Show tap modal if tap info is for current connection
-        if (
-          savedTapInfo &&
-          savedTapInfo.tapResponse.userTap?.ownerUsername === username
-        ) {
-          logClientEvent("user-profile-tap-chip-modal-shown", {});
-          setTapInfo(savedTapInfo);
-          setShowCommentModal(true);
+        if (unregisteredUser) {
+          setIsUnregistered(true);
+        }
+
+        if (user && session) {
+          setUser(user);
+          setSession(session);
+          setConnection(user.connections[username]);
+          const savedTapInfo = await storage.loadSavedTapInfo();
+          // Delete saved tap info after fetching
+          await storage.deleteSavedTapInfo();
+          // Show tap modal if tap info is for current connection
+          if (
+            savedTapInfo &&
+            savedTapInfo.tapResponse.userTap?.ownerUsername === username
+          ) {
+            logClientEvent("user-profile-tap-chip-modal-shown", {});
+            setTapInfo(savedTapInfo);
+            setShowCommentModal(true);
+          }
+        } else if (unregisteredUser) {
+          // In unregistered user case, cannot do PSIs which require user object
+          setConnection(unregisteredUser.connections[username]);
+          const savedTapInfo = await storage.loadSavedTapInfo();
+          // Delete saved tap info after fetching
+          await storage.deleteSavedTapInfo();
+          // Show tap modal if tap info is for current connection
+          if (
+            savedTapInfo &&
+            savedTapInfo.tapResponse.userTap?.ownerUsername === username
+          ) {
+            logClientEvent("user-profile-tap-chip-modal-shown", {});
+            setTapInfo(savedTapInfo);
+            setShowCommentModal(true);
+          }
         }
       }
     };
@@ -435,7 +458,10 @@ const UserProfilePage: React.FC = () => {
     }
   };
 
-  if (!connection || !user || !session) {
+  // Loading Cases:
+  // 1: Is not unregistered user and no user info available yet
+  // 2: Is unregistered user and connection info not available yet 
+  if (((!connection || !user || !session) && !isUnregistered) || (!connection && isUnregistered)) {
     return (
       <div className="flex min-h-screen justify-center items-center text-center">
         <CursiveLogo isLoading />
@@ -443,9 +469,15 @@ const UserProfilePage: React.FC = () => {
     );
   }
 
+  if (!connection) {
+    // If connection is still not available we have issues
+    router.push("/people");
+    return;
+  }
+
   return (
     <>
-      {showCommentModal && (
+      {showCommentModal && !isUnregistered && (
         <CommentModal
           username={connection.user.username}
           displayName={connection.user.displayName}
@@ -486,6 +518,10 @@ const UserProfilePage: React.FC = () => {
                   variant="outline"
                   onClick={() => {
                     logClientEvent("user-profile-begin-edit-comment", {});
+                    if (isUnregistered) {
+                      toast.error("Unregistered user cannot add contact notes. Come to the Cursive booth and" +
+                        " register!");
+                    }
                     setShowCommentModal(true);
                   }}
                 >
@@ -654,9 +690,9 @@ const UserProfilePage: React.FC = () => {
                               leftOption={tensionPairs[index][0]}
                               rightOption={tensionPairs[index][1]}
                               value={
-                                user.userData.tensionsRating?.tensionRating[
+                                (user) ? user.userData.tensionsRating?.tensionRating[
                                   index
-                                ] ?? 50
+                                ] ?? 50 : 50
                               }
                               onChange={() => {}}
                             />
@@ -671,6 +707,9 @@ const UserProfilePage: React.FC = () => {
             <AppButton
               onClick={() => {
                 logClientEvent("user-started-psi", {});
+                if (isUnregistered) {
+                  toast.error("Unregistered user cannot add run contact PSI. Come to the Cursive booth and register!");
+                }
                 updatePSIOverlap();
               }}
               variant="outline"

@@ -50,7 +50,20 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { user, session } = await storage.getUserAndSession();
+      // Gate off unregistered users
+
+      const user = await storage.getUser();
+      const unregisteredUser = await storage.getUnregisteredUser();
+      if (unregisteredUser) {
+        router.push("/people")
+        return;
+      }
+      if (!user) {
+        router.push("/");
+        return;
+      }
+
+      const { session } = await storage.getUserAndSession();
       if (!user || !session || session.authTokenExpiresAt < new Date()) {
         toast.error("Please log in to view your profile.");
         router.push("/");

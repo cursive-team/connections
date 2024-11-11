@@ -195,8 +195,6 @@ const TapPage: React.FC = () => {
               return;
             }
 
-            // If user is not logged in, direct them to sign in
-            // TODO: Allow users to tap without being signed in
             if (!user || !session) {
               logClientEvent("tap-location-chip-not-logged-in", {});
               toast.error("You must be logged in to tap this chip!");
@@ -228,16 +226,7 @@ const TapPage: React.FC = () => {
               return;
             }
 
-            // If user is not logged in, direct them to tap a new chip to register
-            // TODO: Allow users to tap without being signed in
-            if (!user || !session) {
-              logClientEvent("tap-chip-not-logged-in", {});
-              toast.error("Please tap a new chip to register!");
-              router.push("/");
-              return;
-            }
-
-            if (user.userData.username === response.userTap.ownerUsername) {
+            if (user && user.userData.username === response.userTap.ownerUsername) {
               logClientEvent("tap-chip-same-user", {});
               router.push("/community");
               return;
@@ -250,7 +239,7 @@ const TapPage: React.FC = () => {
             let tapSenderHash: string | null = null;
 
             const sentHash: boolean = user?.tapGraphEnabled === true;
-            if (sentHash) {
+            if (sentHash && user) {
               // Double hash the signature private key, use as identifier, use single hash version as revocation code
               tapSenderHash = sha256(
                 sha256(user.signaturePrivateKey).concat(DEVCON)
@@ -259,25 +248,28 @@ const TapPage: React.FC = () => {
 
             // Upsert row, returns edge ID
             try {
-              const resp: UpsertSocialGraphEdgeResponse =
-                await upsertSocialGraphEdge(
-                  session.authTokenValue,
-                  null,
-                  tapSenderHash,
-                  null
-                );
+              // Unregistered users cannot consent to private tap graph so don't keep track of them
+              if (user && session) {
+                const resp: UpsertSocialGraphEdgeResponse =
+                  await upsertSocialGraphEdge(
+                    session.authTokenValue,
+                    null,
+                    tapSenderHash,
+                    null
+                  );
 
-              // Send edge ID to tapped, handles backup for both edge message and localstorage edge record
-              const message = await storage.createEdgeMessageAndHandleBackup(
-                response.userTap.ownerUsername,
-                resp.id,
-                sentHash,
-                user.userData.username
-              );
-              await sendMessages({
-                authToken: session.authTokenValue,
-                messages: [message],
-              });
+                // Send edge ID to tapped, handles backup for both edge message and localstorage edge record
+                const message = await storage.createEdgeMessageAndHandleBackup(
+                  response.userTap.ownerUsername,
+                  resp.id,
+                  sentHash,
+                  user.userData.username
+                );
+                await sendMessages({
+                  authToken: session.authTokenValue,
+                  messages: [message],
+                });
+              }
             } catch (error) {
               // Never fail on upsert, not worth it
               console.error(
@@ -285,8 +277,11 @@ const TapPage: React.FC = () => {
               );
             }
 
-            // Update leaderboard entry
-            await updateTapLeaderboardEntry(response.chipIssuer);
+            if (user) {
+              // If no user, skip updating tap leaderboard.
+              // For the time being assume unregistered users won't be recorded
+              await updateTapLeaderboardEntry(response.chipIssuer);
+            }
 
             // Save tap to populate modal upon redirect
             await storage.saveTapInfo({ tapParams, tapResponse: response });

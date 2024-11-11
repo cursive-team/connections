@@ -4,6 +4,7 @@ import {
   BackupData,
   BackupEntryType,
   CreateBackupData,
+  UnregisteredUserBackup,
 } from "@types";
 import {
   Activity,
@@ -567,3 +568,25 @@ export const createEdgeBackup = ({
     clientCreatedAt: new Date(),
   };
 };
+
+export const unregisteredUserCreateActivityBackup = ({
+  activity
+}: {
+  activity: Activity
+}): UnregisteredUserBackup => {
+  return {
+    type: BackupEntryType.ACTIVITY,
+    backup: JSON.stringify(activity)
+  }
+}
+
+export const unregisteredUserCreateConnectionBackup = ({
+  connection
+}: {
+  connection: Connection
+}): UnregisteredUserBackup => {
+  return {
+    type: BackupEntryType.CONNECTION,
+    backup: JSON.stringify(connection)
+  }
+}

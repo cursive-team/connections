@@ -1,4 +1,9 @@
-import { createActivityBackup, createConnectionBackup } from "@/lib/backup";
+import {
+  createActivityBackup,
+  createConnectionBackup,
+  unregisteredUserCreateActivityBackup,
+  unregisteredUserCreateConnectionBackup
+} from "@/lib/backup";
 import { ChipTapResponse } from "@types";
 import {
   TapDataSchema,
@@ -12,15 +17,21 @@ import {
   InstagramDataSchema,
   FarcasterData,
   FarcasterDataSchema,
+  Connection,
 } from "@/lib/storage/types";
 import { createTapActivity } from "@/lib/activity";
 import { saveBackupAndUpdateStorage } from "../../utils";
-import { getUserAndSession } from "..";
+import { getUser } from "..";
+import { getSession } from "@/lib/storage/localStorage/session";
+import { createUnregisteredUser } from "@/lib/auth";
+import { storage } from "@/lib/storage";
 
 export const addUserTap = async (
   tapResponse: ChipTapResponse
 ): Promise<void> => {
-  const { user, session } = await getUserAndSession();
+  const user = getUser();
+  const session = getSession();
+  let unregisteredUser = await storage.getUnregisteredUser();
 
   const tap = tapResponse.userTap;
   if (!tap) {
@@ -35,7 +46,14 @@ export const addUserTap = async (
     throw new Error("Tap owner username, display name, or keys not found");
   }
 
-  const previousConnection = user.connections[tap.ownerUsername];
+  let previousConnection: Connection | null = null;
+  if (unregisteredUser && unregisteredUser.connections) {
+    // In case where unregistered user exists, attempt to set from its connections
+    // unregistered user and regular user should not exist as the same time
+    previousConnection = unregisteredUser.connections[tap.ownerUsername];
+  } else if (user) {
+    previousConnection = user.connections[tap.ownerUsername];
+  }
 
   let ownerTwitter: TwitterData | undefined;
   let ownerTelegram: TelegramData | undefined;
@@ -152,27 +170,56 @@ export const addUserTap = async (
     sentMessages: newSentMessages,
   };
 
-  const connectionBackup = createConnectionBackup({
-    email: user.email,
-    password: session.backupMasterPassword,
-    connection: newConnection,
-  });
+  if (user && session) {
+    const connectionBackup = createConnectionBackup({
+      email: user.email,
+      password: session.backupMasterPassword,
+      connection: newConnection,
+    });
 
-  // Create activity for tapping a chip
-  const tapActivity = createTapActivity(
-    tapResponse.chipIssuer,
-    ownerDisplayName,
-    tap.ownerUsername
-  );
-  const tapActivityBackup = createActivityBackup({
-    email: user.email,
-    password: session.backupMasterPassword,
-    activity: tapActivity,
-  });
+    // Create activity for tapping a chip
+    const tapActivity = createTapActivity(
+      tapResponse.chipIssuer,
+      ownerDisplayName,
+      tap.ownerUsername
+    );
+    const tapActivityBackup = createActivityBackup({
+      email: user.email,
+      password: session.backupMasterPassword,
+      activity: tapActivity,
+    });
 
-  await saveBackupAndUpdateStorage({
-    user,
-    session,
-    newBackupData: [connectionBackup, tapActivityBackup],
-  });
+    await saveBackupAndUpdateStorage({
+      user,
+      session,
+      newBackupData: [connectionBackup, tapActivityBackup],
+    });
+  } else {
+    // If unregistered user does not exist already, initialize it
+    if (!unregisteredUser) {
+      unregisteredUser = await createUnregisteredUser();
+    }
+
+    // Construct tapActivity
+    const tapActivity = createTapActivity(
+      tapResponse.chipIssuer,
+      ownerDisplayName,
+      tap.ownerUsername
+    );
+
+    // Update connection record on unregisteredUser
+    unregisteredUser.connections[newConnectionUserData.username] = newConnection;
+
+    // Push activity onto user.activities
+    unregisteredUser.activities.push(tapActivity)
+
+    // Push backups onto user.backups
+    const connectionBackup = unregisteredUserCreateConnectionBackup({connection: newConnection});
+    const activityBackup = unregisteredUserCreateActivityBackup({activity: tapActivity});
+    unregisteredUser.backups.push(connectionBackup);
+    unregisteredUser.backups.push(activityBackup);
+
+    // Save unregistered user
+    await storage.saveUnregisteredUser(unregisteredUser);
+  }
 };
