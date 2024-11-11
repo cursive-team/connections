@@ -34,13 +34,3 @@ export const SocketRequestSchema = z.object({
 export type SocketRequest = z.infer<
   typeof SocketRequestSchema
 >;
-
-export const SocketResponseSchema = z.object({
-  type: SocketResponseTypeSchema,
-  recipientSigPubKey: z.string().nullable(),
-  payload: z.any(),
-});
-
-export type SocketResponse = z.infer<
-  typeof SocketResponseSchema
->;

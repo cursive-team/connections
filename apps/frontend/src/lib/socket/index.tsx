@@ -5,8 +5,6 @@ import {
   SocketExpungeConnection,
 } from "@/lib/socket/helper";
 import {
-  SocketResponseSchema,
-  SocketResponse,
   SocketResponseType,
   SocketErrorPayloadSchema,
   SocketErrorPayload,
