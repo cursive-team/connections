@@ -277,7 +277,7 @@ const ProfilePage: React.FC = () => {
         </div>
         <div className="px-4 py-0">
           <ToggleSwitch
-            label="Anonymous tap graph"
+            label="Join anonymous tap graph exhibit"
             checked={!!user?.tapGraphEnabled}
             onChange={() => {
               toggleGraph();
