@@ -48,6 +48,7 @@ import {
   saveOAuthAccessToken,
 } from "@/lib/storage/localStorage/user/oauth";
 import { addLocationTap } from "./user/location";
+import { deleteAppImports } from "@/lib/storage/localStorage/user/imports";
 
 export class LocalStorage implements ClientStorage {
   async loadInitialStorageData(
@@ -96,6 +97,10 @@ export class LocalStorage implements ClientStorage {
 
   async deleteOAuthAccessToken(app: DataImportSource): Promise<void> {
     return deleteOAuthAccessToken(app);
+  }
+
+  async deleteAppImports(app: DataImportSource): Promise<void> {
+    return deleteAppImports(app);
   }
 
   async saveTapInfo(tapInfo: TapInfo): Promise<void> {
