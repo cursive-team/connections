@@ -5,8 +5,6 @@ import {
   SocketExpungeConnection,
 } from "@/lib/socket/helper";
 import {
-  SocketResponseSchema,
-  SocketResponse,
   SocketResponseType,
   SocketErrorPayloadSchema,
   SocketErrorPayload,
@@ -60,32 +58,19 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       console.warn("Authenticated socket server connection is established.");
     });
 
-    socketInstance.on('message', async (ev) => {
-      if (!ev) {
-        console.warn("Socket message is invalid");
-        return;
-      }
-      try {
-        const resp: SocketResponse = SocketResponseSchema.parse(JSON.parse(ev));
+    socketInstance.on(SocketResponseType.TAP_BACK, async () => {
+      await refreshMessages();
+      return;
+    });
 
-        switch (resp.type) {
-          case SocketResponseType.TAP_BACK:
-            refreshMessages();
-            return;
-          case SocketResponseType.PSI:
-            console.log("received PSI refresh message")
-            return;
-          case SocketResponseType.ERROR:
-            const payload: SocketErrorPayload = SocketErrorPayloadSchema.parse(JSON.parse(resp.payload));
-            throw Error(`Socket message returned an error: ${payload.error}`);
-            return;
-          default:
-            return;
-        }
-      } catch (error) {
-        console.error("Onmessage socket client error:", errorToString(error));
-        return;
-      }
+    socketInstance.on(SocketResponseType.PSI, async () => {
+      console.log("received PSI refresh message")
+      return;
+    });
+
+    socketInstance.on(SocketResponseType.ERROR, async (data) => {
+      const payload: SocketErrorPayload = SocketErrorPayloadSchema.parse(JSON.parse(data));
+      console.error(`Onmessage socket client error: ${payload}`);
       return;
     });
 

@@ -5,9 +5,7 @@ import {
   SocketRequestSchema,
   SocketRequest,
   SocketResponseType,
-  SocketResponse,
   SocketErrorPayload,
-  MapRequestToResponse,
   errorToString,
 } from "@types";
 import {
@@ -26,7 +24,7 @@ export const wsServer = new Server(server);
 
 const controller = new Controller();
 
-const clientsSockets: Record<string, Socket> = {};
+const clientsSockets: Record<string, string> = {};
 
 // Middleware to authenticate the socket connection
 wsServer.use(async(socket, next) => {
@@ -45,8 +43,7 @@ wsServer.use(async(socket, next) => {
     // Attach user info to socket object
     socket.user = user;
 
-    // Set client lookup record
-    clientsSockets[user.signaturePublicKey] = socket;
+    clientsSockets[user.signaturePublicKey] = socket.id;
 
     return next();
   }
@@ -60,13 +57,7 @@ const handleError = (socket: Socket, error: string): void => {
     error,
   }
 
-  const resp: SocketResponse = {
-    type: SocketResponseType.ERROR,
-    recipientSigPubKey: socket.user.signaturePublicKey,
-    payload
-  };
-
-  socket.send(JSON.stringify(resp))
+  socket.emit(SocketResponseType.ERROR, payload)
   return;
 }
 
@@ -80,6 +71,7 @@ wsServer.on('connection', (socket: Socket) => {
   });
 
   socket.on('message', async (message: string) => {
+    console.log("Receive message.")
     let sender = socket.user.signaturePublicKey;
     let recipient: string | null = null;
     try {
@@ -92,10 +84,10 @@ wsServer.on('connection', (socket: Socket) => {
             return handleError(socket, "Missing recipient.");
           }
 
-          const tapBackResponse: SocketResponse = MapRequestToResponse(req);
-
           if (clientsSockets[recipient]) {
-            clientsSockets[recipient].send(JSON.stringify(tapBackResponse));
+            console.log(`Emit ${SocketRequestType.TAP_BACK} event.`)
+            const socketId = clientsSockets[recipient];
+            socket.to(socketId).emit(SocketRequestType.TAP_BACK);
           }
           return;
         case SocketRequestType.PSI:
@@ -103,13 +95,14 @@ wsServer.on('connection', (socket: Socket) => {
             return handleError(socket, "Missing recipient.");
           }
 
-          const psiResponse: SocketResponse = MapRequestToResponse(req);
-
           if (clientsSockets[recipient]) {
-            clientsSockets[recipient].send(JSON.stringify(psiResponse));
+            console.log(`Emit ${SocketRequestType.PSI} event.`)
+            const socketId = clientsSockets[recipient];
+            socket.to(socketId).emit(SocketRequestType.PSI);
           }
           return;
         case SocketRequestType.EXPUNGE:
+          console.log("Expunge socket info.")
           delete clientsSockets[sender];
           socket.disconnect();
           return;
