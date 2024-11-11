@@ -128,7 +128,7 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
   };
 
   const handleNext = async (e: unknown) => {
-    if (step === 2 || step === 3) {
+    if (step === 1 || step === 2) {
       // Validate Telegram and Twitter handles
       const handle = formData[steps[step].field as keyof FormData];
       if (handle.includes("@")) {
