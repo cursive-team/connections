@@ -21,6 +21,7 @@ import ImportStravaButton from "@/features/oauth/ImportStravaButton";
 import ToggleSwitch from "@/components/ui/Switch";
 import useSettings from "@/hooks/useSettings";
 import { storeAddChipRequest } from "@/lib/chip/addChip";
+import { AddGraphConsentButton } from "@/features/graph/AddConsentButton";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -134,6 +135,9 @@ const ProfilePage: React.FC = () => {
                   >
                     <span className="text-[14px]">Add Chip</span>
                   </AppButton>
+                </div>
+                <div className="w-fit">
+                  <AddGraphConsentButton/>
                 </div>
               </div>
             </div>

@@ -7,6 +7,7 @@ import oauthRoutes from "./routes/oauth";
 import lannaRoutes from "./routes/lanna";
 import notificationRoutes from "./routes/notification";
 import dataHashRoutes from "./routes/dataHash";
+import graphRoutes from "./routes/graph";
 import { FRONTEND_URL } from "./constants";
 import { Server, Socket } from "socket.io";
 import {
@@ -41,6 +42,7 @@ app.use("/api/lanna", lannaRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/notification", notificationRoutes);
 app.use("/api/data_hash", dataHashRoutes);
+app.use("/api/graph", graphRoutes);
 app.use("/", healthRoutes);
 
 app.locals.intersectionState = {} as IntersectionState;

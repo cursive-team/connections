@@ -28,6 +28,8 @@ import {
   LeaderboardEntryType,
   AccessToken,
   DataImportSource,
+  GraphEdgeResponse,
+  ErrorResponse,
 } from "@types";
 import { Chip } from "@/lib/controller/chip/types";
 import { iChipClient } from "@/lib/controller/chip/interfaces";
@@ -40,6 +42,9 @@ import { TelegramNotificationClient } from "./notification/telegram/client";
 import { iNotificationClient } from "./notification/interfaces";
 import { NitroEnclaveClient } from "@/lib/controller/enclave/nitro/client";
 import { iEnclaveClient } from "@/lib/controller/enclave/interfaces";
+import { iGraphClient } from "@/lib/controller/graph/interfaces";
+import { PrismaGraphClient } from "@/lib/controller/graph/prisma/client";
+import { EdgeData } from "@/lib/controller/graph/types";
 
 export class Controller {
   postgresClient: iPostgresClient; // Use interface so that it can be mocked out
@@ -48,6 +53,7 @@ export class Controller {
   oauthClient: iOAuthClient;
   notificationClient: iNotificationClient;
   enclaveClient: iEnclaveClient;
+  graphClient: iGraphClient;
 
   constructor() {
     // Default client, could also pass through mock
@@ -67,7 +73,10 @@ export class Controller {
     // Enclave client with AWS Nitro Enclave
     this.enclaveClient = new NitroEnclaveClient();
 
-    // Over time more clients will be added (e.g. nitro enclave client)...
+    // Graph client -- uses primsa but in the future may use graph DB of some sort...
+    this.graphClient = new PrismaGraphClient();
+
+    // Over time more clients will be added...
   }
 
   NotificationInitialize(): Promise<void> {
@@ -296,5 +305,14 @@ export class Controller {
     secretHash: string;
   }> {
     return this.enclaveClient.HashWithSecret(encryptedInput);
+  }
+
+  // Graph
+  UpsertGraphEdge(id: string | null, tapSenderId: string | null, tapReceiverId: string | null): Promise<string | ErrorResponse> {
+    return this.graphClient.UpsertGraphEdge(id, tapSenderId, tapReceiverId);
+  }
+
+  GetGraphEdges(fetchUpdatedAtAfter: Date | null): Promise<GraphEdgeResponse | ErrorResponse> {
+    return this.graphClient.GetGraphEdges(fetchUpdatedAtAfter);
   }
 }

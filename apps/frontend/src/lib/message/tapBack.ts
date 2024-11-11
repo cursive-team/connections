@@ -1,11 +1,13 @@
 import { z } from "zod";
 import { randomBytes } from "crypto";
 import { getCounterMessage, sign } from "../crypto/babyJubJub";
-import { ChipIssuer } from "@types";
+import {
+  ChipIssuer,
+  MessageTypeSchema,
+  MessageType
+} from "@types";
 import {
   TapDataSchema,
-  MessageType,
-  MessageTypeSchema,
   UserDataSchema,
   UserData,
 } from "../storage/types";

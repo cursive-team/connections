@@ -24,6 +24,7 @@ import {
 import { decryptBackupString, encryptBackupString } from "@/lib/crypto/backup";
 import { BASE_API_URL } from "@/config";
 import { OAuthData, OAuthDataSchema } from "@/lib/storage/types";
+import { EdgeBackup, EdgeBackupSchema } from "@/lib/storage/types";
 
 /**
  * Parses a user object from backup data.
@@ -154,6 +155,33 @@ export const processUserBackup = ({
         if (user.oauth) {
           delete user.oauth[oauthApp.app];
         }
+        break;
+      case BackupEntryType.TOGGLE_SOCIAL_GRAPH:
+        if (!user) {
+          throw new Error("TOGGLE_SOCIAL_GRAPH backup entry found before INITIAL");
+        }
+        if (user.tapGraphEnabled === undefined) {
+          user.tapGraphEnabled = true;
+        } else {
+          user.tapGraphEnabled = !user.tapGraphEnabled;
+        }
+
+        // TODO: Should this backup entry be responsible for both toggling *and* revoking / backfilling all edges?
+        // Currently this version keeps edges as they are -- ie if the feature was off and then turned on, old edges are not updated and pushed, and if the feature was on and then turned off, old edges are not revoked. Both cases should be covered eventually.
+
+        break;
+      case BackupEntryType.EDGE:
+        if (!user) {
+          throw new Error("EDGE backup entry found before INITIAL");
+        }
+        const edgeData: EdgeBackup = EdgeBackupSchema.parse(
+          JSON.parse(decryptedData)
+        );
+        if (!user.edges) {
+          user.edges = []
+        }
+
+        user.edges.push(edgeData);
         break;
       default:
         throw new Error(`Invalid backup entry type: ${data.backupEntryType}`);
@@ -470,6 +498,72 @@ export const createOAuthDeletionBackup = ({
     iv,
     encryptedData,
     backupEntryType: BackupEntryType.DELETE_OAUTH,
+    clientCreatedAt: new Date(),
+  };
+};
+
+export interface CreateToggleSocialGraphBackupArgs {
+  email: string;
+  password: string;
+}
+
+export const createToggleSocialGraphBackup = ({
+    email,
+    password,
+  }: CreateToggleSocialGraphBackupArgs): CreateBackupData => {
+  const { authenticationTag, iv, encryptedData } = encryptBackupString({
+    backup: "",
+    email,
+    password,
+  });
+
+  return {
+    authenticationTag,
+    iv,
+    encryptedData,
+    backupEntryType: BackupEntryType.TOGGLE_SOCIAL_GRAPH,
+    clientCreatedAt: new Date(),
+  };
+};
+
+export interface CreateEdgeArgs {
+  email: string;
+  password: string;
+  edgeId: string;
+  sentHash: boolean;
+  connectionUsername: string;
+  isTapSender: boolean;
+  timestamp: Date;
+}
+
+export const createEdgeBackup = ({
+    email,
+    password,
+    edgeId,
+    sentHash,
+    connectionUsername,
+    isTapSender,
+    timestamp,
+  }: CreateEdgeArgs): CreateBackupData => {
+  const edgeData : EdgeBackup = {
+    edgeId,
+    sentHash,
+    timestamp,
+    isTapSender,
+    connectionUsername,
+  }
+
+  const { authenticationTag, iv, encryptedData } = encryptBackupString({
+    backup: JSON.stringify(edgeData),
+    email,
+    password,
+  });
+
+  return {
+    authenticationTag,
+    iv,
+    encryptedData,
+    backupEntryType: BackupEntryType.EDGE,
     clientCreatedAt: new Date(),
   };
 };
