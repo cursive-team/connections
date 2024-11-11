@@ -15,7 +15,7 @@ export const ChipSchema = z.object({
   chipRegisteredAt: z.date().nullable(),
   chipPublicKey: z.string().nullable(),
   chipPrivateKey: z.string().nullable(),
-  chipPublicKeySignature: ChipPublicKeySignatureSchema.nullable(),
+  chipPublicKeySignature: z.string().nullable(),
   chipTapCount: z.number().int().nonnegative(),
   ownerUsername: z.string().nullable(),
   ownerDisplayName: z.string().nullable(),

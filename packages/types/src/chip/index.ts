@@ -90,7 +90,7 @@ export const UserTapSchema = z.object({
   ownerPsiPublicKeyLink: z.string().nullable(),
   ownerUserData: JsonSchema.nullable(),
   timestamp: z.coerce.date(),
-  chipPublicKeySignature: ChipPublicKeySignatureSchema.nullable(),
+  chipPublicKeySignature: z.string().nullable(),
 });
 
 export type UserTap = z.infer<typeof UserTapSchema>;
