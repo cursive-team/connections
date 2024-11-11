@@ -23,6 +23,7 @@ import useSettings from "@/hooks/useSettings";
 import { storeAddChipRequest } from "@/lib/chip/addChip";
 import { toggleGraphConsent } from "@/lib/storage/localStorage/graph";
 import { DataImportSource } from "@types";
+import { deleteImports } from "@/lib/imports/delete";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -36,6 +37,12 @@ const ProfilePage: React.FC = () => {
 
   const toggleGraph = async () => {
     await toggleGraphConsent();
+  }
+
+  const handleImportDeletion = async () => {
+    toast.info("Data can be reimported by reenabling application imports.")
+    await deleteImports();
+    router.push("/");
   };
 
   useEffect(() => {
@@ -285,10 +292,15 @@ const ProfilePage: React.FC = () => {
           />
         </div>
         <div className="px-4 py-6">
-            <AppButton onClick={handleLogout} variant="outline">
-              Log out
-            </AppButton>
-          </div>
+          <AppButton onClick={handleLogout} variant="outline">
+            Log out
+          </AppButton>
+        </div>
+        <div className="px-4 py-2">
+          <AppButton onClick={handleImportDeletion} variant="outline">
+            Delete imports
+          </AppButton>
+        </div>
       </AppLayout>
     </>
   );
