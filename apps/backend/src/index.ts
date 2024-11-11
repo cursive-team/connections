@@ -90,9 +90,7 @@ wsServer.use(async(socket, next) => {
   } else {
     // Attach user info to socket object
     socket.user = user;
-    console.log("Set lookup")
     app.locals.clientsSockets[user.signaturePublicKey] = socket.id;
-    console.log(app.locals.clientsSockets[user.signaturePublicKey])
 
     return next();
   }
@@ -120,43 +118,34 @@ wsServer.on('connection', (socket: Socket) => {
   });
 
   socket.on('message', async (message: string) => {
-    console.log("Receive message.")
     let sender = socket.user.signaturePublicKey;
     let recipient: string | null = null;
     try {
       const req: SocketRequest = SocketRequestSchema.parse(JSON.parse(message));
-      console.log("Check req", sender, req)
 
       recipient = req.recipientSigPubKey;
       switch (req.type) {
         case SocketRequestType.TAP_BACK:
-          console.log("TAP_BACK", recipient)
           if (!recipient) {
             return handleError(socket, "Missing recipient.");
           }
 
-          console.log("Does socket exist: ", app.locals.clientsSockets[recipient])
           if (app.locals.clientsSockets[recipient]) {
-            console.log(`Emit ${SocketRequestType.TAP_BACK} event.`)
             const socketId = app.locals.clientsSockets[recipient];
             socket.to(socketId).emit(SocketRequestType.TAP_BACK);
           }
           return;
         case SocketRequestType.PSI:
-          console.log("PSI", recipient)
           if (!recipient) {
             return handleError(socket, "Missing recipient.");
           }
 
-          console.log("Does socket exist: ", app.locals.clientsSockets[recipient])
           if (app.locals.clientsSockets[recipient]) {
-            console.log(`Emit ${SocketRequestType.PSI} event.`)
             const socketId = app.locals.clientsSockets[recipient];
             socket.to(socketId).emit(SocketRequestType.PSI);
           }
           return;
         case SocketRequestType.EXPUNGE:
-          console.log("Expunge socket info.")
           delete app.locals.clientsSockets[sender];
           socket.disconnect();
           return;
@@ -165,7 +154,6 @@ wsServer.on('connection', (socket: Socket) => {
       };
     } catch (error) {
       const errMsg: string = `Error handling message: ${errorToString(error)}`;
-      console.error(errMsg);
       if (sender) {
         return handleError(socket, errMsg);
       }
