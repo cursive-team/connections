@@ -83,7 +83,7 @@ const EnterUsername: React.FC<EnterUsernameProps> = ({
               name="username"
               type="text"
               autoComplete="username"
-              placeholder="Username"
+              label="Username"
               required
               value={username}
               onChange={handleChange}

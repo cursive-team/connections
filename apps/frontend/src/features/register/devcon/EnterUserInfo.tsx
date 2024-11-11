@@ -168,9 +168,9 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
           Link your contact info
         </span>
         <span className="font-sans text-sm font-normal text-label-primary">
-          The info you enter will be saved to your Cursive chip, allowing you to
-          share it instantly with a tap. You can always add, remove, or change
-          this data in the app.
+          This contact info will be shared when others tap your Cursive chip.
+          You can modify this data in the app, or choose other socials like
+          Signal and Farcaster.
         </span>
       </div>
       <div className="flex flex-col col-gap-4">

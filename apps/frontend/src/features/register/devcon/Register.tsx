@@ -45,6 +45,7 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
   const [bio, setBio] = useState("");
   const [telegramHandle, setTelegramHandle] = useState("");
   const [twitterHandle, setTwitterHandle] = useState("");
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
   const { darkTheme } = useSettings();
 
@@ -131,7 +132,8 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
     logClientEvent("register-create-account", {
       chipIssuer: savedTap.tapResponse.chipIssuer,
     });
-    setDisplayState(DisplayState.CREATING_ACCOUNT);
+    // setDisplayState(DisplayState.CREATING_ACCOUNT);
+    setIsCreatingAccount(true);
     try {
       // Register user
       await registerUser({
@@ -261,7 +263,8 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
       ].includes(displayState) && (
         <HeaderCover
           image="devcon"
-          isLoading={[DisplayState.CREATING_ACCOUNT].includes(displayState)}
+          // isLoading={[DisplayState.CREATING_ACCOUNT].includes(displayState)}
+          isLoading={isCreatingAccount}
         />
       )}
       <div className="flex-grow flex px-6 center sm:mx-auto sm:w-full sm:max-w-md">
@@ -290,7 +293,7 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
             onSwitchToPasskey={handleSwitchToRegisterWithPasskey}
           />
         )}
-        {displayState === DisplayState.CREATING_ACCOUNT && <CreatingAccount />}
+        {/* {displayState === DisplayState.CREATING_ACCOUNT && <CreatingAccount />} */}
       </div>
     </div>
   );
