@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+export enum MessageType {
+  TAP_BACK = "TAP_BACK",
+  TAP_GRAPH_EDGE = "TAP_GRAPH_EDGE"
+}
+
+export const MessageTypeSchema = z.nativeEnum(MessageType);
+
 export const GetMessagesRequestSchema = z.object({
   authToken: z.string(),
   lastMessageFetchedAt: z.coerce.date().optional(),

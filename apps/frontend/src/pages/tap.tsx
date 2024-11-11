@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { ChipTapResponse, errorToString, ChipIssuer } from "@types";
+import { ChipTapResponse, errorToString, ChipIssuer, UpsertSocialGraphEdgeResponse } from "@types";
 import { toast } from "sonner";
 import { storage } from "@/lib/storage";
 import {
@@ -15,6 +15,10 @@ import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { shareableUserDataToJson } from "@/lib/user";
 import { hasRecentAddChipRequest } from "@/lib/chip/addChip";
+import { upsertSocialGraphEdge } from "@/lib/graph";
+import { sha256 } from "js-sha256";
+import { sendMessages } from "@/lib/message";
+import { DEVCON } from "@/lib/storage/types";
 
 const TapPage: React.FC = () => {
   const router = useRouter();
@@ -113,6 +117,36 @@ const TapPage: React.FC = () => {
 
             // Save tap to local storage
             await storage.addUserTap(response);
+
+            // If tap graph feature enabled, upsert graph edge (upsert so that either user can create the row)
+            let tapSenderHash: string | null = null;
+
+            const sentHash: boolean = (user?.tapGraphEnabled === true);
+            if (sentHash) {
+              // Double hash the signature private key, use as identifier, use single hash version as revocation code
+              tapSenderHash = sha256(sha256(user.signaturePrivateKey).concat(DEVCON));
+            }
+
+            // Upsert row, returns edge ID
+            try {
+              const resp: UpsertSocialGraphEdgeResponse = await upsertSocialGraphEdge(session.authTokenValue, null, tapSenderHash, null);
+
+              // Send edge ID to tapped, handles backup for both edge message and localstorage edge record
+              const message = await storage.createEdgeMessageAndHandleBackup(
+                response.userTap.ownerUsername,
+                resp.id,
+                sentHash,
+                user.userData.username,
+              );
+              await sendMessages({
+                authToken: session.authTokenValue,
+                messages: [message],
+              });
+            } catch (error) {
+              // Never fail on upsert, not worth it
+              console.error(`Error upserting social graph edge: ${errorToString(error)}`)
+            }
+
 
             // Update leaderboard entry
             await updateTapLeaderboardEntry(response.chipIssuer);

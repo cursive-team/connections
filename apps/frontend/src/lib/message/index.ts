@@ -13,6 +13,7 @@ import {
 } from "@types";
 
 export * from "./tapBack";
+export * from "./edge";
 
 import { BASE_API_URL } from "@/config";
 import { storage } from "@/lib/storage";

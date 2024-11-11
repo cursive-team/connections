@@ -24,6 +24,7 @@ model User {
   notificationUserId    String?
   notificationUsername  String?
   notificationsEnabled  Boolean?
+  tapGraphEnabled       Boolean?
   AuthToken             AuthToken[]
   Backup                Backup[]
 }
@@ -135,4 +136,12 @@ model PairConnection {
   usernameB       String?
   connectionScore Decimal?
   createdAt       DateTime @default(now())
+}
+
+model TapGraphEdge {
+    id              String @id @default(uuid())
+    tapSenderId     String? // Hash(Hash(Private Signing Key)) : use double hash so that single hash can be used for revocation
+    tapReceiverId   String? // Hash(Hash(Private Signing Key))
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime
 }
