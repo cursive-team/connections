@@ -4,18 +4,11 @@ import { toast } from "sonner";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
 import { errorToString, Json, UsernameSchema } from "@types";
-import EnterEmail from "@/features/register/devcon/EnterEmail";
-import EnterCode from "@/features/register/devcon/EnterCode";
+import EnterUsername from "@/features/register/devcon/EnterUsername";
 import EnterUserInfo from "@/features/register/devcon/EnterUserInfo";
 import RegisterWithPasskey from "@/features/register/devcon/RegisterWithPasskey";
 import RegisterWithPassword from "@/features/register/devcon/RegisterWithPassword";
-import CreatingAccount from "@/features/register/devcon/CreatingAccount";
-import {
-  requestSigninToken,
-  verifyEmailIsUnique,
-  verifySigninToken,
-  verifyUsernameIsUnique,
-} from "@/lib/auth/util";
+import { verifyUsernameIsUnique } from "@/lib/auth/util";
 import { TapInfo } from "@/lib/storage/types";
 import { registerChip } from "@/lib/chip/register";
 import { registerUser } from "@/lib/auth/register";
@@ -29,8 +22,7 @@ import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { zxcvbn } from "@zxcvbn-ts/core";
 
 enum DisplayState {
-  ENTER_EMAIL,
-  ENTER_CODE,
+  ENTER_USERNAME,
   ENTER_USER_INFO,
   REGISTER_WITH_PASSKEY,
   REGISTER_WITH_PASSWORD,
@@ -45,77 +37,33 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
   const router = useRouter();
   const { pageHeight } = useSettings();
   const [displayState, setDisplayState] = useState<DisplayState>(
-    DisplayState.ENTER_EMAIL
+    DisplayState.ENTER_USERNAME
   );
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [telegramHandle, setTelegramHandle] = useState("");
   const [twitterHandle, setTwitterHandle] = useState("");
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
   const { darkTheme } = useSettings();
 
-  const handleEmailSubmit = async (submittedEmail: string) => {
-    logClientEvent("register-email-submit", {
+  const handleUsernameSubmit = async (username: string) => {
+    logClientEvent("register-username-submit", {
       chipIssuer: savedTap.tapResponse.chipIssuer,
     });
-    const isUnique = await verifyEmailIsUnique(submittedEmail);
-    if (!isUnique) {
-      toast.error("Email is already in use");
+    const parsedUsername = UsernameSchema.parse(username);
+    const usernameIsUnique = await verifyUsernameIsUnique(parsedUsername);
+    if (!usernameIsUnique) {
+      toast.error("Username is already taken");
       return;
     }
+    setUsername(parsedUsername);
 
-    try {
-      await requestSigninToken(submittedEmail);
-    } catch (error) {
-      console.error(error);
-      toast(
-        SupportToast(
-          "",
-          true,
-          "Error requesting signin token",
-          ERROR_SUPPORT_CONTACT,
-          errorToString(error)
-        )
-      );
-      return;
-    }
-
-    setEmail(submittedEmail);
-    setDisplayState(DisplayState.ENTER_CODE);
-  };
-
-  const handleCodeSubmit = async (submittedCode: string) => {
-    logClientEvent("register-code-submit", {
-      chipIssuer: savedTap.tapResponse.chipIssuer,
-    });
-    try {
-      const isValid = await verifySigninToken(email, submittedCode);
-      if (!isValid) {
-        toast.error("Invalid code");
-        return;
-      }
-
-      setCode(submittedCode);
-      setDisplayState(DisplayState.ENTER_USER_INFO);
-    } catch (error) {
-      toast(
-        SupportToast(
-          "",
-          true,
-          "Cannot verify signin code",
-          ERROR_SUPPORT_CONTACT,
-          errorToString(error)
-        )
-      );
-      return;
-    }
+    setDisplayState(DisplayState.ENTER_USER_INFO);
   };
 
   const handleUserInfoSubmit = async (userInfo: {
-    username: string;
     displayName: string;
     bio: string;
     telegramHandle: string;
@@ -124,14 +72,7 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
     logClientEvent("register-user-info-submit", {
       chipIssuer: savedTap.tapResponse.chipIssuer,
     });
-    const parsedUsername = UsernameSchema.parse(userInfo.username);
-    const usernameIsUnique = await verifyUsernameIsUnique(parsedUsername);
-    if (!usernameIsUnique) {
-      toast.error("Username is already taken");
-      return;
-    }
 
-    setUsername(parsedUsername);
     setDisplayName(userInfo.displayName);
     setBio(userInfo.bio);
     setTelegramHandle(userInfo.telegramHandle);
@@ -190,12 +131,12 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
     logClientEvent("register-create-account", {
       chipIssuer: savedTap.tapResponse.chipIssuer,
     });
-    setDisplayState(DisplayState.CREATING_ACCOUNT);
+    // setDisplayState(DisplayState.CREATING_ACCOUNT);
+    setIsCreatingAccount(true);
     try {
       // Register user
       await registerUser({
-        signinToken: code,
-        email,
+        email: username,
         password: backupPassword,
         username,
         displayName,
@@ -272,14 +213,6 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
   };
 
   const onGoBack = () => {
-    if (displayState === DisplayState.ENTER_CODE) {
-      setDisplayState(DisplayState.ENTER_EMAIL);
-    }
-
-    if (displayState === DisplayState.ENTER_CODE) {
-      setDisplayState(DisplayState.ENTER_EMAIL);
-    }
-
     if (
       displayState === DisplayState.REGISTER_WITH_PASSKEY ||
       displayState === DisplayState.REGISTER_WITH_PASSWORD
@@ -296,7 +229,6 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
       }}
     >
       {[
-        DisplayState.ENTER_CODE,
         DisplayState.REGISTER_WITH_PASSWORD,
         DisplayState.REGISTER_WITH_PASSKEY,
       ].includes(displayState) && (
@@ -323,27 +255,23 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
       )}
 
       {[
-        DisplayState.ENTER_EMAIL,
-        DisplayState.ENTER_CODE,
+        DisplayState.ENTER_USERNAME,
         DisplayState.REGISTER_WITH_PASSKEY,
         DisplayState.REGISTER_WITH_PASSWORD,
         DisplayState.CREATING_ACCOUNT,
       ].includes(displayState) && (
         <HeaderCover
           image="devcon"
-          isLoading={[DisplayState.CREATING_ACCOUNT].includes(displayState)}
+          // isLoading={[DisplayState.CREATING_ACCOUNT].includes(displayState)}
+          isLoading={isCreatingAccount}
         />
       )}
       <div className="flex-grow flex px-6 center sm:mx-auto sm:w-full sm:max-w-md">
-        {displayState === DisplayState.ENTER_EMAIL && (
-          <EnterEmail defaultEmail={email} submitEmail={handleEmailSubmit} />
-        )}
-        {displayState === DisplayState.ENTER_CODE && (
-          <EnterCode email={email} submitCode={handleCodeSubmit} />
+        {displayState === DisplayState.ENTER_USERNAME && (
+          <EnterUsername submitUsername={handleUsernameSubmit} />
         )}
         {displayState === DisplayState.ENTER_USER_INFO && (
           <EnterUserInfo
-            username={username}
             displayName={displayName}
             bio={bio}
             telegramHandle={telegramHandle}
@@ -364,7 +292,7 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
             onSwitchToPasskey={handleSwitchToRegisterWithPasskey}
           />
         )}
-        {displayState === DisplayState.CREATING_ACCOUNT && <CreatingAccount />}
+        {/* {displayState === DisplayState.CREATING_ACCOUNT && <CreatingAccount />} */}
       </div>
     </div>
   );

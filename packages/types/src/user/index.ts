@@ -3,9 +3,6 @@ import { z } from "zod";
 // Username schema
 export const UsernameSchema = z.string().regex(/^[a-zA-Z0-9]{3,20}$/);
 
-// Email schema
-export const EmailSchema = z.string().email();
-
 // Enum for backup entry types
 export enum BackupEntryType {
   INITIAL = "INITIAL",
@@ -108,7 +105,7 @@ export type VerifyUsernameUniqueResponse = z.infer<
 
 // Request schema for verifying email uniqueness
 export const VerifyEmailUniqueRequestSchema = z.object({
-  email: EmailSchema,
+  email: z.string(),
 });
 
 export type VerifyEmailUniqueRequest = z.infer<
@@ -125,9 +122,8 @@ export type VerifyEmailUniqueResponse = z.infer<
 
 // Request schema for registering a user
 export const UserRegisterRequestSchema = z.object({
-  signinToken: SigninTokenSchema,
   username: UsernameSchema,
-  email: EmailSchema,
+  email: z.string(),
   signaturePublicKey: z.string(),
   encryptionPublicKey: z.string(),
   psiPublicKeyLink: z.string().optional(),
@@ -151,8 +147,7 @@ export type UserRegisterResponse = z.infer<typeof UserRegisterResponseSchema>;
 
 // Request schema for logging in a user
 export const UserLoginRequestSchema = z.object({
-  email: EmailSchema,
-  signinToken: SigninTokenSchema,
+  username: UsernameSchema,
 });
 
 export type UserLoginRequest = z.infer<typeof UserLoginRequestSchema>;
@@ -160,6 +155,7 @@ export type UserLoginRequest = z.infer<typeof UserLoginRequestSchema>;
 // Response schema for logging in a user
 export const UserLoginResponseSchema = z.object({
   authToken: AuthTokenSchema,
+  email: z.string(),
   backupData: z.array(BackupDataSchema),
   passwordSalt: z.string(),
   passwordHash: z.string(),
@@ -171,7 +167,7 @@ export type UserLoginResponse = z.infer<typeof UserLoginResponseSchema>;
 
 // Request schema for creating a signin token
 export const CreateSigninTokenRequestSchema = z.object({
-  email: EmailSchema,
+  email: z.string(),
 });
 
 export type CreateSigninTokenRequest = z.infer<
@@ -180,7 +176,7 @@ export type CreateSigninTokenRequest = z.infer<
 
 // Request schema for verifying a signin token
 export const VerifySigninTokenRequestSchema = z.object({
-  email: EmailSchema,
+  email: z.string(),
   signinToken: SigninTokenSchema,
 });
 

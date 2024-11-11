@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { EmailSchema, errorToString } from "@types";
+import { UsernameSchema, errorToString } from "@types";
 import { toast } from "sonner";
 import { AppButton } from "@/components/ui/Button";
 import { AppInput } from "@/components/ui/AppInput";
@@ -8,24 +8,33 @@ import { AppCopy } from "@/components/ui/AppCopy";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
 
-interface EnterEmailProps {
-  submitEmail: (email: string) => Promise<void>;
-  defaultEmail?: string;
+interface EnterUsernameProps {
+  submitUsername: (username: string) => Promise<void>;
+  defaultUsername?: string;
 }
 
-const EnterEmail: React.FC<EnterEmailProps> = ({
-  submitEmail,
-  defaultEmail = "",
+const EnterUsername: React.FC<EnterUsernameProps> = ({
+  submitUsername,
+  defaultUsername = "",
 }) => {
-  const [email, setEmail] = useState(defaultEmail);
+  const [username, setUsername] = useState(defaultUsername);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      UsernameSchema.parse(username);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        "Username must be alphanumeric and between 3 and 20 characters."
+      );
+      return;
+    }
+
+    try {
       setLoading(true);
-      EmailSchema.parse(email);
-      await submitEmail(email);
+      await submitUsername(username);
       setLoading(false);
     } catch (error) {
       console.error(error);
@@ -33,7 +42,7 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
         SupportToast(
           "",
           true,
-          "Please enter a valid email address",
+          "Unexpected error submitting username",
           ERROR_SUPPORT_CONTACT,
           errorToString(error)
         )
@@ -42,36 +51,42 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newEmail = e.target.value;
-    setEmail(newEmail);
+    const newUsername = e.target.value;
+    setUsername(newUsername);
   };
 
   return (
     <div className="flex flex-col grow">
       <RegisterHeader
-        title="Discover & deepen connection with residents!"
+        title="Discover & deepen connection at Devcon!"
         description={
           <div className="flex flex-col gap-2">
-            <span>
-              {`Use programmable cryptography to safely connect & efficiently coordinate with 
-              Devcon attendees. Make sure you've tapped your own chip to register it.`}
-            </span>
+            <ul className="list-disc pl-4 space-y-2">
+              <li>Easily share socials with your NFC chip</li>
+              <li>
+                Discover overlapping events and hot takes with private set
+                intersections
+              </li>
+              <li>
+                Receive high-quality opportunites while maintaining data privacy
+                with MPC
+              </li>
+            </ul>
           </div>
         }
       />
       <div className="flex flex-col mt-auto">
         <form onSubmit={handleSubmit} className="space-y-4 pb-2">
-          <div className="text-center mt-1">
+          <div className="mt-1">
             <AppInput
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              placeholder="Email"
+              id="username"
+              name="username"
+              type="text"
+              autoComplete="username"
+              label="Username"
               required
-              value={email}
+              value={username}
               onChange={handleChange}
-              description="Use your Devcon email for additional features."
             />
           </div>
 
@@ -85,4 +100,4 @@ const EnterEmail: React.FC<EnterEmailProps> = ({
   );
 };
 
-export default EnterEmail;
+export default EnterUsername;

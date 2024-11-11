@@ -1,15 +1,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
-import EnterEmail from "@/features/login/EnterEmail";
-import EnterCode from "@/features/login/EnterCode";
 import LoginWithPassword from "@/features/login/LoginWithPassword";
 import LoginWithPasskey from "@/features/login/LoginWithPasskey";
-import {
-  loginUser,
-  processLoginResponse,
-  requestSigninToken,
-} from "@/lib/auth";
+import { loginUser, processLoginResponse } from "@/lib/auth";
 import { HeaderCover } from "@/components/ui/HeaderCover";
 import useSettings from "@/hooks/useSettings";
 import { errorToString, UserLoginResponse } from "@types";
@@ -17,10 +11,10 @@ import { storage } from "@/lib/storage";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
+import EnterUsername from "@/features/login/EnterUsername";
 
 enum LoginState {
-  EMAIL = "email",
-  CODE = "code",
+  USERNAME = "username",
   PASSWORD = "password",
   PASSKEY = "passkey",
 }
@@ -28,8 +22,7 @@ enum LoginState {
 const LoginPage: React.FC = () => {
   const router = useRouter();
   const { pageHeight } = useSettings();
-  const [step, setStep] = useState<LoginState>(LoginState.EMAIL);
-  const [email, setEmail] = useState("");
+  const [step, setStep] = useState<LoginState>(LoginState.USERNAME);
   const [loginResponse, setLoginResponse] = useState<UserLoginResponse | null>(
     null
   );
@@ -55,32 +48,10 @@ const LoginPage: React.FC = () => {
     checkLoginStatus();
   }, [router]);
 
-  const handleEmailSubmit = async (submittedEmail: string) => {
-    logClientEvent("login-email-submit", {});
+  const handleUsernameSubmit = async (submittedUsername: string) => {
+    logClientEvent("login-username-submit", {});
     try {
-      await requestSigninToken(submittedEmail);
-    } catch (error) {
-      console.error(error);
-      toast(
-        SupportToast(
-          "",
-          true,
-          "Error requesting signin token",
-          ERROR_SUPPORT_CONTACT,
-          errorToString(error)
-        )
-      );
-      return;
-    }
-
-    setEmail(submittedEmail);
-    setStep(LoginState.CODE);
-  };
-
-  const handleCodeSubmit = async (submittedCode: string) => {
-    logClientEvent("login-code-submit", {});
-    try {
-      const response = await loginUser(email, submittedCode);
+      const response = await loginUser(submittedUsername);
       setLoginResponse(response);
       setStep(
         response.registeredWithPasskey
@@ -93,7 +64,7 @@ const LoginPage: React.FC = () => {
         SupportToast(
           "",
           true,
-          "Invalid code",
+          "Invalid username",
           ERROR_SUPPORT_CONTACT,
           errorToString(error)
         )
@@ -110,7 +81,7 @@ const LoginPage: React.FC = () => {
 
     try {
       setLoading(true);
-      await processLoginResponse(loginResponse, email, password);
+      await processLoginResponse(loginResponse, loginResponse.email, password);
       toast.success("Successfully logged in!");
       router.push("/profile");
     } catch (error) {
@@ -138,7 +109,7 @@ const LoginPage: React.FC = () => {
 
     try {
       setLoading(true);
-      await processLoginResponse(loginResponse, email, password);
+      await processLoginResponse(loginResponse, loginResponse.email, password);
       toast.success("Successfully logged in!");
       router.push("/profile");
     } catch (error) {
@@ -164,19 +135,13 @@ const LoginPage: React.FC = () => {
         minHeight: `${pageHeight}px`,
       }}
     >
-      {[
-        LoginState.EMAIL,
-        LoginState.CODE,
-        LoginState.PASSWORD,
-        LoginState.PASSKEY,
-      ].includes(step) && <HeaderCover isLoading={false} />}
+      {[LoginState.USERNAME, LoginState.PASSWORD, LoginState.PASSKEY].includes(
+        step
+      ) && <HeaderCover isLoading={false} />}
 
       <div className="flex-grow flex px-6 center sm:mx-auto sm:w-full sm:max-w-md">
-        {step === LoginState.EMAIL && (
-          <EnterEmail submitEmail={handleEmailSubmit} />
-        )}
-        {step === LoginState.CODE && (
-          <EnterCode email={email} submitCode={handleCodeSubmit} />
+        {step === LoginState.USERNAME && (
+          <EnterUsername submitUsername={handleUsernameSubmit} />
         )}
         {step === LoginState.PASSWORD && (
           <LoginWithPassword

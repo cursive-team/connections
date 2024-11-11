@@ -1,6 +1,5 @@
 import { BASE_API_URL } from "@/config";
 import {
-  EmailSchema,
   SigninTokenSchema,
   VerifyEmailUniqueRequest,
   VerifyEmailUniqueResponseSchema,
@@ -11,10 +10,9 @@ import {
 
 export const requestSigninToken = async (email: string): Promise<void> => {
   try {
-    const parsedEmail = EmailSchema.parse(email);
     const response = await fetch(
       `${BASE_API_URL}/user/get_signin_token?email=${encodeURIComponent(
-        parsedEmail
+        email
       )}`,
       {
         method: "GET",

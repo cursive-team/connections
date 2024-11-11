@@ -14,7 +14,6 @@ import { storage } from "@/lib/storage";
 import { createRegisterActivity } from "../activity";
 
 export interface RegisterUserArgs {
-  signinToken: string;
   email: string;
   password: string;
   username: string;
@@ -29,8 +28,7 @@ export interface RegisterUserArgs {
 /**
  * Registers a user and loads initial storage data.
  * @param args - Object containing user registration details
- * @param args.signinToken - The signin token if registering with email.
- * @param args.email - The email of the user.
+ * @param args.email - The backup salt for the user. Can be email for early users, username for new users. This is a quirk for backwards compatibility.
  * @param args.password - The password of the user.
  * @param args.username - The username of the user.
  * @param args.displayName - The display name of the user.
@@ -41,7 +39,6 @@ export interface RegisterUserArgs {
  * @param args.passkeyAuthPublicKey - The public key of the authenticator if registering with passkey.
  */
 export async function registerUser({
-  signinToken,
   email,
   password,
   username,
@@ -94,7 +91,6 @@ export async function registerUser({
   });
 
   const request: UserRegisterRequest = {
-    signinToken,
     username,
     email,
     signaturePublicKey,
