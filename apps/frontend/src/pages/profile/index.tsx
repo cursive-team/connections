@@ -17,7 +17,6 @@ import { Card } from "@/components/cards/Card";
 import { logoutUser } from "@/lib/auth";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import ImportGithubButton from "@/features/oauth/ImportGithubButton";
-import ImportStravaButton from "@/features/oauth/ImportStravaButton";
 import ImportDevconButton from "@/features/oauth/ImportDevconButton";
 import ToggleSwitch from "@/components/ui/Switch";
 import useSettings from "@/hooks/useSettings";
@@ -61,14 +60,12 @@ const ProfilePage: React.FC = () => {
     );
   }
 
-  const hasStravaToAdd =
-    !user.oauth || !Object.keys(user.oauth).includes(DataImportSource.STRAVA);
   const hasGithubToAdd =
     !user.oauth || !Object.keys(user.oauth).includes(DataImportSource.GITHUB);
   const hasDevconToAdd = !Object.keys(user.userData).includes("devcon");
 
   console.log("To add?", hasDevconToAdd)
-  const hasOauthToAdd = hasStravaToAdd || hasGithubToAdd || hasDevconToAdd;
+  const hasOauthToAdd =  hasGithubToAdd || hasDevconToAdd;
   const hasDataToAdd = hasOauthToAdd || !user.userData.tensionsRating;
 
   const hasVaultData =
@@ -164,15 +161,6 @@ const ProfilePage: React.FC = () => {
                 {hasOauthToAdd && (
                   <div className="py-2">
                     <div className="w-full flex gap-2 overflow-x-auto">
-                      {hasStravaToAdd && (
-                        <div
-                          onClick={() =>
-                            logClientEvent("user-profile-strava-clicked", {})
-                          }
-                        >
-                          <ImportStravaButton />
-                        </div>
-                      )}
                       {hasGithubToAdd && (
                         <div
                           onClick={() =>
@@ -183,7 +171,7 @@ const ProfilePage: React.FC = () => {
                         </div>
                       )}
                       {hasDevconToAdd && (
-                        <ImportDevconButton addElement={false} />
+                        <ImportDevconButton />
                       )}
                     </div>
                   </div>
@@ -234,11 +222,6 @@ const ProfilePage: React.FC = () => {
                 {((user.oauth && Object.keys(user.oauth).length > 0) || !hasDevconToAdd) && (
                   <div className="py-2">
                     <div className="w-full flex gap-2 overflow-x-auto">
-                      {Object.keys(user.oauth || {}).includes(DataImportSource.STRAVA) && (
-                        <div>
-                          <ImportStravaButton addElement={false} />
-                        </div>
-                      )}
                       {Object.keys(user.oauth || {}).includes(DataImportSource.GITHUB) && (
                         <div>
                           <ImportGithubButton addElement={false} />

@@ -17,7 +17,7 @@ const ImportDevconButton = ({
       <Tag
         emoji={<Ethereum />}
         variant="gray"
-        text="Devcon"
+        text="Devcon Schedule"
         className={cn("pl-4 pr-8", fullWidth ? "w-full" : "min-w-max")}
         addElement={addElement}
         refresh={!addElement}

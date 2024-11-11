@@ -117,7 +117,7 @@ const DevconScheduleImportPage = () => {
               </span>
               <Link href={"https://app.devcon.org/account/settings"} target="_blank">
                 <AppButton size="md" className="w-fit" variant="outline">
-                  Navigate to your user settings.
+                  Navigate to Devcon settings
                 </AppButton>
               </Link>
             </div>
