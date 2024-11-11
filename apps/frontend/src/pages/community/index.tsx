@@ -11,6 +11,7 @@ import DevconCommunityPage from "@/features/community/DevconCommunityPage";
 import { Metadata } from "next";
 import { NextSeo } from "next-seo";
 import AppLayout from "@/layouts/AppLayout";
+import { DisplayedDashboard } from "@/components/cards/CommunityCard";
 
 export const metadata: Metadata = {
   title: "Community",
@@ -23,6 +24,8 @@ const CommunityPage = () => {
   );
   const [userChips, setUserChips] = useState<ChipIssuer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [displayedDashboard, setDisplayedDashboard] =
+    useState<DisplayedDashboard>(DisplayedDashboard.NONE);
 
   useEffect(() => {
     const fetchUserChips = async () => {
@@ -70,53 +73,65 @@ const CommunityPage = () => {
       <NextSeo title="Community" />
       <AppLayout
         header={
-          <>
-            <span className="text-label-primary font-medium">Community</span>
-            <div
-              className="absolute left-0 right-0 bottom-0 h-[2px]"
-              style={{
-                background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
-              }}
-            ></div>
-          </>
+          displayedDashboard === DisplayedDashboard.NONE && (
+            <>
+              <span className="text-label-primary font-medium">Community</span>
+              <div
+                className="absolute left-0 right-0 bottom-0 h-[2px]"
+                style={{
+                  background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
+                }}
+              ></div>
+            </>
+          )
         }
+        withContainer={displayedDashboard === DisplayedDashboard.NONE}
       >
-        {userChips.length >= 2 && (
-          <div className="flex gap-2 mt-2 sticky top-0 bg-background z-10">
-            {userChips.includes(ChipIssuer.EDGE_CITY_LANNA) && (
-              <AppButton
-                variant={
-                  selectedCommunity === ChipIssuer.EDGE_CITY_LANNA
-                    ? "outline"
-                    : "subtle"
-                }
-                onClick={() => setSelectedCommunity(ChipIssuer.EDGE_CITY_LANNA)}
-                className="flex-1"
-              >
-                Edge City Lanna
-              </AppButton>
-            )}
-            {userChips.includes(ChipIssuer.DEVCON_2024) && (
-              <AppButton
-                variant={
-                  selectedCommunity === ChipIssuer.DEVCON_2024
-                    ? "outline"
-                    : "subtle"
-                }
-                onClick={() => setSelectedCommunity(ChipIssuer.DEVCON_2024)}
-                className="flex-1"
-              >
-                Devcon
-              </AppButton>
-            )}
-          </div>
-        )}
+        {userChips.length >= 2 &&
+          displayedDashboard === DisplayedDashboard.NONE && (
+            <div className="flex gap-2 mt-2 sticky top-0 bg-background z-10">
+              {userChips.includes(ChipIssuer.EDGE_CITY_LANNA) && (
+                <AppButton
+                  variant={
+                    selectedCommunity === ChipIssuer.EDGE_CITY_LANNA
+                      ? "outline"
+                      : "subtle"
+                  }
+                  onClick={() =>
+                    setSelectedCommunity(ChipIssuer.EDGE_CITY_LANNA)
+                  }
+                  className="flex-1"
+                >
+                  Edge City Lanna
+                </AppButton>
+              )}
+              {userChips.includes(ChipIssuer.DEVCON_2024) && (
+                <AppButton
+                  variant={
+                    selectedCommunity === ChipIssuer.DEVCON_2024
+                      ? "outline"
+                      : "subtle"
+                  }
+                  onClick={() => setSelectedCommunity(ChipIssuer.DEVCON_2024)}
+                  className="flex-1"
+                >
+                  Devcon
+                </AppButton>
+              )}
+            </div>
+          )}
 
         {selectedCommunity === ChipIssuer.EDGE_CITY_LANNA && (
-          <LannaCommunityPage />
+          <LannaCommunityPage
+            displayedDashboard={displayedDashboard}
+            setDisplayedDashboard={setDisplayedDashboard}
+          />
         )}
         {selectedCommunity === ChipIssuer.DEVCON_2024 && (
-          <DevconCommunityPage />
+          <DevconCommunityPage
+            displayedDashboard={displayedDashboard}
+            setDisplayedDashboard={setDisplayedDashboard}
+          />
         )}
       </AppLayout>
     </>

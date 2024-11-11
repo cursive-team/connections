@@ -11,6 +11,8 @@ import {
   LeaderboardDetails,
   LeaderboardEntries,
   errorToString,
+  SubmitProofJobRequest,
+  SubmitProofJobRequestSchema,
 } from "@types";
 import { Controller } from "@/lib/controller";
 
@@ -109,6 +111,37 @@ router.get(
       };
 
       return res.status(200).json(resp);
+    } catch (error) {
+      return res.status(500).json({
+        error: errorToString(error),
+      });
+    }
+  }
+);
+
+/**
+ * @route POST /api/chip/submit_proof_job
+ * @desc Submits a proof job for a user
+ */
+router.post(
+  "/submit_proof_job",
+  async (
+    req: Request<{}, {}, SubmitProofJobRequest>,
+    res: Response<{} | ErrorResponse>
+  ) => {
+    try {
+      const validatedData = SubmitProofJobRequestSchema.parse(req.body);
+      const { authToken, jobId } = validatedData;
+
+      const user = await controller.GetUserByAuthToken(authToken);
+
+      if (!user) {
+        return res.status(401).json({ error: "Invalid auth token" });
+      }
+
+      await controller.SubmitProofJob(user.username, jobId);
+
+      return res.status(200).json({});
     } catch (error) {
       return res.status(500).json({
         error: errorToString(error),

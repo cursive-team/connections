@@ -21,16 +21,32 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-export default function DevconCommunityPage() {
+export default function DevconCommunityPage({
+  displayedDashboard,
+  setDisplayedDashboard,
+}: {
+  displayedDashboard: DisplayedDashboard;
+  setDisplayedDashboard: (dashboard: DisplayedDashboard) => void;
+}) {
   const router = useRouter();
   const [leaderboardDetails, setLeaderboardDetails] =
     useState<LeaderboardDetails | null>(null);
   const [leaderboardEntries, setLeaderboardEntries] =
     useState<LeaderboardEntries | null>(null);
+  const [day1Details, setDay1Details] = useState<LeaderboardDetails | null>(
+    null
+  );
+  const [day1Entries, setDay1Entries] = useState<LeaderboardEntries | null>(
+    null
+  );
+  const [day2Details, setDay2Details] = useState<LeaderboardDetails | null>(
+    null
+  );
+  const [day2Entries, setDay2Entries] = useState<LeaderboardEntries | null>(
+    null
+  );
 
   const [cardProps, setCardProps] = useState<CommunityCardProps[]>([]);
-  const [displayedDashboard, setDisplayedDashboard] =
-    useState<DisplayedDashboard>(DisplayedDashboard.NONE);
 
   useEffect(() => {
     const fetchInfo = async () => {
@@ -45,22 +61,60 @@ export default function DevconCommunityPage() {
 
       let totalTapDetails: LeaderboardDetails | null = null;
       let totalTapEntries: LeaderboardEntries | null = null;
+      let day1TapDetails: LeaderboardDetails | null = null;
+      let day1TapEntries: LeaderboardEntries | null = null;
+      let day2TapDetails: LeaderboardDetails | null = null;
+      let day2TapEntries: LeaderboardEntries | null = null;
+
       try {
-        totalTapDetails = await getUserLeaderboardDetails(
-          communityIssuer,
-          LeaderboardEntryType.TOTAL_TAP_COUNT
-        );
-        totalTapEntries = await getTopLeaderboardEntries(
-          communityIssuer,
-          LeaderboardEntryType.TOTAL_TAP_COUNT
-        );
+        [
+          totalTapDetails,
+          totalTapEntries,
+          day1TapDetails,
+          day1TapEntries,
+          day2TapDetails,
+          day2TapEntries,
+        ] = await Promise.all([
+          getUserLeaderboardDetails(
+            communityIssuer,
+            LeaderboardEntryType.DEVCON_2024_TAP_COUNT
+          ),
+          getTopLeaderboardEntries(
+            communityIssuer,
+            LeaderboardEntryType.DEVCON_2024_TAP_COUNT
+          ),
+          getUserLeaderboardDetails(
+            communityIssuer,
+            LeaderboardEntryType.DEVCON_2024_DAY_1_TAP_COUNT
+          ),
+          getTopLeaderboardEntries(
+            communityIssuer,
+            LeaderboardEntryType.DEVCON_2024_DAY_1_TAP_COUNT
+          ),
+          getUserLeaderboardDetails(
+            communityIssuer,
+            LeaderboardEntryType.DEVCON_2024_DAY_2_TAP_COUNT
+          ),
+          getTopLeaderboardEntries(
+            communityIssuer,
+            LeaderboardEntryType.DEVCON_2024_DAY_2_TAP_COUNT
+          ),
+        ]);
       } catch (error) {
         console.error("Error getting user leaderboard info:", error);
         toast.error("Error getting user leaderboard info.");
         router.push("/profile");
         return;
       }
-      if (!totalTapDetails || !totalTapEntries) {
+
+      if (
+        !totalTapDetails ||
+        !totalTapEntries ||
+        !day1TapDetails ||
+        !day1TapEntries ||
+        !day2TapDetails ||
+        !day2TapEntries
+      ) {
         toast.error("User leaderboard info not found.");
         router.push("/profile");
         return;
@@ -68,11 +122,23 @@ export default function DevconCommunityPage() {
 
       setLeaderboardDetails(totalTapDetails);
       setLeaderboardEntries(totalTapEntries);
+      setDay1Details(day1TapDetails);
+      setDay1Entries(day1TapEntries);
+      setDay2Details(day2TapDetails);
+      setDay2Entries(day2TapEntries);
+
+      const now = new Date();
+      const thailandOffset = 7; // UTC+7
+      const thailandTime = new Date(
+        now.getTime() + thailandOffset * 60 * 60 * 1000
+      );
+      const isDay2Started =
+        thailandTime >= new Date("2024-11-13T00:00:00+07:00");
 
       const props: CommunityCardProps[] = [
         {
           image: "/images/hand.png",
-          title: "Devcon Social Graph 🌐",
+          title: "coSNARK Tap Leaderboard 🌐",
           description: `${totalTapDetails.totalValue} of 2000 taps`,
           type: "active",
           position: totalTapDetails.userPosition,
@@ -81,9 +147,42 @@ export default function DevconCommunityPage() {
             100,
             Math.round((totalTapDetails.totalValue / 2000) * 100)
           ),
-          dashboard: DisplayedDashboard.DEVCON_TOTAL_TAPS,
+          dashboard: DisplayedDashboard.DEVCON_2024_TAP_COUNT,
         },
       ];
+
+      const day1Card: CommunityCardProps = {
+        image: "/images/week.png",
+        title: "11/12 coSNARK Tap Leaderboard 💫",
+        description: `${day1TapDetails.totalValue} of 500 taps`,
+        type: "active",
+        position: day1TapDetails.userPosition,
+        totalContributors: day1TapDetails.totalContributors,
+        progressPercentage: Math.min(
+          100,
+          Math.round((day1TapDetails.totalValue / 500) * 100)
+        ),
+        dashboard: DisplayedDashboard.DEVCON_2024_DAY_1_TAP_COUNT,
+        past: isDay2Started,
+      };
+
+      if (isDay2Started) {
+        props.push({
+          image: "/images/week.png",
+          title: "Devcon Day 2 Social Graph 💫",
+          description: `${day2TapDetails.totalValue} of 500 taps`,
+          type: "active",
+          position: day2TapDetails.userPosition,
+          totalContributors: day2TapDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((day2TapDetails.totalValue / 500) * 100)
+          ),
+          dashboard: DisplayedDashboard.DEVCON_2024_DAY_2_TAP_COUNT,
+        });
+      }
+
+      props.push(day1Card);
       setCardProps(props);
     };
 
@@ -91,9 +190,53 @@ export default function DevconCommunityPage() {
   }, [router]);
 
   if (
+    day1Details &&
+    day1Entries &&
+    displayedDashboard === DisplayedDashboard.DEVCON_2024_DAY_1_TAP_COUNT
+  ) {
+    return (
+      <DashboardDetail
+        image="/images/week-wide.png"
+        title="Devcon Day 1 Social Graph 💫"
+        description="Grow the Devcon Social Graph during Day 1 by tapping NFC chips to share socials and connect with other attendees!"
+        leaderboardDetails={day1Details}
+        leaderboardEntries={day1Entries}
+        goal={500}
+        unit="tap"
+        organizer="Cursive"
+        organizerDescription="Cryptography for human connection"
+        type="active"
+        returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
+      />
+    );
+  }
+
+  if (
+    day2Details &&
+    day2Entries &&
+    displayedDashboard === DisplayedDashboard.DEVCON_2024_DAY_2_TAP_COUNT
+  ) {
+    return (
+      <DashboardDetail
+        image="/images/social-graph-wide.png"
+        title="Devcon Day 2 Social Graph 💫"
+        description="Grow the Devcon Social Graph during Day 2 by tapping NFC chips to share socials and connect with other attendees!"
+        leaderboardDetails={day2Details}
+        leaderboardEntries={day2Entries}
+        goal={500}
+        unit="tap"
+        organizer="Cursive"
+        organizerDescription="Cryptography for human connection"
+        type="active"
+        returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
+      />
+    );
+  }
+
+  if (
     leaderboardDetails &&
     leaderboardEntries &&
-    displayedDashboard === DisplayedDashboard.DEVCON_TOTAL_TAPS
+    displayedDashboard === DisplayedDashboard.DEVCON_2024_TAP_COUNT
   ) {
     return (
       <DashboardDetail
@@ -153,7 +296,7 @@ export default function DevconCommunityPage() {
               );
             })}
           </div>
-          <div className="flex flex-col gap-2">
+          {/* <div className="flex flex-col gap-2">
             <span className="text-base font-bold text-label-primary font-sans">
               {`Past dashboards`}
             </span>
@@ -185,7 +328,7 @@ export default function DevconCommunityPage() {
                 </div>
               );
             })}
-          </div>
+          </div> */}
         </div>
       )}
     </>

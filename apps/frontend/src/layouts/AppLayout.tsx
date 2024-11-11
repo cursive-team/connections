@@ -62,7 +62,7 @@ export default function AppLayout({
       {header && (
         <div
           className={cn(
-            "flex items-center relative min-h-12",
+            "flex items-center relative min-h-12 w-full",
             headerDivider && "border-b border-b-quaternary/20",
             headerContainer && "px-3"
           )}

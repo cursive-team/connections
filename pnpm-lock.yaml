@@ -16,6 +16,9 @@ importers:
       '@prisma/client':
         specifier: ^5.19.1
         version: 5.20.0(prisma@5.20.0)
+      '@taceo/csn-api-client':
+        specifier: ^0.2.0
+        version: 0.2.0
       '@types/socket.io':
         specifier: ^3.0.2
         version: 3.0.2
@@ -37,9 +40,6 @@ importers:
       express:
         specifier: ^4.21.0
         version: 4.21.0
-      ffjavascript:
-        specifier: ^0.3.0
-        version: 0.3.0
       grammy:
         specifier: ^1.30.1
         version: 1.30.1
@@ -49,6 +49,9 @@ importers:
       js-sha256:
         specifier: ^0.11.0
         version: 0.11.0
+      node-cron:
+        specifier: ^3.0.3
+        version: 3.0.3
       poseidon-lite:
         specifier: ^0.3.0
         version: 0.3.0
@@ -2148,6 +2151,10 @@ packages:
       sass:
         optional: true
 
+  node-cron@3.0.3:
+    resolution: {integrity: sha512-dOal67//nohNgYWb+nWmg5dkFdIwDm8EpeGYMekPMrngV3637lqnX0lbUcCtgibHTz6SEz7DAIjKvKDFYCnO1A==}
+    engines: {node: '>=6.0.0'}
+
   node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
     engines: {node: 4.x || >=6.0.0}
@@ -2781,6 +2788,10 @@ packages:
 
   uuid@10.0.0:
     resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+    hasBin: true
+
+  uuid@8.3.2:
+    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
 
   uuid@9.0.1:
@@ -5439,6 +5450,10 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
+  node-cron@3.0.3:
+    dependencies:
+      uuid: 8.3.2
+
   node-fetch@2.7.0:
     dependencies:
       whatwg-url: 5.0.0
@@ -6170,6 +6185,8 @@ snapshots:
   utils-merge@1.0.1: {}
 
   uuid@10.0.0: {}
+
+  uuid@8.3.2: {}
 
   uuid@9.0.1: {}
 

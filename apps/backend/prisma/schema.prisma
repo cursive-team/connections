@@ -145,3 +145,15 @@ model TapGraphEdge {
     createdAt       DateTime @default(now())
     updatedAt       DateTime
 }
+
+model Proof {
+  id                            String   @id @default(uuid())
+  jobId                         String   @unique
+  jobCompleted                  Boolean  @default(false)
+  username                      String
+  sigNullifier                  String?
+  pubkeyNullifier               String?
+  pubkeyNullifierRandomnessHash String?
+  leaderboardEntryType          String?
+  createdAt                     DateTime @default(now())
+}

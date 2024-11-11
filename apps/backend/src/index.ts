@@ -24,8 +24,9 @@ import {
 import { IntersectionState } from "@types";
 import { Controller } from "./lib/controller";
 const cors = require("cors");
+const cron = require("node-cron");
 
-import * as http from 'http';
+import * as http from "http";
 
 const app = express();
 const corsOptions = {
@@ -57,6 +58,40 @@ controller
   .catch((error) => {
     console.error("Failed to initialize notification service: ", error);
   });
+
+const cronJobs = {
+  checkProofJobs: {
+    schedule: "* * * * *",
+    task: async () => {
+      try {
+        console.log("Checking proof jobs");
+        await controller.PollProofResults();
+      } catch (error) {
+        console.error("Error in exampleJob:", error);
+      }
+    },
+  },
+};
+
+const initializeCronJobs = () => {
+  for (const [jobName, job] of Object.entries(cronJobs)) {
+    if (cron.validate(job.schedule)) {
+      cron.schedule(job.schedule, job.task, {
+        scheduled: true,
+        timezone: "Asia/Bangkok", // Specify your timezone
+      });
+      console.log(
+        `Cron job '${jobName}' initialized with schedule: ${job.schedule}`
+      );
+    } else {
+      console.error(
+        `Invalid cron schedule for job '${jobName}': ${job.schedule}`
+      );
+    }
+  }
+};
+
+initializeCronJobs();
 
 export const server = http.createServer(app);
 

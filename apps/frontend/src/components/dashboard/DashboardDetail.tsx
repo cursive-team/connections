@@ -68,7 +68,7 @@ export function DashboardDetail({
         withContainer={false}
         showFooter={false}
         header={
-          <div>
+          <div className="w-full">
             <div className="flex-row w-full px-1 pt-8 pb-4 bg-background justify-between items-center inline-flex">
               <div className="text-label-primary text-xl font-semibold font-sans leading-tight">
                 {`Total (${
@@ -162,7 +162,7 @@ export function DashboardDetail({
             <div
               className={cn(
                 "w-full rounded-full h-[7px] mt-2 mb-1 overflow-hidden",
-                darkTheme ? "bg-white" : "bg-[#f1f1f1f]"
+                darkTheme ? "bg-white" : "bg-[#f1f1f1]"
               )}
             >
               <div

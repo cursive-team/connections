@@ -126,13 +126,13 @@ export async function updateTapLeaderboardEntry(
 
   try {
     const requests = [];
-    const updateTotalTapsRequest: UpdateLeaderboardEntryRequest = {
-      authToken: session.authTokenValue,
-      chipIssuer,
-      entryType: LeaderboardEntryType.TOTAL_TAP_COUNT,
-      entryValue: totalTapCount,
-    };
-    requests.push(updateTotalTapsRequest);
+    // const updateTotalTapsRequest: UpdateLeaderboardEntryRequest = {
+    //   authToken: session.authTokenValue,
+    //   chipIssuer,
+    //   entryType: LeaderboardEntryType.TOTAL_TAP_COUNT,
+    //   entryValue: totalTapCount,
+    // };
+    // requests.push(updateTotalTapsRequest);
 
     if (chipIssuer === ChipIssuer.EDGE_CITY_LANNA) {
       const updateWeekTapsRequest: UpdateLeaderboardEntryRequest = {
@@ -142,6 +142,16 @@ export async function updateTapLeaderboardEntry(
         entryValue: weekNov4TapCount,
       };
       requests.push(updateWeekTapsRequest);
+    }
+
+    if (chipIssuer === ChipIssuer.DEVCON_2024) {
+      const updateDevconTapsRequest: UpdateLeaderboardEntryRequest = {
+        authToken: session.authTokenValue,
+        chipIssuer,
+        entryType: LeaderboardEntryType.DEVCON_2024_TAP_COUNT_NO_PROOF,
+        entryValue: totalTapCount,
+      };
+      requests.push(updateDevconTapsRequest);
     }
 
     for (const request of requests) {
@@ -247,6 +257,39 @@ export async function getTopLeaderboardEntries(
     return parsedData;
   } catch (error) {
     console.error("Error getting top leaderboard entries:", error);
+    throw error;
+  }
+}
+
+export async function submitProofJob(jobId: string): Promise<void> {
+  const { user, session } = await storage.getUserAndSession();
+
+  try {
+    const response = await fetch(`${BASE_API_URL}/chip/submit_proof_job`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        authToken: session.authTokenValue,
+        username: user.userData.username,
+        jobId,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      console.error(
+        `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+      );
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorResponse.error}`
+      );
+    }
+
+    return;
+  } catch (error) {
+    console.error("Error submitting proof job:", error);
     throw error;
   }
 }
