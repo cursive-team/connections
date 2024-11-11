@@ -82,6 +82,9 @@ const LoginPage: React.FC = () => {
     try {
       setLoading(true);
       await processLoginResponse(loginResponse, loginResponse.email, password);
+
+      // If you have a proper login, clean up localstorage
+      await storage.deleteUnregisteredUser();
       toast.success("Successfully logged in!");
       router.push("/profile");
     } catch (error) {

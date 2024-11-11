@@ -76,109 +76,114 @@ const TapPage: React.FC = () => {
         if (response.chipIsRegistered) {
           // Make tap proof for leaderboard
           if (response.userTap?.chipPublicKeySignature) {
-            try {
-              const { parse_and_split_input_bn254, encrypt_share } =
-                await import("@taceo/csn-wasm/csn_wasm.js");
-              const { Configuration, JobApi } = await import(
-                "@taceo/csn-client"
-              );
+            if (user && session) {
+              try {
+                const {parse_and_split_input_bn254, encrypt_share} =
+                  await import("@taceo/csn-wasm/csn_wasm.js");
+                const {Configuration, JobApi} = await import(
+                  "@taceo/csn-client"
+                  );
 
-              const chipPublicKeySignature = ChipPublicKeySignatureSchema.parse(
-                JSON.parse(response.userTap.chipPublicKeySignature)
-              );
-              const tapPubKey = await publicKeyFromString(
-                response.userTap!.chipPublicKey
-              );
-              const { r, s } = derDecodeSignature(response.userTap!.signature!);
-              const msgHash = BigInt(
-                "0x" + getECDSAMessageHash(response.userTap!.message)
-              );
-              const { T, U } = await getPublicInputsFromSignature(
-                { r, s },
-                msgHash,
-                tapPubKey
-              );
-              const public_inputs = [
-                "sigNullifierRandomness",
-                "cursivePubKeyAx",
-                "cursivePubKeyAy",
-                "tapTx",
-                "tapTy",
-                "tapUx",
-                "tapUy",
-              ];
+                const chipPublicKeySignature = ChipPublicKeySignatureSchema.parse(
+                  JSON.parse(response.userTap.chipPublicKeySignature)
+                );
+                const tapPubKey = await publicKeyFromString(
+                  response.userTap!.chipPublicKey
+                );
+                const {r, s} = derDecodeSignature(response.userTap!.signature!);
+                const msgHash = BigInt(
+                  "0x" + getECDSAMessageHash(response.userTap!.message)
+                );
+                const {T, U} = await getPublicInputsFromSignature(
+                  {r, s},
+                  msgHash,
+                  tapPubKey
+                );
+                const public_inputs = [
+                  "sigNullifierRandomness",
+                  "cursivePubKeyAx",
+                  "cursivePubKeyAy",
+                  "tapTx",
+                  "tapTy",
+                  "tapUx",
+                  "tapUy",
+                ];
 
-              const configParams: ConfigurationParameters = {
-                basePath: "https://csn-devcon.taceo.io",
-                accessToken: "ASV9PkXpy76KRFtmcQeaLbxT75grdilY",
-              };
-              const configuration = new Configuration(configParams);
-              const apiInstance = new JobApi(configuration);
-              const input = {
-                tapS: s.toString(),
-                tapTx: T.x.toString(),
-                tapTy: T.y.toString(),
-                tapUx: U.x.toString(),
-                tapUy: U.y.toString(),
-                sigNullifierRandomness: "0",
-                pubKeyNullifierRandomness: "0",
-                pubKeySignatureR8x: "0x" + chipPublicKeySignature.R8xHex,
-                pubKeySignatureR8y: "0x" + chipPublicKeySignature.R8yHex,
-                pubKeySignatureS: "0x" + chipPublicKeySignature.SHex,
-                cursivePubKeyAx: BigInt(
-                  "0x1b073e4eede939876ce1deb7491d5d3bf212ba6b574c1c4658b0d72c467af4fb"
-                ).toString(),
-                cursivePubKeyAy: BigInt(
-                  "0x503c38a246469b877b3a9096de70bad25bd41ae302bc9c5dd208b2046ef6e2a"
-                ).toString(),
-              };
+                const configParams: ConfigurationParameters = {
+                  basePath: "https://csn-devcon.taceo.io",
+                  accessToken: "ASV9PkXpy76KRFtmcQeaLbxT75grdilY",
+                };
+                const configuration = new Configuration(configParams);
+                const apiInstance = new JobApi(configuration);
+                const input = {
+                  tapS: s.toString(),
+                  tapTx: T.x.toString(),
+                  tapTy: T.y.toString(),
+                  tapUx: U.x.toString(),
+                  tapUy: U.y.toString(),
+                  sigNullifierRandomness: "0",
+                  pubKeyNullifierRandomness: "0",
+                  pubKeySignatureR8x: "0x" + chipPublicKeySignature.R8xHex,
+                  pubKeySignatureR8y: "0x" + chipPublicKeySignature.R8yHex,
+                  pubKeySignatureS: "0x" + chipPublicKeySignature.SHex,
+                  cursivePubKeyAx: BigInt(
+                    "0x1b073e4eede939876ce1deb7491d5d3bf212ba6b574c1c4658b0d72c467af4fb"
+                  ).toString(),
+                  cursivePubKeyAy: BigInt(
+                    "0x503c38a246469b877b3a9096de70bad25bd41ae302bc9c5dd208b2046ef6e2a"
+                  ).toString(),
+                };
 
-              const request = {
-                jobDefinition: "f94b8057-b816-4c0d-ae83-6c77585fc4bb",
-                mpcProtocol: "REP3",
-                withWitext: true,
-              };
-              const createJobRes = await apiInstance.createJob({
-                jobCreationRequest: request,
-              });
+                const request = {
+                  jobDefinition: "f94b8057-b816-4c0d-ae83-6c77585fc4bb",
+                  mpcProtocol: "REP3",
+                  withWitext: true,
+                };
+                const createJobRes = await apiInstance.createJob({
+                  jobCreationRequest: request,
+                });
 
-              const sharedInput = parse_and_split_input_bn254(
-                input,
-                public_inputs
-              );
-              const share0Ciphertext = encrypt_share(
-                base64Decode(createJobRes.node0Pk),
-                sharedInput.shares0
-              );
-              const share1Ciphertext = encrypt_share(
-                base64Decode(createJobRes.node1Pk),
-                sharedInput.shares1
-              );
-              const share2Ciphertext = encrypt_share(
-                base64Decode(createJobRes.node2Pk),
-                sharedInput.shares2
-              );
+                const sharedInput = parse_and_split_input_bn254(
+                  input,
+                  public_inputs
+                );
+                const share0Ciphertext = encrypt_share(
+                  base64Decode(createJobRes.node0Pk),
+                  sharedInput.shares0
+                );
+                const share1Ciphertext = encrypt_share(
+                  base64Decode(createJobRes.node1Pk),
+                  sharedInput.shares1
+                );
+                const share2Ciphertext = encrypt_share(
+                  base64Decode(createJobRes.node2Pk),
+                  sharedInput.shares2
+                );
 
-              await apiInstance.addInput({
-                id: createJobRes.uuid,
-                inputParty0: new Blob([share0Ciphertext]),
-                inputParty1: new Blob([share1Ciphertext]),
-                inputParty2: new Blob([share2Ciphertext]),
-              });
+                await apiInstance.addInput({
+                  id: createJobRes.uuid,
+                  inputParty0: new Blob([share0Ciphertext]),
+                  inputParty1: new Blob([share1Ciphertext]),
+                  inputParty2: new Blob([share2Ciphertext]),
+                });
 
-              await submitProofJob(createJobRes.uuid);
-              console.log("Job ID:", createJobRes.uuid);
-            } catch (error) {
-              toast(
-                SupportToast(
-                  "",
-                  true,
-                  "Error submitting coSNARK proof job",
-                  ERROR_SUPPORT_CONTACT,
-                  errorToString(error)
-                )
-              );
-              console.error("Error submitting proof job:", error);
+                await submitProofJob(createJobRes.uuid);
+                console.log("Job ID:", createJobRes.uuid);
+              }
+            catch
+              (error)
+              {
+                toast(
+                  SupportToast(
+                    "",
+                    true,
+                    "Error submitting coSNARK proof job",
+                    ERROR_SUPPORT_CONTACT,
+                    errorToString(error)
+                  )
+                );
+                console.error("Error submitting proof job:", error);
+              }
             }
           }
 
