@@ -6,12 +6,13 @@ import {
   ErrorResponse,
   UserRegisterRequest,
   UserRegisterResponseSchema,
-  errorToString,
+  errorToString, BackupEntryType, CreateBackupData,
 } from "@types";
-import { createInitialBackup, processUserBackup } from "@/lib/backup";
-import { User } from "@/lib/storage/types";
+import { createActivityBackup, createConnectionBackup, createInitialBackup, processUserBackup } from "@/lib/backup";
+import { ActivitySchema, ConnectionSchema, UnregisteredUser, User } from "@/lib/storage/types";
 import { storage } from "@/lib/storage";
 import { createRegisterActivity } from "../activity";
+import { saveBackupAndUpdateStorage } from "@/lib/storage/localStorage/utils";
 
 export interface RegisterUserArgs {
   email: string;
@@ -23,6 +24,33 @@ export interface RegisterUserArgs {
   twitterHandle?: string;
   registeredWithPasskey: boolean;
   passkeyAuthPublicKey?: string;
+}
+
+async function getUserKeys (): Promise<{
+  encryptionPublicKey: string,
+  encryptionPrivateKey: string,
+  signaturePublicKey: string,
+  signaturePrivateKey: string,
+}> {
+  const unregisteredUser = await storage.getUnregisteredUser();
+  if (unregisteredUser) {
+    return {
+      encryptionPublicKey: unregisteredUser.userData.encryptionPublicKey,
+      encryptionPrivateKey: unregisteredUser.encryptionPrivateKey,
+      signaturePublicKey: unregisteredUser.userData.signaturePublicKey,
+      signaturePrivateKey: unregisteredUser.signaturePrivateKey,
+    }
+  } else {
+    const encryptionKeys = await generateEncryptionKeyPair();
+    const signatureKeys =
+      generateSignatureKeyPair();
+    return {
+      encryptionPublicKey: encryptionKeys.publicKey,
+      encryptionPrivateKey: encryptionKeys.privateKey,
+      signaturePublicKey: signatureKeys.verifyingKey,
+      signaturePrivateKey: signatureKeys.signingKey,
+    }
+  }
 }
 
 /**
@@ -49,11 +77,8 @@ export async function registerUser({
   registeredWithPasskey,
   passkeyAuthPublicKey,
 }: RegisterUserArgs): Promise<void> {
-  const { publicKey: encryptionPublicKey, privateKey: encryptionPrivateKey } =
-    await generateEncryptionKeyPair();
-  const { verifyingKey: signaturePublicKey, signingKey: signaturePrivateKey } =
-    generateSignatureKeyPair();
 
+  const {encryptionPublicKey, encryptionPrivateKey, signaturePublicKey, signaturePrivateKey } = await getUserKeys();
   const passwordSalt = generateSalt();
   const passwordHash = await hashPassword(password, passwordSalt);
 
@@ -139,5 +164,79 @@ export async function registerUser({
     return;
   } catch (error) {
     throw new Error(errorToString(error));
+  }
+}
+
+export async function createUnregisteredUser(): Promise<UnregisteredUser> {
+  const { publicKey: encryptionPublicKey, privateKey: encryptionPrivateKey } =
+    await generateEncryptionKeyPair();
+  const { verifyingKey: signaturePublicKey, signingKey: signaturePrivateKey } =
+    generateSignatureKeyPair();
+
+  const user: UnregisteredUser = {
+    signaturePrivateKey,
+    encryptionPrivateKey,
+    lastMessageFetchedAt: new Date(),
+    userData: {
+      signaturePublicKey,
+      encryptionPublicKey,
+    },
+    connections: {},
+    activities: [],
+    backups: [],
+  };
+  await storage.saveUnregisteredUser(user);
+  return user;
+}
+
+export async function applyBackupsToNewUser(password: string): Promise<void> {
+  // Both these values should have been created in registerUser, if they don't, exit
+  const user = await storage.getUser();
+  const session = await storage.getSession();
+  if (!user || !session) {
+    return;
+  }
+
+  const unregisteredUser = await storage.getUnregisteredUser();
+  if (unregisteredUser) {
+    const createBackups: CreateBackupData[] = [];
+    for (const backup of unregisteredUser.backups) {
+      try {
+        switch (backup.type) {
+          case BackupEntryType.CONNECTION:
+            const connection = ConnectionSchema.parse(JSON.parse(backup.backup));
+
+            const connectionBackupData = createConnectionBackup({
+              email: user.email,
+              password: password,
+              connection
+            });
+
+            createBackups.push(connectionBackupData);
+            break;
+
+          case BackupEntryType.ACTIVITY:
+            const activity = ActivitySchema.parse(JSON.parse(backup.backup));
+
+            const activityBackupData = createActivityBackup({
+              email: user.email,
+              password: password,
+              activity,
+            });
+
+            createBackups.push(activityBackupData);
+            break;
+
+          default:
+            console.log(`Do not recognize type ${backup.type}.`)
+            // This should never happen. Don't recognize type, just continue / skip.
+        }
+      } catch (error) {
+        console.log(`error: ${errorToString(error)}`)
+        // Nothing in this operation should disrupt registration flow
+      }
+    }
+    await saveBackupAndUpdateStorage({user, session, newBackupData: createBackups})
+    await storage.deleteUnregisteredUser();
   }
 }

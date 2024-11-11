@@ -7,6 +7,17 @@ import { MdKeyboardArrowRight as ArrowRight } from "react-icons/md";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import { Banner } from "@/components/cards/Banner";
 import useSettings from "@/hooks/useSettings";
+import { getUnregisteredUser } from "@/lib/storage/localStorage/user";
+
+function sortConnections(connections: Record<string, Connection>) {
+  return Object.entries(connections)
+    .sort(
+      ([, a], [, b]) =>
+        b.taps[b.taps.length - 1].timestamp.getTime() -
+        a.taps[a.taps.length - 1].timestamp.getTime()
+    )
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+}
 
 const PeoplePage: React.FC = () => {
   const { darkTheme } = useSettings();
@@ -17,17 +28,17 @@ const PeoplePage: React.FC = () => {
   useEffect(() => {
     const fetchConnections = async () => {
       const user = await storage.getUser();
-      if (!user) {
+      const unregisteredUser = await getUnregisteredUser();
+      if (!user && !unregisteredUser) {
         return;
       }
 
-      const sortedConnections = Object.entries(user.connections)
-        .sort(
-          ([, a], [, b]) =>
-            b.taps[b.taps.length - 1].timestamp.getTime() -
-            a.taps[a.taps.length - 1].timestamp.getTime()
-        )
-        .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+      let sortedConnections = {};
+      if (user) {
+        sortedConnections = sortConnections(user.connections);
+      } else if (unregisteredUser) {
+        sortedConnections = sortConnections(unregisteredUser.connections);
+      }
       setConnections(sortedConnections);
     };
 

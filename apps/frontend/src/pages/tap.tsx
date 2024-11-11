@@ -195,15 +195,6 @@ const TapPage: React.FC = () => {
               return;
             }
 
-            // If user is not logged in, direct them to sign in
-            // TODO: Allow users to tap without being signed in
-            if (!user || !session) {
-              logClientEvent("tap-location-chip-not-logged-in", {});
-              toast.error("You must be logged in to tap this chip!");
-              router.push("/login");
-              return;
-            }
-
             // Save tap to local storage
             await storage.addLocationTap(response);
 
@@ -228,16 +219,7 @@ const TapPage: React.FC = () => {
               return;
             }
 
-            // If user is not logged in, direct them to tap a new chip to register
-            // TODO: Allow users to tap without being signed in
-            if (!user || !session) {
-              logClientEvent("tap-chip-not-logged-in", {});
-              toast.error("Please tap a new chip to register!");
-              router.push("/");
-              return;
-            }
-
-            if (user.userData.username === response.userTap.ownerUsername) {
+            if (user && user.userData.username === response.userTap.ownerUsername) {
               logClientEvent("tap-chip-same-user", {});
               router.push("/community");
               return;
@@ -285,8 +267,11 @@ const TapPage: React.FC = () => {
               );
             }
 
-            // Update leaderboard entry
-            await updateTapLeaderboardEntry(response.chipIssuer);
+            if (user) {
+              // If no user, skip updating tap leaderboard.
+              // For the time being assume unregistered users won't be recorded
+              await updateTapLeaderboardEntry(response.chipIssuer);
+            }
 
             // Save tap to populate modal upon redirect
             await storage.saveTapInfo({ tapParams, tapResponse: response });

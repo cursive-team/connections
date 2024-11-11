@@ -29,6 +29,13 @@ const CommunityPage = () => {
 
   useEffect(() => {
     const fetchUserChips = async () => {
+      // Gate off unregistered users
+      const unregisteredUser = await storage.getUnregisteredUser();
+      if (unregisteredUser) {
+        router.push("/people")
+        return;
+      }
+
       const { user, session } = await storage.getUserAndSession();
       if (!user || !session || session.authTokenExpiresAt < new Date()) {
         toast.error("Please log in to view communities.");

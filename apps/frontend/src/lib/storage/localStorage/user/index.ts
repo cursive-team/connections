@@ -2,10 +2,11 @@ import {
   saveToLocalStorage,
   getFromLocalStorage,
 } from "@/lib/storage/localStorage/utils";
-import { Session, User, UserSchema } from "@/lib/storage/types";
+import { Session, UnregisteredUser, User, UserSchema, UnregisteredUserSchema } from "@/lib/storage/types";
 import { getSession } from "../session";
 
 const USER_STORAGE_KEY = "user";
+const UNREGISTERED_STORAGE_KEY = "unregistered";
 
 export const saveUser = (user: User): void => {
   saveToLocalStorage(USER_STORAGE_KEY, JSON.stringify(user));
@@ -20,6 +21,19 @@ export const getUser = (): User | undefined => {
     return UserSchema.parse(parsedUser);
   } catch (error) {
     console.error("Error parsing user from localStorage:", error);
+    return undefined;
+  }
+};
+
+export const getUnregisteredUser = (): UnregisteredUser | undefined => {
+  const userString = getFromLocalStorage(UNREGISTERED_STORAGE_KEY);
+  if (!userString) return undefined;
+
+  try {
+    const parsedUser = JSON.parse(userString);
+    return UnregisteredUserSchema.parse(parsedUser);
+  } catch (error) {
+    console.error("Error parsing unregistered user from localStorage:", error);
     return undefined;
   }
 };
@@ -43,4 +57,12 @@ export const getUserAndSession = async (): Promise<{
   }
 
   return { user, session };
+};
+
+export const saveUnregisteredUser = (user: UnregisteredUser): void => {
+  saveToLocalStorage(UNREGISTERED_STORAGE_KEY, JSON.stringify(user));
+};
+
+export const deleteUnregisteredUser = (): void => {
+  localStorage.removeItem(UNREGISTERED_STORAGE_KEY);
 };

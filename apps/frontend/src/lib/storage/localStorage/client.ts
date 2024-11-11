@@ -9,6 +9,9 @@ import {
   getUser,
   getUserAndSession,
   saveUser,
+  getUnregisteredUser,
+  saveUnregisteredUser,
+  deleteUnregisteredUser,
 } from "@/lib/storage/localStorage/user";
 import {
   Activity,
@@ -17,6 +20,7 @@ import {
   PSIData,
   Session,
   TapInfo,
+  UnregisteredUser,
   User,
   UserData,
 } from "@/lib/storage/types";
@@ -85,6 +89,18 @@ export class LocalStorage implements ClientStorage {
 
   syncGetSession(): Session | undefined {
     return getSession();
+  }
+
+  async getUnregisteredUser(): Promise<UnregisteredUser | undefined> {
+    return getUnregisteredUser();
+  }
+
+  async saveUnregisteredUser(user: UnregisteredUser): Promise<void> {
+    return saveUnregisteredUser(user);
+  }
+
+  async deleteUnregisteredUser(): Promise<void> {
+    return deleteUnregisteredUser();
   }
 
   async saveOAuthAccessToken(app: DataImportSource, token: AccessToken): Promise<void> {

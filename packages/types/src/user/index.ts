@@ -20,6 +20,13 @@ export enum BackupEntryType {
 
 export const BackupEntryTypeSchema = z.nativeEnum(BackupEntryType);
 
+export const UnregisteredUserBackupSchema  = z.object({
+  type: BackupEntryTypeSchema,
+  backup: z.string(),
+});
+
+export type UnregisteredUserBackup = z.infer<typeof UnregisteredUserBackupSchema>;
+
 // Generic backup data schema for creating a backup
 export const CreateBackupDataSchema = z.object({
   authenticationTag: z.string(),

@@ -34,6 +34,13 @@ export const UserDataSchema = z.object({
 
 export type UserData = z.infer<typeof UserDataSchema>;
 
+export const UnregisteredUserDataSchema = z.object({
+  signaturePublicKey: z.string(),
+  encryptionPublicKey: z.string(),
+});
+
+export type UnregisteredUserData = z.infer<typeof UnregisteredUserDataSchema>;
+
 export { type TwitterData, TwitterDataSchema } from "./twitterData";
 export { type TelegramData, TelegramDataSchema } from "./telegramData";
 export { type SignalData, SignalDataSchema } from "./signalData";

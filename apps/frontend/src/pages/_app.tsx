@@ -18,6 +18,8 @@ import useSettings from "@/hooks/useSettings";
 import { refreshData } from "@/lib/imports";
 import { SocketProvider } from "@/lib/socket";
 import { refreshMessages } from "@/lib/message";
+import { getUser, getUnregisteredUser } from "@/lib/storage/localStorage/user";
+import { getSession } from "@/lib/storage/localStorage/session";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -35,6 +37,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const [isPreMigrationSessionChecked, setIsPreMigrationSessionChecked] =
     useState(false);
+  const [isToastDisabled, setIsToastDisabled] =
+    useState(false);
 
   const { darkTheme } = useSettings();
 
@@ -42,6 +46,40 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   if (pathname?.includes("/fortune")) {
     isFortunePage = pathname.includes("/fortune");
   }
+
+  useEffect(() => {
+    const gateUnregisteredUser = async () => {
+      const user = getUser();
+      const session = getSession();
+      const unregisteredUser = getUnregisteredUser();
+
+      if (!user && !session && unregisteredUser) {
+
+        // Unregistered is only allowed onto:
+        // - login view
+        // - people view
+        // - contact view
+        // - tap flow
+        // - register flow
+
+        // If it's not on a valid page, show error toast
+        if (!(router.pathname.match("/people") || router.pathname.match("/tap") || router.pathname === "/" || router.pathname.match("/register"))) {
+
+          if (!isToastDisabled) {
+            toast.error("Unregistered users can only collect contacts. Get a chip at the Cursive booth near entrance to access other features!", {duration: 6000});
+          }
+
+          // Ensure toast only called once
+          setIsToastDisabled(true);
+          router.push("/people");
+        } else {
+          setIsToastDisabled(true);
+        }
+      }
+
+    }
+    gateUnregisteredUser();
+  });
 
   // Refresh imports when the page is refreshed
   useEffect(() => {

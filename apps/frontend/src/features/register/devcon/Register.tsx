@@ -11,7 +11,7 @@ import RegisterWithPassword from "@/features/register/devcon/RegisterWithPasswor
 import { verifyUsernameIsUnique } from "@/lib/auth/util";
 import { TapInfo } from "@/lib/storage/types";
 import { registerChip } from "@/lib/chip/register";
-import { registerUser } from "@/lib/auth/register";
+import { applyBackupsToNewUser, registerUser } from "@/lib/auth/register";
 import useSettings from "@/hooks/useSettings";
 import { HeaderCover } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
@@ -131,10 +131,10 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
     logClientEvent("register-create-account", {
       chipIssuer: savedTap.tapResponse.chipIssuer,
     });
+
     // setDisplayState(DisplayState.CREATING_ACCOUNT);
     setIsCreatingAccount(true);
     try {
-      // Register user
       await registerUser({
         email: username,
         password: backupPassword,
@@ -146,6 +146,11 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
         registeredWithPasskey: registeredWithPasskey,
         passkeyAuthPublicKey: authPublicKey,
       });
+
+      // This is the only place this method should be applied
+      // Backups will only be applied if an unregistered user exists (which will only happen if an accountless client
+      // goes through the tap flow)
+      await applyBackupsToNewUser(backupPassword);
 
       const { user, session } = await storage.getUserAndSession();
 
@@ -189,6 +194,8 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
           ownerUserData,
         });
       }
+
+      await new Promise(resolve => setTimeout(resolve, 5000));
 
       // Show success toast and redirect to home
       toast.success("Account created successfully!");
