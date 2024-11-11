@@ -205,6 +205,9 @@ const UserProfilePage: React.FC = () => {
   const [verifiedIntersection, setVerifiedIntersection] = useState<{
     tensions: string[];
     contacts: string[];
+    devconEvents: string[];
+    programmingLangs: string[];
+    starredRepos: string[]
   } | null>(null);
   const { socket } = useSocket();
 
@@ -349,6 +352,37 @@ const UserProfilePage: React.FC = () => {
         contactData
       );
 
+      // Devcon events
+      let devconEvents: string[] = [];
+      if (user.userData?.devcon?.schedule) {
+        const devconEventTitles = user.userData.devcon.schedule.map(event => event.title);
+        devconEvents = await hashCommit(
+          user.encryptionPrivateKey,
+          connection.user.encryptionPublicKey,
+          devconEventTitles
+        );
+      }
+
+      // HERE: any ability to order on frequency?
+      let programmingLangs: string[] = [];
+      if (user.userData?.github?.programmingLanguages?.value) {
+        const languages = Object.keys(user.userData?.github?.programmingLanguages?.value);
+        programmingLangs = await hashCommit(
+          user.encryptionPrivateKey,
+          connection.user.encryptionPublicKey,
+          languages
+        );
+      }
+
+      let starredRepos: string[] = [];
+      if (user.userData?.github?.starredRepos?.value) {
+        starredRepos = await hashCommit(
+          user.encryptionPrivateKey,
+          connection.user.encryptionPublicKey,
+          user.userData?.github?.starredRepos?.value
+        );
+      }
+
       const [secretHash] = await hashCommit(
         user.encryptionPrivateKey,
         connection.user.encryptionPublicKey,
@@ -365,7 +399,13 @@ const UserProfilePage: React.FC = () => {
           body: JSON.stringify({
             secretHash,
             index: user.userData.username < connection.user.username ? 0 : 1,
-            intersectionState: { tensions, contacts },
+            intersectionState: {
+              tensions,
+              contacts,
+              devconEvents,
+              programmingLangs,
+              starredRepos,
+            },
           }),
         }
       );
@@ -405,6 +445,9 @@ const UserProfilePage: React.FC = () => {
         setVerifiedIntersection({
           contacts: translatedContacts,
           tensions: data.verifiedIntersectionState.tensions,
+          devconEvents: data.verifiedIntersectionState.devconEvents,
+          programmingLangs: data.verifiedIntersectionState.programmingLangs,
+          starredRepos: data.verifiedIntersectionState.starredRepos,
         });
         logClientEvent("user-finished-psi", {});
         if (!waitingForOtherUser) {
