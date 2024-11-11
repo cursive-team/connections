@@ -1,7 +1,6 @@
 import { storage } from "@/lib/storage";
-import { toast } from "sonner";
 import { OAUTH_APP_DETAILS } from "@/config";
-import { DataImportSource, DataImportSourceSchema } from "@types";
+import { DataImportSourceSchema } from "@types";
 
 /**
  * Logs out the user by deleting all storage data.

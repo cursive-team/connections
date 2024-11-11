@@ -97,7 +97,7 @@ const ProfilePage: React.FC = () => {
               }}
             >
               <div className="absolute left-4 top-[30px]">
-                <ProfileImage size={16} user={user?.userData as UserData} />
+                <ProfileImage size={16} user={user?.userData as UserData}/>
               </div>
             </div>
           </div>
@@ -126,7 +126,7 @@ const ProfilePage: React.FC = () => {
                 <div className="shrink-0">
                   <Link href="/activity">
                     <AppButton
-                      icon={<Icons.Activity size={16} className="mr-1" />}
+                      icon={<Icons.Activity size={16} className="mr-1"/>}
                       variant="outline"
                       className="w-fit"
                       size="sm"
@@ -174,7 +174,7 @@ const ProfilePage: React.FC = () => {
                             logClientEvent("user-profile-github-clicked", {})
                           }
                         >
-                          <ImportGithubButton />
+                          <ImportGithubButton/>
                         </div>
                       )}
                       {hasDevconToAdd && (
@@ -196,12 +196,12 @@ const ProfilePage: React.FC = () => {
                     <div className="flex flex-col gap-[10px]">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <Icons.Clip className="text-icon-primary" />
+                          <Icons.Clip className="text-icon-primary"/>
                           <span className="text-sm text-label-primary font-medium">
                             Tensions 🪢
                           </span>
                         </div>
-                        <Icons.Plus className="text-icon-primary" />
+                        <Icons.Plus className="text-icon-primary"/>
                       </div>
                       <span className="text-xs font-medium text-label-tertiary">
                         Practice your decision making skills by playing the
@@ -231,7 +231,7 @@ const ProfilePage: React.FC = () => {
                     <div className="w-full flex gap-2 overflow-x-auto">
                       {Object.keys(user.oauth || {}).includes(DataImportSource.GITHUB) && (
                         <div>
-                          <ImportGithubButton addElement={false} />
+                          <ImportGithubButton addElement={false}/>
                         </div>
                       )}
                       {!hasDevconToAdd && (
@@ -254,12 +254,12 @@ const ProfilePage: React.FC = () => {
                     <div className="flex flex-col gap-[10px] ">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <Icons.Clip className="text-icon-primary" />
+                          <Icons.Clip className="text-icon-primary"/>
                           <span className="text-sm text-label-primary font-medium">
                             Tensions 🪢
                           </span>
                         </div>
-                        <Icons.Pencil className="text-icon-primary" />
+                        <Icons.Pencil className="text-icon-primary"/>
                       </div>
                       <span className="text-xs font-medium text-label-tertiary">
                         Practice your decision making skills by playing the
