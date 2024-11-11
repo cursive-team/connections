@@ -3,15 +3,15 @@ import {
   generateSignatureForPublicKey,
   generateSignatureKeyPair,
 } from "../../lib/util";
-// import { DEVCON_CHIP_UIDS } from "./chips";
+import { DEVCON_CHIP_UIDS } from "./chips";
 
 const prisma = new PrismaClient();
 
 async function loadChips() {
   try {
     console.log("Starting to load chips...");
-    // const chipUids: string[] = DEVCON_CHIP_UIDS;
-    const chipUids: string[] = [];
+    const chipUids: string[] = DEVCON_CHIP_UIDS;
+    // const chipUids: string[] = [];
     const chipsToCreate = chipUids.map((uid) => {
       const { signingKey, verifyingKey } = generateSignatureKeyPair();
       const chipPublicKeySignature = JSON.stringify(
