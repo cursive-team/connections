@@ -13,6 +13,7 @@ import { storage } from "@/lib/storage";
 import { toast } from "sonner";
 import { Location, User } from "@/lib/storage/types";
 import { TapParams, ChipTapResponse } from "@types";
+import { devconLocationMapping } from "@/constants";
 
 // Dynamically import the Lottie component with SSR disabled
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
@@ -249,6 +250,86 @@ export default function LocationPage() {
           prize={prize}
         />
       </AppLayout>
+    );
+  }
+
+  if (location && devconLocationMapping[location.id]) {
+    const { name, exhibitor, description } = devconLocationMapping[location.id];
+    return (
+      <>
+        <AppLayout
+          seoTitle={`${location}`}
+          back={{
+            label: "Back",
+            href: "/",
+          }}
+          className="mx-auto"
+        >
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col pt-4">
+              <div className="flex flex-col gap-4 pb-6">
+                <span className="text-xl text-label-primary font-bold">
+                  {name}
+                </span>
+                <span className="text-md text-label-tertiary font-normal">
+                  {exhibitor}
+                </span>
+                <span className="text-sm text-label-tertiary font-normal">
+                  {description}
+                </span>
+                {location.taps?.[0] && (
+                  <span className="text-sm text-label-tertiary font-normal">
+                    <span className="font-bold">Visited on:</span>
+                    {` ${location.taps?.[0]?.timestamp.toLocaleString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                      second: "numeric",
+                      hour12: true,
+                    })}`}
+                  </span>
+                )}
+                {location.taps?.[0] && (
+                  <span className="text-sm text-label-tertiary font-normal truncate">
+                    <span className="font-bold">Signature:</span>
+                    {` ${location.taps?.[0]?.signature}`}
+                  </span>
+                )}
+              </div>
+            </div>
+            {/* <div className="flex flex-col gap-4">
+              <div className="flex items-center">
+                <Icons.Menu className="text-label-quaternary" />
+                <span className="text-xs font-bold text-label-quaternary ml-2">
+                  This week
+                </span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-4">
+              <div className=" items-center flex justify-between">
+                <span className="text-base font-bold text-label-primary font-sans">
+                  Top 5 contributors
+                </span>
+                <AppButton
+                  variant="outline"
+                  className="rounded-full max-w-[120px]"
+                  icon={<Icons.Star className="mr-2" />}
+                  onClick={() => {
+                    logClientEvent("dashboard-leaderboard-clicked", {
+                      location: location as string,
+                    });
+                    setSeeFullLeaderboard(true);
+                  }}
+                >
+                  See all
+                </AppButton>
+              </div>
+            </div> */}
+          </div>
+        </AppLayout>
+      </>
     );
   }
 
