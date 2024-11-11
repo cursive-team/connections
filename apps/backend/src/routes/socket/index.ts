@@ -43,7 +43,9 @@ wsServer.use(async(socket, next) => {
     // Attach user info to socket object
     socket.user = user;
 
+    console.log("Set lookup")
     clientsSockets[user.signaturePublicKey] = socket.id;
+    console.log(clientsSockets[user.signaturePublicKey])
 
     return next();
   }
@@ -76,14 +78,17 @@ wsServer.on('connection', (socket: Socket) => {
     let recipient: string | null = null;
     try {
       const req: SocketRequest = SocketRequestSchema.parse(JSON.parse(message));
+      console.log("Check req", sender, req)
 
       recipient = req.recipientSigPubKey;
       switch (req.type) {
         case SocketRequestType.TAP_BACK:
+          console.log("TAP_BACK", recipient)
           if (!recipient) {
             return handleError(socket, "Missing recipient.");
           }
 
+          console.log("Does socket exist: ", clientsSockets[recipient])
           if (clientsSockets[recipient]) {
             console.log(`Emit ${SocketRequestType.TAP_BACK} event.`)
             const socketId = clientsSockets[recipient];
@@ -91,10 +96,12 @@ wsServer.on('connection', (socket: Socket) => {
           }
           return;
         case SocketRequestType.PSI:
+          console.log("PSI", recipient)
           if (!recipient) {
             return handleError(socket, "Missing recipient.");
           }
 
+          console.log("Does socket exist: ", clientsSockets[recipient])
           if (clientsSockets[recipient]) {
             console.log(`Emit ${SocketRequestType.PSI} event.`)
             const socketId = clientsSockets[recipient];
