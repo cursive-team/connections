@@ -195,8 +195,6 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
         });
       }
 
-      await new Promise(resolve => setTimeout(resolve, 5000));
-
       // Show success toast and redirect to home
       toast.success("Account created successfully!");
       router.push("/profile");
