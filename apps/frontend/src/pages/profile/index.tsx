@@ -17,11 +17,12 @@ import { Card } from "@/components/cards/Card";
 import { logoutUser } from "@/lib/auth";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import ImportGithubButton from "@/features/oauth/ImportGithubButton";
-import ImportStravaButton from "@/features/oauth/ImportStravaButton";
+import ImportDevconButton from "@/features/oauth/ImportDevconButton";
 import ToggleSwitch from "@/components/ui/Switch";
 import useSettings from "@/hooks/useSettings";
 import { storeAddChipRequest } from "@/lib/chip/addChip";
 import { toggleGraphConsent } from "@/lib/storage/localStorage/graph";
+import { DataImportSource } from "@types";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -59,16 +60,17 @@ const ProfilePage: React.FC = () => {
     );
   }
 
-  const hasStravaToAdd =
-    !user.oauth || !Object.keys(user.oauth).includes("strava");
   const hasGithubToAdd =
-    !user.oauth || !Object.keys(user.oauth).includes("github");
-  const hasOauthToAdd = hasStravaToAdd || hasGithubToAdd;
+    !user.oauth || !Object.keys(user.oauth).includes(DataImportSource.GITHUB);
+  const hasDevconToAdd = !Object.keys(user.userData).includes("devcon");
+
+  console.log("To add?", hasDevconToAdd)
+  const hasOauthToAdd =  hasGithubToAdd || hasDevconToAdd;
   const hasDataToAdd = hasOauthToAdd || !user.userData.tensionsRating;
 
   const hasVaultData =
     (user.oauth && Object.keys(user.oauth).length > 0) ||
-    user.userData.tensionsRating;
+    user.userData.tensionsRating || user.userData.devcon;
 
   return (
     <>
@@ -128,7 +130,7 @@ const ProfilePage: React.FC = () => {
                 </div>
                 <div className="shrink-0">
                   <AppButton
-                    icon={<Icons.Sparkles size={16} className="mr-1" />}
+                    icon={<Icons.Sparkles size={16} className="mr-1 text-icon-primary" />}
                     onClick={() => {
                       storeAddChipRequest();
                       toast.success("Please tap your new chip to add it!");
@@ -159,15 +161,6 @@ const ProfilePage: React.FC = () => {
                 {hasOauthToAdd && (
                   <div className="py-2">
                     <div className="w-full flex gap-2 overflow-x-auto">
-                      {hasStravaToAdd && (
-                        <div
-                          onClick={() =>
-                            logClientEvent("user-profile-strava-clicked", {})
-                          }
-                        >
-                          <ImportStravaButton />
-                        </div>
-                      )}
                       {hasGithubToAdd && (
                         <div
                           onClick={() =>
@@ -176,6 +169,9 @@ const ProfilePage: React.FC = () => {
                         >
                           <ImportGithubButton />
                         </div>
+                      )}
+                      {hasDevconToAdd && (
+                        <ImportDevconButton />
                       )}
                     </div>
                   </div>
@@ -223,18 +219,17 @@ const ProfilePage: React.FC = () => {
                     {`This data can be used to discover commonalities and try digital pheromone experiments.`}
                   </span>
                 </div>
-                {user.oauth && Object.keys(user.oauth).length > 0 && (
+                {((user.oauth && Object.keys(user.oauth).length > 0) || !hasDevconToAdd) && (
                   <div className="py-2">
                     <div className="w-full flex gap-2 overflow-x-auto">
-                      {/* TODO: use enum */}
-                      {Object.keys(user.oauth).includes("strava") && (
-                        <div>
-                          <ImportStravaButton addElement={false} />
-                        </div>
-                      )}
-                      {Object.keys(user.oauth).includes("github") && (
+                      {Object.keys(user.oauth || {}).includes(DataImportSource.GITHUB) && (
                         <div>
                           <ImportGithubButton addElement={false} />
+                        </div>
+                      )}
+                      {!hasDevconToAdd && (
+                        <div>
+                          <ImportDevconButton addElement={false} />
                         </div>
                       )}
                     </div>

@@ -226,7 +226,6 @@ export async function getOAuthAccessToken(
       "Minting OAuth token failed, check if code has expired",
       errorToString(error)
     );
-    toast.error("Minting OAuth token failed, check if code has expired");
     return null;
   }
 
