@@ -17,7 +17,7 @@ import * as http from 'http';
 // Hoist websockets
 import("./routes/socket");
 
-const app = express();
+export const app = express();
 const corsOptions = {
   origin: `${FRONTEND_URL}`,
 };
@@ -35,6 +35,7 @@ app.use("/api/data_hash", dataHashRoutes);
 app.use("/", healthRoutes);
 
 app.locals.intersectionState = {} as IntersectionState;
+app.locals.clientsSockets = {} as Record<string, string>;
 
 const controller = new Controller();
 controller

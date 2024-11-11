@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { server } from "@/index";
+import { app, server } from "@/index";
 import {
   SocketRequestType,
   SocketRequestSchema,
@@ -24,7 +24,7 @@ export const wsServer = new Server(server);
 
 const controller = new Controller();
 
-const clientsSockets: Record<string, string> = {};
+
 
 // Middleware to authenticate the socket connection
 wsServer.use(async(socket, next) => {
@@ -42,10 +42,9 @@ wsServer.use(async(socket, next) => {
   } else {
     // Attach user info to socket object
     socket.user = user;
-
     console.log("Set lookup")
-    clientsSockets[user.signaturePublicKey] = socket.id;
-    console.log(clientsSockets[user.signaturePublicKey])
+    app.locals.clientsSockets[user.signaturePublicKey] = socket.id;
+    console.log(app.locals.clientsSockets[user.signaturePublicKey])
 
     return next();
   }
@@ -88,10 +87,10 @@ wsServer.on('connection', (socket: Socket) => {
             return handleError(socket, "Missing recipient.");
           }
 
-          console.log("Does socket exist: ", clientsSockets[recipient])
-          if (clientsSockets[recipient]) {
+          console.log("Does socket exist: ", app.locals.clientsSockets[recipient])
+          if (app.locals.clientsSockets[recipient]) {
             console.log(`Emit ${SocketRequestType.TAP_BACK} event.`)
-            const socketId = clientsSockets[recipient];
+            const socketId = app.locals.clientsSockets[recipient];
             socket.to(socketId).emit(SocketRequestType.TAP_BACK);
           }
           return;
@@ -101,16 +100,16 @@ wsServer.on('connection', (socket: Socket) => {
             return handleError(socket, "Missing recipient.");
           }
 
-          console.log("Does socket exist: ", clientsSockets[recipient])
-          if (clientsSockets[recipient]) {
+          console.log("Does socket exist: ", app.locals.clientsSockets[recipient])
+          if (app.locals.clientsSockets[recipient]) {
             console.log(`Emit ${SocketRequestType.PSI} event.`)
-            const socketId = clientsSockets[recipient];
+            const socketId = app.locals.clientsSockets[recipient];
             socket.to(socketId).emit(SocketRequestType.PSI);
           }
           return;
         case SocketRequestType.EXPUNGE:
           console.log("Expunge socket info.")
-          delete clientsSockets[sender];
+          delete app.locals.clientsSockets[sender];
           socket.disconnect();
           return;
         default:
