@@ -71,6 +71,7 @@ wsServer.on('connection', (socket: Socket) => {
   });
 
   socket.on('message', async (message: string) => {
+    console.log("Receive message.")
     let sender = socket.user.signaturePublicKey;
     let recipient: string | null = null;
     try {
@@ -84,6 +85,7 @@ wsServer.on('connection', (socket: Socket) => {
           }
 
           if (clientsSockets[recipient]) {
+            console.log(`Emit ${SocketRequestType.TAP_BACK} event.`)
             const socketId = clientsSockets[recipient];
             socket.to(socketId).emit(SocketRequestType.TAP_BACK);
           }
@@ -94,11 +96,13 @@ wsServer.on('connection', (socket: Socket) => {
           }
 
           if (clientsSockets[recipient]) {
+            console.log(`Emit ${SocketRequestType.PSI} event.`)
             const socketId = clientsSockets[recipient];
             socket.to(socketId).emit(SocketRequestType.PSI);
           }
           return;
         case SocketRequestType.EXPUNGE:
+          console.log("Expunge socket info.")
           delete clientsSockets[sender];
           socket.disconnect();
           return;
