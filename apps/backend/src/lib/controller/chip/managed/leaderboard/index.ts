@@ -390,6 +390,8 @@ ManagedChipClient.prototype.PollProofResults = async function () {
         },
       });
 
+      console.log(job.username, userProofs);
+
       // Verify all pubkeyNullifierRandomnessHash are the same
       const uniquePubkeyNullifierRandomnessHashes = new Set<string>();
       for (const proof of userProofs) {
@@ -469,6 +471,8 @@ ManagedChipClient.prototype.PollProofResults = async function () {
           value: pubkeyNullifiersByDay.day4.size,
         },
       ];
+
+      console.log(pubkeyNullifiersByDay);
 
       for (const update of leaderboardUpdates) {
         const existingEntry =
