@@ -57,6 +57,19 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     refreshImports();
   });
 
+  // Refresh PSIs when the page is refreshed
+  useEffect(() => {
+    const refreshPSIs = async () => {
+      const user = await storage.getUser();
+      const session = await storage.getSession();
+      if (!user || !session) {
+        return;
+      }
+
+    }
+    refreshPSIs();
+  });
+
   // Refresh messages when the page is refreshed
   useEffect(() => {
     refreshMessages();

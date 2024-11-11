@@ -92,6 +92,22 @@ PrismaPostgresClient.prototype.GetUserByAuthToken = async function (
   return null;
 };
 
+PrismaPostgresClient.prototype.GetUserBySigPubKey = async function (
+  sigPubKey: string
+): Promise<User | null> {
+  const prismaUser = await this.prismaClient.user.findFirst({
+    where: { signaturePublicKey: sigPubKey },
+  });
+
+  if (prismaUser) {
+    return UserSchema.parse(prismaUser);
+  }
+
+  return null;
+};
+
+// GetUserBySigPubKey(sigPubKey: string): Promise<User | null>
+
 PrismaPostgresClient.prototype.CreateUser = async function (
   createUser: UserCreateRequest
 ): Promise<User> {

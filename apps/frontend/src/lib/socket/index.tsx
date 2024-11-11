@@ -13,6 +13,7 @@ import {
 import {
   refreshMessages
 } from "@/lib/message";
+import { refresh}
 
 import { storage } from "@/lib/storage";
 
@@ -65,6 +66,11 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     socketInstance.on(SocketResponseType.PSI, async () => {
       console.log("received PSI refresh message")
+
+      // TODO refresh
+      // TODO: do I need username of refresher?
+
+
       return;
     });
 

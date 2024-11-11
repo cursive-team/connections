@@ -107,6 +107,12 @@ export class Controller {
     return this.postgresClient.GetUserByAuthToken(authToken);
   }
 
+  GetUserBySigPubKey(sigPubKey: string): Promise<User | null> {
+    return this.postgresClient.GetUserBySigPubKey(sigPubKey);
+  }
+
+  // TODO: get user by pub key?
+
   CreateUser(createUser: UserCreateRequest): Promise<User> {
     return this.postgresClient.CreateUser(createUser);
   }
