@@ -81,9 +81,9 @@ export async function getChipFromTapParams(
 
     const chipId = data.tag.uid.toString();
     if (data.valid) {
-      // if (data.tag.used && !registration) {
-      //   throw new Error("Tap link already used, please try tapping again.");
-      // }
+      if (data.tag.used && !registration) {
+        throw new Error("Tap link already used, please try tapping again.");
+      }
       const chip = await prisma.chip.findUnique({
         where: { chipId },
       });

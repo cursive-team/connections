@@ -138,7 +138,7 @@ export default function DevconCommunityPage({
       const props: CommunityCardProps[] = [
         {
           image: "/images/hand.png",
-          title: "coSNARK Tap Leaderboard 🌐",
+          title: "coSNARK Tap Leaderboard 🏆",
           description: `${totalTapDetails.totalValue} of 2000 taps`,
           type: "active",
           position: totalTapDetails.userPosition,
@@ -153,7 +153,7 @@ export default function DevconCommunityPage({
 
       const day1Card: CommunityCardProps = {
         image: "/images/week.png",
-        title: "11/12 coSNARK Tap Leaderboard 💫",
+        title: "Day 1 coSNARK Tap Leaderboard 💫",
         description: `${day1TapDetails.totalValue} of 500 taps`,
         type: "active",
         position: day1TapDetails.userPosition,
@@ -197,8 +197,49 @@ export default function DevconCommunityPage({
     return (
       <DashboardDetail
         image="/images/week-wide.png"
-        title="Devcon Day 1 Social Graph 💫"
-        description="Grow the Devcon Social Graph during Day 1 by tapping NFC chips to share socials and connect with other attendees!"
+        title="Day 1 coSNARK Tap Leaderboard 💫"
+        description={
+          <>
+            <span>
+              Tap NFC chips on Day 1 to share socials and discover common &
+              complimentary interests! The top 5 by 6pm will receive an
+              exclusive Cursive NFC ring 💍.
+            </span>
+            <br />
+            <br />
+            <span>
+              Each tap is privately verified with Collaborative SNARKs built by{" "}
+              <a
+                href="https://taceo.io/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link-primary"
+              >
+                TACEO
+              </a>
+              . Secret shares of your data is split between Cursive,{" "}
+              <a
+                href="https://taceo.io/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                TACEO
+              </a>
+              , and{" "}
+              <a
+                href="https://pse.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link-primary"
+              >
+                PSE
+              </a>{" "}
+              servers, who work together to generate a proof you have a valid
+              tap. This means you can delegate ZK proving without sacrificing
+              privacy!
+            </span>
+          </>
+        }
         leaderboardDetails={day1Details}
         leaderboardEntries={day1Entries}
         goal={500}
@@ -219,8 +260,49 @@ export default function DevconCommunityPage({
     return (
       <DashboardDetail
         image="/images/social-graph-wide.png"
-        title="Devcon Day 2 Social Graph 💫"
-        description="Grow the Devcon Social Graph during Day 2 by tapping NFC chips to share socials and connect with other attendees!"
+        title="Day 2 coSNARK Tap Leaderboard 💫"
+        description={
+          <>
+            <span>
+              Tap NFC chips on Day 1 to share socials and discover common &
+              complimentary interests! The top 5 by 6pm will receive an
+              exclusive Cursive NFC ring 💍.
+            </span>
+            <br />
+            <br />
+            <span>
+              Each tap is privately verified with Collaborative SNARKs built by{" "}
+              <a
+                href="https://taceo.io/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link-primary"
+              >
+                TACEO
+              </a>
+              . Secret shares of your data is split between Cursive,{" "}
+              <a
+                href="https://taceo.io/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                TACEO
+              </a>
+              , and{" "}
+              <a
+                href="https://pse.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link-primary"
+              >
+                PSE
+              </a>{" "}
+              servers, who work together to generate a proof you have a valid
+              tap. This means you can delegate ZK proving without sacrificing
+              privacy!
+            </span>
+          </>
+        }
         leaderboardDetails={day2Details}
         leaderboardEntries={day2Entries}
         goal={500}
@@ -241,8 +323,48 @@ export default function DevconCommunityPage({
     return (
       <DashboardDetail
         image="/images/social-graph-wide.png"
-        title="Devcon Social Graph 🌐"
-        description={`Grow the Devcon Social Graph by tapping NFC chips to share socials, organize your contacts, and discover common and complimentary interests!`}
+        title="coSNARK Tap Leaderboard 🏆"
+        description={
+          <>
+            <span>
+              Grow the Devcon Social Graph by tapping NFC chips to share socials
+              and discover common and complimentary interests!
+            </span>
+            <br />
+            <br />
+            <span>
+              Each tap is privately verified with Collaborative SNARKs built by{" "}
+              <a
+                href="https://taceo.io/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link-primary"
+              >
+                TACEO
+              </a>
+              . Secret shares of your data is split between Cursive,{" "}
+              <a
+                href="https://taceo.io/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                TACEO
+              </a>
+              , and{" "}
+              <a
+                href="https://pse.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-link-primary"
+              >
+                PSE
+              </a>{" "}
+              servers, who work together to generate a proof you have a valid
+              tap. This means you can delegate ZK proving without sacrificing
+              privacy!
+            </span>
+          </>
+        }
         leaderboardDetails={leaderboardDetails}
         leaderboardEntries={leaderboardEntries}
         goal={2000}

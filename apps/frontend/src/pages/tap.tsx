@@ -167,8 +167,6 @@ const TapPage: React.FC = () => {
               });
 
               await submitProofJob(createJobRes.uuid);
-              // const data = await pollJobResult(apiInstance, createJobRes.uuid);
-
               console.log("Job ID:", createJobRes.uuid);
             } catch (error) {
               toast(
