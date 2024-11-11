@@ -31,7 +31,7 @@ import useSettings from "@/hooks/useSettings";
 import { cn } from "@/lib/frontend/util";
 import { Card } from "@/components/cards/Card";
 import { getConnectionSigPubKey } from "@/lib/user";
-import { useSocket, socketEmit } from "@/lib/socket";omponents/ui/AccordionItem";
+import { useSocket, socketEmit } from "@/lib/socket";
 import { IntersectionAccordion } from "@/components/ui/IntersectionAccordion";
 import { CringeSlider } from "@/components/ui/CringeSlider";
 
