@@ -12,6 +12,7 @@ import { IoMdRemove as Remove } from "react-icons/io";
 import { FaRegCalendar as Calendar } from "react-icons/fa";
 import { IoMenu as Menu } from "react-icons/io5";
 import { IoIosCloseCircle as CloseLocation } from "react-icons/io";
+import { LuHourglass as Hourglass } from "react-icons/lu";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Icons: Record<string, any> = {
@@ -29,6 +30,41 @@ export const Icons: Record<string, any> = {
   Calendar,
   Menu,
   CloseLocation,
+  Hourglass,
+  // @ts-ignore
+  Job: (props: any) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="19"
+      height="18"
+      viewBox="0 0 19 18"
+      fill="none"
+      {...props}
+    >
+      <path
+        d="M16.249 9.94157C14.1646 10.7853 11.8861 11.25 9.49903 11.25C7.112 11.25 4.83349 10.7853 2.74902 9.94157M12.499 4.5V3C12.499 2.17157 11.8275 1.5 10.999 1.5H7.99902C7.1706 1.5 6.49902 2.17157 6.49902 3V4.5M9.49902 9H9.50652M4.24902 15H14.749C15.5775 15 16.249 14.3284 16.249 13.5V6C16.249 5.17157 15.5775 4.5 14.749 4.5H4.24902C3.4206 4.5 2.74902 5.17157 2.74902 6V13.5C2.74902 14.3284 3.4206 15 4.24902 15Z"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  // @ts-ignore
+  Star: (props: any) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      {...props}
+    >
+      <path
+        d="M8.04895 2.92664C8.34833 2.00538 9.65167 2.00538 9.95104 2.92664L10.7963 5.52768C10.9302 5.93967 11.3141 6.21861 11.7473 6.21863L14.4822 6.21873C15.4509 6.21877 15.8537 7.45832 15.07 8.02773L12.8575 9.63536C12.507 9.89 12.3604 10.3413 12.4942 10.7533L13.3392 13.3544C13.6385 14.2757 12.5841 15.0418 11.8004 14.4725L9.58776 12.865C9.23728 12.6104 8.76272 12.6104 8.41225 12.865L6.19958 14.4725C5.41588 15.0418 4.36145 14.2757 4.66076 13.3544L5.5058 10.7533C5.63965 10.3413 5.493 9.89 5.14255 9.63536L2.93 8.02773C2.14634 7.45832 2.54909 6.21877 3.51778 6.21873L6.25271 6.21863C6.68591 6.21861 7.06984 5.93967 7.20372 5.52768L8.04895 2.92664Z"
+        stroke="currentColor"
+      />
+    </svg>
+  ),
   Checked: () => (
     <svg
       className="w-4 h-4 text-gray-900"
