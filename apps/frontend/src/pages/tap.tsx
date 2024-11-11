@@ -232,7 +232,7 @@ const TapPage: React.FC = () => {
             let tapSenderHash: string | null = null;
 
             const sentHash: boolean = user?.tapGraphEnabled === true;
-            if (sentHash) {
+            if (sentHash && user) {
               // Double hash the signature private key, use as identifier, use single hash version as revocation code
               tapSenderHash = sha256(
                 sha256(user.signaturePrivateKey).concat(DEVCON)
@@ -241,25 +241,28 @@ const TapPage: React.FC = () => {
 
             // Upsert row, returns edge ID
             try {
-              const resp: UpsertSocialGraphEdgeResponse =
-                await upsertSocialGraphEdge(
-                  session.authTokenValue,
-                  null,
-                  tapSenderHash,
-                  null
-                );
+              // Unregistered users cannot consent to private tap graph so don't keep track of them 
+              if (user && session) {
+                const resp: UpsertSocialGraphEdgeResponse =
+                  await upsertSocialGraphEdge(
+                    session.authTokenValue,
+                    null,
+                    tapSenderHash,
+                    null
+                  );
 
-              // Send edge ID to tapped, handles backup for both edge message and localstorage edge record
-              const message = await storage.createEdgeMessageAndHandleBackup(
-                response.userTap.ownerUsername,
-                resp.id,
-                sentHash,
-                user.userData.username
-              );
-              await sendMessages({
-                authToken: session.authTokenValue,
-                messages: [message],
-              });
+                // Send edge ID to tapped, handles backup for both edge message and localstorage edge record
+                const message = await storage.createEdgeMessageAndHandleBackup(
+                  response.userTap.ownerUsername,
+                  resp.id,
+                  sentHash,
+                  user.userData.username
+                );
+                await sendMessages({
+                  authToken: session.authTokenValue,
+                  messages: [message],
+                });
+              }
             } catch (error) {
               // Never fail on upsert, not worth it
               console.error(
