@@ -1,6 +1,12 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { ChipTapResponse, errorToString, ChipIssuer, UpsertSocialGraphEdgeResponse } from "@types";
+import {
+  ChipTapResponse,
+  errorToString,
+  ChipIssuer,
+  ChipPublicKeySignatureSchema,
+  UpsertSocialGraphEdgeResponse,
+} from "@types";
 import { toast } from "sonner";
 import { storage } from "@/lib/storage";
 import {
@@ -19,6 +25,40 @@ import { upsertSocialGraphEdge } from "@/lib/graph";
 import { sha256 } from "js-sha256";
 import { sendMessages } from "@/lib/message";
 import { DEVCON } from "@/lib/storage/types";
+import { ConfigurationParameters, JobApi, JobResult } from "@taceo/csn-client";
+import {
+  derDecodeSignature,
+  getECDSAMessageHash,
+  getPublicInputsFromSignature,
+  publicKeyFromString,
+} from "@/lib/crypto/babyJubJub";
+
+function base64Decode(base64: string) {
+  return Buffer.from(base64, "base64");
+}
+
+async function pollJobResult(
+  apiInstance: JobApi,
+  id: string
+): Promise<JobResult | null> {
+  while (true) {
+    try {
+      const getStatusRes = await apiInstance.getStatus({ id: id });
+      if (getStatusRes.status == "Completed") {
+        console.info("success:", getStatusRes);
+        return getStatusRes;
+      } else if (getStatusRes.status == "Failed") {
+        console.info("failed:", getStatusRes);
+        return null;
+      }
+    } catch (error) {
+      console.error("error:", error);
+      return null;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    console.info(`running...`);
+  }
+}
 
 const TapPage: React.FC = () => {
   const router = useRouter();
@@ -52,6 +92,109 @@ const TapPage: React.FC = () => {
 
       try {
         const response: ChipTapResponse = await tapChip(tapParams);
+
+        if (response.userTap?.chipPublicKeySignature) {
+          const sig = ChipPublicKeySignatureSchema.parse(
+            JSON.parse(response.userTap.chipPublicKeySignature)
+          );
+          const tapPubKey = await publicKeyFromString(
+            response.userTap!.chipPublicKey
+          );
+          const { r, s } = derDecodeSignature(response.userTap!.signature!);
+          const msgHash = BigInt(
+            "0x" + getECDSAMessageHash(response.userTap!.message)
+          );
+          const { T, U } = await getPublicInputsFromSignature(
+            { r, s },
+            msgHash,
+            tapPubKey
+          );
+          const public_inputs = [
+            "sigNullifierRandomness",
+            "cursivePubKeyAx",
+            "cursivePubKeyAy",
+            "tapTx",
+            "tapTy",
+            "tapUx",
+            "tapUy",
+          ];
+
+          const { parse_and_split_input_bn254, encrypt_share } = await import(
+            "@taceo/csn-wasm/csn_wasm.js"
+          );
+          const { Configuration, JobApi } = await import("@taceo/csn-client");
+
+          const configParams: ConfigurationParameters = {
+            basePath: "https://csn-devcon.taceo.io",
+            accessToken: "ASV9PkXpy76KRFtmcQeaLbxT75grdilY",
+          };
+          const configuration = new Configuration(configParams);
+          const apiInstance = new JobApi(configuration);
+          const input = {
+            tapS: s.toString(),
+            tapTx: T.x.toString(),
+            tapTy: T.y.toString(),
+            tapUx: U.x.toString(),
+            tapUy: U.y.toString(),
+            sigNullifierRandomness: "0",
+            pubKeyNullifierRandomness: "0",
+            pubKeySignatureR8x: "0x" + sig.R8xHex,
+            pubKeySignatureR8y: "0x" + sig.R8yHex,
+            pubKeySignatureS: "0x" + sig.SHex,
+            cursivePubKeyAx: BigInt(
+              "0x1b073e4eede939876ce1deb7491d5d3bf212ba6b574c1c4658b0d72c467af4fb"
+            ).toString(),
+            cursivePubKeyAy: BigInt(
+              "0x503c38a246469b877b3a9096de70bad25bd41ae302bc9c5dd208b2046ef6e2a"
+            ).toString(),
+          };
+          console.log(input);
+
+          const request = {
+            jobDefinition: "f94b8057-b816-4c0d-ae83-6c77585fc4bb",
+            mpcProtocol: "REP3",
+            withWitext: true,
+          };
+          console.info("create job:", request);
+          const createJobRes = await apiInstance.createJob({
+            jobCreationRequest: request,
+          });
+          console.info("created job with id", createJobRes.uuid);
+
+          console.info("split input:", input);
+          const startTime = performance.now();
+
+          const sharedInput = parse_and_split_input_bn254(input, public_inputs);
+
+          console.info("encrypt shares in wasm");
+          const share0Ciphertext = encrypt_share(
+            base64Decode(createJobRes.node0Pk),
+            sharedInput.shares0
+          );
+          const share1Ciphertext = encrypt_share(
+            base64Decode(createJobRes.node1Pk),
+            sharedInput.shares1
+          );
+          const share2Ciphertext = encrypt_share(
+            base64Decode(createJobRes.node2Pk),
+            sharedInput.shares2
+          );
+
+          const endTime = performance.now();
+          console.info(`Execution time: ${endTime - startTime} milliseconds`);
+
+          console.info("add input");
+          await apiInstance.addInput({
+            id: createJobRes.uuid,
+            inputParty0: new Blob([share0Ciphertext]),
+            inputParty1: new Blob([share1Ciphertext]),
+            inputParty2: new Blob([share2Ciphertext]),
+          });
+
+          const data = await pollJobResult(apiInstance, createJobRes.uuid);
+          console.log(data);
+          console.log(response);
+        }
 
         if (response.chipIsRegistered) {
           // Chip is registered and tapped successfully
@@ -121,22 +264,30 @@ const TapPage: React.FC = () => {
             // If tap graph feature enabled, upsert graph edge (upsert so that either user can create the row)
             let tapSenderHash: string | null = null;
 
-            const sentHash: boolean = (user?.tapGraphEnabled === true);
+            const sentHash: boolean = user?.tapGraphEnabled === true;
             if (sentHash) {
               // Double hash the signature private key, use as identifier, use single hash version as revocation code
-              tapSenderHash = sha256(sha256(user.signaturePrivateKey).concat(DEVCON));
+              tapSenderHash = sha256(
+                sha256(user.signaturePrivateKey).concat(DEVCON)
+              );
             }
 
             // Upsert row, returns edge ID
             try {
-              const resp: UpsertSocialGraphEdgeResponse = await upsertSocialGraphEdge(session.authTokenValue, null, tapSenderHash, null);
+              const resp: UpsertSocialGraphEdgeResponse =
+                await upsertSocialGraphEdge(
+                  session.authTokenValue,
+                  null,
+                  tapSenderHash,
+                  null
+                );
 
               // Send edge ID to tapped, handles backup for both edge message and localstorage edge record
               const message = await storage.createEdgeMessageAndHandleBackup(
                 response.userTap.ownerUsername,
                 resp.id,
                 sentHash,
-                user.userData.username,
+                user.userData.username
               );
               await sendMessages({
                 authToken: session.authTokenValue,
@@ -144,9 +295,10 @@ const TapPage: React.FC = () => {
               });
             } catch (error) {
               // Never fail on upsert, not worth it
-              console.error(`Error upserting social graph edge: ${errorToString(error)}`)
+              console.error(
+                `Error upserting social graph edge: ${errorToString(error)}`
+              );
             }
-
 
             // Update leaderboard entry
             await updateTapLeaderboardEntry(response.chipIssuer);
