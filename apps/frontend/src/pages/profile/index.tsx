@@ -24,6 +24,7 @@ import { storeAddChipRequest } from "@/lib/chip/addChip";
 import { toggleGraphConsent } from "@/lib/storage/localStorage/graph";
 import { DataImportSource } from "@types";
 import { deleteImports } from "@/lib/imports/delete";
+import AddNotificationButton from "@/features/notification/AddNotificationButton";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -37,12 +38,14 @@ const ProfilePage: React.FC = () => {
 
   const toggleGraph = async () => {
     await toggleGraphConsent();
-  }
+  };
 
   const handleImportDeletion = async () => {
-    toast.info("Data can be reimported by reenabling application imports.")
-    await deleteImports();
-    router.push("/");
+    if (window.confirm("Are you sure you want to delete all imports?")) {
+      toast.info("Data can be reimported by reenabling application imports.");
+      await deleteImports();
+    }
+    router.push("/profile");
   };
 
   useEffect(() => {
@@ -71,13 +74,14 @@ const ProfilePage: React.FC = () => {
     !user.oauth || !Object.keys(user.oauth).includes(DataImportSource.GITHUB);
   const hasDevconToAdd = !Object.keys(user.userData).includes("devcon");
 
-  console.log("To add?", hasDevconToAdd)
-  const hasOauthToAdd =  hasGithubToAdd || hasDevconToAdd;
+  console.log("To add?", hasDevconToAdd);
+  const hasOauthToAdd = hasGithubToAdd || hasDevconToAdd;
   const hasDataToAdd = hasOauthToAdd || !user.userData.tensionsRating;
 
   const hasVaultData =
     (user.oauth && Object.keys(user.oauth).length > 0) ||
-    user.userData.tensionsRating || user.userData.devcon;
+    user.userData.tensionsRating ||
+    user.userData.devcon;
 
   return (
     <>
@@ -97,7 +101,7 @@ const ProfilePage: React.FC = () => {
               }}
             >
               <div className="absolute left-4 top-[30px]">
-                <ProfileImage size={16} user={user?.userData as UserData}/>
+                <ProfileImage size={16} user={user?.userData as UserData} />
               </div>
             </div>
           </div>
@@ -126,7 +130,7 @@ const ProfilePage: React.FC = () => {
                 <div className="shrink-0">
                   <Link href="/activity">
                     <AppButton
-                      icon={<Icons.Activity size={16} className="mr-1"/>}
+                      icon={<Icons.Activity size={16} className="mr-1" />}
                       variant="outline"
                       className="w-fit"
                       size="sm"
@@ -137,7 +141,12 @@ const ProfilePage: React.FC = () => {
                 </div>
                 <div className="shrink-0">
                   <AppButton
-                    icon={<Icons.Sparkles size={16} className="mr-1 text-icon-primary" />}
+                    icon={
+                      <Icons.Sparkles
+                        size={16}
+                        className="mr-1 text-icon-primary"
+                      />
+                    }
                     onClick={() => {
                       storeAddChipRequest();
                       toast.success("Please tap your new chip to add it!");
@@ -174,12 +183,10 @@ const ProfilePage: React.FC = () => {
                             logClientEvent("user-profile-github-clicked", {})
                           }
                         >
-                          <ImportGithubButton/>
+                          <ImportGithubButton />
                         </div>
                       )}
-                      {hasDevconToAdd && (
-                        <ImportDevconButton />
-                      )}
+                      {hasDevconToAdd && <ImportDevconButton />}
                     </div>
                   </div>
                 )}
@@ -196,12 +203,12 @@ const ProfilePage: React.FC = () => {
                     <div className="flex flex-col gap-[10px]">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <Icons.Clip className="text-icon-primary"/>
+                          <Icons.Clip className="text-icon-primary" />
                           <span className="text-sm text-label-primary font-medium">
                             Tensions 🪢
                           </span>
                         </div>
-                        <Icons.Plus className="text-icon-primary"/>
+                        <Icons.Plus className="text-icon-primary" />
                       </div>
                       <span className="text-xs font-medium text-label-tertiary">
                         Practice your decision making skills by playing the
@@ -226,12 +233,15 @@ const ProfilePage: React.FC = () => {
                     {`This data can be used to discover commonalities and try digital pheromone experiments.`}
                   </span>
                 </div>
-                {((user.oauth && Object.keys(user.oauth).length > 0) || !hasDevconToAdd) && (
+                {((user.oauth && Object.keys(user.oauth).length > 0) ||
+                  !hasDevconToAdd) && (
                   <div className="py-2">
                     <div className="w-full flex gap-2 overflow-x-auto">
-                      {Object.keys(user.oauth || {}).includes(DataImportSource.GITHUB) && (
+                      {Object.keys(user.oauth || {}).includes(
+                        DataImportSource.GITHUB
+                      ) && (
                         <div>
-                          <ImportGithubButton addElement={false}/>
+                          <ImportGithubButton addElement={false} />
                         </div>
                       )}
                       {!hasDevconToAdd && (
@@ -254,12 +264,12 @@ const ProfilePage: React.FC = () => {
                     <div className="flex flex-col gap-[10px] ">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <Icons.Clip className="text-icon-primary"/>
+                          <Icons.Clip className="text-icon-primary" />
                           <span className="text-sm text-label-primary font-medium">
                             Tensions 🪢
                           </span>
                         </div>
-                        <Icons.Pencil className="text-icon-primary"/>
+                        <Icons.Pencil className="text-icon-primary" />
                       </div>
                       <span className="text-xs font-medium text-label-tertiary">
                         Practice your decision making skills by playing the
@@ -273,33 +283,47 @@ const ProfilePage: React.FC = () => {
             </div>
           )}
         </div>
-        <div className="px-4 py-3">
-          <ToggleSwitch
-            label="Dark theme"
-            checked={darkTheme}
-            onChange={() => {
-              toggleTheme();
-            }}
-          />
-        </div>
-        <div className="px-4 py-0">
-          <ToggleSwitch
-            label="Join anonymous tap graph exhibit"
-            checked={!!user?.tapGraphEnabled}
-            onChange={() => {
-              toggleGraph();
-            }}
-          />
-        </div>
-        <div className="px-4 py-6">
-          <AppButton onClick={handleLogout} variant="outline">
-            Log out
-          </AppButton>
-        </div>
-        <div className="px-4 py-2">
-          <AppButton onClick={handleImportDeletion} variant="outline">
-            Delete imports
-          </AppButton>
+
+        <div className="p-4">
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1">
+              <span className="text-lg font-semibold text-label-primary font-sans">
+                Settings
+              </span>
+            </div>
+
+            <div className="py-0">
+              <ToggleSwitch
+                label="Dark theme"
+                checked={darkTheme}
+                onChange={() => {
+                  toggleTheme();
+                }}
+              />
+            </div>
+            <div className="py-0">
+              <ToggleSwitch
+                label="Join anonymous tap graph exhibit"
+                checked={!!user?.tapGraphEnabled}
+                onChange={() => {
+                  toggleGraph();
+                }}
+              />
+            </div>
+            <div className="">
+              <AddNotificationButton buttonText="Add notifications" />
+            </div>
+            <div className="">
+              <AppButton onClick={handleImportDeletion} variant="outline">
+                Delete OAuth imports
+              </AppButton>
+            </div>
+            <div className="pb-6">
+              <AppButton onClick={handleLogout} variant="secondary">
+                Log out
+              </AppButton>
+            </div>
+          </div>
         </div>
       </AppLayout>
     </>
