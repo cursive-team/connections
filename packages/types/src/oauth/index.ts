@@ -1,33 +1,7 @@
 import { z } from "zod";
+import { StravaBearerTokenSchema, GithubBearerTokenSchema,  } from "../imports";
 
 import { DataImportSource, DataImportSourceSchema } from "../imports";
-
-// Export app-specific types
-export * from "./strava";
-export * from "./github";
-
-export const StravaAtheleteSchema = z.object({
-  id: z.number(),
-});
-
-export type StravaAthelete = z.infer<typeof StravaAtheleteSchema>;
-
-export const StravaBearerTokenSchema = z.object({
-  access_token: z.string(),
-  refresh_token: z.string(),
-  expires_at: z.number(),
-  athlete: StravaAtheleteSchema.optional(),
-});
-
-export type StravaBearerToken = z.infer<typeof StravaBearerTokenSchema>;
-
-export const GithubBearerTokenSchema = z.object({
-  access_token: z.string(),
-  scope: z.string(),
-  token_type: z.string(),
-});
-
-export type GithubBearerToken = z.infer<typeof GithubBearerTokenSchema>;
 
 export const AccessTokenSchema = z.object({
   access_token: z.string(),

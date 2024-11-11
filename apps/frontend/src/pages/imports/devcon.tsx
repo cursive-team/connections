@@ -20,7 +20,7 @@ type UsernameSubmission = {
   username: string;
 };
 
-async function FetchAndSaveDevconSchedule(username: string): boolean {
+async function FetchAndSaveDevconSchedule(username: string): Promise<boolean> {
   const { user } = await storage.getUserAndSession();
 
   // Fetch schedule
