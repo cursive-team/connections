@@ -474,7 +474,7 @@ const UserProfilePage: React.FC = () => {
     router.push("/people");
     return;
   }
-  
+
   return (
     <>
       {showCommentModal && !isUnregistered && (

@@ -64,15 +64,16 @@ export default function MyApp({ Component, pageProps }: AppProps) {
 
         // If it's not on a valid page, show error toast
         if (!(router.pathname.match("/people") || router.pathname.match("/tap") || router.pathname === "/" || router.pathname.match("/register"))) {
+          // Ensure toast only called once
+          setIsToastDisabled(false);
+
 
           if (!isToastDisabled) {
             toast.error("Unregistered users can only collect contacts. Get a chip at the Cursive booth near entrance to access other features!", {duration: 6000});
           }
-
-          // Ensure toast only called once
-          setIsToastDisabled(true);
           router.push("/people");
         } else {
+          // On valid page
           setIsToastDisabled(true);
         }
       }
