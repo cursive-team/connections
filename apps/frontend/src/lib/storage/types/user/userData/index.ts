@@ -9,7 +9,7 @@ import { LannaDataSchema, TensionsRatingSchema } from "./lannaData";
 import { StravaDataSchema } from "./stravaData";
 import { GithubDataSchema } from "./githubData";
 import { LannaHalloweenDataSchema } from "./lannaHalloweenData";
-import { DevconData, DevconSchema } from "./devconData";
+import { DevconSchema } from "./devconData";
 
 export const UserDataSchema = z.object({
   username: z.string(),

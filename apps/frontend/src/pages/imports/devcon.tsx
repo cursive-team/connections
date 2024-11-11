@@ -30,7 +30,7 @@ async function FetchAndSaveDevconSchedule(username: string): Promise<boolean> {
   }
 
   // Update userdata
-  let userData: UserData = user.userData;
+  const userData: UserData = user.userData;
 
   if (!userData.devcon) {
     userData.devcon = {};
