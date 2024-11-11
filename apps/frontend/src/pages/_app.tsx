@@ -62,9 +62,10 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         // - tap flow
         // - register flow
         // - about page
+        // - login page
 
         // If it's not on a valid page, show error toast
-        if (!(router.pathname.match("/people") || router.pathname.match("/tap") || router.pathname === "/" || router.pathname.match("/register") || router.pathname.match("/about"))) {
+        if (!(router.pathname.match("/people") || router.pathname.match("/tap") || router.pathname === "/" || router.pathname.match("/register") || router.pathname.match("/about") || router.pathname.match("/login"))) {
           // Ensure toast only called once
           setIsToastDisabled(false);
 

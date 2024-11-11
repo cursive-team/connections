@@ -182,6 +182,7 @@ export async function createUnregisteredUser(): Promise<UnregisteredUser> {
       encryptionPublicKey,
     },
     connections: {},
+    locations: {},
     activities: [],
     backups: [],
   };

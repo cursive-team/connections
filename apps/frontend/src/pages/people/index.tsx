@@ -8,6 +8,7 @@ import { ProfileImage } from "@/components/ui/ProfileImage";
 import { Banner } from "@/components/cards/Banner";
 import useSettings from "@/hooks/useSettings";
 import { getUnregisteredUser } from "@/lib/storage/localStorage/user";
+import { useRouter } from "next/router";
 
 function sortConnections(connections: Record<string, Connection>) {
   return Object.entries(connections)
@@ -20,6 +21,8 @@ function sortConnections(connections: Record<string, Connection>) {
 }
 
 const PeoplePage: React.FC = () => {
+  const router = useRouter();
+
   const { darkTheme } = useSettings();
   const [connections, setConnections] = useState<Record<string, Connection>>(
     {}
@@ -30,6 +33,7 @@ const PeoplePage: React.FC = () => {
       const user = await storage.getUser();
       const unregisteredUser = await getUnregisteredUser();
       if (!user && !unregisteredUser) {
+        router.push("/")
         return;
       }
 

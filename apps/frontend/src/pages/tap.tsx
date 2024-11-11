@@ -195,6 +195,13 @@ const TapPage: React.FC = () => {
               return;
             }
 
+            if (!user || !session) {
+              logClientEvent("tap-location-chip-not-logged-in", {});
+              toast.error("You must be logged in to tap this chip!");
+              router.push("/login");
+              return;
+            }
+
             // Save tap to local storage
             await storage.addLocationTap(response);
 
@@ -241,7 +248,7 @@ const TapPage: React.FC = () => {
 
             // Upsert row, returns edge ID
             try {
-              // Unregistered users cannot consent to private tap graph so don't keep track of them 
+              // Unregistered users cannot consent to private tap graph so don't keep track of them
               if (user && session) {
                 const resp: UpsertSocialGraphEdgeResponse =
                   await upsertSocialGraphEdge(
