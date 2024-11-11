@@ -8,7 +8,6 @@ import EnterUsername from "@/features/register/devcon/EnterUsername";
 import EnterUserInfo from "@/features/register/devcon/EnterUserInfo";
 import RegisterWithPasskey from "@/features/register/devcon/RegisterWithPasskey";
 import RegisterWithPassword from "@/features/register/devcon/RegisterWithPassword";
-import CreatingAccount from "@/features/register/devcon/CreatingAccount";
 import { verifyUsernameIsUnique } from "@/lib/auth/util";
 import { TapInfo } from "@/lib/storage/types";
 import { registerChip } from "@/lib/chip/register";
