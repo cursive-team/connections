@@ -469,8 +469,12 @@ const UserProfilePage: React.FC = () => {
     );
   }
 
-
-
+  if (!connection) {
+    // If connection is still not available we have issues
+    router.push("/people");
+    return;
+  }
+  
   return (
     <>
       {showCommentModal && !isUnregistered && (
