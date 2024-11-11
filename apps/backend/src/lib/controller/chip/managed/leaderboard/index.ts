@@ -6,6 +6,13 @@ import {
   LeaderboardEntryType,
 } from "@types";
 import { ManagedChipClient } from "../client";
+import {
+  Configuration,
+  ConfigurationParameters,
+  JobApi,
+  JobResult,
+} from "@taceo/csn-api-client";
+import { pollJobResult } from "@/lib/util";
 
 ManagedChipClient.prototype.UpdateLeaderboardEntry = async function (
   username: string,
@@ -238,5 +245,263 @@ ManagedChipClient.prototype.GetTopLeaderboardEntries = async function (
       errorToString(error)
     );
     throw new Error("Failed to get top leaderboard entries");
+  }
+};
+
+ManagedChipClient.prototype.SubmitProofJob = async function (
+  username: string,
+  jobId: string
+) {
+  await this.prismaClient.proof.create({
+    data: {
+      username,
+      jobId,
+    },
+  });
+};
+
+ManagedChipClient.prototype.PollProofResults = async function () {
+  // Get all incomplete proof jobs
+  const incompleteProofs = await this.prismaClient.proof.findMany({
+    where: {
+      jobCompleted: false,
+    },
+  });
+
+  if (incompleteProofs.length === 0) {
+    return;
+  }
+
+  // Setup API instance similar to tap.tsx
+  const apiConfig: ConfigurationParameters = {
+    basePath: "https://csn-devcon.taceo.io",
+    accessToken: "ASV9PkXpy76KRFtmcQeaLbxT75grdilY",
+  };
+  const configuration = new Configuration(apiConfig);
+  const apiInstance = new JobApi(configuration);
+
+  const completedJobs: {
+    jobId: string;
+    result: JobResult;
+    username: string;
+    createdAt: Date;
+  }[] = [];
+
+  // Check each incomplete proof
+  await Promise.all(
+    incompleteProofs.map(async (proof) => {
+      try {
+        const result = await pollJobResult(apiInstance, proof.jobId);
+
+        if (result) {
+          // Job completed successfully
+          console.log(result);
+          completedJobs.push({
+            result,
+            jobId: proof.jobId,
+            username: proof.username,
+            createdAt: proof.createdAt,
+          });
+        }
+        // If undefined, job is still processing
+      } catch (error) {
+        console.error(`Error polling job ${proof.jobId}:`, error);
+      }
+    })
+  );
+
+  // Update all completed jobs
+  if (completedJobs.length > 0) {
+    const processJobs = completedJobs.map(async (job) => {
+      if (!job.result.publicInput) {
+        return;
+      }
+
+      // parse all properties of job and verify correct public key
+      const publicInput = JSON.parse(job.result.publicInput);
+      const sigNullifier = publicInput[0];
+      const pubkeyNullifier = publicInput[1];
+      const pubkeyNullifierRandomnessHash = publicInput[2];
+      const cursivePubKeyAx = publicInput[8];
+      const cursivePubKeyAy = publicInput[9];
+      if (
+        !sigNullifier ||
+        !pubkeyNullifier ||
+        !pubkeyNullifierRandomnessHash ||
+        !cursivePubKeyAx ||
+        !cursivePubKeyAy
+      ) {
+        return;
+      }
+      if (
+        cursivePubKeyAx !==
+          BigInt(
+            "0x1b073e4eede939876ce1deb7491d5d3bf212ba6b574c1c4658b0d72c467af4fb"
+          ).toString() ||
+        cursivePubKeyAy !==
+          BigInt(
+            "0x503c38a246469b877b3a9096de70bad25bd41ae302bc9c5dd208b2046ef6e2a"
+          ).toString()
+      ) {
+        return;
+      }
+
+      // update the proof job as having completed
+      await this.prismaClient.proof.update({
+        where: {
+          jobId: job.jobId,
+        },
+        data: {
+          sigNullifier: sigNullifier.toString(),
+          pubkeyNullifier: pubkeyNullifier.toString(),
+          pubkeyNullifierRandomnessHash:
+            pubkeyNullifierRandomnessHash.toString(),
+          jobCompleted: true,
+        },
+      });
+
+      // Compute daily leaderboards for Devcon 2024
+      const THAILAND_OFFSET = 7; // UTC+7
+
+      const timeWindows = {
+        day1: {
+          start: new Date("2024-11-12T00:00:00+07:00"), // Nov 12 12AM Thailand
+          end: new Date("2024-11-12T18:00:00+07:00"), // Nov 12 6PM Thailand
+        },
+        day2: {
+          start: new Date("2024-11-13T00:00:00+07:00"),
+          end: new Date("2024-11-13T18:00:00+07:00"),
+        },
+        day3: {
+          start: new Date("2024-11-14T00:00:00+07:00"),
+          end: new Date("2024-11-14T18:00:00+07:00"),
+        },
+        day4: {
+          start: new Date("2024-11-15T00:00:00+07:00"),
+          end: new Date("2024-11-15T18:00:00+07:00"),
+        },
+      };
+
+      // Get all proofs for this user and calculate nullifier counts
+      const userProofs = await this.prismaClient.proof.findMany({
+        where: {
+          username: job.username,
+          jobCompleted: true,
+        },
+      });
+
+      console.log(job.username, userProofs);
+
+      // Verify all pubkeyNullifierRandomnessHash are the same
+      const uniquePubkeyNullifierRandomnessHashes = new Set<string>();
+      for (const proof of userProofs) {
+        if (proof.pubkeyNullifierRandomnessHash) {
+          uniquePubkeyNullifierRandomnessHashes.add(
+            proof.pubkeyNullifierRandomnessHash
+          );
+        }
+      }
+      if (uniquePubkeyNullifierRandomnessHashes.size > 1) {
+        return;
+      }
+
+      // compute new leaderboard entries for each day
+      const pubkeyNullifiersByDay = {
+        day1: new Set<string>(),
+        day2: new Set<string>(),
+        day3: new Set<string>(),
+        day4: new Set<string>(),
+        total: new Set<string>(),
+      };
+
+      for (const proof of userProofs) {
+        if (!proof.pubkeyNullifier || !proof.createdAt) continue;
+
+        // Add to total set
+        pubkeyNullifiersByDay.total.add(proof.pubkeyNullifier);
+
+        // Convert UTC to Thailand time
+        const thailandTime = new Date(proof.createdAt);
+        thailandTime.setHours(thailandTime.getHours() + THAILAND_OFFSET);
+
+        // Check which day this proof belongs to
+        if (
+          thailandTime >= timeWindows.day1.start &&
+          thailandTime <= timeWindows.day1.end
+        ) {
+          pubkeyNullifiersByDay.day1.add(proof.pubkeyNullifier);
+        } else if (
+          thailandTime >= timeWindows.day2.start &&
+          thailandTime <= timeWindows.day2.end
+        ) {
+          pubkeyNullifiersByDay.day2.add(proof.pubkeyNullifier);
+        } else if (
+          thailandTime >= timeWindows.day3.start &&
+          thailandTime <= timeWindows.day3.end
+        ) {
+          pubkeyNullifiersByDay.day3.add(proof.pubkeyNullifier);
+        } else if (
+          thailandTime >= timeWindows.day4.start &&
+          thailandTime <= timeWindows.day4.end
+        ) {
+          pubkeyNullifiersByDay.day4.add(proof.pubkeyNullifier);
+        }
+      }
+
+      // Update leaderboard entries for each type
+      const leaderboardUpdates = [
+        {
+          entryType: LeaderboardEntryType.DEVCON_2024_TAP_COUNT,
+          value: pubkeyNullifiersByDay.total.size,
+        },
+        {
+          entryType: LeaderboardEntryType.DEVCON_2024_DAY_1_TAP_COUNT,
+          value: pubkeyNullifiersByDay.day1.size,
+        },
+        {
+          entryType: LeaderboardEntryType.DEVCON_2024_DAY_2_TAP_COUNT,
+          value: pubkeyNullifiersByDay.day2.size,
+        },
+        {
+          entryType: LeaderboardEntryType.DEVCON_2024_DAY_3_TAP_COUNT,
+          value: pubkeyNullifiersByDay.day3.size,
+        },
+        {
+          entryType: LeaderboardEntryType.DEVCON_2024_DAY_4_TAP_COUNT,
+          value: pubkeyNullifiersByDay.day4.size,
+        },
+      ];
+
+      console.log(pubkeyNullifiersByDay);
+
+      for (const update of leaderboardUpdates) {
+        const existingEntry =
+          await this.prismaClient.leaderboardEntry.findFirst({
+            where: {
+              username: job.username,
+              chipIssuer: ChipIssuer.DEVCON_2024,
+              entryType: update.entryType,
+            },
+          });
+
+        if (existingEntry) {
+          await this.prismaClient.leaderboardEntry.update({
+            where: { id: existingEntry.id },
+            data: { entryValue: update.value },
+          });
+        } else {
+          await this.prismaClient.leaderboardEntry.create({
+            data: {
+              username: job.username,
+              chipIssuer: ChipIssuer.DEVCON_2024,
+              entryType: update.entryType,
+              entryValue: update.value,
+            },
+          });
+        }
+      }
+    });
+
+    await Promise.all(processJobs);
   }
 };

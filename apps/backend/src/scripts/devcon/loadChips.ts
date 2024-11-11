@@ -20,7 +20,7 @@ async function loadChips() {
 
       return {
         chipId: uid,
-        chipIssuer: "DEVCON",
+        chipIssuer: "DEVCON_2024",
         chipVariant: "NTAG424",
         chipPrivateKey: signingKey,
         chipPublicKey: verifyingKey,

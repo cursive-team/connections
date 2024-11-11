@@ -13,7 +13,9 @@ export enum DisplayedDashboard {
   GITHUB = "github",
   LANNA_TOTAL_WORKOUTS = "lanna-total-workouts",
   WEEKLY_TAPS_NOV_4 = "weekly-taps-nov-4",
-  DEVCON_TOTAL_TAPS = "devcon-total-taps",
+  DEVCON_2024_TAP_COUNT = "devcon-total-taps",
+  DEVCON_2024_DAY_1_TAP_COUNT = "devcon-day-1-taps",
+  DEVCON_2024_DAY_2_TAP_COUNT = "devcon-day-2-taps",
 }
 
 export interface CommunityCardProps {

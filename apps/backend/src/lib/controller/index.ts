@@ -291,7 +291,10 @@ export class Controller {
   }
 
   // OAuth
-  MintOAuthToken(app: DataImportSource, code: string): Promise<AccessToken | null> {
+  MintOAuthToken(
+    app: DataImportSource,
+    code: string
+  ): Promise<AccessToken | null> {
     return this.oauthClient.MintOAuthToken(app, code);
   }
 
@@ -308,11 +311,25 @@ export class Controller {
   }
 
   // Graph
-  UpsertGraphEdge(id: string | null, tapSenderId: string | null, tapReceiverId: string | null): Promise<string | ErrorResponse> {
+  UpsertGraphEdge(
+    id: string | null,
+    tapSenderId: string | null,
+    tapReceiverId: string | null
+  ): Promise<string | ErrorResponse> {
     return this.graphClient.UpsertGraphEdge(id, tapSenderId, tapReceiverId);
   }
 
-  GetGraphEdges(fetchUpdatedAtAfter: Date | null): Promise<GraphEdgeResponse | ErrorResponse> {
+  GetGraphEdges(
+    fetchUpdatedAtAfter: Date | null
+  ): Promise<GraphEdgeResponse | ErrorResponse> {
     return this.graphClient.GetGraphEdges(fetchUpdatedAtAfter);
+  }
+
+  SubmitProofJob(username: string, jobId: string): Promise<void> {
+    return this.chipClient.SubmitProofJob(username, jobId);
+  }
+
+  PollProofResults(): Promise<void> {
+    return this.chipClient.PollProofResults();
   }
 }

@@ -68,4 +68,10 @@ export class ManagedChipClient implements iChipClient {
     entryType: LeaderboardEntryType,
     count: number | undefined
   ): Promise<LeaderboardEntry[] | null>;
+
+  // @ts-expect-error (ts2391)
+  SubmitProofJob(username: string, jobId: string): Promise<void>;
+
+  // @ts-expect-error (ts2391)
+  PollProofResults(): Promise<void>;
 }

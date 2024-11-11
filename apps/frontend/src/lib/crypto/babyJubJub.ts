@@ -439,3 +439,61 @@ export const extendHexString = (hex: string, desiredLength: number): string => {
   const zeros = "0".repeat(desiredLength - hex.length);
   return zeros + hex;
 };
+
+/**
+ * Generates the public inputs for a membership proof
+ * Uses notation and formulation from Efficient ECDSA
+ * https://personaelabs.org/posts/efficient-ecdsa-1/
+ * Public inputs are points in Twisted Edwards form for efficient in circuit operations
+ * @param sig - The signature to generate the public inputs for
+ * @param msgHash - The message hash to generate the public inputs for
+ * @param pubKey - The public key to generate the public inputs for
+ * @throws If the public inputs cannot be found, i.e. R cannot be recovered from the signature
+ * @returns - The public inputs R, T, U based on Efficient ECDSA format
+ */
+export const getPublicInputsFromSignature = (
+  sig: Signature,
+  msgHash: bigint,
+  pubKey: WeierstrassPoint
+): { R: EdwardsPoint; T: EdwardsPoint; U: EdwardsPoint } => {
+  const Fb = babyjubjub.Fb;
+  const Fs = babyjubjub.Fs;
+
+  // Because the cofactor is > 1, we must check multiple points
+  // See public key recovery algorithm: https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm
+  for (let i = 0; i < babyjubjub.cofactor; i++) {
+    console.log(i);
+    for (const parity of [0, 1]) {
+      const r = Fb.add(sig.r, Fb.mul(BigInt(i), Fs.p));
+      const rInv = Fs.inv(r);
+      let ecR;
+      try {
+        // The following will throw an error if the point is not on the curve
+        ecR = babyjubjub.ec.curve.pointFromX(
+          new BN(r.toString(16), 16),
+          parity
+        );
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (e) {
+        continue;
+      }
+      // We should use computeTUFromR here but I can't get the ec math to be correct from converting to elliptic.js points
+      const ecT = ecR.mul(rInv.toString(16));
+      const T = WeierstrassPoint.fromEllipticPoint(ecT);
+      const G = babyjubjub.ec.curve.g;
+      const rInvm = Fs.neg(Fs.mul(rInv, msgHash));
+      const ecU = G.mul(rInvm.toString(16));
+      const U = WeierstrassPoint.fromEllipticPoint(ecU);
+      const sT = ecT.mul(sig.s.toString(16));
+      const ecsTU = sT.add(ecU);
+      const sTU = WeierstrassPoint.fromEllipticPoint(ecsTU);
+
+      if (sTU.equals(pubKey)) {
+        const R = WeierstrassPoint.fromEllipticPoint(ecR);
+        return { R: R.toEdwards(), T: T.toEdwards(), U: U.toEdwards() };
+      }
+    }
+  }
+
+  throw new Error("Could not find valid public inputs");
+};

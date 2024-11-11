@@ -29,7 +29,13 @@ import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Mona } from "@/components/icons/Mona";
 
-export default function LannaCommunityPage() {
+export default function LannaCommunityPage({
+  displayedDashboard,
+  setDisplayedDashboard,
+}: {
+  displayedDashboard: DisplayedDashboard;
+  setDisplayedDashboard: (dashboard: DisplayedDashboard) => void;
+}) {
   const router = useRouter();
   const [leaderboardDetails, setLeaderboardDetails] =
     useState<LeaderboardDetails | null>(null);
@@ -61,8 +67,6 @@ export default function LannaCommunityPage() {
     useState<LeaderboardEntries | null>(null);
 
   const [cardProps, setCardProps] = useState<CommunityCardProps[]>([]);
-  const [displayedDashboard, setDisplayedDashboard] =
-    useState<DisplayedDashboard>(DisplayedDashboard.NONE);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {

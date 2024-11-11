@@ -93,6 +93,7 @@ export async function getChipFromTapParams(
     }
   } catch (error) {
     // Only surface non-validation errors for N424 chips
+    console.error(error);
     if (!(error instanceof ZodError)) {
       throw error;
     }

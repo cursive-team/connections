@@ -90,7 +90,7 @@ export const UserTapSchema = z.object({
   ownerPsiPublicKeyLink: z.string().nullable(),
   ownerUserData: JsonSchema.nullable(),
   timestamp: z.coerce.date(),
-  chipPublicKeySignature: ChipPublicKeySignatureSchema.nullable(),
+  chipPublicKeySignature: z.string().nullable(),
 });
 
 export type UserTap = z.infer<typeof UserTapSchema>;
@@ -129,6 +129,12 @@ export enum LeaderboardEntryType {
   GITHUB_LANNA_COMMITS = "GITHUB_LANNA_COMMITS",
   GITHUB_CONTRIBUTIONS_LAST_YEAR = "GITHUB_CONTRIBUTIONS_LAST_YEAR",
   LANNA_TOTAL_WORKOUT_COUNT = "LANNA_TOTAL_WORKOUT_COUNT",
+  DEVCON_2024_TAP_COUNT = "DEVCON_2024_TAP_COUNT",
+  DEVCON_2024_DAY_1_TAP_COUNT = "DEVCON_2024_DAY_1_TAP_COUNT",
+  DEVCON_2024_DAY_2_TAP_COUNT = "DEVCON_2024_DAY_2_TAP_COUNT",
+  DEVCON_2024_DAY_3_TAP_COUNT = "DEVCON_2024_DAY_3_TAP_COUNT",
+  DEVCON_2024_DAY_4_TAP_COUNT = "DEVCON_2024_DAY_4_TAP_COUNT",
+  DEVCON_2024_TAP_COUNT_NO_PROOF = "DEVCON_2024_TAP_COUNT_NO_PROOF",
 }
 
 export const LeaderboardEntryTypeSchema = z.nativeEnum(LeaderboardEntryType);
@@ -186,3 +192,10 @@ export const LeaderboardDetailsSchema = z.object({
 });
 
 export type LeaderboardDetails = z.infer<typeof LeaderboardDetailsSchema>;
+
+export const SubmitProofJobRequestSchema = z.object({
+  authToken: z.string(),
+  jobId: z.string(),
+});
+
+export type SubmitProofJobRequest = z.infer<typeof SubmitProofJobRequestSchema>;
