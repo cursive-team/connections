@@ -31,7 +31,7 @@ export class TelegramNotificationClient implements iNotificationClient {
 
       // Store the association in your database
       await this.prismaClient.user.update({
-        where: {id: backendUserId},
+        where: { id: backendUserId },
         data: {
           notificationUserId: telegramUserId?.toString(),
           notificationUsername: telegramUsername,
@@ -45,9 +45,7 @@ export class TelegramNotificationClient implements iNotificationClient {
       await ctx.reply(
         `If you want to stop Cursive Telegram notifications, enter /stop.`
       );
-      await ctx.reply(
-        `If you want to resume at any time enter /start.`
-      );
+      await ctx.reply(`If you want to resume at any time enter /start.`);
       await ctx.reply(
         `If you want to offer feedback and chat with the team enter /feedback.`
       );
@@ -69,11 +67,11 @@ export class TelegramNotificationClient implements iNotificationClient {
       try {
         // Lookup user by telegram name from database
         const user = await this.prismaClient.user.findFirst({
-          where: {notificationUsername: telegramUsername},
+          where: { notificationUsername: telegramUsername },
         });
 
         if (!user) {
-          throw new Error("User not registered.")
+          throw new Error("User not registered.");
         }
 
         await this.prismaClient.user.update({
@@ -96,9 +94,7 @@ export class TelegramNotificationClient implements iNotificationClient {
         return;
       }
     }
-    await ctx.reply(
-      `Woah man! We need your Telegram username for us to help.`
-    );
+    await ctx.reply(`We need your Telegram username for us to help.`);
   }
 
   private async resume(ctx: CommandContext<Context>): Promise<void> {
@@ -108,11 +104,11 @@ export class TelegramNotificationClient implements iNotificationClient {
       try {
         // Lookup user by telegram name from database
         const user = await this.prismaClient.user.findFirst({
-          where: {notificationUsername: telegramUsername},
+          where: { notificationUsername: telegramUsername },
         });
 
         if (!user) {
-          throw new Error("User not registered.")
+          throw new Error("User not registered.");
         }
 
         if (user.notificationsEnabled) {
@@ -141,9 +137,7 @@ export class TelegramNotificationClient implements iNotificationClient {
         return;
       }
     }
-    await ctx.reply(
-      `Woah man! We need your Telegram username for us to help.`
-    );
+    await ctx.reply(`We need your Telegram username for us to help.`);
   }
 
   private async setupBot(): Promise<void> {
@@ -170,22 +164,14 @@ export class TelegramNotificationClient implements iNotificationClient {
       await ctx.reply(
         `Join the Cursive Support channel and talk with the team!`
       );
-      await ctx.reply(
-        `https://t.me/+5_LUJlsRFfBmMTUx`
-      );
+      await ctx.reply(`https://t.me/cursiveappsupport`);
     });
 
     this.bot.command("help", async (ctx) => {
-      await ctx.reply(
-        `/start : register or resume notifications.`
-      );
-      await ctx.reply(
-        `/stop : stop notifications.`
-      );
-      await ctx.reply(
-        `/feedback : chat with the Cursive team.`
-      );
-    })
+      await ctx.reply(`/start : register or resume notifications.`);
+      await ctx.reply(`/stop : stop notifications.`);
+      await ctx.reply(`/feedback : chat with the Cursive team.`);
+    });
 
     this.bot.on("message", async (ctx) => {
       await ctx.reply(
