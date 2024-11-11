@@ -12,6 +12,8 @@ import { useRouter } from "next/router";
 import { NavTab } from "@/components/ui/NavTab";
 import { cn } from "@/lib/frontend/util";
 import Image from "next/image";
+import { logClientEvent } from "@/lib/frontend/metrics";
+import { Icons } from "@/components/icons/Icons";
 
 function sortConnections(connections: Record<string, Connection>) {
   return Object.entries(connections)
@@ -106,21 +108,54 @@ const PeoplePage: React.FC = () => {
 
           return (
             <li key={connection.user.username} className=" bg-pink">
-              <Link
-                className="grid grid-cols-[1fr_65px] h-[124px] items-center gap-0.5 pt-2 px-4"
-                href={`/people/${connection.user.username}`}
-              >
+              <div className="grid grid-cols-[1fr_65px] h-[124px] items-center gap-0.5 pt-2 px-4">
                 <div className="flex w-full h-full">
                   <div className="flex flex-col gap-1 pb-2 h-full">
-                    <div className="flex items-center gap-2"></div>
-                    <span
-                      className={cn(
-                        "text-base leading-[22px] font-bold mt-auto",
-                        darkTheme ? "text-black" : "text-white"
+                    <div className="flex items-center gap-5">
+                      {connection?.user?.telegram?.username && (
+                        <Link
+                          href={`https://t.me/${connection.user.telegram.username}`}
+                        >
+                          <Icons.Telegram
+                            size={24}
+                            className={cn(
+                              darkTheme ? "text-black" : "text-white"
+                            )}
+                          />
+                        </Link>
                       )}
+                      {connection?.user?.twitter?.username && (
+                        <div
+                          onClick={() => {
+                            logClientEvent("user-profile-twitter-clicked", {});
+                          }}
+                        >
+                          <Link
+                            href={`https://twitter.com/${connection.user.twitter.username}`}
+                          >
+                            <Icons.Twitter
+                              size={24}
+                              className={cn(
+                                darkTheme ? "text-black" : "text-white"
+                              )}
+                            />
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                    <Link
+                      className="mt-auto"
+                      href={`/people/${connection.user.username}`}
                     >
-                      {connection.user.displayName}
-                    </span>
+                      <span
+                        className={cn(
+                          "text-base leading-[22px] font-bold mt-auto line-clamp-2",
+                          darkTheme ? "text-black" : "text-white"
+                        )}
+                      >
+                        {connection.user.displayName}
+                      </span>
+                    </Link>
                   </div>
                 </div>
                 <div className="mt-auto relative w-full h-full">
@@ -131,7 +166,7 @@ const PeoplePage: React.FC = () => {
                     src={flowerImage}
                   />
                 </div>
-              </Link>
+              </div>
             </li>
           );
         })}
@@ -170,27 +205,29 @@ const PeoplePage: React.FC = () => {
       className="mx-auto"
       withContainer={false}
     >
-      <div className="w-full px-4 py-4">
-        <Banner
-          className="justify-center"
-          italic={false}
-          title={
-            <span className="!font-normal text-center">
-              <b>Tap NFC chips </b> -- share socials, organize contacts, and
-              discover shared interests! Troubleshoot tapping{" "}
-              <a
-                href="https://cursive.team/tap-help"
-                className="underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                here
-              </a>
-              .
-            </span>
-          }
-        />
-      </div>
+      {activeTab === ActiveTab.LIST && (
+        <div className="w-full px-4 py-4">
+          <Banner
+            className="justify-center"
+            italic={false}
+            title={
+              <span className="!font-normal text-center">
+                <b>Tap NFC chips </b> -- share socials, organize contacts, and
+                discover shared interests! Troubleshoot tapping{" "}
+                <a
+                  href="https://cursive.team/tap-help"
+                  className="underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  here
+                </a>
+                .
+              </span>
+            }
+          />
+        </div>
+      )}
       {Object.keys(connections).length === 0 ? (
         <div className="p-4 text-center text-label-secondary px-16">
           {`No connections yet.`}

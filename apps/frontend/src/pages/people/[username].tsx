@@ -4,7 +4,12 @@ import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
 import { Connection, Session, User } from "@/lib/storage/types";
 import { toast } from "sonner";
-import { TapParams, ChipTapResponse, errorToString, SocketRequestType } from "@types";
+import {
+  TapParams,
+  ChipTapResponse,
+  errorToString,
+  SocketRequestType,
+} from "@types";
 import { AppButton } from "@/components/ui/Button";
 import Image from "next/image";
 import AppLayout from "@/layouts/AppLayout";
@@ -27,6 +32,8 @@ import { cn } from "@/lib/frontend/util";
 import { Card } from "@/components/cards/Card";
 import { getConnectionSigPubKey } from "@/lib/user";
 import { useSocket, socketEmit } from "@/lib/socket";
+import { AccordionItem } from "@/components/ui/AccordionItem";
+import { IntersectionAccordion } from "@/components/ui/IntersectionAccordion";
 
 interface CommentModalProps {
   username: string;
@@ -215,7 +222,10 @@ const UserProfilePage: React.FC = () => {
         const user = await storage.getUser();
         const session = await storage.getSession();
         const unregisteredUser = await storage.getUnregisteredUser();
-        if ((!user || !session || !user.connections[username]) && !unregisteredUser) {
+        if (
+          (!user || !session || !user.connections[username]) &&
+          !unregisteredUser
+        ) {
           console.error("User not found");
           toast.error("User not found");
           router.push("/people");
@@ -290,7 +300,10 @@ const UserProfilePage: React.FC = () => {
       // Only need to emit, do not need response from server
       if (socket && user) {
         // Get recipient id (pub key)
-        const recipient: string | null = getConnectionSigPubKey(user, connection.user.username);
+        const recipient: string | null = getConnectionSigPubKey(
+          user,
+          connection.user.username
+        );
 
         if (recipient) {
           socketEmit({
@@ -393,7 +406,6 @@ const UserProfilePage: React.FC = () => {
         }
       );
 
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(`HTTP error! status: ${errorData.error}`);
@@ -401,7 +413,10 @@ const UserProfilePage: React.FC = () => {
 
       if (socket && connection) {
         // Get recipient id (pub key)
-        const recipient: string | null = getConnectionSigPubKey(user, connection.user.username);
+        const recipient: string | null = getConnectionSigPubKey(
+          user,
+          connection.user.username
+        );
 
         if (recipient) {
           socketEmit({
@@ -460,8 +475,11 @@ const UserProfilePage: React.FC = () => {
 
   // Loading Cases:
   // 1: Is not unregistered user and no user info available yet
-  // 2: Is unregistered user and connection info not available yet 
-  if (((!connection || !user || !session) && !isUnregistered) || (!connection && isUnregistered)) {
+  // 2: Is unregistered user and connection info not available yet
+  if (
+    ((!connection || !user || !session) && !isUnregistered) ||
+    (!connection && isUnregistered)
+  ) {
     return (
       <div className="flex min-h-screen justify-center items-center text-center">
         <CursiveLogo isLoading />
@@ -474,6 +492,10 @@ const UserProfilePage: React.FC = () => {
     router.push("/people");
     return;
   }
+
+  const flowerStage = "sprout"; //small / large / medium / sprout
+  const flowerIndex = "2";
+  const flowerImage = `/flowers/flower-${flowerIndex}-${flowerStage}.svg`;
 
   return (
     <>
@@ -519,8 +541,10 @@ const UserProfilePage: React.FC = () => {
                   onClick={() => {
                     logClientEvent("user-profile-begin-edit-comment", {});
                     if (isUnregistered) {
-                      toast.error("Unregistered user cannot add contact notes. Come to the Cursive booth and" +
-                        " register!");
+                      toast.error(
+                        "Unregistered user cannot add contact notes. Come to the Cursive booth and" +
+                          " register!"
+                      );
                     }
                     setShowCommentModal(true);
                   }}
@@ -615,12 +639,23 @@ const UserProfilePage: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-4 py-4 px-4">
-            <span className="text-sm font-semibold text-label-primary font-sans">
-              Overlap icebreaker{" "}
-              <span className="font-normal text-label-tertiary">
-                Find common contacts & opposing tensions to spark conversation
+            <div className=" grid grid-cols-[1fr_60px] gap-6">
+              <span className="flex flex-col gap-5 text-sm font-semibold text-label-primary font-sans">
+                <span>Discover intersections in your encrypted data. </span>
+                <span className="font-normal text-label-tertiary">
+                  Watch your shared flower grow the more you learn about one
+                  another!
+                </span>
               </span>
-            </span>
+              <div className="mt-auto relative w-full h-full">
+                <Image
+                  fill
+                  className=" object-cover bg-cover w-full"
+                  alt={`${flowerIndex} ${flowerStage}`}
+                  src={flowerImage}
+                />
+              </div>
+            </div>
 
             {verifiedIntersection && (
               <>
@@ -690,9 +725,11 @@ const UserProfilePage: React.FC = () => {
                               leftOption={tensionPairs[index][0]}
                               rightOption={tensionPairs[index][1]}
                               value={
-                                (user) ? user.userData.tensionsRating?.tensionRating[
-                                  index
-                                ] ?? 50 : 50
+                                user
+                                  ? user.userData.tensionsRating?.tensionRating[
+                                      index
+                                    ] ?? 50
+                                  : 50
                               }
                               onChange={() => {}}
                             />
@@ -708,7 +745,9 @@ const UserProfilePage: React.FC = () => {
               onClick={() => {
                 logClientEvent("user-started-psi", {});
                 if (isUnregistered) {
-                  toast.error("Unregistered user cannot add run contact PSI. Come to the Cursive booth and register!");
+                  toast.error(
+                    "Unregistered user cannot add run contact PSI. Come to the Cursive booth and register!"
+                  );
                 }
                 updatePSIOverlap();
               }}
