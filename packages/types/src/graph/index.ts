@@ -22,8 +22,8 @@ export const UpsertSocialGraphEdgeResponseSchema = z.object({
 export type UpsertSocialGraphEdgeResponse = z.infer<typeof UpsertSocialGraphEdgeResponseSchema>;
 
 export const GraphEdgeSchema = z.object({
-  tapSenderHash: z.string(),
-  tapReceiverHash: z.string(),
+  tapSenderHash: z.string().nullable(),
+  tapReceiverHash: z.string().nullable(),
   updatedAt: z.coerce.date(),
 });
 
