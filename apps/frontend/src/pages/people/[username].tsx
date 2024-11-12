@@ -561,7 +561,7 @@ const UserProfilePage: React.FC = () => {
       >
         {/* ETH Hot takes mock */}
         <div className="px-4 pt-2">
-          <IntersectionAccordion label="Ethereum hot takes" icon="😬">
+          {/* <IntersectionAccordion label="Ethereum hot takes" icon="😬">
             <div className="flex flex-col gap-2">
               <CringeSlider
                 label="text"
@@ -585,7 +585,7 @@ const UserProfilePage: React.FC = () => {
                 }}
               />
             </div>
-          </IntersectionAccordion>
+          </IntersectionAccordion> */}
         </div>
         <div className="!divide-y !divide-quaternary/20">
           <div className="flex flex-col gap-2 py-4 px-4">
