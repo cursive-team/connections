@@ -224,9 +224,9 @@ const ProfilePage: React.FC = () => {
                         <Icons.Plus className="text-icon-primary" />
                       </div>
                       <span className="text-xs font-medium text-label-tertiary">
-                        Practice your decision making skills by playing the
-                        Tensions game, match with residents who hold opposing
-                        views to learn new perspectives.
+                        Play the Tensions game from Summer of Protocols to
+                        practice your decision making skills. Upon tap, discover
+                        where you disagree to learn new perespectives.
                       </span>
                     </div>
                   </Card.Base>
@@ -285,9 +285,9 @@ const ProfilePage: React.FC = () => {
                         <Icons.Pencil className="text-icon-primary" />
                       </div>
                       <span className="text-xs font-medium text-label-tertiary">
-                        Practice your decision making skills by playing the
-                        Tensions game, match with residents who hold opposing
-                        views to learn new perspectives.
+                        Play the Tensions game from Summer of Protocols to
+                        practice your decision making skills. Upon tap, discover
+                        where you disagree to learn new perespectives.
                       </span>
                     </div>
                   </Card.Base>

@@ -1,10 +1,10 @@
 import { Banner } from "@/components/cards/Banner";
 import AppLayout from "@/layouts/AppLayout";
-import { useEffect } from "react";
 import { storage } from "@/lib/storage";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
-export default function NarrowcastPage() {
+export default function PheromonesPage() {
   const router = useRouter();
 
   useEffect(() => {
@@ -23,10 +23,12 @@ export default function NarrowcastPage() {
 
   return (
     <AppLayout
-      seoTitle="Narrowcast"
+      seoTitle="Digital pheromones"
       header={
         <>
-          <span className="text-label-primary font-medium">Narrowcasting</span>
+          <span className="text-label-primary font-medium">
+            Digital pheromones
+          </span>
           <div
             className="absolute left-0 right-0 bottom-0 h-[2px]"
             style={{
@@ -42,24 +44,32 @@ export default function NarrowcastPage() {
           italic={false}
           title={
             <div className="!font-normal flex flex-col gap-4">
-              <div>
-                <b>Coming soon</b>: Narrowcast events & opportunities to{" "}
-                <i>only your most relevant connections</i> instead of
-                broadcasting to the whole community or making dozens of group
-                chats.
+              <div className="text-md">
+                <b>Launching on Wednesday, Nov 13th!</b>
               </div>
-              <div>
-                Learn more about narrowcasting and other upcoming features like{" "}
-                <b>digital pheromones</b> and <b>superconnectors</b>{" "}
+              <div className="text-sm">
+                Come by our{" "}
                 <a
-                  href="https://cursive.team/lanna"
-                  className="underline"
+                  href="https://app.devcon.org/schedule/LMCG3V"
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="text-link-primary"
                 >
-                  here
-                </a>
-                .
+                  Digital Pheromones workshop
+                </a>{" "}
+                on 11/13 at 3:20pm in Classroom A to try a live demo and learn
+                more.
+              </div>
+              <div className="text-sm">
+                Multi-party computation enables <b>digital pheromones</b>, the
+                ability to coordinate in a p2p way using lightweight,
+                privacy-preserving signals.
+              </div>
+              <div className="text-sm">
+                This enables new forms of communication like{" "}
+                <b>narrowcasting</b>, where only people that satisfy specific
+                private, verifiable criteria will be able to decrypt your
+                message.
               </div>
             </div>
           }
