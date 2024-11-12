@@ -387,7 +387,7 @@ export default function DevconCommunityPage({
         <div className="flex flex-col gap-6 pt-2 pb-6">
           <div className="flex flex-col gap-2">
             <span className="text-base font-bold text-label-primary font-sans">
-              {`Current dashboards`}
+              {`Dashboards`}
             </span>
             {cardProps?.map((prop: CommunityCardProps, index) => {
               return prop.past ? (

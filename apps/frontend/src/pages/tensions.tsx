@@ -112,9 +112,10 @@ export default function TensionsPage() {
             Tensions
           </span>
           <span className="text-[14px] font-normal text-label-tertiary">
-            Practice your decision making skills by playing the Tensions game
-            and <b>match with residents who hold opposing views upon tapping</b>{" "}
-            to learn new perspectives.
+            Play the Tensions game from Summer of Protocols to practice your
+            decision making skills. Upon tap, discover where you disagree to
+            learn new perespectives. Use the slider to express how strongly you
+            lean towards one of the two options.
           </span>
         </div>
         <div className="flex flex-col gap-4">
