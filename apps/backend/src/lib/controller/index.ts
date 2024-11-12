@@ -32,6 +32,7 @@ import {
   ErrorResponse,
 } from "@types";
 import { Chip } from "@/lib/controller/chip/types";
+import { TwitterReclaimController } from "@/lib/controller/reclaim/twitter";
 import { iChipClient } from "@/lib/controller/chip/interfaces";
 import { ManagedChipClient } from "@/lib/controller/chip/managed/client";
 import { SESEmailClient } from "@/lib/controller/email/ses/client";
@@ -45,6 +46,8 @@ import { iEnclaveClient } from "@/lib/controller/enclave/interfaces";
 import { iGraphClient } from "@/lib/controller/graph/interfaces";
 import { PrismaGraphClient } from "@/lib/controller/graph/prisma/client";
 import { EdgeData } from "@/lib/controller/graph/types";
+import { TwitterReclaimCallbackResponse } from "./reclaim/interface";
+import { TwitterReclaimUrlResponse } from "./reclaim/interface";
 
 export class Controller {
   postgresClient: iPostgresClient; // Use interface so that it can be mocked out
@@ -54,6 +57,7 @@ export class Controller {
   notificationClient: iNotificationClient;
   enclaveClient: iEnclaveClient;
   graphClient: iGraphClient;
+  reclaimTwitterClient: TwitterReclaimController;
 
   constructor() {
     // Default client, could also pass through mock
@@ -76,7 +80,9 @@ export class Controller {
     // Graph client -- uses primsa but in the future may use graph DB of some sort...
     this.graphClient = new PrismaGraphClient();
 
-    // Over time more clients will be added...
+    // Initialize Twitter Reclaim client
+    this.reclaimTwitterClient = new TwitterReclaimController();
+
   }
 
   NotificationInitialize(): Promise<void> {
@@ -331,5 +337,14 @@ export class Controller {
 
   PollProofResults(): Promise<void> {
     return this.chipClient.PollProofResults();
+  }
+
+  // Twitter Reclaim methods
+  async GetTwitterReclaimUrl(userId: string, redirectUrl: string): Promise<TwitterReclaimUrlResponse> {
+    return this.reclaimTwitterClient.getTwitterReclaimUrl(userId, redirectUrl);
+  }
+
+  async HandleTwitterReclaimCallback(proof: string): Promise<TwitterReclaimCallbackResponse> {
+    return this.reclaimTwitterClient.handleCallback(proof);
   }
 }

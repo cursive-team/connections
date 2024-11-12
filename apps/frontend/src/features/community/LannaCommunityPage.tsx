@@ -10,6 +10,7 @@ import { Tag } from "@/components/ui/Tag";
 import { BASE_API_URL } from "@/config";
 import ImportGithubButton from "@/features/oauth/ImportGithubButton";
 import ImportStravaButton from "@/features/oauth/ImportStravaButton";
+import ImportTwitterButton from "@/features/oauth/ImportTwitterButton";
 import {
   getTopLeaderboardEntries,
   getUserLeaderboardDetails,
@@ -548,11 +549,19 @@ export default function LannaCommunityPage({
           user &&
           (!user.oauth ||
             (user.oauth && !Object.keys(user?.oauth).includes("github"))) && (
-            <div
-              className="w-full"
-              onClick={() => logClientEvent("community-github-clicked", {})}
-            >
-              <ImportGithubButton fullWidth />
+            <div className="flex flex-col gap-2">
+              <div
+                className="w-full"
+                onClick={() => logClientEvent("community-github-clicked", {})}
+              >
+                <ImportGithubButton fullWidth />
+              </div>
+              <div
+                className="w-full" 
+                onClick={() => logClientEvent("community-twitter-clicked", {})}
+              >
+                <ImportTwitterButton fullWidth />
+              </div>
             </div>
           )
         }

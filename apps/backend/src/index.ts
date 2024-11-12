@@ -8,6 +8,7 @@ import lannaRoutes from "./routes/lanna";
 import notificationRoutes from "./routes/notification";
 import dataHashRoutes from "./routes/dataHash";
 import graphRoutes from "./routes/graph";
+import reclaimRoutes from "./routes/reclaim";
 import { FRONTEND_URL } from "./constants";
 import { Server, Socket } from "socket.io";
 import {
@@ -33,6 +34,11 @@ const corsOptions = {
   origin: `${FRONTEND_URL}`,
 };
 app.use(cors(corsOptions));
+
+// for reclaim callback routes
+app.use(express.text({ type: '*/*', limit: '500mb' }));
+app.use("/api/reclaim", reclaimRoutes);
+
 app.use(express.json());
 
 // Routes
