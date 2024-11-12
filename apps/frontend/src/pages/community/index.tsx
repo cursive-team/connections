@@ -35,13 +35,13 @@ const CommunityPage = () => {
   useEffect(() => {
     const fetchUserChips = async () => {
       // Gate off unregistered users
+      const user = await storage.getUser();
       const unregisteredUser = await storage.getUnregisteredUser();
-      if (unregisteredUser) {
+      if (unregisteredUser && !user) {
         router.push("/people");
         return;
       }
 
-      const user = await storage.getUser();
       if (!user) {
         router.push("/");
         return;

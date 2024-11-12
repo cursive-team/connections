@@ -54,7 +54,7 @@ const ProfilePage: React.FC = () => {
 
       const user = await storage.getUser();
       const unregisteredUser = await storage.getUnregisteredUser();
-      if (unregisteredUser) {
+      if (unregisteredUser && !user) {
         router.push("/people")
         return;
       }
