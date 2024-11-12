@@ -12,16 +12,24 @@ import { Metadata } from "next";
 import { NextSeo } from "next-seo";
 import AppLayout from "@/layouts/AppLayout";
 import { DisplayedDashboard } from "@/components/cards/CommunityCard";
+import { StoreBanner } from "@/components/StoreBanner";
+import { NavTab } from "@/components/ui/NavTab";
 
 export const metadata: Metadata = {
   title: "Community",
 };
+
+enum ActiveTab {
+  DEVCON,
+  LANNA,
+}
 
 const CommunityPage = () => {
   const router = useRouter();
   const [selectedCommunity, setSelectedCommunity] = useState<ChipIssuer | null>(
     null
   );
+  const [activeTab, setActiveTab] = useState(ActiveTab.DEVCON);
   const [userChips, setUserChips] = useState<ChipIssuer[]>([]);
   const [loading, setLoading] = useState(true);
   const [displayedDashboard, setDisplayedDashboard] =
@@ -32,15 +40,15 @@ const CommunityPage = () => {
       // Gate off unregistered users
       const unregisteredUser = await storage.getUnregisteredUser();
       if (unregisteredUser) {
-        router.push("/people")
+        router.push("/people");
         return;
       }
 
       const user = await storage.getUser();
       if (!user) {
-        router.push("/")
+        router.push("/");
         return;
-      };
+      }
 
       const { session } = await storage.getUserAndSession();
       if (!user || !session || session.authTokenExpiresAt < new Date()) {
@@ -86,17 +94,37 @@ const CommunityPage = () => {
       <NextSeo title="Community" />
       <AppLayout
         header={
-          displayedDashboard === DisplayedDashboard.NONE && (
-            <>
-              <span className="text-label-primary font-medium">Community</span>
+          <div className="flex flex-col">
+            <div className="flex flex-col pt-3">
+              <span className="text-label-primary text-xl font-bold">
+                Communities
+              </span>
               <div
                 className="absolute left-0 right-0 bottom-0 h-[2px]"
                 style={{
                   background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
                 }}
               ></div>
-            </>
-          )
+            </div>
+            <div className="py-3 flex gap-6">
+              <NavTab
+                active={activeTab === ActiveTab.DEVCON}
+                onClick={() => {
+                  setActiveTab(ActiveTab.DEVCON);
+                }}
+              >
+                Devcon
+              </NavTab>
+              <NavTab
+                active={activeTab === ActiveTab.LANNA}
+                onClick={() => {
+                  setActiveTab(ActiveTab.LANNA);
+                }}
+              >
+                Edge Lanna
+              </NavTab>
+            </div>
+          </div>
         }
         withContainer={displayedDashboard === DisplayedDashboard.NONE}
       >
@@ -134,17 +162,22 @@ const CommunityPage = () => {
             </div>
           )}
 
-        {selectedCommunity === ChipIssuer.EDGE_CITY_LANNA && (
+        {activeTab === ActiveTab.LANNA && (
           <LannaCommunityPage
             displayedDashboard={displayedDashboard}
             setDisplayedDashboard={setDisplayedDashboard}
           />
         )}
-        {selectedCommunity === ChipIssuer.DEVCON_2024 && (
-          <DevconCommunityPage
-            displayedDashboard={displayedDashboard}
-            setDisplayedDashboard={setDisplayedDashboard}
-          />
+        {activeTab === ActiveTab.DEVCON && (
+          <div className="flex flex-col gap-3">
+            <div className="pt-3">
+              <StoreBanner />
+            </div>
+            <DevconCommunityPage
+              displayedDashboard={displayedDashboard}
+              setDisplayedDashboard={setDisplayedDashboard}
+            />
+          </div>
         )}
       </AppLayout>
     </>
