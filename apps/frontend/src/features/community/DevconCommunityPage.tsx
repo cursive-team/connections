@@ -4,6 +4,7 @@ import {
   DisplayedDashboard,
 } from "@/components/cards/CommunityCard";
 import { DashboardDetail } from "@/components/dashboard/DashboardDetail";
+import { StoreBanner } from "@/components/StoreBanner";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import {
   getTopLeaderboardEntries,
@@ -379,6 +380,9 @@ export default function DevconCommunityPage({
 
   return (
     <>
+      <div className="py-3">
+        <StoreBanner />
+      </div>
       {!leaderboardDetails || !leaderboardEntries ? (
         <div className="flex justify-center items-center pt-4">
           <CursiveLogo isLoading />
