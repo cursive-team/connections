@@ -80,6 +80,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         }
       }
 
+      if (user && session && unregisteredUser) {
+        // If user and session are active, ensure unregisteredUser is cleaned up
+        await storage.deleteUnregisteredUser();
+      }
+
     }
     gateUnregisteredUser();
   });

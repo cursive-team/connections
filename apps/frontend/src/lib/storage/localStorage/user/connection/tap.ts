@@ -195,6 +195,10 @@ export const addUserTap = async (
       newBackupData: [connectionBackup, tapActivityBackup],
     });
   } else {
+    // NOTE: This is the *only* place where createUnregisteredUser and saveUnregisteredUser are called.
+    // This is intention to ensure unregistered user is *only* created when a client has no user AND no session
+    // (indicating that they're logged out / accountless)
+
     // If unregistered user does not exist already, initialize it
     if (!unregisteredUser) {
       unregisteredUser = await createUnregisteredUser();
