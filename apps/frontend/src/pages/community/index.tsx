@@ -22,14 +22,12 @@ export const metadata: Metadata = {
 enum ActiveTab {
   DEVCON,
   LANNA,
+  NONE,
 }
 
 const CommunityPage = () => {
   const router = useRouter();
-  const [selectedCommunity, setSelectedCommunity] = useState<ChipIssuer | null>(
-    null
-  );
-  const [activeTab, setActiveTab] = useState(ActiveTab.DEVCON);
+  const [activeTab, setActiveTab] = useState(ActiveTab.NONE);
   const [userChips, setUserChips] = useState<ChipIssuer[]>([]);
   const [loading, setLoading] = useState(true);
   const [displayedDashboard, setDisplayedDashboard] =
@@ -62,7 +60,11 @@ const CommunityPage = () => {
 
       // Set initial selected community
       if (userChipIssuers.length > 0) {
-        setSelectedCommunity(userChipIssuers[0]);
+        if (userChipIssuers.includes(ChipIssuer.DEVCON_2024)) {
+          setActiveTab(ActiveTab.DEVCON);
+        } else if (userChipIssuers.includes(ChipIssuer.EDGE_CITY_LANNA)) {
+          setActiveTab(ActiveTab.LANNA);
+        }
       }
 
       setLoading(false);
@@ -107,61 +109,31 @@ const CommunityPage = () => {
               ></div>
             </div>
             <div className="py-3 flex gap-6">
-              <NavTab
-                active={activeTab === ActiveTab.DEVCON}
-                onClick={() => {
-                  setActiveTab(ActiveTab.DEVCON);
-                }}
-              >
-                Devcon
-              </NavTab>
-              <NavTab
-                active={activeTab === ActiveTab.LANNA}
-                onClick={() => {
-                  setActiveTab(ActiveTab.LANNA);
-                }}
-              >
-                Edge Lanna
-              </NavTab>
+              {userChips && userChips.includes(ChipIssuer.DEVCON_2024) && (
+                <NavTab
+                  active={activeTab === ActiveTab.DEVCON}
+                  onClick={() => {
+                    setActiveTab(ActiveTab.DEVCON);
+                  }}
+                >
+                  Devcon
+                </NavTab>
+              )}
+              {userChips && userChips.includes(ChipIssuer.EDGE_CITY_LANNA) && (
+                <NavTab
+                  active={activeTab === ActiveTab.LANNA}
+                  onClick={() => {
+                    setActiveTab(ActiveTab.LANNA);
+                  }}
+                >
+                  Edge Lanna
+                </NavTab>
+              )}
             </div>
           </div>
         }
         withContainer={displayedDashboard === DisplayedDashboard.NONE}
       >
-        {userChips.length >= 2 &&
-          displayedDashboard === DisplayedDashboard.NONE && (
-            <div className="flex gap-2 mt-2 sticky top-0 bg-background z-10">
-              {userChips.includes(ChipIssuer.EDGE_CITY_LANNA) && (
-                <AppButton
-                  variant={
-                    selectedCommunity === ChipIssuer.EDGE_CITY_LANNA
-                      ? "outline"
-                      : "subtle"
-                  }
-                  onClick={() =>
-                    setSelectedCommunity(ChipIssuer.EDGE_CITY_LANNA)
-                  }
-                  className="flex-1"
-                >
-                  Edge City Lanna
-                </AppButton>
-              )}
-              {userChips.includes(ChipIssuer.DEVCON_2024) && (
-                <AppButton
-                  variant={
-                    selectedCommunity === ChipIssuer.DEVCON_2024
-                      ? "outline"
-                      : "subtle"
-                  }
-                  onClick={() => setSelectedCommunity(ChipIssuer.DEVCON_2024)}
-                  className="flex-1"
-                >
-                  Devcon
-                </AppButton>
-              )}
-            </div>
-          )}
-
         {activeTab === ActiveTab.LANNA && (
           <LannaCommunityPage
             displayedDashboard={displayedDashboard}

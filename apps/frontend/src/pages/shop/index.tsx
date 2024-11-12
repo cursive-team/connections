@@ -54,15 +54,8 @@ export default function ShopPage() {
     <AppLayout
       withContainer={false}
       showFooter={false}
-      footer={
-        <div className="flex sticky bottom-0 bg-[#FF9DF8] w-full ">
-          <div className="flex px-5 py-4 text-lg leading-none font-semibold ml-auto">
-            Cursive Connection 2024
-          </div>
-        </div>
-      }
       back={{
-        href: "/",
+        href: "/community",
         label: "Back",
         content: (
           <div
@@ -77,10 +70,12 @@ export default function ShopPage() {
       <div className={cn("flex flex-col overflow-hidden")}>
         <div className="flex flex-col gap-1 p-4">
           <span className="text-label-primary text-xl font-bold leading-none font-sans tracking-[-0.1px]">
-            Cursive shop
+            Museum merch store
           </span>
           <span className="text-sm text-label-tertiary font-normal">
-            Tap and connect with your friend, then shop the museum store.
+            Featuring hand-made NFC necklaces, locally sourced NFC bracelets,
+            and historical cryptography T-shirts. Pick it up from our museum
+            booth near the registration desks!
           </span>
         </div>
         <div className={cn("grid grid-cols-2")}>
