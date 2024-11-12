@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
 import { toast } from "sonner";
 import { ChipIssuer } from "@types";
-import { AppButton } from "@/components/ui/Button";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import LannaCommunityPage from "@/features/community/LannaCommunityPage";
 import DevconCommunityPage from "@/features/community/DevconCommunityPage";
