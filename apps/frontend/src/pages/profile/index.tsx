@@ -18,6 +18,7 @@ import { logoutUser } from "@/lib/auth";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import ImportGithubButton from "@/features/oauth/ImportGithubButton";
 import ImportDevconButton from "@/features/oauth/ImportDevconButton";
+import ImportTwitterButton from "@/features/oauth/ImportTwitterButton";
 import ToggleSwitch from "@/components/ui/Switch";
 import useSettings from "@/hooks/useSettings";
 import { storeAddChipRequest } from "@/lib/chip/addChip";
@@ -83,6 +84,7 @@ const ProfilePage: React.FC = () => {
     );
   }
 
+  const hasTwitterToAdd = !user.oauth // add twitter to add
   const hasGithubToAdd =
     !user.oauth || !Object.keys(user.oauth).includes(DataImportSource.GITHUB);
   const hasDevconToAdd = !Object.keys(user.userData).includes("devcon");
@@ -197,6 +199,15 @@ const ProfilePage: React.FC = () => {
                           }
                         >
                           <ImportGithubButton />
+                        </div>
+                      )}
+                      {hasTwitterToAdd && (
+                        <div
+                          onClick={() =>
+                            logClientEvent("user-profile-twitter-clicked", {})
+                          }
+                        >
+                          <ImportTwitterButton />
                         </div>
                       )}
                       {hasDevconToAdd && <ImportDevconButton />}
