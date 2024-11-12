@@ -71,9 +71,9 @@ router.get(
   ) => {
     try {
       // Allow Micah's origin
-      res.header('Access-Control-Allow-Origin', 'https://micahscopes.github.io/');
+      res.header('Access-Control-Allow-Origin', 'https://micahscopes.github.io');
       res.header('Access-Control-Allow-Methods', 'GET');
-      res.header('Access-Control-Allow-Headers', 'Content-Type');
+      res.header("Access-Control-Allow-Headers", "*");
 
       const validatedData = UpsertSocialGraphEdgeRequestQuerySchema.parse(req.query);
       const { fetchUpdatedAtAfter } = validatedData;
