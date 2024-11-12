@@ -10,6 +10,7 @@ import { StravaDataSchema } from "./stravaData";
 import { GithubDataSchema } from "./githubData";
 import { LannaHalloweenDataSchema } from "./lannaHalloweenData";
 import { DevconSchema } from "./devconData";
+import { ConnectionPSISizeSchema } from "@/lib/storage/types/user/userData/psiSizeData";
 
 export const UserDataSchema = z.object({
   username: z.string(),
@@ -30,7 +31,8 @@ export const UserDataSchema = z.object({
   github: nullToUndefined(GithubDataSchema),
   lannaHalloween: nullToUndefined(LannaHalloweenDataSchema),
   devcon: nullToUndefined(DevconSchema),
-  psiSize: nullToUndefined(z.number().optional()),
+  // flowerSize?
+  connectionPSISize: nullToUndefined(ConnectionPSISizeSchema),
 });
 
 export type UserData = z.infer<typeof UserDataSchema>;

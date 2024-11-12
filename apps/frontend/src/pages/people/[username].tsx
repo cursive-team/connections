@@ -34,6 +34,7 @@ import { useSocket, socketEmit } from "@/lib/socket";
 import { IntersectionAccordion } from "@/components/ui/IntersectionAccordion";
 import { UserData } from "@/lib/storage/types";
 import { updateUserData } from "@/lib/storage/localStorage/user/userData";
+import { flowerSize } from "@/lib/garden";
 
 interface CommentModalProps {
   username: string;
@@ -504,7 +505,11 @@ const UserProfilePage: React.FC = () => {
         const intersectionSize: number = JSON.stringify(newVerifiedIntersection).length;
 
         const newUserData: UserData = user.userData;
-        newUserData.psiSize = intersectionSize;
+        if (!newUserData.connectionPSISize) {
+          newUserData.connectionPSISize = {};
+        }
+
+        newUserData.connectionPSISize[connection.user.username] = intersectionSize;
 
         // Update the size on the user object
         if (user && session) {
@@ -560,7 +565,12 @@ const UserProfilePage: React.FC = () => {
     return;
   }
 
-  const flowerStage = "sprout"; //small / large / medium / sprout
+  let size = "sprout";
+  if (user?.userData?.connectionPSISize && user?.userData?.connectionPSISize[connection.user.username]) {
+    size = flowerSize(user?.userData?.connectionPSISize[connection.user.username]);
+  }
+
+  const flowerStage = size;
   const flowerIndex = "2";
   const flowerImage = `/flowers/flower-${flowerIndex}-${flowerStage}.svg`;
 
