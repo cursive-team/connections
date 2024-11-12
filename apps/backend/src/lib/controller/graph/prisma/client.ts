@@ -98,7 +98,7 @@ export class PrismaGraphClient implements iGraphClient {
     return edge.id;
   };
 
-  async GetGraphEdges(fetchUpdatedAtAfter: Date | null): Promise<GraphEdgeResponse | ErrorResponse> {
+  async GetGraphEdges(fetchUpdatedAtAfter: Date | undefined): Promise<GraphEdgeResponse | ErrorResponse> {
     // TODO: collapse directions into one if possible, it may be non-trivial
     const fallbackTime: Date = new Date(0);
     try {

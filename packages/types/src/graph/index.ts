@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const UpsertSocialGraphEdgeRequestQuerySchema = z.object({
-  fetchUpdatedAtAfter: z.coerce.date(),
+  fetchUpdatedAtAfter: z.coerce.date().optional(),
 })
 
 export type UpsertSocialGraphEdgeRequestQuery = z.infer<typeof UpsertSocialGraphEdgeRequestQuerySchema>;
@@ -9,8 +9,8 @@ export type UpsertSocialGraphEdgeRequestQuery = z.infer<typeof UpsertSocialGraph
 export const UpsertSocialGraphEdgeRequestSchema = z.object({
   id: z.string().nullable(), // If null, make a new one
   authToken: z.string(),
-  tapSenderHash: z.string().nullable(),
-  tapReceiverHash: z.string().nullable(),
+  tapSenderId: z.string().nullable(),
+  tapReceiverId: z.string().nullable(),
 });
 
 export type UpsertSocialGraphEdgeRequest = z.infer<typeof UpsertSocialGraphEdgeRequestSchema>;
@@ -22,8 +22,8 @@ export const UpsertSocialGraphEdgeResponseSchema = z.object({
 export type UpsertSocialGraphEdgeResponse = z.infer<typeof UpsertSocialGraphEdgeResponseSchema>;
 
 export const GraphEdgeSchema = z.object({
-  tapSenderHash: z.string().nullable(),
-  tapReceiverHash: z.string().nullable(),
+  tapSenderId: z.string().nullable(),
+  tapReceiverId: z.string().nullable(),
   updatedAt: z.coerce.date(),
 });
 

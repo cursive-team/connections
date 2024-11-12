@@ -44,7 +44,6 @@ import { NitroEnclaveClient } from "@/lib/controller/enclave/nitro/client";
 import { iEnclaveClient } from "@/lib/controller/enclave/interfaces";
 import { iGraphClient } from "@/lib/controller/graph/interfaces";
 import { PrismaGraphClient } from "@/lib/controller/graph/prisma/client";
-import { EdgeData } from "@/lib/controller/graph/types";
 
 export class Controller {
   postgresClient: iPostgresClient; // Use interface so that it can be mocked out
@@ -320,7 +319,7 @@ export class Controller {
   }
 
   GetGraphEdges(
-    fetchUpdatedAtAfter: Date | null
+    fetchUpdatedAtAfter: Date | undefined
   ): Promise<GraphEdgeResponse | ErrorResponse> {
     return this.graphClient.GetGraphEdges(fetchUpdatedAtAfter);
   }

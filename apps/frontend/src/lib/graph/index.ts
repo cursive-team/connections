@@ -11,11 +11,11 @@ import { BASE_API_URL } from "@/config";
 export async function upsertSocialGraphEdge(
   authToken: string,
   id: string | null,
-  tapSenderHash: string | null,
-  tapReceiverHash: string | null,
+  tapSenderId: string | null,
+  tapReceiverId: string | null,
 ): Promise<UpsertSocialGraphEdgeResponse> {
   try {
-    const request: UpsertSocialGraphEdgeRequest = { authToken, id, tapSenderHash, tapReceiverHash };
+    const request: UpsertSocialGraphEdgeRequest = { authToken, id, tapSenderId, tapReceiverId };
     const response = await fetch(`${BASE_API_URL}/graph/edge`, {
       method: "POST",
       headers: {
