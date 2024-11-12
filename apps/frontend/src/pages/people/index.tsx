@@ -9,6 +9,9 @@ import { Banner } from "@/components/cards/Banner";
 import useSettings from "@/hooks/useSettings";
 import { getUnregisteredUser } from "@/lib/storage/localStorage/user";
 import { useRouter } from "next/router";
+import { NavTab } from "@/components/ui/NavTab";
+import { cn } from "@/lib/frontend/util";
+import Image from "next/image";
 
 function sortConnections(connections: Record<string, Connection>) {
   return Object.entries(connections)
@@ -20,10 +23,15 @@ function sortConnections(connections: Record<string, Connection>) {
     .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
 }
 
+enum ActiveTab {
+  GARDEN,
+  LIST,
+}
 const PeoplePage: React.FC = () => {
   const router = useRouter();
 
   const { darkTheme } = useSettings();
+  const [activeTab, setActiveTab] = useState(ActiveTab.GARDEN);
   const [connections, setConnections] = useState<Record<string, Connection>>(
     {}
   );
@@ -33,7 +41,7 @@ const PeoplePage: React.FC = () => {
       const user = await storage.getUser();
       const unregisteredUser = await getUnregisteredUser();
       if (!user && !unregisteredUser) {
-        router.push("/")
+        router.push("/");
         return;
       }
 
@@ -47,21 +55,117 @@ const PeoplePage: React.FC = () => {
     };
 
     fetchConnections();
-  }, []);
+  }, [router]);
+
+  const ViewMapping: Record<ActiveTab, React.ReactNode> = {
+    [ActiveTab.LIST]: (
+      <ul className="flex flex-col">
+        {Object.values(connections).map((connection, index) => (
+          <li
+            key={connection.user.username}
+            className="p-4"
+            style={{
+              borderTop:
+                index === 0 && darkTheme
+                  ? "0.5px solid rgba(255, 255, 255, 0.20)"
+                  : "0.5px solid rgba(0, 0, 0, 0.20)",
+              // for some reason tailwind not applying
+              borderBottom: darkTheme
+                ? "0.5px solid rgba(255, 255, 255, 0.20)"
+                : "0.5px solid rgba(0, 0, 0, 0.20)",
+            }}
+          >
+            <Link
+              className="grid grid-cols-[1fr_20px] items-center gap-4"
+              href={`/people/${connection.user.username}`}
+            >
+              <div className="flex items-center gap-4">
+                <ProfileImage user={connection.user} />
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-medium text-label-primary">
+                    {connection.user.displayName}
+                  </span>
+                  <span className="text-xs text-label-secondary font-medium">
+                    @{connection.user.username}
+                  </span>
+                </div>
+              </div>
+              <ArrowRight className="ml-auto" />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    ),
+    [ActiveTab.GARDEN]: (
+      <ul className="grid grid-cols-2 gap-[1px]">
+        {Object.values(connections).map((connection) => {
+          const flowerStage = "large"; //small / large / medium / sprout
+          const flowerIndex = "2";
+
+          const flowerImage = `/flowers/flower-${flowerIndex}-${flowerStage}.svg`;
+
+          return (
+            <li key={connection.user.username} className=" bg-pink">
+              <Link
+                className="grid grid-cols-[1fr_65px] h-[124px] items-center gap-0.5 pt-2 px-4"
+                href={`/people/${connection.user.username}`}
+              >
+                <div className="flex w-full h-full">
+                  <div className="flex flex-col gap-1 pb-2 h-full">
+                    <div className="flex items-center gap-2"></div>
+                    <span
+                      className={cn(
+                        "text-base leading-[22px] font-bold mt-auto",
+                        darkTheme ? "text-black" : "text-white"
+                      )}
+                    >
+                      {connection.user.displayName}
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-auto relative w-full h-full">
+                  <Image
+                    fill
+                    className=" object-cover bg-cover w-full"
+                    alt={`${flowerIndex} ${flowerStage}`}
+                    src={flowerImage}
+                  />
+                </div>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    ),
+  };
 
   return (
     <AppLayout
       seoTitle="People"
       header={
-        <>
-          <span className="text-label-primary font-medium">People</span>
-          <div
-            className="absolute left-0 right-0 bottom-0 h-[2px]"
-            style={{
-              background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
-            }}
-          ></div>
-        </>
+        <div className="flex flex-col">
+          <span className="text-label-primary text-xl leading-none font-bold tracking-[-0.1px] py-4">
+            Connections
+          </span>
+          <div className="py-3 flex gap-6">
+            <NavTab
+              active={activeTab === ActiveTab.GARDEN}
+              onClick={() => {
+                setActiveTab(ActiveTab.GARDEN);
+              }}
+            >
+              Garden
+            </NavTab>
+            <NavTab
+              active={activeTab === ActiveTab.LIST}
+              onClick={() => {
+                setActiveTab(ActiveTab.LIST);
+              }}
+            >
+              List
+            </NavTab>
+          </div>
+        </div>
       }
       className="mx-auto"
       withContainer={false}
@@ -92,42 +196,7 @@ const PeoplePage: React.FC = () => {
           {`No connections yet.`}
         </div>
       ) : (
-        <ul className="flex flex-col">
-          {Object.values(connections).map((connection, index) => (
-            <li
-              key={connection.user.username}
-              className="p-4"
-              style={{
-                borderTop:
-                  index === 0 && darkTheme
-                    ? "0.5px solid rgba(255, 255, 255, 0.20)"
-                    : "0.5px solid rgba(0, 0, 0, 0.20)",
-                // for some reason tailwind not applying
-                borderBottom: darkTheme
-                  ? "0.5px solid rgba(255, 255, 255, 0.20)"
-                  : "0.5px solid rgba(0, 0, 0, 0.20)",
-              }}
-            >
-              <Link
-                className="grid grid-cols-[1fr_20px] items-center gap-4"
-                href={`/people/${connection.user.username}`}
-              >
-                <div className="flex items-center gap-4">
-                  <ProfileImage user={connection.user} />
-                  <div className="flex flex-col gap-1">
-                    <span className="text-sm font-medium text-label-primary">
-                      {connection.user.displayName}
-                    </span>
-                    <span className="text-xs text-label-secondary font-medium">
-                      @{connection.user.username}
-                    </span>
-                  </div>
-                </div>
-                <ArrowRight className="ml-auto" />
-              </Link>
-            </li>
-          ))}
-        </ul>
+        ViewMapping?.[activeTab]
       )}
     </AppLayout>
   );

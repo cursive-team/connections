@@ -45,6 +45,8 @@ const config: Config = {
         quaternary: "var(--color-quaternary)",
         cinnamon: "var(--color-cinnamon)",
 
+        pink: "#ff9df8",
+
         label: {
           primary: "var(--color-label-primary)",
           secondary: "var(--color-label-secondary)",
