@@ -7,6 +7,7 @@ export const DevconEventSchema = z.object({
   expertise: z.string(),
   audience: z.string(),
   tags: z.string(),
+  sourceId: z.string().optional(),
   eventId: z.string().nullable(),
   slot_start: z.coerce.date(),
   slot_end: z.coerce.date(),
@@ -18,6 +19,8 @@ export const DevconEventSchema = z.object({
    "slot_room":{"id":"main-stage","name":"Main Stage","description":"Masks"
    */
 });
+
+export type DevconEvent = z.infer<typeof DevconEventSchema>;
 
 export const DevconScheduleSchema = z.array(DevconEventSchema);
 

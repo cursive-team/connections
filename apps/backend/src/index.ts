@@ -170,7 +170,14 @@ wsServer.on('connection', (socket: Socket) => {
           if (app.locals.clientsSockets[recipient]) {
             const socketId = app.locals.clientsSockets[recipient];
             socket.to(socketId).emit(SocketRequestType.TAP_BACK);
+          } else {
+            // If client is not online, use telegram instead
+            const user: User | null = await controller.GetUserBySigPubKey(recipient);
+            if (user) {
+              await controller.SendNotification(user.id, "You have a new tap back! Check out who in your activities!")
+            }
           }
+
           return;
         case SocketRequestType.PSI:
           if (!recipient) {

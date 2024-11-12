@@ -30,6 +30,7 @@ export const UserDataSchema = z.object({
   github: nullToUndefined(GithubDataSchema),
   lannaHalloween: nullToUndefined(LannaHalloweenDataSchema),
   devcon: nullToUndefined(DevconSchema),
+  psiSize: nullToUndefined(z.number().optional()),
 });
 
 export type UserData = z.infer<typeof UserDataSchema>;

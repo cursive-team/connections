@@ -24,9 +24,11 @@ import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { sendMessages } from "@/lib/message";
 import useSettings from "@/hooks/useSettings";
 import { cn } from "@/lib/frontend/util";
-import { Card } from "@/components/cards/Card";
 import { getConnectionSigPubKey } from "@/lib/user";
 import { useSocket, socketEmit } from "@/lib/socket";
+import { IntersectionAccordion } from "@/components/ui/IntersectionAccordion";
+import { UserData } from "@/lib/storage/types";
+import { updateUserData } from "@/lib/storage/localStorage/user/userData";
 
 interface CommentModalProps {
   username: string;
@@ -192,7 +194,6 @@ const UserProfilePage: React.FC = () => {
   const router = useRouter();
   const { username } = router.query;
   const [user, setUser] = useState<User | null>(null);
-  const { darkTheme } = useSettings();
   const [session, setSession] = useState<Session | null>(null);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [tapInfo, setTapInfo] = useState<{
@@ -205,6 +206,9 @@ const UserProfilePage: React.FC = () => {
   const [verifiedIntersection, setVerifiedIntersection] = useState<{
     tensions: string[];
     contacts: string[];
+    devconEvents: string[];
+    programmingLangs: string[];
+    starredRepos: string[]
   } | null>(null);
   const [isUnregistered, setIsUnregistered] = useState(false);
   const { socket } = useSocket();
@@ -372,6 +376,38 @@ const UserProfilePage: React.FC = () => {
         contactData
       );
 
+      // Devcon events
+      let devconEventTitles: string[] = [];
+      let devconEvents: string[] = [];
+      if (user.userData?.devcon?.schedule) {
+        devconEventTitles = user.userData.devcon.schedule.map(event => event.title);
+        devconEvents = await hashCommit(
+          user.encryptionPrivateKey,
+          connection.user.encryptionPublicKey,
+          devconEventTitles
+        );
+      }
+
+      // HERE: any ability to order on frequency?
+      let programmingLangs: string[] = [];
+      if (user.userData?.github?.programmingLanguages?.value) {
+        const languages = Object.keys(user.userData?.github?.programmingLanguages?.value);
+        programmingLangs = await hashCommit(
+          user.encryptionPrivateKey,
+          connection.user.encryptionPublicKey,
+          languages
+        );
+      }
+
+      let starredRepos: string[] = [];
+      if (user.userData?.github?.starredRepos?.value) {
+        starredRepos = await hashCommit(
+          user.encryptionPrivateKey,
+          connection.user.encryptionPublicKey,
+          user.userData?.github?.starredRepos?.value
+        );
+      }
+
       const [secretHash] = await hashCommit(
         user.encryptionPrivateKey,
         connection.user.encryptionPublicKey,
@@ -388,7 +424,13 @@ const UserProfilePage: React.FC = () => {
           body: JSON.stringify({
             secretHash,
             index: user.userData.username < connection.user.username ? 0 : 1,
-            intersectionState: { tensions, contacts },
+            intersectionState: {
+              tensions,
+              contacts,
+              devconEvents,
+              programmingLangs,
+              starredRepos,
+            },
           }),
         }
       );
@@ -425,10 +467,37 @@ const UserProfilePage: React.FC = () => {
           }
         }
 
-        setVerifiedIntersection({
+        const translatedEvents = [];
+        for (const hashEvent of data.verifiedIntersectionState.devconEvents) {
+          const index = devconEvents.findIndex(
+            (event) => event === hashEvent
+          );
+          if (index !== -1) {
+            translatedEvents.push(devconEventTitles[index]);
+          }
+        }
+
+        const newVerifiedIntersection = {
           contacts: translatedContacts,
           tensions: data.verifiedIntersectionState.tensions,
-        });
+          devconEvents: translatedEvents,
+          programmingLangs: [],
+          starredRepos: [],
+        }
+
+        setVerifiedIntersection(newVerifiedIntersection);
+
+        // set the size of intersection here
+        const intersectionSize: number = JSON.stringify(newVerifiedIntersection).length;
+
+        const newUserData: UserData = user.userData;
+        newUserData.psiSize = intersectionSize;
+
+        // Update the size on the user object
+        if (user && session) {
+          await updateUserData(newUserData);
+        }
+
         logClientEvent("user-finished-psi", {});
         if (!waitingForOtherUser) {
           toast.info(
@@ -624,18 +693,7 @@ const UserProfilePage: React.FC = () => {
 
             {verifiedIntersection && (
               <>
-                <Card.Base
-                  variant="gray"
-                  className={cn(
-                    "px-2 pt-2 pb-4 rounded-lg w-full  flex-col justify-start items-start gap-2 inline-flex",
-                    darkTheme
-                      ? "border !border-white"
-                      : "border border-black/80"
-                  )}
-                >
-                  <div className="text-sm font-semibold text-label-primary font-sans">
-                    📇 Common contacts
-                  </div>
+                <IntersectionAccordion label="Common contacts" icon="👽">
                   {verifiedIntersection.contacts.length === 0 ? (
                     <div className="text-sm text-label-primary font-sans font-normal">
                       No common contacts.
@@ -644,35 +702,24 @@ const UserProfilePage: React.FC = () => {
                     <div className="text-sm text-link-primary font-sans font-normal">
                       {verifiedIntersection.contacts.map((contact, index) => (
                         <>
-                          <span className="text-label-primary">
-                            {index !== 0 && " | "}
-                          </span>
+                        <span className="text-label-primary">
+                          {index !== 0 && " | "}
+                        </span>
                           <Link href={`/people/${contact}`}>{contact}</Link>
                         </>
                       ))}
                     </div>
                   )}
-                </Card.Base>
-                <Card.Base
-                  variant="gray"
-                  className={cn(
-                    "px-2 pt-2 pb-4 rounded-lg w-full  flex-col justify-start items-start gap-2 inline-flex",
-                    darkTheme
-                      ? "border !border-white"
-                      : "border border-black/80"
-                  )}
-                >
-                  <div className="text-sm font-semibold text-label-primary font-sans">
-                    🪢 Your Tension disagreements
-                  </div>
+                </IntersectionAccordion>
 
+                <IntersectionAccordion label="Your Tension disagreements" icon="🪢">
                   {verifiedIntersection.tensions.length === 0 ? (
                     <div className="text-sm text-label-primary font-sans font-normal">
                       Play the tensions game and refresh to see results!
                     </div>
                   ) : verifiedIntersection.tensions.every(
-                      (tension) => tension === "0"
-                    ) ? (
+                    (tension) => tension === "0"
+                  ) ? (
                     <div className="text-sm text-label-primary font-sans font-normal">
                       No tension disagreements!
                     </div>
@@ -700,7 +747,27 @@ const UserProfilePage: React.FC = () => {
                       )}
                     </>
                   )}
-                </Card.Base>
+                </IntersectionAccordion>
+
+                <IntersectionAccordion label="Shared Devcon events" icon="📅">
+                  {verifiedIntersection.devconEvents.length === 0 ? (
+                    <div className="text-sm text-label-primary font-sans font-normal">
+                      No common events.
+                    </div>
+                  ) : (
+                    <ul>
+                    <div className="text-sm text-link-primary font-sans font-normal">
+                      {verifiedIntersection.devconEvents.map((event, index) => (
+                        <li key={index}>
+                          <Link href={`https://app.devcon.org/schedule`}>
+                            - {event}
+                          </Link>
+                        </li>
+                      ))}
+                    </div>
+                    </ul>
+                  )}
+                </IntersectionAccordion>
               </>
             )}
 
