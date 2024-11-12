@@ -32,8 +32,6 @@ import { cn } from "@/lib/frontend/util";
 import { Card } from "@/components/cards/Card";
 import { getConnectionSigPubKey } from "@/lib/user";
 import { useSocket, socketEmit } from "@/lib/socket";
-import { IntersectionAccordion } from "@/components/ui/IntersectionAccordion";
-import { CringeSlider } from "@/components/ui/CringeSlider";
 
 interface CommentModalProps {
   username: string;
@@ -559,34 +557,6 @@ const UserProfilePage: React.FC = () => {
           </div>
         }
       >
-        {/* ETH Hot takes mock */}
-        <div className="px-4 pt-2">
-          {/* <IntersectionAccordion label="Ethereum hot takes" icon="😬">
-            <div className="flex flex-col gap-2">
-              <CringeSlider
-                label="text"
-                value={1}
-                onChange={(value) => {
-                  // value 0= based -> 2 = cringe
-                }}
-              />
-              <CringeSlider
-                label="text"
-                value={2}
-                onChange={(value) => {
-                  // value 0= based -> 2 = cringe
-                }}
-              />
-              <CringeSlider
-                label="text"
-                value={0}
-                onChange={(value) => {
-                  // value 0= based -> 2 = cringe
-                }}
-              />
-            </div>
-          </IntersectionAccordion> */}
-        </div>
         <div className="!divide-y !divide-quaternary/20">
           <div className="flex flex-col gap-2 py-4 px-4">
             <span className="text-sm font-semibold text-label-primary font-sans">
