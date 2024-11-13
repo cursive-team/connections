@@ -217,6 +217,7 @@ const UserProfilePage: React.FC = () => {
     starredRepos: string[]
   } | null>(null);
   const [isUnregistered, setIsUnregistered] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { socket } = useSocket();
 
   useEffect(() => {
@@ -357,6 +358,20 @@ const UserProfilePage: React.FC = () => {
         )
       );
     }
+  };
+
+  const handleCopyLink = async (link: string) => {
+    console.log(link)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(link);
+        setCopied(true);
+      } catch (err) {
+        console.error("Failed to copy link using Clipboard API: ", err);
+      }
+    }
+
+    setTimeout(() => setCopied(false), 3000); // Reset copied state after 3 seconds
   };
 
   const updatePSIOverlap = async () => {
@@ -577,6 +592,17 @@ const UserProfilePage: React.FC = () => {
 
   const flowerStage = size;
   const flowerImage = `/flowers/flower-${flowerIndex}-${flowerStage}.svg`;
+
+  const isUserAdmin = (
+    user?.userData?.username === "stevenelleman" ||
+    user?.userData?.username === "vivek" ||
+    user?.userData?.username === "andrew"
+  );
+
+  let chipLink = ""
+  if (user) {
+    chipLink = `https://nfc.cursive.team/bracelets?chipId=${connection.chipId}`;
+  }
 
   return (
     <>
@@ -855,6 +881,22 @@ const UserProfilePage: React.FC = () => {
                 <span className="text-sm text-label-secondary font-sans font-normal">
                   {connection?.user?.bio}
                 </span>
+              </>
+            </div>
+          )}
+
+          {isUserAdmin && (
+            <div className="flex flex-col gap-2 py-4 px-4">
+              <>
+                <span className="text-sm font-semibold text-label-primary font-sans">
+                  Admin chip link
+                </span>
+                <span className="text-sm text-label-secondary font-sans font-normal">
+                  {chipLink}
+                </span>
+                <AppButton variant="outline" onClick={() => handleCopyLink(chipLink)}>
+                  {copied ? "Link copied!" : "Copy link"}
+                </AppButton>
               </>
             </div>
           )}

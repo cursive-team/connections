@@ -53,6 +53,7 @@ import {
 } from "@/lib/storage/localStorage/user/oauth";
 import { addLocationTap } from "./user/location";
 import { deleteAppImports } from "@/lib/storage/localStorage/user/imports";
+import { ChipTap } from "@/lib/storage/types/user/tap";
 
 export class LocalStorage implements ClientStorage {
   async loadInitialStorageData(
@@ -139,7 +140,7 @@ export class LocalStorage implements ClientStorage {
     return addChip(chip);
   }
 
-  async addUserTap(tapResponse: ChipTapResponse): Promise<void> {
+  async addUserTap(tapResponse: ChipTap): Promise<void> {
     return addUserTap(tapResponse);
   }
 

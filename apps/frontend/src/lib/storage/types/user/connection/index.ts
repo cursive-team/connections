@@ -12,6 +12,7 @@ export const ConnectionSchema = z.object({
   taps: z.array(TapDataSchema),
   psi: nullToUndefined(PSIDataSchema),
   sentMessages: nullToUndefined(z.array(SentMessageSchema)).default([]),
+  chipId: z.string().optional(),
 });
 
 export type Connection = z.infer<typeof ConnectionSchema>;

@@ -4,7 +4,6 @@ import {
   unregisteredUserCreateActivityBackup,
   unregisteredUserCreateConnectionBackup
 } from "@/lib/backup";
-import { ChipTapResponse } from "@types";
 import {
   TapDataSchema,
   TelegramData,
@@ -25,9 +24,10 @@ import { getUser } from "..";
 import { getSession } from "@/lib/storage/localStorage/session";
 import { createUnregisteredUser } from "@/lib/auth";
 import { storage } from "@/lib/storage";
+import { ChipTap } from "@/lib/storage/types/user/tap";
 
 export const addUserTap = async (
-  tapResponse: ChipTapResponse
+  tapResponse: ChipTap
 ): Promise<void> => {
   const user = getUser();
   const session = getSession();
@@ -168,6 +168,7 @@ export const addUserTap = async (
     taps: newTaps,
     comment: newComment,
     sentMessages: newSentMessages,
+    chipId: tapResponse.chipId,
   };
 
   if (user && session) {
