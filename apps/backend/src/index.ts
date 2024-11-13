@@ -18,9 +18,7 @@ import {
   SocketErrorPayload,
   errorToString,
 } from "@types";
-import {
-  User,
-} from "@/lib/controller/postgres/types";
+import { User } from "@/lib/controller/postgres/types";
 import { IntersectionState } from "@types";
 import { Controller } from "./lib/controller";
 const cors = require("cors");
@@ -61,7 +59,7 @@ controller
 
 const cronJobs = {
   checkProofJobs: {
-    schedule: "* * * * *",
+    schedule: "*/5 * * * *",
     task: async () => {
       try {
         console.log("Checking proof jobs");
@@ -103,7 +101,7 @@ server.listen(PORT, () => {
 // Socket Server:
 
 // Extend the interface to include User info -- with the User info attached we do not need sender info in request
-declare module 'socket.io' {
+declare module "socket.io" {
   interface Socket {
     user: User;
   }
@@ -112,7 +110,7 @@ declare module 'socket.io' {
 export const wsServer = new Server(server);
 
 // Middleware to authenticate the socket connection
-wsServer.use(async(socket, next) => {
+wsServer.use(async (socket, next) => {
   const token = socket.handshake.auth.token;
 
   if (!token) {
@@ -135,26 +133,25 @@ wsServer.use(async(socket, next) => {
   return next(new Error("Authentication error"));
 });
 
-
 const handleError = (socket: Socket, error: string): void => {
   const payload: SocketErrorPayload = {
     error,
-  }
+  };
 
-  socket.emit(SocketResponseType.ERROR, payload)
+  socket.emit(SocketResponseType.ERROR, payload);
   return;
-}
+};
 
-wsServer.on('connection', (socket: Socket) => {
-  socket.on('open', () => {
+wsServer.on("connection", (socket: Socket) => {
+  socket.on("open", () => {
     console.log("Open authenticated socket client connection.");
   });
 
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     console.log(`Disconnect socket client connection.`);
   });
 
-  socket.on('message', async (message: string) => {
+  socket.on("message", async (message: string) => {
     let sender = socket.user.signaturePublicKey;
     let recipient: string | null = null;
     try {
@@ -172,9 +169,14 @@ wsServer.on('connection', (socket: Socket) => {
             socket.to(socketId).emit(SocketRequestType.TAP_BACK);
           } else {
             // If client is not online, use telegram instead
-            const user: User | null = await controller.GetUserBySigPubKey(recipient);
+            const user: User | null = await controller.GetUserBySigPubKey(
+              recipient
+            );
             if (user) {
-              await controller.SendNotification(user.id, "You have a new tap back! Check out who in your activities!")
+              await controller.SendNotification(
+                user.id,
+                "You have a new tap back! Check out who in your activities!"
+              );
             }
           }
 
@@ -195,7 +197,7 @@ wsServer.on('connection', (socket: Socket) => {
           return;
         default:
           return;
-      };
+      }
     } catch (error) {
       const errMsg: string = `Error handling message: ${errorToString(error)}`;
       if (sender) {
