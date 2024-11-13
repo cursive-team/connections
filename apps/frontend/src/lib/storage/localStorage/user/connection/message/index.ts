@@ -102,10 +102,10 @@ function handleConnectionTapBacks(session: Session, user: User, lastMessageTimes
 }
 
 async function handleEdges(session: Session, user: User, messages: EdgeMessage[]): Promise<CreateBackupData[]> {
-  let tapReceiverHash: string | null = null;
+  let tapReceiverId: string | null = null;
   if (user && user.tapGraphEnabled) {
     // Double hash the signature private key, use as identifier, use single hash version as revocation code
-    tapReceiverHash = sha256(sha256(user.signaturePrivateKey).concat(DEVCON));
+    tapReceiverId = sha256(sha256(user.signaturePrivateKey).concat(DEVCON));
   }
 
   const newBackupEntries: CreateBackupData[] = [];
@@ -137,7 +137,7 @@ async function handleEdges(session: Session, user: User, messages: EdgeMessage[]
 
     try {
       // Upsert row, returns edge ID
-      await upsertSocialGraphEdge(session.authTokenValue, message.edge.edgeId, null, tapReceiverHash);
+      await upsertSocialGraphEdge(session.authTokenValue, message.edge.edgeId, null, tapReceiverId);
     } catch (error) {
       // Never fail on upsert, not worth it
       console.error(`Error while upserting edge: ${errorToString(error)}`);

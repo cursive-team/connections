@@ -241,12 +241,12 @@ const TapPage: React.FC = () => {
             await storage.addUserTap(response);
 
             // If tap graph feature enabled, upsert graph edge (upsert so that either user can create the row)
-            let tapSenderHash: string | null = null;
+            let tapSenderId: string | null = null;
 
             const sentHash: boolean = user?.tapGraphEnabled === true;
             if (sentHash && user) {
               // Double hash the signature private key, use as identifier, use single hash version as revocation code
-              tapSenderHash = sha256(
+              tapSenderId = sha256(
                 sha256(user.signaturePrivateKey).concat(DEVCON)
               );
             }
@@ -259,7 +259,7 @@ const TapPage: React.FC = () => {
                   await upsertSocialGraphEdge(
                     session.authTokenValue,
                     null,
-                    tapSenderHash,
+                    tapSenderId,
                     null
                   );
 

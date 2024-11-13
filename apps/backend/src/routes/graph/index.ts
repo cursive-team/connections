@@ -28,7 +28,7 @@ router.post(
   ) => {
     try {
       const validatedData = UpsertSocialGraphEdgeRequestSchema.parse(req.body);
-      const { id, authToken, tapSenderHash, tapReceiverHash } = validatedData;
+      const { id, authToken, tapSenderId, tapReceiverId } = validatedData;
 
       if (!authToken) {
         return res.status(400).json({ error: "Missing auth token" });
@@ -41,7 +41,7 @@ router.post(
         return res.status(401).json({ error: "Invalid auth token" });
       }
 
-      const resp: string | ErrorResponse = await controller.UpsertGraphEdge(id, tapSenderHash, tapReceiverHash);
+      const resp: string | ErrorResponse = await controller.UpsertGraphEdge(id, tapSenderId, tapReceiverId);
       if (typeof resp === "object") {
         throw new Error(resp.error);
       }
