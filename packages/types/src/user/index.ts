@@ -15,7 +15,8 @@ export enum BackupEntryType {
   LOCATION = "LOCATION",
   DELETE_OAUTH = "DELETE_OAUTH",
   TOGGLE_SOCIAL_GRAPH = "TOGGLE_SOCIAL_GRAPH",
-  EDGE = "EDGE"
+  EDGE = "EDGE",
+  EDGE_BACKFILL_FOR_ENABLED_USERS = "EDGE_BACKFILL_FOR_ENABLED_USERS",
 }
 
 export const BackupEntryTypeSchema = z.nativeEnum(BackupEntryType);

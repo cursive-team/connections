@@ -21,3 +21,7 @@ export const EdgeBackupSchema = z.object({
 });
 
 export type EdgeBackup = z.infer<typeof EdgeBackupSchema>;
+
+export const EdgeIdsSchema = z.array(z.string());
+
+export type EdgeIds = z.infer<typeof EdgeIdsSchema>;

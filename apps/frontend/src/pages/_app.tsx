@@ -20,6 +20,7 @@ import { SocketProvider } from "@/lib/socket";
 import { refreshMessages } from "@/lib/message";
 import { getUser, getUnregisteredUser } from "@/lib/storage/localStorage/user";
 import { getSession } from "@/lib/storage/localStorage/session";
+import { backfillEdgesForUserWithFeatureAlreadyEnabled } from "@/lib/storage/localStorage/graph";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -46,6 +47,17 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   if (pathname?.includes("/fortune")) {
     isFortunePage = pathname.includes("/fortune");
   }
+
+  useEffect(() => {
+    const backfillEdgesOnceForEnabledUser = async () => {
+      const user = getUser();
+      const session = getSession();
+      if (user && session && user.tapGraphEnabled && !user.edgesBackfilledForUsersWithEnabledFeature) {
+        await backfillEdgesForUserWithFeatureAlreadyEnabled(user, session);
+      }
+    }
+    backfillEdgesOnceForEnabledUser();
+  });
 
   useEffect(() => {
     const gateUnregisteredUser = async () => {
