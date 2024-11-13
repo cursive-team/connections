@@ -49,6 +49,9 @@ export class PrismaPostgresClient implements iPostgresClient {
   GetUserByAuthToken(authToken: string): Promise<User | null>;
 
   // @ts-expect-error (ts2391)
+  GetUserBySigPubKey(sigPubKey: string): Promise<User | null>;
+
+  // @ts-expect-error (ts2391)
   CreateUser(createUser: UserCreateRequest): Promise<User>;
 
   // @ts-expect-error (ts2391)

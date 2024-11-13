@@ -5,7 +5,7 @@ import { cn } from "@/lib/frontend/util";
 import { classed } from "@tw-classed/react";
 import useSettings from "@/hooks/useSettings";
 
-export const MenuBarItem = ({ href, isActive, icon }: RouterItem) => {
+export const MenuBarItem = ({ href, isActive, icon, iconSize }: RouterItem) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const Icon: any = icon;
   const { darkTheme } = useSettings();
@@ -21,7 +21,7 @@ export const MenuBarItem = ({ href, isActive, icon }: RouterItem) => {
         )}
       >
         <Icon
-          size={24}
+          size={iconSize}
           className={cn(
             "duration-200 mx-auto opacity-100",
             iconColor,
@@ -38,7 +38,7 @@ export const MenuBar = classed.div(
   {
     variants: {
       darkTheme: {
-        true: "bg-[#FF9DF8]",
+        true: "bg-white",
         false: "bg-black",
       },
     },

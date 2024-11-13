@@ -4,7 +4,12 @@ import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
 import { Connection, Session, User } from "@/lib/storage/types";
 import { toast } from "sonner";
-import { TapParams, ChipTapResponse, errorToString, SocketRequestType } from "@types";
+import {
+  TapParams,
+  ChipTapResponse,
+  errorToString,
+  SocketRequestType,
+} from "@types";
 import { AppButton } from "@/components/ui/Button";
 import Image from "next/image";
 import AppLayout from "@/layouts/AppLayout";
@@ -24,9 +29,12 @@ import { ERROR_SUPPORT_CONTACT } from "@/constants";
 import { sendMessages } from "@/lib/message";
 import useSettings from "@/hooks/useSettings";
 import { cn } from "@/lib/frontend/util";
-import { Card } from "@/components/cards/Card";
 import { getConnectionSigPubKey } from "@/lib/user";
 import { useSocket, socketEmit } from "@/lib/socket";
+import { IntersectionAccordion } from "@/components/ui/IntersectionAccordion";
+import { UserData } from "@/lib/storage/types";
+import { updateUserData } from "@/lib/storage/localStorage/user/userData";
+import { flowerSize, flowerType } from "@/lib/garden";
 
 interface CommentModalProps {
   username: string;
@@ -192,7 +200,6 @@ const UserProfilePage: React.FC = () => {
   const router = useRouter();
   const { username } = router.query;
   const [user, setUser] = useState<User | null>(null);
-  const { darkTheme } = useSettings();
   const [session, setSession] = useState<Session | null>(null);
   const [connection, setConnection] = useState<Connection | null>(null);
   const [tapInfo, setTapInfo] = useState<{
@@ -205,6 +212,9 @@ const UserProfilePage: React.FC = () => {
   const [verifiedIntersection, setVerifiedIntersection] = useState<{
     tensions: string[];
     contacts: string[];
+    devconEvents: string[];
+    programmingLangs: string[];
+    starredRepos: string[]
   } | null>(null);
   const [isUnregistered, setIsUnregistered] = useState(false);
   const { socket } = useSocket();
@@ -215,7 +225,10 @@ const UserProfilePage: React.FC = () => {
         const user = await storage.getUser();
         const session = await storage.getSession();
         const unregisteredUser = await storage.getUnregisteredUser();
-        if ((!user || !session || !user.connections[username]) && !unregisteredUser) {
+        if (
+          (!user || !session || !user.connections[username]) &&
+          !unregisteredUser
+        ) {
           console.error("User not found");
           toast.error("User not found");
           router.push("/people");
@@ -290,7 +303,10 @@ const UserProfilePage: React.FC = () => {
       // Only need to emit, do not need response from server
       if (socket && user) {
         // Get recipient id (pub key)
-        const recipient: string | null = getConnectionSigPubKey(user, connection.user.username);
+        const recipient: string | null = getConnectionSigPubKey(
+          user,
+          connection.user.username
+        );
 
         if (recipient) {
           socketEmit({
@@ -372,6 +388,38 @@ const UserProfilePage: React.FC = () => {
         contactData
       );
 
+      // Devcon events
+      let devconEventTitles: string[] = [];
+      let devconEvents: string[] = [];
+      if (user.userData?.devcon?.schedule) {
+        devconEventTitles = user.userData.devcon.schedule.map(event => event.title);
+        devconEvents = await hashCommit(
+          user.encryptionPrivateKey,
+          connection.user.encryptionPublicKey,
+          devconEventTitles
+        );
+      }
+
+      // HERE: any ability to order on frequency?
+      let programmingLangs: string[] = [];
+      if (user.userData?.github?.programmingLanguages?.value) {
+        const languages = Object.keys(user.userData?.github?.programmingLanguages?.value);
+        programmingLangs = await hashCommit(
+          user.encryptionPrivateKey,
+          connection.user.encryptionPublicKey,
+          languages
+        );
+      }
+
+      let starredRepos: string[] = [];
+      if (user.userData?.github?.starredRepos?.value) {
+        starredRepos = await hashCommit(
+          user.encryptionPrivateKey,
+          connection.user.encryptionPublicKey,
+          user.userData?.github?.starredRepos?.value
+        );
+      }
+
       const [secretHash] = await hashCommit(
         user.encryptionPrivateKey,
         connection.user.encryptionPublicKey,
@@ -388,11 +436,16 @@ const UserProfilePage: React.FC = () => {
           body: JSON.stringify({
             secretHash,
             index: user.userData.username < connection.user.username ? 0 : 1,
-            intersectionState: { tensions, contacts },
+            intersectionState: {
+              tensions,
+              contacts,
+              devconEvents,
+              programmingLangs,
+              starredRepos,
+            },
           }),
         }
       );
-
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -401,7 +454,10 @@ const UserProfilePage: React.FC = () => {
 
       if (socket && connection) {
         // Get recipient id (pub key)
-        const recipient: string | null = getConnectionSigPubKey(user, connection.user.username);
+        const recipient: string | null = getConnectionSigPubKey(
+          user,
+          connection.user.username
+        );
 
         if (recipient) {
           socketEmit({
@@ -425,10 +481,41 @@ const UserProfilePage: React.FC = () => {
           }
         }
 
-        setVerifiedIntersection({
+        const translatedEvents = [];
+        for (const hashEvent of data.verifiedIntersectionState.devconEvents) {
+          const index = devconEvents.findIndex(
+            (event) => event === hashEvent
+          );
+          if (index !== -1) {
+            translatedEvents.push(devconEventTitles[index]);
+          }
+        }
+
+        const newVerifiedIntersection = {
           contacts: translatedContacts,
           tensions: data.verifiedIntersectionState.tensions,
-        });
+          devconEvents: translatedEvents,
+          programmingLangs: [],
+          starredRepos: [],
+        }
+
+        setVerifiedIntersection(newVerifiedIntersection);
+
+        // set the size of intersection here
+        const intersectionSize: number = JSON.stringify(newVerifiedIntersection).length;
+
+        const newUserData: UserData = user.userData;
+        if (!newUserData.connectionPSISize) {
+          newUserData.connectionPSISize = {};
+        }
+
+        newUserData.connectionPSISize[connection.user.username] = intersectionSize;
+
+        // Update the size on the user object
+        if (user && session) {
+          await updateUserData(newUserData);
+        }
+
         logClientEvent("user-finished-psi", {});
         if (!waitingForOtherUser) {
           toast.info(
@@ -460,8 +547,11 @@ const UserProfilePage: React.FC = () => {
 
   // Loading Cases:
   // 1: Is not unregistered user and no user info available yet
-  // 2: Is unregistered user and connection info not available yet 
-  if (((!connection || !user || !session) && !isUnregistered) || (!connection && isUnregistered)) {
+  // 2: Is unregistered user and connection info not available yet
+  if (
+    ((!connection || !user || !session) && !isUnregistered) ||
+    (!connection && isUnregistered)
+  ) {
     return (
       <div className="flex min-h-screen justify-center items-center text-center">
         <CursiveLogo isLoading />
@@ -474,6 +564,19 @@ const UserProfilePage: React.FC = () => {
     router.push("/people");
     return;
   }
+
+  let size = "sprout";
+  if (user?.userData?.connectionPSISize && user?.userData?.connectionPSISize[connection.user.username]) {
+    size = flowerSize(user?.userData?.connectionPSISize[connection.user.username]);
+  }
+
+  let flowerIndex = "2";
+  if (user) {
+    flowerIndex = flowerType(user.userData.username);
+  }
+
+  const flowerStage = size;
+  const flowerImage = `/flowers/flower-${flowerIndex}-${flowerStage}.svg`;
 
   return (
     <>
@@ -519,8 +622,10 @@ const UserProfilePage: React.FC = () => {
                   onClick={() => {
                     logClientEvent("user-profile-begin-edit-comment", {});
                     if (isUnregistered) {
-                      toast.error("Unregistered user cannot add contact notes. Come to the Cursive booth and" +
-                        " register!");
+                      toast.error(
+                        "Unregistered user cannot add contact notes. Come to the Cursive booth and" +
+                          " register!"
+                      );
                     }
                     setShowCommentModal(true);
                   }}
@@ -615,27 +720,27 @@ const UserProfilePage: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-4 py-4 px-4">
-            <span className="text-sm font-semibold text-label-primary font-sans">
-              Overlap icebreaker{" "}
-              <span className="font-normal text-label-tertiary">
-                Find common contacts & opposing tensions to spark conversation
+            <div className=" grid grid-cols-[1fr_60px] gap-6">
+              <span className="flex flex-col gap-5 text-sm font-semibold text-label-primary font-sans">
+                <span>Discover intersections in your encrypted data. </span>
+                <span className="font-normal text-label-tertiary">
+                  Watch your shared flower grow the more you learn about one
+                  another!
+                </span>
               </span>
-            </span>
+              <div className="mt-auto relative w-full h-full">
+                <Image
+                  fill
+                  className=" object-cover bg-cover w-full"
+                  alt={`${flowerIndex} ${flowerStage}`}
+                  src={flowerImage}
+                />
+              </div>
+            </div>
 
             {verifiedIntersection && (
               <>
-                <Card.Base
-                  variant="gray"
-                  className={cn(
-                    "px-2 pt-2 pb-4 rounded-lg w-full  flex-col justify-start items-start gap-2 inline-flex",
-                    darkTheme
-                      ? "border !border-white"
-                      : "border border-black/80"
-                  )}
-                >
-                  <div className="text-sm font-semibold text-label-primary font-sans">
-                    📇 Common contacts
-                  </div>
+                <IntersectionAccordion label="Common contacts" icon="👽">
                   {verifiedIntersection.contacts.length === 0 ? (
                     <div className="text-sm text-label-primary font-sans font-normal">
                       No common contacts.
@@ -644,35 +749,24 @@ const UserProfilePage: React.FC = () => {
                     <div className="text-sm text-link-primary font-sans font-normal">
                       {verifiedIntersection.contacts.map((contact, index) => (
                         <>
-                          <span className="text-label-primary">
-                            {index !== 0 && " | "}
-                          </span>
+                        <span className="text-label-primary">
+                          {index !== 0 && " | "}
+                        </span>
                           <Link href={`/people/${contact}`}>{contact}</Link>
                         </>
                       ))}
                     </div>
                   )}
-                </Card.Base>
-                <Card.Base
-                  variant="gray"
-                  className={cn(
-                    "px-2 pt-2 pb-4 rounded-lg w-full  flex-col justify-start items-start gap-2 inline-flex",
-                    darkTheme
-                      ? "border !border-white"
-                      : "border border-black/80"
-                  )}
-                >
-                  <div className="text-sm font-semibold text-label-primary font-sans">
-                    🪢 Your Tension disagreements
-                  </div>
+                </IntersectionAccordion>
 
+                <IntersectionAccordion label="Your Tension disagreements" icon="🪢">
                   {verifiedIntersection.tensions.length === 0 ? (
                     <div className="text-sm text-label-primary font-sans font-normal">
                       Play the tensions game and refresh to see results!
                     </div>
                   ) : verifiedIntersection.tensions.every(
-                      (tension) => tension === "0"
-                    ) ? (
+                    (tension) => tension === "0"
+                  ) ? (
                     <div className="text-sm text-label-primary font-sans font-normal">
                       No tension disagreements!
                     </div>
@@ -690,9 +784,11 @@ const UserProfilePage: React.FC = () => {
                               leftOption={tensionPairs[index][0]}
                               rightOption={tensionPairs[index][1]}
                               value={
-                                (user) ? user.userData.tensionsRating?.tensionRating[
-                                  index
-                                ] ?? 50 : 50
+                                user
+                                  ? user.userData.tensionsRating?.tensionRating[
+                                      index
+                                    ] ?? 50
+                                  : 50
                               }
                               onChange={() => {}}
                             />
@@ -700,7 +796,27 @@ const UserProfilePage: React.FC = () => {
                       )}
                     </>
                   )}
-                </Card.Base>
+                </IntersectionAccordion>
+
+                <IntersectionAccordion label="Shared Devcon events" icon="📅">
+                  {verifiedIntersection.devconEvents.length === 0 ? (
+                    <div className="text-sm text-label-primary font-sans font-normal">
+                      No common events.
+                    </div>
+                  ) : (
+                    <ul>
+                    <div className="text-sm text-link-primary font-sans font-normal">
+                      {verifiedIntersection.devconEvents.map((event, index) => (
+                        <li key={index}>
+                          <Link href={`https://app.devcon.org/schedule`}>
+                            - {event}
+                          </Link>
+                        </li>
+                      ))}
+                    </div>
+                    </ul>
+                  )}
+                </IntersectionAccordion>
               </>
             )}
 
@@ -708,7 +824,9 @@ const UserProfilePage: React.FC = () => {
               onClick={() => {
                 logClientEvent("user-started-psi", {});
                 if (isUnregistered) {
-                  toast.error("Unregistered user cannot add run contact PSI. Come to the Cursive booth and register!");
+                  toast.error(
+                    "Unregistered user cannot add run contact PSI. Come to the Cursive booth and register!"
+                  );
                 }
                 updatePSIOverlap();
               }}
