@@ -26,7 +26,6 @@ import { decryptBackupString, encryptBackupString } from "@/lib/crypto/backup";
 import { BASE_API_URL } from "@/config";
 import { OAuthData, OAuthDataSchema } from "@/lib/storage/types";
 import { EdgeBackup, EdgeBackupSchema } from "@/lib/storage/types";
-import { upsertSocialGraphEdge } from "@/lib/graph";
 
 /**
  * Parses a user object from backup data.
