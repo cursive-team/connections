@@ -6,7 +6,7 @@ export const flowerSize = (size: number): string => {
     return "large";
   } else if (size > 500) {
     return "medium";
-  } else if (size > 100) {
+  } else if (size > 50) {
     return "small";
   } else {
     return "sprout";

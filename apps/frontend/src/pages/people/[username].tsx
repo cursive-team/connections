@@ -565,17 +565,16 @@ const UserProfilePage: React.FC = () => {
     return;
   }
 
-  let size = "sprout";
-  if (user?.userData?.connectionPSISize && user?.userData?.connectionPSISize[connection.user.username]) {
-    size = flowerSize(user?.userData?.connectionPSISize[connection.user.username]);
-  }
+  const flowerIndex = flowerType(connection.user.username);
 
-  let flowerIndex = "2";
-  if (user) {
-    flowerIndex = flowerType(user.userData.username);
+  let flowerStage = "sprout";
+  if (user?.userData?.connectionPSISize) {
+    const psiSize = user.userData.connectionPSISize;
+    const connectionUsername = connection.user.username;
+    if (psiSize[connectionUsername]) {
+      flowerStage = flowerSize(psiSize[connectionUsername]);
+    }
   }
-
-  const flowerStage = size;
   const flowerImage = `/flowers/flower-${flowerIndex}-${flowerStage}.svg`;
 
   return (

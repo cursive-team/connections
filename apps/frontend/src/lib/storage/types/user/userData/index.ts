@@ -31,7 +31,6 @@ export const UserDataSchema = z.object({
   github: nullToUndefined(GithubDataSchema),
   lannaHalloween: nullToUndefined(LannaHalloweenDataSchema),
   devcon: nullToUndefined(DevconSchema),
-  // flowerSize?
   connectionPSISize: nullToUndefined(ConnectionPSISizeSchema),
 });
 

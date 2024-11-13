@@ -14,7 +14,7 @@ import { cn } from "@/lib/frontend/util";
 import Image from "next/image";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { Icons } from "@/components/icons/Icons";
-import { flowerType } from "@/lib/garden";
+import { flowerSize, flowerType } from "@/lib/garden";
 
 function sortConnections(connections: Record<string, Connection>) {
   return Object.entries(connections)
@@ -38,6 +38,7 @@ const PeoplePage: React.FC = () => {
   const [connections, setConnections] = useState<Record<string, Connection>>(
     {}
   );
+  const [psiSize, setPSISize] =  useState<Record<string, number>>({});
 
   useEffect(() => {
     const fetchConnections = async () => {
@@ -46,6 +47,10 @@ const PeoplePage: React.FC = () => {
       if (!user && !unregisteredUser) {
         router.push("/");
         return;
+      }
+
+      if (user?.userData?.connectionPSISize) {
+        setPSISize(user?.userData?.connectionPSISize);
       }
 
       let sortedConnections = {};
@@ -102,7 +107,11 @@ const PeoplePage: React.FC = () => {
     [ActiveTab.GARDEN]: (
       <ul className="grid grid-cols-2 gap-[1px]">
         {Object.values(connections).map((connection) => {
-          const flowerStage = "large"; //small / large / medium / sprout
+          let flowerStage = "sprout";
+          if (psiSize && psiSize[connection.user.username]) {
+            flowerStage = flowerSize(psiSize[connection.user.username])
+          }
+
           const flowerIndex = flowerType(connection.user.username);
 
           const flowerImage = `/flowers/flower-${flowerIndex}-${flowerStage}.svg`;
@@ -154,7 +163,7 @@ const PeoplePage: React.FC = () => {
                         className="mt-auto"
                         href={`/people/${connection.user.username}`}
                       >
-                        {connection.user.displayName}
+                        {connection.user.username}
                       </Link>
                     </span>
                   </div>
@@ -218,8 +227,9 @@ const PeoplePage: React.FC = () => {
             italic={false}
             title={
               <span className="!font-normal text-center">
-                <b>Tap NFC chips </b> -- share socials, organize contacts, and
-                discover shared interests! Troubleshoot tapping{" "}
+                <b>Grow your garden </b> by running PSIs with your connections.
+                <br/>
+                Troubleshoot tapping{" "}
                 <a
                   href="https://cursive.team/tap-help"
                   className="underline"
@@ -228,7 +238,6 @@ const PeoplePage: React.FC = () => {
                 >
                   here
                 </a>
-                .
               </span>
             }
           />
