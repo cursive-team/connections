@@ -35,7 +35,6 @@ import { IntersectionAccordion } from "@/components/ui/IntersectionAccordion";
 import { UserData } from "@/lib/storage/types";
 import { updateUserData } from "@/lib/storage/localStorage/user/userData";
 import { flowerSize, flowerType } from "@/lib/garden";
-import { sha256 } from "js-sha256";
 
 interface CommentModalProps {
   username: string;
