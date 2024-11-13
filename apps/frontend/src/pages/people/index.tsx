@@ -14,6 +14,7 @@ import { cn } from "@/lib/frontend/util";
 import Image from "next/image";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { Icons } from "@/components/icons/Icons";
+import { flowerType } from "@/lib/garden";
 
 function sortConnections(connections: Record<string, Connection>) {
   return Object.entries(connections)
@@ -102,7 +103,7 @@ const PeoplePage: React.FC = () => {
       <ul className="grid grid-cols-2 gap-[1px]">
         {Object.values(connections).map((connection) => {
           const flowerStage = "large"; //small / large / medium / sprout
-          const flowerIndex = "2";
+          const flowerIndex = flowerType(connection.user.username);
 
           const flowerImage = `/flowers/flower-${flowerIndex}-${flowerStage}.svg`;
 

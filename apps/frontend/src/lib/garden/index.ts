@@ -1,3 +1,4 @@
+import { sha256 } from "js-sha256";
 
 
 export const flowerSize = (size: number): string => {
@@ -10,4 +11,8 @@ export const flowerSize = (size: number): string => {
   } else {
     return "sprout";
   }
+}
+
+export const flowerType = (username: string): string => {
+  return (parseInt(sha256(username).slice(0, 10), 16) % 10).toString();
 }

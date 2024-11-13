@@ -34,7 +34,8 @@ import { useSocket, socketEmit } from "@/lib/socket";
 import { IntersectionAccordion } from "@/components/ui/IntersectionAccordion";
 import { UserData } from "@/lib/storage/types";
 import { updateUserData } from "@/lib/storage/localStorage/user/userData";
-import { flowerSize } from "@/lib/garden";
+import { flowerSize, flowerType } from "@/lib/garden";
+import { sha256 } from "js-sha256";
 
 interface CommentModalProps {
   username: string;
@@ -570,8 +571,12 @@ const UserProfilePage: React.FC = () => {
     size = flowerSize(user?.userData?.connectionPSISize[connection.user.username]);
   }
 
+  let flowerIndex = "2";
+  if (user) {
+    flowerIndex = flowerType(user.userData.username);
+  }
+
   const flowerStage = size;
-  const flowerIndex = "2";
   const flowerImage = `/flowers/flower-${flowerIndex}-${flowerStage}.svg`;
 
   return (
