@@ -143,28 +143,33 @@ const PeoplePage: React.FC = () => {
                         </div>
                       )}
                     </div>
-                    <Link
-                      className="mt-auto"
-                      href={`/people/${connection.user.username}`}
+                    <span
+                      className={cn(
+                        "text-base leading-[22px] font-bold mt-auto line-clamp-2",
+                        darkTheme ? "text-black" : "text-white"
+                      )}
                     >
-                      <span
-                        className={cn(
-                          "text-base leading-[22px] font-bold mt-auto line-clamp-2",
-                          darkTheme ? "text-black" : "text-white"
-                        )}
+                      <Link
+                        className="mt-auto"
+                        href={`/people/${connection.user.username}`}
                       >
                         {connection.user.displayName}
-                      </span>
-                    </Link>
+                      </Link>
+                    </span>
                   </div>
                 </div>
                 <div className="mt-auto relative w-full h-full">
-                  <Image
-                    fill
-                    className=" object-cover bg-cover w-full"
-                    alt={`${flowerIndex} ${flowerStage}`}
-                    src={flowerImage}
-                  />
+                  <Link
+                    className="mt-auto"
+                    href={`/people/${connection.user.username}`}
+                  >
+                    <Image
+                      fill
+                      className=" object-cover bg-cover w-full"
+                      alt={`${flowerIndex} ${flowerStage}`}
+                      src={flowerImage}
+                    />
+                  </Link>
                 </div>
               </div>
             </li>
