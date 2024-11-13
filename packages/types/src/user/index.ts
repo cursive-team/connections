@@ -214,6 +214,7 @@ export const IntersectionStateSchema = z.record(
     z.number().int(),
     z.object({
       tensions: z.array(z.string()),
+      hotTakes: z.array(z.string()),
       contacts: z.array(z.string()),
       devconEvents: z.array(z.string()),
       programmingLangs: z.array(z.string()),
@@ -230,6 +231,7 @@ export const RefreshIntersectionRequestSchema = z.object({
   index: z.number().int(),
   intersectionState: z.object({
     tensions: z.array(z.string()),
+    hotTakes: z.array(z.string()),
     contacts: z.array(z.string()),
     devconEvents: z.array(z.string()),
     programmingLangs: z.array(z.string()),
@@ -245,6 +247,7 @@ export const RefreshIntersectionResponseSchema = z.object({
   success: z.boolean(),
   verifiedIntersectionState: z.object({
     tensions: z.array(z.string()),
+    hotTakes: z.array(z.string()),
     contacts: z.array(z.string()),
     devconEvents: z.array(z.string()),
     programmingLangs: z.array(z.string()),

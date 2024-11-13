@@ -18,7 +18,7 @@ import { AppTextarea } from "@/components/ui/Textarea";
 import { ProfileImage } from "@/components/ui/ProfileImage";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
-import { tensionPairs } from "@/common/constants";
+import { hotTakeLabels, tensionPairs } from "@/common/constants";
 import { hashCommit } from "@/lib/psi/hash";
 import { BASE_API_URL } from "@/config";
 import Link from "next/link";
@@ -35,6 +35,7 @@ import { IntersectionAccordion } from "@/components/ui/IntersectionAccordion";
 import { UserData } from "@/lib/storage/types";
 import { updateUserData } from "@/lib/storage/localStorage/user/userData";
 import { flowerSize, flowerType } from "@/lib/garden";
+import { CringeSlider } from "@/components/ui/CringeSlider";
 
 interface CommentModalProps {
   username: string;
@@ -182,10 +183,6 @@ const CommentModal: React.FC<CommentModalProps> = ({
 
         <div className="mt-4 grid grid-cols-1 gap-4">
           <AppButton
-            disabled={
-              (selectedEmoji ?? "") === (previousEmoji ?? "") &&
-              privateNote === (previousNote ?? "")
-            }
             onClick={() => onSubmit(selectedEmoji, privateNote)}
           >
             Save
@@ -211,6 +208,7 @@ const UserProfilePage: React.FC = () => {
   const [waitingForOtherUser, setWaitingForOtherUser] = useState(false);
   const [verifiedIntersection, setVerifiedIntersection] = useState<{
     tensions: string[];
+    hotTakes: string[];
     contacts: string[];
     devconEvents: string[];
     programmingLangs: string[];
@@ -381,6 +379,20 @@ const UserProfilePage: React.FC = () => {
         );
       }
 
+      let hotTakes: string[] = [];
+      if (user.userData.hotTakesRating?.revealAnswers) {
+        const hotTakeData = hotTakeLabels.map((hotTake, index) =>
+          user.userData.hotTakesRating!.rating[index] < 50
+            ? hotTake[0]
+            : hotTake[1]
+        );
+        hotTakes = await hashCommit(
+          user.encryptionPrivateKey,
+          connection.user.encryptionPublicKey,
+          hotTakeData
+        );
+      }
+
       const contactData = Object.keys(user.connections);
       const contacts = await hashCommit(
         user.encryptionPrivateKey,
@@ -438,6 +450,7 @@ const UserProfilePage: React.FC = () => {
             index: user.userData.username < connection.user.username ? 0 : 1,
             intersectionState: {
               tensions,
+              hotTakes,
               contacts,
               devconEvents,
               programmingLangs,
@@ -493,6 +506,7 @@ const UserProfilePage: React.FC = () => {
 
         const newVerifiedIntersection = {
           contacts: translatedContacts,
+          hotTakes: data.verifiedIntersectionState.hotTakes,
           tensions: data.verifiedIntersectionState.tensions,
           devconEvents: translatedEvents,
           programmingLangs: [],
@@ -754,6 +768,41 @@ const UserProfilePage: React.FC = () => {
                           <Link href={`/people/${contact}`}>{contact}</Link>
                         </>
                       ))}
+                    </div>
+                  )}
+                </IntersectionAccordion>
+
+                <IntersectionAccordion label="Your hot take agreements" icon="🔥">
+                  {verifiedIntersection.hotTakes.length === 0 ? (
+                    <div className="text-sm text-label-primary font-sans font-normal">
+                      Submit your hot takes and refresh to see results!
+                    </div>
+                  ) : verifiedIntersection.hotTakes.every(
+                    (hotTake) => hotTake === "0"
+                  ) ? (
+                    <div className="text-sm text-label-primary font-sans font-normal">
+                      No hot take agreements!
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-4">
+                      {verifiedIntersection.hotTakes.map(
+                        (hotTake, index) =>
+                          hotTake === "1" && (
+                            <CringeSlider
+                              label={hotTakeLabels[index]}
+                              key={index}
+                              value={
+                                user
+                                  ? user.userData.hotTakesRating?.rating[
+                                  index
+                                  ] ?? 50
+                                  : 50
+                              }
+                              onChange={() => {
+                              }}
+                            />
+                          )
+                      )}
                     </div>
                   )}
                 </IntersectionAccordion>

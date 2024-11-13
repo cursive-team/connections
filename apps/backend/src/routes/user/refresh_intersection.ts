@@ -26,6 +26,7 @@ router.post(
       req.app.locals.intersectionState[secretHash][index] = intersectionState;
       const {
         tensions: tensions0,
+        hotTakes: hotTakes0,
         contacts: contacts0,
         devconEvents: devconEvents0,
         programmingLangs: programmingLangs0,
@@ -35,6 +36,7 @@ router.post(
       if (req.app.locals.intersectionState[secretHash][1 - index]) {
         const {
           tensions: tensions1,
+          hotTakes: hotTakes1,
           contacts: contacts1,
           devconEvents: devconEvents1,
           programmingLangs: programmingLangs1,
@@ -43,6 +45,7 @@ router.post(
           req.app.locals.intersectionState[secretHash][1 - index];
 
         const newTensions: string[] = [];
+        const newHotTakes: string[] = [];
         const newContacts: string[] = [];
         const newDevconEvents: string[] = [];
         const newProgrammingLangs: string[] = [];
@@ -60,6 +63,22 @@ router.post(
               newTensions.push("1");
             } else {
               newTensions.push("0");
+            }
+          }
+        }
+
+        if (
+          hotTakes0.length !== 0 &&
+          hotTakes1.length !== 0 &&
+          hotTakes0.length === hotTakes1.length
+        ) {
+          for (let i = 0; i < hotTakes0.length; i++) {
+            const hotTake0 = hotTakes0[i];
+            const hotTake1 = hotTakes1[i];
+            if (hotTake0 === hotTake1) {
+              newHotTakes.push("1");
+            } else {
+              newHotTakes.push("0");
             }
           }
         }
@@ -108,6 +127,7 @@ router.post(
           success: true,
           verifiedIntersectionState: {
             tensions: newTensions,
+            hotTakes: newHotTakes,
             contacts: newContacts,
             devconEvents: newDevconEvents,
             programmingLangs: newProgrammingLangs,
@@ -120,6 +140,7 @@ router.post(
         success: false,
         verifiedIntersectionState: {
           tensions: [],
+          hotTakes: [],
           contacts: [],
           devconEvents: [],
           programmingLangs: [],

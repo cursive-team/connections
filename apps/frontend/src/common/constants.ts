@@ -30,6 +30,22 @@ export const tensionPairs = [
   ["🌳 Evolutionary roots", "Scientific progress 🧪"],
 ];
 
+export const hotTakeLabels = [
+  "Ethereum transactions should be private be default.",
+  "All Ethereum rollups should be ZK rollups.",
+  "DeFi will carry more transaction volume than traditional finance within the next 20 years.",
+  "Community governance is better than centralized decision-making.",
+  "Ethereum layer 1 should always prioritize decentralization over speed.",
+  "The current state of UI/UX in Web3 is good enough for mainstream adoption.",
+  "Zero knowledge proofs (ZKPs)",
+  "Trusted execution environments (TEEs)",
+  "Privacy on Ethereum L1 by default",
+  "Account abstraction",
+  "Fully homomorphic encryption (FHE)",
+  "NFTs",
+  "Donald Trump Presidency",
+];
+
 // Signature public keys for pre-migration users
 export const preMigrationSignaturePublicKeys: string[] = [
   "0404849088a1bfca2742634aede380f1cf47eac2158d32b1c253ef9746889ac7c4065ad6155273268dccf40cc4f668ac40dfd9850142700a75108ae3729548dcc6",
