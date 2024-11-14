@@ -238,7 +238,14 @@ const TapPage: React.FC = () => {
             }
 
             // Save tap to local storage
-            await storage.addUserTap(response);
+            await storage.addUserTap({
+              chipIssuer: response.chipIssuer,
+              chipIsRegistered: response.chipIsRegistered,
+              isLocationChip: response.isLocationChip,
+              userTap: response.userTap,
+              locationTap: response.locationTap,
+              chipId: tapParams.chipId,
+            });
 
             // If tap graph feature enabled, upsert graph edge (upsert so that either user can create the row)
             let tapSenderId: string | null = null;
