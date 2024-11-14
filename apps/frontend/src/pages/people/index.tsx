@@ -210,7 +210,7 @@ const PeoplePage: React.FC = () => {
       header={
         <div className="flex flex-col">
           <span className="text-label-primary text-xl leading-none font-bold tracking-[-0.1px] py-4">
-            Connections
+            {`Connections (${Object.keys(connections)?.length})`}
           </span>
           <div className="py-3 flex gap-6">
             <NavTab
