@@ -12,11 +12,10 @@ export function CringeSlider({
 }) {
   const { darkTheme } = useSettings();
   return (
-    <div
-      className={cn(
-        "px-4 py-4 bg-card-gray rounded-lg flex flex-col gap-4",
-        darkTheme && "!border !border-white"
-      )}
+    <div className={cn(
+      "px-4 py-4 bg-card-gray rounded-lg flex flex-col gap-4 bg-white",
+      darkTheme && "!border !border-white"
+    )}
     >
       <span>{label}</span>
       <div className="flex flex-col gap-2">
