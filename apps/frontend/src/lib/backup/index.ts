@@ -219,7 +219,7 @@ export const processUserBackup = ({
           console.error(`Error updating backfilled edges on user: ${errorToString(error)}`)
           break;
         }
-
+        break;
       default:
         throw new Error(`Invalid backup entry type: ${data.backupEntryType}`);
     }
