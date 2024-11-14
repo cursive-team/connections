@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
   ChipTapResponse,
@@ -34,6 +34,7 @@ import {
   publicKeyFromString,
 } from "@/lib/crypto/babyJubJub";
 import { logoutUser } from "@/lib/auth";
+import { AppButton } from "@/components/ui/Button";
 
 function base64Decode(base64: string) {
   return Buffer.from(base64, "base64");
@@ -41,9 +42,25 @@ function base64Decode(base64: string) {
 
 const TapPage: React.FC = () => {
   const router = useRouter();
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = async (link: string) => {
+    console.log(link)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(link);
+        setCopied(true);
+      } catch (err) {
+        console.error("Failed to copy link using Clipboard API: ", err);
+      }
+    }
+
+    setTimeout(() => setCopied(false), 3000); // Reset copied state after 3 seconds
+  };
 
   useEffect(() => {
     const handleTap = async () => {
+
       logClientEvent("tap-chip", {});
       const tapParams = Object.fromEntries(
         Object.entries(router.query)
@@ -235,6 +252,28 @@ const TapPage: React.FC = () => {
               logClientEvent("tap-chip-same-user", {});
               router.push("/community");
               return;
+            }
+            // cursive
+            if (user && (
+              user.userData.username === "stevenelleman" ||
+              user.userData.username === "andrew" ||
+              user.userData.username === "vivek"
+            )) {
+              toast(
+                <div className="flex flex-col gap-2 py-4 px-4">
+                  <>
+                    <span className="text-sm font-semibold text-label-primary font-sans">
+                      Admin chip link
+                    </span>
+                    <span className="text-sm text-label-secondary font-sans font-normal">
+                    {`https://nfc.cursive.team/devcon?chipId=${tapParams.chipId}`}
+                    </span>
+                    <AppButton variant="outline" onClick={() => handleCopyLink(`https://nfc.cursive.team/devcon?chipId=${tapParams.chipId}`)}>
+                      {copied ? "Link copied!" : "Copy link"}
+                    </AppButton>
+                  </>
+                </div>, {duration: 10000}
+              );
             }
 
             // Save tap to local storage
