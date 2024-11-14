@@ -3,7 +3,7 @@ import {
   AppendBackupDataResponseSchema,
   BackupData,
   BackupEntryType,
-  CreateBackupData,
+  CreateBackupData, errorToString,
   UnregisteredUserBackup,
 } from "@types";
 import {
@@ -20,12 +20,13 @@ import {
   UserDataSchema,
   UserSchema,
   OAuthAppSchema,
-  OAuthApp,
+  OAuthApp, EdgeIdsSchema,
 } from "@/lib/storage/types";
 import { decryptBackupString, encryptBackupString } from "@/lib/crypto/backup";
 import { BASE_API_URL } from "@/config";
 import { OAuthData, OAuthDataSchema } from "@/lib/storage/types";
 import { EdgeBackup, EdgeBackupSchema } from "@/lib/storage/types";
+import { updateBackfilledEdgesOnUser } from "@/lib/storage/localStorage/graph";
 
 /**
  * Parses a user object from backup data.
@@ -167,8 +168,25 @@ export const processUserBackup = ({
           user.tapGraphEnabled = !user.tapGraphEnabled;
         }
 
-        // TODO: Should this backup entry be responsible for both toggling *and* revoking / backfilling all edges?
-        // Currently this version keeps edges as they are -- ie if the feature was off and then turned on, old edges are not updated and pushed, and if the feature was on and then turned off, old edges are not revoked. Both cases should be covered eventually.
+        // When toggled on, we backfill edges. When toggled off, we keep the edges as they are but don't include new
+        // ones. In theory we could add edge revocation when toggling off, in practice we have too many other things
+        // to do.
+        if (decryptedData === "") {
+          // This was the original case, before updatedEdges was added as an array of updated edge IDs.
+          break;
+        }
+
+        try {
+          const updatedEdges: string[] = EdgeIdsSchema.parse(
+            JSON.parse(decryptedData)
+          );
+
+          user = updateBackfilledEdgesOnUser(user, updatedEdges);
+
+        } catch (error) {
+          console.error(`Error updating backfilled edges on user: ${errorToString(error)}`)
+          break;
+        }
 
         break;
       case BackupEntryType.EDGE:
@@ -183,6 +201,24 @@ export const processUserBackup = ({
         }
 
         user.edges.push(edgeData);
+        break;
+      case BackupEntryType.EDGE_BACKFILL_FOR_ENABLED_USERS:
+        if (!user) {
+          throw new Error("EDGE backup entry found before INITIAL");
+        }
+        user.edgesBackfilledForUsersWithEnabledFeature = true;
+
+        try {
+          const updatedEdges: string[] = EdgeIdsSchema.parse(
+            JSON.parse(decryptedData)
+          );
+
+          user = updateBackfilledEdgesOnUser(user, updatedEdges);
+
+        } catch (error) {
+          console.error(`Error updating backfilled edges on user: ${errorToString(error)}`)
+          break;
+        }
         break;
       default:
         throw new Error(`Invalid backup entry type: ${data.backupEntryType}`);
@@ -506,14 +542,16 @@ export const createOAuthDeletionBackup = ({
 export interface CreateToggleSocialGraphBackupArgs {
   email: string;
   password: string;
+  sentEdges: string[];
 }
 
 export const createToggleSocialGraphBackup = ({
     email,
     password,
+    sentEdges,
   }: CreateToggleSocialGraphBackupArgs): CreateBackupData => {
   const { authenticationTag, iv, encryptedData } = encryptBackupString({
-    backup: "",
+    backup: JSON.stringify(sentEdges),
     email,
     password,
   });
@@ -568,6 +606,34 @@ export const createEdgeBackup = ({
     clientCreatedAt: new Date(),
   };
 };
+
+export interface CreateEdgeBackfillForEnabledUserBackupArgs {
+  email: string;
+  password: string;
+  sentEdges: string[];
+}
+
+export const createEdgeBackfillForEnabledUserBackup = ({
+  email,
+  password,
+  sentEdges,
+}: CreateEdgeBackfillForEnabledUserBackupArgs): CreateBackupData => {
+  const { authenticationTag, iv, encryptedData } = encryptBackupString({
+    backup: JSON.stringify(sentEdges),
+    email,
+    password,
+  });
+
+  return {
+    authenticationTag,
+    iv,
+    encryptedData,
+    backupEntryType: BackupEntryType.EDGE_BACKFILL_FOR_ENABLED_USERS,
+    clientCreatedAt: new Date(),
+  };
+};
+
+// Unregistered user backups
 
 export const unregisteredUserCreateActivityBackup = ({
   activity
