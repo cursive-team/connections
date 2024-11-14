@@ -42,7 +42,7 @@ export const IntersectionAccordion = ({
       </button>
       <div
         className={`px-2 overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-[900px] opacity-100 pb-4" : "max-h-0 opacity-0"
+          isOpen ? "opacity-100 pb-4" : "max-h-0 opacity-0"
         }`}
       >
         {children}

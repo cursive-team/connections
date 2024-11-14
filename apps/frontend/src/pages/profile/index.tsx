@@ -203,7 +203,8 @@ const ProfilePage: React.FC = () => {
                     </div>
                   </div>
                 )}
-                <Card.Base
+
+                {!user.userData.tensionsRating && (<Card.Base
                   variant="gray"
                   className="p-4 !rounded-lg !border !border-white"
                   onClick={() => {
@@ -216,16 +217,17 @@ const ProfilePage: React.FC = () => {
                       <div className="flex items-center gap-1">
                         <Icons.Clip className="text-icon-primary"/>
                         <span className="text-sm text-label-primary font-medium">
-                          Hot Takes 🔥
+                          Ethereum Hot Takes 🔥
                         </span>
                       </div>
                       <Icons.Plus className="text-icon-primary"/>
                     </div>
                     <span className="text-xs font-medium text-label-tertiary">
-                      Weigh in on the *most important* topics in the Eth community: based or cringe?
+                      Weigh in on the *most important* topics in the community: based or cringe?
                     </span>
                   </div>
                 </Card.Base>
+                )}
 
                 {!user.userData.tensionsRating && (
                   <Card.Base
@@ -288,6 +290,7 @@ const ProfilePage: React.FC = () => {
                     </div>
                   </div>
                 )}
+                {user.userData.tensionsRating && (
                 <Card.Base
                   variant="gray"
                   className="p-4 !rounded-lg !border !border-white"
@@ -301,17 +304,17 @@ const ProfilePage: React.FC = () => {
                       <div className="flex items-center gap-1">
                         <Icons.Clip className="text-icon-primary" />
                         <span className="text-sm text-label-primary font-medium">
-                          🔥Hot Takes 😬
+                          Ethereum Hot Takes 🔥
                         </span>
                       </div>
                       <Icons.Pencil className="text-icon-primary" />
                     </div>
                     <span className="text-xs font-medium text-label-tertiary">
-                      Weigh in on
-                      Slide the scale to discover intersections with others when you perform private set intersection.
+                      Weigh in on the *most important* topics in the community: based or cringe?
                     </span>
                   </div>
                 </Card.Base>
+                )}
                 {user.userData.tensionsRating && (
                   <Card.Base
                     variant="gray"

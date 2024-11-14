@@ -382,7 +382,7 @@ const UserProfilePage: React.FC = () => {
       let hotTakes: string[] = [];
       if (user.userData.hotTakesRating?.revealAnswers) {
         const hotTakeData = hotTakeLabels.map((hotTake, index) =>
-          user.userData.hotTakesRating!.rating[index] < 50
+          user.userData.hotTakesRating!.rating[index] < 1
             ? hotTake[0]
             : hotTake[1]
         );
@@ -795,8 +795,8 @@ const UserProfilePage: React.FC = () => {
                                 user
                                   ? user.userData.hotTakesRating?.rating[
                                   index
-                                  ] ?? 50
-                                  : 50
+                                  ] ?? 1
+                                  : 1
                               }
                               onChange={() => {
                               }}

@@ -59,7 +59,7 @@ router.post(
           for (let i = 0; i < tensions0.length; i++) {
             const tension0 = tensions0[i];
             const tension1 = tensions1[i];
-            if (tension0 !== tension1) {
+            if (tension0 !== tension1) { // Disagreement
               newTensions.push("1");
             } else {
               newTensions.push("0");
@@ -75,7 +75,7 @@ router.post(
           for (let i = 0; i < hotTakes0.length; i++) {
             const hotTake0 = hotTakes0[i];
             const hotTake1 = hotTakes1[i];
-            if (hotTake0 === hotTake1) {
+            if (hotTake0 === hotTake1) { // Agreement
               newHotTakes.push("1");
             } else {
               newHotTakes.push("0");

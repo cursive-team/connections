@@ -14,7 +14,7 @@ import { CringeSlider } from "@/components/ui/CringeSlider";
 export default function TensionsPage() {
   const router = useRouter();
   const [sliderValues, setSliderValues] = useState<number[]>(
-    hotTakeLabels.map(() => 50)
+    hotTakeLabels.map(() => 1)
   );
   const [revealAnswers, setRevealAnswers] = useState(false);
   const [contributeAnonymously, setContributeAnonymously] = useState(false);
@@ -32,7 +32,7 @@ export default function TensionsPage() {
       if (user.userData.hotTakesRating) {
         setSliderValues(
           user.userData.hotTakesRating.rating ??
-          hotTakeLabels.map(() => 50)
+          hotTakeLabels.map(() => 1)
         );
         setRevealAnswers(user.userData.hotTakesRating.revealAnswers ?? false);
         setContributeAnonymously(
@@ -48,10 +48,9 @@ export default function TensionsPage() {
     setSliderValues((prevValues) => {
       const newValues = [...prevValues];
       newValues[index] = value;
+      console.log(newValues);
       return newValues;
     });
-
-    console.log(sliderValues);
   };
 
   const handleSave = async () => {
