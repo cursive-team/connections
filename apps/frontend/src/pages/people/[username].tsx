@@ -626,8 +626,8 @@ const UserProfilePage: React.FC = () => {
   );
   
   let chipLink = ""
-  if (connection && connection.chipId) {
-    chipLink = `https://nfc.cursive.team/bracelets?chipId=${JSON.parse(connection.chipId)}`;
+  if (connection) {
+    chipLink = `https://nfc.cursive.team/bracelets?chipId=${connection.chipId}`;
   }
 
   return (
@@ -961,6 +961,9 @@ const UserProfilePage: React.FC = () => {
                 </span>
                 <span className="text-sm text-label-secondary font-sans font-normal">
                   {chipLink}
+                </span>
+                <span className="text-sm text-label-secondary font-sans font-normal">
+                  {connection.chipId}
                 </span>
                 <AppButton variant="outline" onClick={() => handleCopyLink(chipLink)}>
                   {copied ? "Link copied!" : "Copy link"}
