@@ -5,7 +5,7 @@ import { TelegramDataSchema } from "./telegramData";
 import { SignalDataSchema } from "./signalData";
 import { InstagramDataSchema } from "./instagramData";
 import { FarcasterDataSchema } from "./farcasterData";
-import { LannaDataSchema, TensionsRatingSchema } from "./lannaData";
+import { HotTakesRatingSchema, LannaDataSchema, TensionsRatingSchema } from "./lannaData";
 import { StravaDataSchema } from "./stravaData";
 import { GithubDataSchema } from "./githubData";
 import { LannaHalloweenDataSchema } from "./lannaHalloweenData";
@@ -27,6 +27,7 @@ export const UserDataSchema = z.object({
   pronouns: nullToUndefined(z.string()),
   lanna: nullToUndefined(LannaDataSchema),
   tensionsRating: nullToUndefined(TensionsRatingSchema),
+  hotTakesRating: nullToUndefined(HotTakesRatingSchema),
   strava: nullToUndefined(StravaDataSchema),
   github: nullToUndefined(GithubDataSchema),
   lannaHalloween: nullToUndefined(LannaHalloweenDataSchema),

@@ -4,18 +4,17 @@ import { storage } from "@/lib/storage";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { tensionPairs } from "@/common/constants";
+import { hotTakeLabels } from "@/common/constants";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { errorToString } from "@types";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
-import { cn } from "@/lib/frontend/util";
-import useSettings from "@/hooks/useSettings";
+import { CringeSlider } from "@/components/ui/CringeSlider";
 
 export default function TensionsPage() {
   const router = useRouter();
   const [sliderValues, setSliderValues] = useState<number[]>(
-    tensionPairs.map(() => 50)
+    hotTakeLabels.map(() => 1)
   );
   const [revealAnswers, setRevealAnswers] = useState(false);
   const [contributeAnonymously, setContributeAnonymously] = useState(false);
@@ -30,14 +29,13 @@ export default function TensionsPage() {
         return;
       }
 
-      if (user.userData.tensionsRating) {
+      if (user.userData.hotTakesRating) {
         setSliderValues(
-          user.userData.tensionsRating.tensionRating ??
-            tensionPairs.map(() => 50)
+          user.userData.hotTakesRating.rating ?? hotTakeLabels.map(() => 1)
         );
-        setRevealAnswers(user.userData.tensionsRating.revealAnswers ?? false);
+        setRevealAnswers(user.userData.hotTakesRating.revealAnswers ?? false);
         setContributeAnonymously(
-          user.userData.tensionsRating.contributeAnonymously ?? false
+          user.userData.hotTakesRating.contributeAnonymously ?? false
         );
       }
     };
@@ -49,10 +47,9 @@ export default function TensionsPage() {
     setSliderValues((prevValues) => {
       const newValues = [...prevValues];
       newValues[index] = value;
+      console.log(newValues);
       return newValues;
     });
-
-    console.log(sliderValues);
   };
 
   const handleSave = async () => {
@@ -73,8 +70,8 @@ export default function TensionsPage() {
     try {
       await storage.updateUserData({
         ...user.userData,
-        tensionsRating: {
-          tensionRating: sliderValues,
+        hotTakesRating: {
+          rating: sliderValues,
           revealAnswers,
           contributeAnonymously,
         },
@@ -82,7 +79,7 @@ export default function TensionsPage() {
 
       logClientEvent("submit_tensions", {});
 
-      toast.success("Tensions saved successfully!");
+      toast.success("Hot takes saved successfully!");
       router.push("/profile");
     } catch (error) {
       console.error(error);
@@ -109,21 +106,18 @@ export default function TensionsPage() {
       <div className="flex flex-col p-4 gap-4">
         <div className="flex flex-col gap-2">
           <span className="text-[14px] font-semibold text-label-primary">
-            Tensions
+            Ethereum Hot Takes
           </span>
           <span className="text-[14px] font-normal text-label-tertiary">
-            Play the Tensions game from Summer of Protocols to practice your
-            decision making skills. Upon tap, discover where you disagree to
-            learn new perspectives. Use the slider to express how strongly you
-            lean towards one of the two options.
+            Slide the scale to discover intersections with others when you
+            perform private set intersection.
           </span>
         </div>
         <div className="flex flex-col gap-4">
-          {tensionPairs.map((pair, index) => (
-            <TensionSlider
+          {hotTakeLabels.map((label, index) => (
+            <CringeSlider
+              label={label}
               key={index}
-              leftOption={pair[0]}
-              rightOption={pair[1]}
               value={sliderValues[index]}
               onChange={(value) => handleSliderChange(index, value)}
             />
@@ -138,8 +132,7 @@ export default function TensionsPage() {
               className="form-checkbox h-5 w-5 text-label-primary"
             />
             <span className="text-sm text-label-primary">
-              Reveal opposing answers when discovering overlap with someoone
-              else.
+              Reveal my answers when discovering overlap with someone else.
             </span>
           </label>
           <label className="flex items-start gap-2">
@@ -166,42 +159,5 @@ export default function TensionsPage() {
         </AppButton>
       </div>
     </AppLayout>
-  );
-}
-
-export function TensionSlider({
-  leftOption,
-  rightOption,
-  value,
-  onChange,
-}: {
-  leftOption: string;
-  rightOption: string;
-  value: number;
-  onChange: (value: number) => void;
-}) {
-  const { darkTheme } = useSettings();
-  return (
-    <div
-      className={cn(
-        "px-4 py-4 bg-card-gray rounded-lg flex flex-col gap-4",
-        darkTheme && "!border !border-white"
-      )}
-    >
-      <div className="text-right text-primary text-xs font-medium">
-        {rightOption}
-      </div>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        value={value}
-        onChange={(e) => onChange(parseInt(e.target.value))}
-        className="w-full h-2 bg-primary rounded-lg appearance-none cursor-pointer"
-      />
-      <div className="text-left text-primary text-xs font-medium">
-        {leftOption}
-      </div>
-    </div>
   );
 }

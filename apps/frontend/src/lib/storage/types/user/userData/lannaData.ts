@@ -8,6 +8,14 @@ export const TensionsRatingSchema = z.object({
 
 export type TensionsRating = z.infer<typeof TensionsRatingSchema>;
 
+export const HotTakesRatingSchema = z.object({
+  rating: z.array(z.number()),
+  revealAnswers: z.boolean(),
+  contributeAnonymously: z.boolean(),
+});
+
+export type HotTakesRating = z.infer<typeof HotTakesRatingSchema>;
+
 export const LannaDesiredConnectionsSchema = z.object({
   getHealthy: z.boolean(),
   cowork: z.boolean(),
