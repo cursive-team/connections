@@ -266,9 +266,9 @@ const TapPage: React.FC = () => {
                       Admin chip link
                     </span>
                     <span className="text-sm text-label-secondary font-sans font-normal">
-                    {`https://nfc.cursive.team/devcon?chipId=${tapParams.chipId}`}
-                    </span>
-                    <AppButton variant="outline" onClick={() => handleCopyLink(`https://nfc.cursive.team/devcon?chipId=${tapParams.chipId}`)}>
+                      {`https://nfc.cursive.team/devcon?chipId=${tapParams.chipId || tapParams.encryptedChipId}`}
+                    </span>g
+                    <AppButton variant="outline" onClick={() => handleCopyLink(`https://nfc.cursive.team/devcon?chipId=${tapParams.chipId || tapParams.encryptedChipId}`)}>
                       {copied ? "Link copied!" : "Copy link"}
                     </AppButton>
                   </>
