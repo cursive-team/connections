@@ -45,7 +45,7 @@ export default function PheromonesPage() {
           title={
             <div className="!font-normal flex flex-col gap-4">
               <div className="text-md">
-                <b>Launching on Wednesday, Nov 13th!</b>
+                <b>Launching on Friday, Nov 15th!</b>
               </div>
               <div className="text-sm">
                 Come by our{" "}
