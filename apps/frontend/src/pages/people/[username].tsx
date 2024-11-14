@@ -624,9 +624,9 @@ const UserProfilePage: React.FC = () => {
     user?.userData?.username === "vivek" ||
     user?.userData?.username === "andrew"
   );
-
+  
   let chipLink = ""
-  if (user) {
+  if (connection) {
     chipLink = `https://nfc.cursive.team/bracelets?chipId=${connection.chipId}`;
   }
 
