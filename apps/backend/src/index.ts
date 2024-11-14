@@ -59,7 +59,7 @@ controller
 
 const cronJobs = {
   checkProofJobs: {
-    schedule: "*/5 * * * *",
+    schedule: "*/2 * * * *",
     task: async () => {
       try {
         console.log("Checking proof jobs");
