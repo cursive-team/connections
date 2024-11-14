@@ -138,7 +138,8 @@ export default function TensionsPage() {
               className="form-checkbox h-5 w-5 text-label-primary"
             />
             <span className="text-sm text-label-primary">
-              Match with residents who hold opposing views upon tapping.
+              Reveal opposing answers when discovering overlap with someoone
+              else.
             </span>
           </label>
           <label className="flex items-start gap-2">

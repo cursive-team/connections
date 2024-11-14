@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { User, UserData } from "@/lib/storage/types";
+import { Session, User, UserData } from "@/lib/storage/types";
 import { toast } from "sonner";
 import AppLayout from "@/layouts/AppLayout";
 import { AppButton } from "@/components/ui/Button";
@@ -50,26 +50,27 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      // Gate off unregistered users
-
-      const user = await storage.getUser();
-      const unregisteredUser = await storage.getUnregisteredUser();
-      if (unregisteredUser) {
-        router.push("/people")
-        return;
-      }
-      if (!user) {
+      try {
+        // Gate off unregistered users
+        const user = await storage.getUser();
+        const unregisteredUser = await storage.getUnregisteredUser();
+        if (unregisteredUser) {
+          router.push("/people");
+          return;
+        }
+        if (!user) {
+          router.push("/");
+          return;
+        }
+        // checks if session is valid
+        await storage.getUserAndSession();
+        setUser(user);
+      } catch (error) {
+        console.error("Error fetching user and session:", error);
+        toast.error("Please log in again.");
         router.push("/");
         return;
       }
-
-      const { session } = await storage.getUserAndSession();
-      if (!user || !session || session.authTokenExpiresAt < new Date()) {
-        toast.error("Please log in to view your profile.");
-        router.push("/");
-        return;
-      }
-      setUser(user);
     };
 
     fetchUser();
@@ -94,7 +95,8 @@ const ProfilePage: React.FC = () => {
   const hasVaultData =
     (user.oauth && Object.keys(user.oauth).length > 0) ||
     user.userData.tensionsRating ||
-    user.userData.devcon;
+    user.userData.devcon ||
+    user.userData.hotTakesRating;
 
   return (
     <>
@@ -204,29 +206,31 @@ const ProfilePage: React.FC = () => {
                   </div>
                 )}
 
-                {!user.userData.tensionsRating && (<Card.Base
-                  variant="gray"
-                  className="p-4 !rounded-lg !border !border-white"
-                  onClick={() => {
-                    logClientEvent("start_hot_takes", {});
-                    router.push("/hot-takes");
-                  }}
-                >
-                  <div className="flex flex-col gap-[10px]">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1">
-                        <Icons.Clip className="text-icon-primary"/>
-                        <span className="text-sm text-label-primary font-medium">
-                          Ethereum Hot Takes 🔥
-                        </span>
+                {!user.userData.hotTakesRating && (
+                  <Card.Base
+                    variant="gray"
+                    className="p-4 !rounded-lg !border !border-white"
+                    onClick={() => {
+                      logClientEvent("start_hot_takes", {});
+                      router.push("/hot-takes");
+                    }}
+                  >
+                    <div className="flex flex-col gap-[10px]">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                          <Icons.Clip className="text-icon-primary" />
+                          <span className="text-sm text-label-primary font-medium">
+                            Ethereum Hot Takes 🔥
+                          </span>
+                        </div>
+                        <Icons.Plus className="text-icon-primary" />
                       </div>
-                      <Icons.Plus className="text-icon-primary"/>
+                      <span className="text-xs font-medium text-label-tertiary">
+                        Weigh in on the *most important* topics in the
+                        community: based or cringe?
+                      </span>
                     </div>
-                    <span className="text-xs font-medium text-label-tertiary">
-                      Weigh in on the *most important* topics in the community: based or cringe?
-                    </span>
-                  </div>
-                </Card.Base>
+                  </Card.Base>
                 )}
 
                 {!user.userData.tensionsRating && (
@@ -290,30 +294,31 @@ const ProfilePage: React.FC = () => {
                     </div>
                   </div>
                 )}
-                {user.userData.tensionsRating && (
-                <Card.Base
-                  variant="gray"
-                  className="p-4 !rounded-lg !border !border-white"
-                  onClick={() => {
-                    logClientEvent("edit_hot_takes", {});
-                    router.push("/hot-takes");
-                  }}
-                >
-                  <div className="flex flex-col gap-[10px] ">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1">
-                        <Icons.Clip className="text-icon-primary" />
-                        <span className="text-sm text-label-primary font-medium">
-                          Ethereum Hot Takes 🔥
-                        </span>
+                {user.userData.hotTakesRating && (
+                  <Card.Base
+                    variant="gray"
+                    className="p-4 !rounded-lg !border !border-white"
+                    onClick={() => {
+                      logClientEvent("edit_hot_takes", {});
+                      router.push("/hot-takes");
+                    }}
+                  >
+                    <div className="flex flex-col gap-[10px] ">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                          <Icons.Clip className="text-icon-primary" />
+                          <span className="text-sm text-label-primary font-medium">
+                            Ethereum Hot Takes 🔥
+                          </span>
+                        </div>
+                        <Icons.Pencil className="text-icon-primary" />
                       </div>
-                      <Icons.Pencil className="text-icon-primary" />
+                      <span className="text-xs font-medium text-label-tertiary">
+                        Weigh in on the *most important* topics in the
+                        community: based or cringe?
+                      </span>
                     </div>
-                    <span className="text-xs font-medium text-label-tertiary">
-                      Weigh in on the *most important* topics in the community: based or cringe?
-                    </span>
-                  </div>
-                </Card.Base>
+                  </Card.Base>
                 )}
                 {user.userData.tensionsRating && (
                   <Card.Base

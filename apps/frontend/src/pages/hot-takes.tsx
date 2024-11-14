@@ -31,8 +31,7 @@ export default function TensionsPage() {
 
       if (user.userData.hotTakesRating) {
         setSliderValues(
-          user.userData.hotTakesRating.rating ??
-          hotTakeLabels.map(() => 1)
+          user.userData.hotTakesRating.rating ?? hotTakeLabels.map(() => 1)
         );
         setRevealAnswers(user.userData.hotTakesRating.revealAnswers ?? false);
         setContributeAnonymously(
@@ -110,7 +109,8 @@ export default function TensionsPage() {
             Ethereum Hot Takes
           </span>
           <span className="text-[14px] font-normal text-label-tertiary">
-            Slide the scale to discover intersections with others when you perform private set intersection.
+            Slide the scale to discover intersections with others when you
+            perform private set intersection.
           </span>
         </div>
         <div className="flex flex-col gap-4">
@@ -132,7 +132,7 @@ export default function TensionsPage() {
               className="form-checkbox h-5 w-5 text-label-primary"
             />
             <span className="text-sm text-label-primary">
-              Reveal my answers when running PSI with someone else.
+              Reveal my answers when discovering overlap with someone else.
             </span>
           </label>
           <label className="flex items-start gap-2">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { storage } from "@/lib/storage";
-import { Connection } from "@/lib/storage/types";
+import { Connection, User } from "@/lib/storage/types";
 import AppLayout from "@/layouts/AppLayout";
 import { MdKeyboardArrowRight as ArrowRight } from "react-icons/md";
 import { ProfileImage } from "@/components/ui/ProfileImage";
@@ -38,7 +38,8 @@ const PeoplePage: React.FC = () => {
   const [connections, setConnections] = useState<Record<string, Connection>>(
     {}
   );
-  const [psiSize, setPSISize] =  useState<Record<string, number>>({});
+  const [psiSize, setPSISize] = useState<Record<string, number>>({});
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchConnections = async () => {
@@ -56,6 +57,7 @@ const PeoplePage: React.FC = () => {
       let sortedConnections = {};
       if (user) {
         sortedConnections = sortConnections(user.connections);
+        setUser(user);
       } else if (unregisteredUser) {
         sortedConnections = sortConnections(unregisteredUser.connections);
       }
@@ -109,10 +111,13 @@ const PeoplePage: React.FC = () => {
         {Object.values(connections).map((connection) => {
           let flowerStage = "sprout";
           if (psiSize && psiSize[connection.user.username]) {
-            flowerStage = flowerSize(psiSize[connection.user.username])
+            flowerStage = flowerSize(psiSize[connection.user.username]);
           }
 
-          const flowerIndex = flowerType(connection.user.username);
+          const flowerIndex = flowerType(
+            connection.user.username,
+            user?.userData?.username
+          );
 
           const flowerImage = `/flowers/flower-${flowerIndex}-${flowerStage}.svg`;
 
@@ -155,7 +160,7 @@ const PeoplePage: React.FC = () => {
                     </div>
                     <span
                       className={cn(
-                        "text-base leading-[22px] font-bold mt-auto line-clamp-2",
+                        "text-base leading-[22px] font-bold mt-auto line-clamp-2 break-words",
                         darkTheme ? "text-black" : "text-white"
                       )}
                     >
@@ -163,7 +168,17 @@ const PeoplePage: React.FC = () => {
                         className="mt-auto"
                         href={`/people/${connection.user.username}`}
                       >
-                        {connection.user.username}
+                        {(
+                          connection.user.displayName ||
+                          connection.user.username
+                        )
+                          .split(" ")
+                          .map((word, index) =>
+                            word.length > 8 && index === 0
+                              ? `${word.slice(0, 8)}-${word.slice(8)}`
+                              : word
+                          )
+                          .join(" ")}
                       </Link>
                     </span>
                   </div>
@@ -227,8 +242,7 @@ const PeoplePage: React.FC = () => {
             italic={false}
             title={
               <span className="!font-normal text-center">
-                <b>Grow your garden </b> by running PSIs with your connections.
-                <br/>
+                <b>Grow your garden </b> by discovering overlap after tap!
                 Troubleshoot tapping{" "}
                 <a
                   href="https://cursive.team/tap-help"
@@ -238,6 +252,7 @@ const PeoplePage: React.FC = () => {
                 >
                   here
                 </a>
+                .
               </span>
             }
           />
