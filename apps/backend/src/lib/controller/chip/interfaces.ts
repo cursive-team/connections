@@ -12,6 +12,7 @@ import { Chip } from "./types";
 export interface iChipClient {
   RegisterChip(registerChip: RegisterChipRequest): Promise<Chip>;
   UpdateChip(updateChip: UpdateChipRequest): Promise<Chip>;
+  GetChipId(chipIssuer: ChipIssuer, username: string): Promise<string>;
   GetTapFromChip(tapParams: TapParams): Promise<ChipTapResponse>;
   UpdateLeaderboardEntry(
     username: string,

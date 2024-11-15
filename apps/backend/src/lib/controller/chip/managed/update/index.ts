@@ -1,4 +1,4 @@
-import { UpdateChipRequest } from "@types";
+import { ChipIssuer, UpdateChipRequest } from "@types";
 import { Chip, ChipSchema } from "../../types";
 import { ManagedChipClient } from "../client";
 
@@ -54,4 +54,21 @@ ManagedChipClient.prototype.UpdateChip = async function (
 
   // Return the updated chip
   return ChipSchema.parse(updatedChip);
+};
+
+ManagedChipClient.prototype.GetChipId = async function (
+  chipIssuer: ChipIssuer,
+  username: string
+): Promise<string> {
+  const chip = await this.prismaClient.chip.findFirst({
+    where: {
+      chipIssuer,
+      ownerUsername: username
+    },
+  });
+  if (!chip) {
+    throw new Error("Chip not found");
+  }
+
+  return chip.chipId;
 };

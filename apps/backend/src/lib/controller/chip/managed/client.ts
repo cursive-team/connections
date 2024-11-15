@@ -36,6 +36,9 @@ export class ManagedChipClient implements iChipClient {
   UpdateChip(updateChip: UpdateChipRequest): Promise<Chip>;
 
   // @ts-expect-error (ts2391)
+  GetChipId(chipIssuer: ChipIssuer, username: string): Promise<string>;
+
+  // @ts-expect-error (ts2391)
   UpdateLeaderboardEntry(
     username: string,
     chipIssuer: ChipIssuer,

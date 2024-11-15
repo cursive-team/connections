@@ -1,15 +1,10 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { Connection, Session, User } from "@/lib/storage/types";
+import { Connection, Session, User, UserData } from "@/lib/storage/types";
 import { toast } from "sonner";
-import {
-  TapParams,
-  ChipTapResponse,
-  errorToString,
-  SocketRequestType,
-} from "@types";
+import { ChipIssuer, ChipTapResponse, errorToString, GetChipIdResponse, SocketRequestType, TapParams, } from "@types";
 import { AppButton } from "@/components/ui/Button";
 import Image from "next/image";
 import AppLayout from "@/layouts/AppLayout";
@@ -30,12 +25,12 @@ import { sendMessages } from "@/lib/message";
 import useSettings from "@/hooks/useSettings";
 import { cn } from "@/lib/frontend/util";
 import { getConnectionSigPubKey } from "@/lib/user";
-import { useSocket, socketEmit } from "@/lib/socket";
+import { socketEmit, useSocket } from "@/lib/socket";
 import { IntersectionAccordion } from "@/components/ui/IntersectionAccordion";
-import { UserData } from "@/lib/storage/types";
 import { updateUserData } from "@/lib/storage/localStorage/user/userData";
 import { flowerSize, flowerType } from "@/lib/garden";
 import { CringeSlider } from "@/components/ui/CringeSlider";
+import { getChipId } from "@/lib/chip/update";
 
 interface CommentModalProps {
   username: string;
@@ -214,6 +209,7 @@ const UserProfilePage: React.FC = () => {
   } | null>(null);
   const [isUnregistered, setIsUnregistered] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [chipId, setChipId] = useState("");
   const { socket } = useSocket();
 
   useEffect(() => {
@@ -252,6 +248,17 @@ const UserProfilePage: React.FC = () => {
             setTapInfo(savedTapInfo);
             setShowCommentModal(true);
           }
+
+          if (user && connection?.user?.username && (
+            user.userData.username === "stevenelleman" ||
+            user.userData.username === "andrew" ||
+            user.userData.username === "vivek"
+          )) {
+            // TODO: make this applicable to other communities
+            const chipIdResp: GetChipIdResponse = await getChipId(session.authTokenValue, ChipIssuer.DEVCON_2024, connection?.user?.username);
+            setChipId(chipIdResp.id);
+          }
+
         } else if (unregisteredUser) {
           // In unregistered user case, cannot do PSIs which require user object
           setConnection(unregisteredUser.connections[username]);
@@ -627,7 +634,7 @@ const UserProfilePage: React.FC = () => {
   
   let chipLink = ""
   if (connection) {
-    chipLink = `https://nfc.cursive.team/bracelets?chipId=${connection.chipId}`;
+    chipLink = `https://nfc.cursive.team/bracelets?chipId=${chipId}`;
   }
 
   return (
@@ -961,9 +968,6 @@ const UserProfilePage: React.FC = () => {
                 </span>
                 <span className="text-sm text-label-secondary font-sans font-normal">
                   {chipLink}
-                </span>
-                <span className="text-sm text-label-secondary font-sans font-normal">
-                  {connection.chipId}
                 </span>
                 <AppButton variant="outline" onClick={() => handleCopyLink(chipLink)}>
                   {copied ? "Link copied!" : "Copy link"}

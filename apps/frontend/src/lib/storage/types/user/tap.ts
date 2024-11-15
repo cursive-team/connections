@@ -7,7 +7,6 @@ export const ChipTapSchema = z.object({
   isLocationChip: z.boolean().nullable(),
   userTap: UserTapSchema.nullable(),
   locationTap: LocationTapSchema.nullable(),
-  chipId: z.string(),
 });
 
 export type ChipTap = z.infer<typeof ChipTapSchema>;

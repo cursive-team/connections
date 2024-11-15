@@ -179,6 +179,10 @@ export class Controller {
     return this.chipClient.UpdateChip(updateChip);
   }
 
+  GetChipId(chipIssuer: ChipIssuer, username: string): Promise<string> {
+    return this.chipClient.GetChipId(chipIssuer, username);
+  }
+
   GetTapFromChip(tapParams: TapParams): Promise<ChipTapResponse> {
     return this.chipClient.GetTapFromChip(tapParams);
   }

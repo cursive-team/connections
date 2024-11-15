@@ -1,5 +1,5 @@
 import { BASE_API_URL } from "@/config";
-import { ChipIssuer, errorToString, Json, UpdateChipRequest } from "@types";
+import { ChipIssuer, errorToString, GetChipIdResponse, GetChipIdResponseSchema, Json, UpdateChipRequest } from "@types";
 import { storage } from "../storage";
 
 interface UpdateChipArgs {
@@ -97,6 +97,34 @@ export async function updateChip(args: UpdateChipArgs): Promise<void> {
       },
       pronouns: args.ownerPronouns ?? undefined,
     });
+  } catch (error) {
+    console.error("Error updating chip:", errorToString(error));
+    throw error;
+  }
+}
+
+export async function getChipId(authTokenValue: string, chipIssuer: ChipIssuer, connectionUsername: string): Promise<GetChipIdResponse> {
+  try {
+    const response = await fetch(`${BASE_API_URL}/chip/id?authToken=${authTokenValue}&chipIssuer=${chipIssuer.toString()}&username=${connectionUsername}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to update chip");
+    }
+
+    const data = await response.json();
+    if (data && data.error) {
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${data.error}, consider checking environment variables or redirect_uri`
+      );
+    }
+
+    return GetChipIdResponseSchema.parse(data);
   } catch (error) {
     console.error("Error updating chip:", errorToString(error));
     throw error;
