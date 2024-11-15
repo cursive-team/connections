@@ -7,6 +7,7 @@ import {
   UpdateChipRequestSchema,
 } from "@types";
 import { User } from "@/lib/controller/postgres/types";
+import chip from "@/routes/chip/index";
 
 const router = express.Router();
 const controller = new Controller();

@@ -213,6 +213,28 @@ const UserProfilePage: React.FC = () => {
   const { socket } = useSocket();
 
   useEffect(() => {
+    const fetchChipIp = async () => {
+      const user = await storage.getUser();
+      const session = await storage.getSession();
+      const unregisteredUser = await storage.getUnregisteredUser();
+      if (user && session && !unregisteredUser) {
+        console.log('pre admin', user.userData)
+        if (user && connection?.user?.username && (
+          user.userData.username === "stevenelleman" ||
+          user.userData.username === "andrew" ||
+          user.userData.username === "vivek" ||
+          user.userData.username === "Carol"
+        )) {
+          // TODO: make this applicable to other communities
+          const chipIdResp: GetChipIdResponse = await getChipId(session.authTokenValue, ChipIssuer.DEVCON_2024, connection?.user?.username);
+          setChipId(chipIdResp.id);
+        }
+      }
+    }
+    fetchChipIp();
+  });
+
+  useEffect(() => {
     const fetchConnectionAndTapInfo = async () => {
       if (typeof username === "string") {
         const user = await storage.getUser();
@@ -247,16 +269,6 @@ const UserProfilePage: React.FC = () => {
             logClientEvent("user-profile-tap-chip-modal-shown", {});
             setTapInfo(savedTapInfo);
             setShowCommentModal(true);
-          }
-
-          if (user && connection?.user?.username && (
-            user.userData.username === "stevenelleman" ||
-            user.userData.username === "andrew" ||
-            user.userData.username === "vivek"
-          )) {
-            // TODO: make this applicable to other communities
-            const chipIdResp: GetChipIdResponse = await getChipId(session.authTokenValue, ChipIssuer.DEVCON_2024, connection?.user?.username);
-            setChipId(chipIdResp.id);
           }
 
         } else if (unregisteredUser) {
