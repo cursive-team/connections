@@ -168,7 +168,6 @@ export const addUserTap = async (
     taps: newTaps,
     comment: newComment,
     sentMessages: newSentMessages,
-    chipId: tapResponse.chipId,
   };
 
   if (user && session) {

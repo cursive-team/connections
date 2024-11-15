@@ -77,6 +77,20 @@ export const UpdateChipRequestSchema = z.object({
 
 export type UpdateChipRequest = z.infer<typeof UpdateChipRequestSchema>;
 
+export const GetChipIdRequestParamsSchema = z.object({
+  authToken: z.string(),
+  username: z.string(),
+  chipIssuer: ChipIssuerSchema,
+});
+
+export type GetChipIdRequestParams = z.infer<typeof GetChipIdRequestParamsSchema>;
+
+export const GetChipIdResponseSchema = z.object({
+  id: z.string()
+});
+
+export type GetChipIdResponse = z.infer<typeof GetChipIdResponseSchema>;
+
 export const UserTapSchema = z.object({
   chipPublicKey: z.string(),
   message: z.string(),
