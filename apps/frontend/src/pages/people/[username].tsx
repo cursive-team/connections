@@ -222,8 +222,7 @@ const UserProfilePage: React.FC = () => {
         if (user && connection?.user?.username && (
           user.userData.username === "stevenelleman" ||
           user.userData.username === "andrew" ||
-          user.userData.username === "vivek" ||
-          user.userData.username === "Carol"
+          user.userData.username === "vivek"
         )) {
           // TODO: make this applicable to other communities
           const chipIdResp: GetChipIdResponse = await getChipId(session.authTokenValue, ChipIssuer.DEVCON_2024, connection?.user?.username);
