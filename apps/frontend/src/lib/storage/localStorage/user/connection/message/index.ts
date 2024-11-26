@@ -7,7 +7,10 @@ import {
   decryptReceivedMessage,
   parseSerializedTapBackMessage,
   parseSerializedEdgeMessage,
-  TapBackMessage, EdgeMessage,
+  TapBackMessage,
+  EdgeMessage,
+  parseSerializedPSIMessage,
+  PSIMessage,
 } from "@/lib/message";
 import { saveBackupAndUpdateStorage } from "../../../utils";
 import { getUserAndSession } from "../..";
@@ -22,6 +25,10 @@ import { createTapBackReceivedActivity } from "@/lib/activity";
 import { sha256 } from "js-sha256";
 import { upsertSocialGraphEdge } from "@/lib/graph";
 import { DEVCON } from "@/lib/storage/types";
+import {
+  refreshPSI,
+  updateConnectionPSISize
+} from "@/lib/psi/refresh";
 
 function handleConnectionTapBacks(session: Session, user: User, lastMessageTimestamp: Date, connectionTapBacks: Record<string, TapBackMessage[]>): CreateBackupData[] {
 
@@ -148,6 +155,20 @@ async function handleEdges(session: Session, user: User, messages: EdgeMessage[]
   return newBackupEntries;
 }
 
+async function handleConnectionPSIs(session: Session, user: User, messages: PSIMessage[]): Promise<void> {
+  for (const message of messages) {
+    if (message.senderUsername && user.connections && user.connections[message.senderUsername]) {
+      // Refresh intersection
+      const newVerifiedIntersection = await refreshPSI(user, user.connections[message.senderUsername]);
+
+      if (newVerifiedIntersection) {
+        // If intersection was successful, set the size of intersection
+        await updateConnectionPSISize(newVerifiedIntersection, user, session, user.connections[message.senderUsername], true);
+      }
+    }
+  }
+}
+
 
 export const processNewMessages = async (
   messages: MessageData[]
@@ -160,6 +181,7 @@ export const processNewMessages = async (
 
   const connectionTapBacks: Record<string, TapBackMessage[]> = {};
   const edgeMessages: EdgeMessage[] = [];
+  const psiMessages: PSIMessage[] = [];
 
   let lastMessageTimestamp: Date | null = null;
   const sortedMessages = messages.sort(
@@ -194,6 +216,10 @@ export const processNewMessages = async (
         const edgeMessage = parseSerializedEdgeMessage(serializedData);
         edgeMessages.push(edgeMessage);
         continue;
+      } else if (serializedData.match(MessageType.PSI.toString())) {
+        const psiMessage = parseSerializedPSIMessage(serializedData);
+        psiMessages.push(psiMessage);
+        continue;
       } else {
         console.error(`Message type not recognized.`);
         continue;
@@ -220,6 +246,10 @@ export const processNewMessages = async (
   const edgeBackups: CreateBackupData[] = await handleEdges(session, user, edgeMessages);
 
   newBackupEntries = newBackupEntries.concat(edgeBackups);
+
+  // Handle all psi messages
+  // Currently we do not back up PSIs, therefore there's no associated backup
+  await handleConnectionPSIs(session, user, psiMessages);
 
   // Update last message fetched at
   const lastMessageFetchedAtBackup = createLastMessageFetchedAtBackup({

@@ -159,36 +159,49 @@ wsServer.on("connection", (socket: Socket) => {
 
       recipient = req.recipientSigPubKey;
       switch (req.type) {
-        case SocketRequestType.TAP_BACK:
+        case SocketRequestType.PULL_TAP_BACK_MSG:
           if (!recipient) {
             return handleError(socket, "Missing recipient.");
           }
 
           if (app.locals.clientsSockets[recipient]) {
             const socketId = app.locals.clientsSockets[recipient];
-            socket.to(socketId).emit(SocketRequestType.TAP_BACK);
+            socket.to(socketId).emit(SocketResponseType.PULL_TAP_BACK_MSG);
           } else {
             // If client is not online, use telegram instead
-            const user: User | null = await controller.GetUserBySigPubKey(
+            const targetUser: User | null = await controller.GetUserBySigPubKey(
               recipient
             );
-            if (user) {
+            if (targetUser) {
               await controller.SendNotification(
-                user.id,
-                "You have a new tap back! Check out who in your activities!"
+                targetUser.id,
+                `${socket.user.username} has tapped you back!`
               );
             }
           }
 
           return;
-        case SocketRequestType.PSI:
+        case SocketRequestType.PULL_PSI_MSG:
           if (!recipient) {
             return handleError(socket, "Missing recipient.");
           }
 
+          const req: SocketRequest = SocketRequestSchema.parse(JSON.parse(message));
+
           if (app.locals.clientsSockets[recipient]) {
             const socketId = app.locals.clientsSockets[recipient];
-            socket.to(socketId).emit(SocketRequestType.PSI);
+            socket.to(socketId).emit(SocketResponseType.PULL_PSI_MSG);
+          } else {
+            // If client is not online, use telegram instead
+            const targetUser: User | null = await controller.GetUserBySigPubKey(
+              recipient
+            );
+            if (targetUser) {
+              await controller.SendNotification(
+                targetUser.id,
+                `${socket.user.username} has refreshed your intersection! Go to their contact card and check out what common ground you share.`
+              );
+            }
           }
           return;
         case SocketRequestType.EXPUNGE:

@@ -8,13 +8,16 @@ import { FarcasterDataSchema } from "./farcasterData";
 import {
   HotTakesRatingSchema,
   LannaDataSchema,
-  TensionsRatingSchema,
+  TensionsRatingSchema
 } from "./lannaData";
 import { StravaDataSchema } from "./stravaData";
 import { GithubDataSchema } from "./githubData";
 import { LannaHalloweenDataSchema } from "./lannaHalloweenData";
 import { DevconSchema } from "./devconData";
-import { ConnectionPSISizeSchema } from "@/lib/storage/types/user/userData/psiSizeData";
+import {
+  ConnectionPSISizeSchema,
+  PullPSISchema
+} from "@/lib/storage/types/user/userData/psiSizeData";
 
 export const UserDataSchema = z.object({
   username: z.string(),
@@ -37,6 +40,7 @@ export const UserDataSchema = z.object({
   lannaHalloween: nullToUndefined(LannaHalloweenDataSchema),
   devcon: nullToUndefined(DevconSchema),
   connectionPSISize: nullToUndefined(ConnectionPSISizeSchema),
+  pullPSI: nullToUndefined(PullPSISchema),
 });
 
 export type UserData = z.infer<typeof UserDataSchema>;

@@ -2,7 +2,8 @@ import { z } from "zod";
 
 export enum MessageType {
   TAP_BACK = "TAP_BACK",
-  TAP_GRAPH_EDGE = "TAP_GRAPH_EDGE"
+  TAP_GRAPH_EDGE = "TAP_GRAPH_EDGE",
+  PSI = "PSI"
 }
 
 export const MessageTypeSchema = z.nativeEnum(MessageType);

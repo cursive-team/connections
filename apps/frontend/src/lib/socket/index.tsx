@@ -58,13 +58,13 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       console.warn("Authenticated socket server connection is established.");
     });
 
-    socketInstance.on(SocketResponseType.TAP_BACK, async () => {
+    socketInstance.on(SocketResponseType.PULL_TAP_BACK_MSG, async () => {
       await refreshMessages();
       return;
     });
 
-    socketInstance.on(SocketResponseType.PSI, async () => {
-      console.log("received PSI refresh message")
+    socketInstance.on(SocketResponseType.PULL_PSI_MSG, async () => {
+      await refreshMessages();
       return;
     });
 

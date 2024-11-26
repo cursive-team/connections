@@ -44,7 +44,12 @@ import {
   saveTapInfo,
 } from "@/lib/storage/localStorage/tapInfo";
 import { createTapBackMessage } from "./user/connection/message/tapBack";
-import { createEdgeMessageAndHandleBackup } from "./user/connection/message/edge";
+import {
+  createEdgeMessageAndHandleBackup,
+} from "./user/connection/message/edge";
+import {
+  createPSIMessageAndHandleBackup,
+} from "@/lib/storage/localStorage/user/connection/message/psi";
 import { processNewMessages } from "./user/connection/message";
 import {
   deleteOAuthAccessToken,
@@ -181,6 +186,13 @@ export class LocalStorage implements ClientStorage {
     senderUsername: string,
   ): Promise<CreateMessageData> {
     return createEdgeMessageAndHandleBackup(connectionUsername, edgeId, sentHash, senderUsername);
+  }
+
+  async createPSIMessageAndHandleBackup(
+    connectionUsername: string,
+    senderUsername: string,
+  ): Promise<CreateMessageData> {
+    return createPSIMessageAndHandleBackup(connectionUsername, senderUsername);
   }
 
   async processNewMessages(messages: MessageData[]): Promise<void> {
