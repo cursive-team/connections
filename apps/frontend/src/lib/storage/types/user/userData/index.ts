@@ -44,6 +44,23 @@ export const UnregisteredUserDataSchema = z.object({
 
 export type UnregisteredUserData = z.infer<typeof UnregisteredUserDataSchema>;
 
+export const FlattenedUserDataSchema = z.object({
+  username: z.string(),
+  displayName: z.string(),
+  bio: z.string(),
+  signaturePublicKey: z.string(),
+  encryptionPublicKey: z.string(),
+  psiPublicKeyLink: z.string().optional(),
+  twitterHandle: z.string().optional(),
+  telegramHandle: z.string().optional(),
+  signalHandle: z.string().optional(),
+  instagramHandle: z.string().optional(),
+  farcasterHandle: z.string().optional(),
+  pronouns: z.string().optional(),
+});
+
+export type FlattenedUserData = z.infer<typeof FlattenedUserDataSchema>;
+
 export { type TwitterData, TwitterDataSchema } from "./twitterData";
 export { type TelegramData, TelegramDataSchema } from "./telegramData";
 export { type SignalData, SignalDataSchema } from "./signalData";

@@ -25,6 +25,7 @@ import { toggleGraphConsent } from "@/lib/storage/localStorage/graph";
 import { DataImportSource } from "@types";
 import { deleteImports } from "@/lib/imports/delete";
 import AddNotificationButton from "@/features/notification/AddNotificationButton";
+import { exportConnectionsToCSV } from "@/lib/exports";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -38,6 +39,13 @@ const ProfilePage: React.FC = () => {
 
   const toggleGraph = async () => {
     await toggleGraphConsent();
+  };
+
+  const handleExportConnectionsToCSV = async () => {
+    if (window.confirm("Are you sure you want to export your connections?")) {
+      await exportConnectionsToCSV();
+    }
+    router.push("/profile");
   };
 
   const handleImportDeletion = async () => {
@@ -88,7 +96,6 @@ const ProfilePage: React.FC = () => {
     !user.oauth || !Object.keys(user.oauth).includes(DataImportSource.GITHUB);
   const hasDevconToAdd = !Object.keys(user.userData).includes("devcon");
 
-  console.log("To add?", hasDevconToAdd);
   const hasOauthToAdd = hasGithubToAdd || hasDevconToAdd;
   const hasDataToAdd = hasOauthToAdd || !user.userData.tensionsRating;
 
@@ -382,8 +389,8 @@ const ProfilePage: React.FC = () => {
               <AddNotificationButton buttonText="Add notifications" />
             </div>
             <div className="">
-              <AppButton onClick={handleImportDeletion} variant="outline">
-                Delete OAuth imports
+              <AppButton onClick={handleExportConnectionsToCSV} variant="outline">
+                Export connections to CSV
               </AppButton>
             </div>
             <div className="pb-6">
@@ -393,6 +400,24 @@ const ProfilePage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        <div className="p-4">
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1">
+              <span className="text-lg font-semibold text-label-primary font-sans">
+                Scary Settings
+              </span>
+            </div>
+
+            <div className="">
+              <AppButton onClick={handleImportDeletion} variant="outline">
+                Delete data imports
+              </AppButton>
+            </div>
+          </div>
+        </div>
+
+
       </AppLayout>
     </>
   );

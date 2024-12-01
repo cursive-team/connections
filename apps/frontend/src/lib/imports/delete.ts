@@ -3,8 +3,7 @@ import { OAUTH_APP_DETAILS } from "@/config";
 import { DataImportSourceSchema } from "@types";
 
 /**
- * Logs out the user by deleting all storage data.
- * @returns A promise that resolves when the logout process is complete.
+ * Deletes users data imports
  */
 export async function deleteImports(): Promise<void> {
   try {
