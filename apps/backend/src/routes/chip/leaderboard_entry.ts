@@ -1,7 +1,6 @@
 import express, { Request, Response } from "express";
 import {
   ErrorResponse,
-  LeaderboardEntry,
   GetLeaderboardEntryRequest,
   GetLeaderboardEntryRequestSchema,
   UpdateLeaderboardEntryRequest,
@@ -13,6 +12,7 @@ import {
   errorToString,
   SubmitProofJobRequest,
   SubmitProofJobRequestSchema,
+  LeaderboardEntryType,
 } from "@types";
 import { Controller } from "@/lib/controller";
 
@@ -31,7 +31,7 @@ router.post(
   ) => {
     try {
       const validatedData = UpdateLeaderboardEntryRequestSchema.parse(req.body);
-      const { authToken, chipIssuer, entryType, entryValue } = validatedData;
+      const { authToken, chipIssuer, entryType, entryValue, entryUsername } = validatedData;
 
       // Fetch user by auth token
       const user = await controller.GetUserByAuthToken(authToken);
@@ -40,15 +40,32 @@ router.post(
         return res.status(401).json({ error: "Invalid auth token" });
       }
 
-      // Update leaderboard entry
-      await controller.UpdateLeaderboardEntry(
-        user.username,
-        chipIssuer,
-        entryType,
-        entryValue
-      );
+      if (entryType === LeaderboardEntryType.USER_REGISTRATION_ONBOARDING) {
+        // Use the provided username rather than the username corresponding to the auth token
+        if (entryUsername) {
+          await controller.IncrementLeaderboardEntry(
+            entryUsername,
+            chipIssuer,
+            entryType,
+            entryValue
+          )
+          return res.status(200).json({});
+        } else {
+          return res.status(400).json({
+            error: "Missing connection username",
+          });
+        }
+      } else {
+        // Update leaderboard entry
+        await controller.UpdateLeaderboardEntry(
+          user.username,
+          chipIssuer,
+          entryType,
+          entryValue
+        );
 
-      return res.status(200).json({});
+        return res.status(200).json({});
+      }
     } catch (error) {
       return res.status(500).json({
         error: errorToString(error),

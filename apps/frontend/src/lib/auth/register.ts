@@ -6,13 +6,21 @@ import {
   ErrorResponse,
   UserRegisterRequest,
   UserRegisterResponseSchema,
-  errorToString, BackupEntryType, CreateBackupData,
+  errorToString,
+  BackupEntryType,
+  CreateBackupData, ChipIssuer, LeaderboardEntryType,
 } from "@types";
-import { createActivityBackup, createConnectionBackup, createInitialBackup, processUserBackup } from "@/lib/backup";
+import {
+  createActivityBackup,
+  createConnectionBackup,
+  createInitialBackup,
+  processUserBackup
+} from "@/lib/backup";
 import { ActivitySchema, ConnectionSchema, UnregisteredUser, User } from "@/lib/storage/types";
 import { storage } from "@/lib/storage";
 import { createRegisterActivity } from "../activity";
 import { saveBackupAndUpdateStorage } from "@/lib/storage/localStorage/utils";
+import { updateLeaderboardEntry } from "@/lib/chip";
 
 export interface RegisterUserArgs {
   email: string;
@@ -199,6 +207,7 @@ export async function applyBackupsToNewUser(password: string): Promise<void> {
   }
 
   const unregisteredUser = await storage.getUnregisteredUser();
+  let gaveOnboardingCredit = false;
   if (unregisteredUser) {
     const createBackups: CreateBackupData[] = [];
     for (const backup of unregisteredUser.backups) {
@@ -206,6 +215,18 @@ export async function applyBackupsToNewUser(password: string): Promise<void> {
         switch (backup.type) {
           case BackupEntryType.CONNECTION:
             const connection = ConnectionSchema.parse(JSON.parse(backup.backup));
+
+            // Give onboarding credit to first user connection
+            if (!gaveOnboardingCredit) {
+              await updateLeaderboardEntry({
+                authToken: session.authTokenValue,
+                chipIssuer: ChipIssuer.DEVCON_2024, // TODO: make this generic
+                entryType: LeaderboardEntryType.USER_REGISTRATION_ONBOARDING,
+                entryValue: 1,
+                entryUsername: connection.user.username,
+              });
+              gaveOnboardingCredit = true;
+            }
 
             const connectionBackupData = createConnectionBackup({
               email: user.email,

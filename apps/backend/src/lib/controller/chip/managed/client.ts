@@ -77,4 +77,12 @@ export class ManagedChipClient implements iChipClient {
 
   // @ts-expect-error (ts2391)
   PollProofResults(): Promise<void>;
+
+  // @ts-expect-error (ts2391)
+  IncrementLeaderboardEntry(
+    username: string,
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType,
+    entryValue: number
+  ): Promise<void>;
 }

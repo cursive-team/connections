@@ -149,6 +149,7 @@ export enum LeaderboardEntryType {
   DEVCON_2024_DAY_3_TAP_COUNT = "DEVCON_2024_DAY_3_TAP_COUNT",
   DEVCON_2024_DAY_4_TAP_COUNT = "DEVCON_2024_DAY_4_TAP_COUNT",
   DEVCON_2024_TAP_COUNT_NO_PROOF = "DEVCON_2024_TAP_COUNT_NO_PROOF",
+  USER_REGISTRATION_ONBOARDING = "USER_REGISTRATION_ONBOARDING",
 }
 
 export const LeaderboardEntryTypeSchema = z.nativeEnum(LeaderboardEntryType);
@@ -158,6 +159,7 @@ export const UpdateLeaderboardEntryRequestSchema = z.object({
   chipIssuer: ChipIssuerSchema,
   entryType: LeaderboardEntryTypeSchema,
   entryValue: z.number(),
+  entryUsername: z.string().optional(),
 });
 
 export type UpdateLeaderboardEntryRequest = z.infer<

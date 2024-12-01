@@ -201,6 +201,20 @@ export class Controller {
     );
   }
 
+  IncrementLeaderboardEntry(
+    username: string,
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType,
+    entryValue: number
+  ): Promise<void> {
+    return this.chipClient.IncrementLeaderboardEntry(
+      username,
+      chipIssuer,
+      entryType,
+      entryValue
+    );
+  }
+
   GetLeaderboardTotalValue(
     chipIssuer: ChipIssuer,
     entryType: LeaderboardEntryType

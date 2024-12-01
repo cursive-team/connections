@@ -505,3 +505,48 @@ ManagedChipClient.prototype.PollProofResults = async function () {
     await Promise.all(processJobs);
   }
 };
+
+ManagedChipClient.prototype.IncrementLeaderboardEntry = async function (
+  username: string,
+  chipIssuer: ChipIssuer,
+  entryType: LeaderboardEntryType,
+  entryValue: number
+): Promise<void> {
+  try {
+    const existingEntry = await this.prismaClient.leaderboardEntry.findFirst({
+      where: {
+        username,
+        chipIssuer: chipIssuer,
+        entryType: entryType,
+      },
+    });
+    if (existingEntry) {
+      let currentValue = 0;
+      if (existingEntry.entryValue) {
+        currentValue = existingEntry.entryValue.toNumber();
+      }
+      if (entryValue > 0) {
+        currentValue += entryValue;
+      }
+
+      // If an entry exists, update the tap count
+      await this.prismaClient.leaderboardEntry.update({
+        where: { id: existingEntry.id },
+        data: { entryValue: currentValue },
+      });
+    } else {
+      await this.prismaClient.leaderboardEntry.create({
+        data: {
+          username: username,
+          chipIssuer: chipIssuer,
+          entryType: entryType,
+          entryValue: entryValue,
+        },
+      });
+    }
+    return;
+  } catch (error) {
+    console.error("Failed to increment leaderboard entry:", errorToString(error));
+    throw new Error("Failed to increment leaderboard entry");
+  }
+};
