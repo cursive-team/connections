@@ -203,6 +203,7 @@ export type LeaderboardEntries = z.infer<typeof LeaderboardEntriesSchema>;
 export const LeaderboardDetailsSchema = z.object({
   username: z.string(),
   userPosition: z.coerce.number(),
+  userValue: z.number(),
   totalContributors: z.coerce.number(),
   totalValue: z.coerce.number(),
 });

@@ -14,6 +14,11 @@ export interface iChipClient {
   UpdateChip(updateChip: UpdateChipRequest): Promise<Chip>;
   GetChipId(chipIssuer: ChipIssuer, username: string): Promise<string>;
   GetTapFromChip(tapParams: TapParams): Promise<ChipTapResponse>;
+  GetLeaderboardEntryValue(
+    username: string,
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType
+  ): Promise<number>;
   UpdateLeaderboardEntry(
     username: string,
     chipIssuer: ChipIssuer,

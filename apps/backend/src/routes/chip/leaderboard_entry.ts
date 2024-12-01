@@ -98,11 +98,18 @@ router.get(
       }
 
       // Get leaderboard position
-      const position = await controller.GetUserLeaderboardPosition(
+      const userPosition = await controller.GetUserLeaderboardPosition(
         user.username,
         chipIssuer,
         entryType
       );
+
+      // Get user value
+      const userValue = await controller.GetLeaderboardEntryValue(
+        user.username,
+        chipIssuer,
+        entryType
+      )
 
       const totalContributors =
         await controller.GetLeaderboardTotalContributors(chipIssuer, entryType);
@@ -113,7 +120,8 @@ router.get(
       );
 
       if (
-        position === null ||
+        userPosition === null ||
+        userValue === null ||
         totalContributors === null ||
         totalValue === null
       ) {
@@ -122,7 +130,8 @@ router.get(
 
       const resp: LeaderboardDetails = {
         username: user.username,
-        userPosition: position,
+        userPosition,
+        userValue,
         totalContributors,
         totalValue,
       };

@@ -14,6 +14,30 @@ import {
 } from "@taceo/csn-api-client";
 import { pollJobResult } from "@/lib/util";
 
+ManagedChipClient.prototype.GetLeaderboardEntryValue = async function (
+  username: string,
+  chipIssuer: ChipIssuer,
+  entryType: LeaderboardEntryType,
+): Promise<number> {
+  try {
+    const existingEntry = await this.prismaClient.leaderboardEntry.findFirst({
+      where: {
+        username,
+        chipIssuer,
+        entryType,
+      },
+    });
+
+    if (existingEntry && existingEntry.entryValue) {
+      return existingEntry.entryValue.toNumber();
+    }
+    return 0;
+  } catch (error) {
+    console.error("Failed to get leaderboard entry value:", errorToString(error));
+    throw new Error("Failed to get leaderboard entry value");
+  }
+};
+
 ManagedChipClient.prototype.UpdateLeaderboardEntry = async function (
   username: string,
   chipIssuer: ChipIssuer,

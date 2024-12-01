@@ -216,14 +216,14 @@ export default function DevconCommunityPage({
         description={
           <>
             <span>
-              Bring friends into the Cursive community! Tap them before registration, guide them through the registration process, and get onboarding credit.
+              Bring your friends into the Cursive community! Tap them before registration, guide them through the registration process, and get credit for onboarding.
             </span>
           </>
         }
         leaderboardDetails={leaderboardOnboardingDetails}
         leaderboardEntries={leaderboardOnboardingEntries}
         goal={100}
-        unit="tap"
+        unit="invites"
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         type="active"
