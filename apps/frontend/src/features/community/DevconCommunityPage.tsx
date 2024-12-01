@@ -123,13 +123,13 @@ export default function DevconCommunityPage({
         {
           image: "/images/week.png",
           title: "User Onboarding Dashboard",
-          description: `${totalOnboardingDetails.totalValue} of 300 Onboardings`,
+          description: `${totalOnboardingDetails.totalValue} of 100 Onboardings`,
           type: "active",
           position: totalOnboardingDetails.userPosition,
           totalContributors: totalOnboardingDetails.totalContributors,
           progressPercentage: Math.min(
             100,
-            Math.round((totalTapDetails.totalValue / 300) * 100)
+            Math.round((totalOnboardingDetails.totalValue / 100) * 100)
           ),
           dashboard: DisplayedDashboard.USER_REGISTRATION_ONBOARDING,
         },
@@ -222,7 +222,7 @@ export default function DevconCommunityPage({
         }
         leaderboardDetails={leaderboardOnboardingDetails}
         leaderboardEntries={leaderboardOnboardingEntries}
-        goal={2000}
+        goal={100}
         unit="tap"
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
