@@ -21,6 +21,8 @@ import {
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { User } from "@/lib/storage/types";
+import ImportGithubButton from "@/features/oauth/ImportGithubButton";
 
 export default function DevconCommunityPage({
   displayedDashboard,
@@ -30,6 +32,10 @@ export default function DevconCommunityPage({
   setDisplayedDashboard: (dashboard: DisplayedDashboard) => void;
 }) {
   const router = useRouter();
+
+  const [user, setUser] =
+    useState<User | undefined>(undefined);
+
   const [leaderboardTapDetails, setLeaderboardTapDetails] =
     useState<LeaderboardDetails | null>(null);
   const [leaderboardTapEntries, setLeaderboardTapEntries] =
@@ -38,6 +44,11 @@ export default function DevconCommunityPage({
   const [leaderboardOnboardingDetails, setLeaderboardOnboardingDetails] =
     useState<LeaderboardDetails | null>(null);
   const [leaderboardOnboardingEntries, setLeaderboardOnboardingEntries] =
+    useState<LeaderboardEntries | null>(null);
+
+  const [githubLeaderboardDetails, setGithubLeaderboardDetails] =
+    useState<LeaderboardDetails | null>(null);
+  const [githubLeaderboardEntries, setGithubLeaderboardEntries] =
     useState<LeaderboardEntries | null>(null);
 
   const [cardProps, setCardProps] = useState<CommunityCardProps[]>([]);
@@ -53,14 +64,24 @@ export default function DevconCommunityPage({
 
       const communityIssuer: ChipIssuer = ChipIssuer.DEVCON_2024;
 
+      let fetchedUser: User | undefined = undefined;
       let totalTapDetails: LeaderboardDetails | null = null;
       let totalTapEntries: LeaderboardEntries | null = null;
+      let githubDetails: LeaderboardDetails | null = null;
+      let githubEntries: LeaderboardEntries | null = null;
 
       let totalOnboardingDetails: LeaderboardDetails | null = null;
       let totalOnboardingEntries: LeaderboardEntries | null = null;
 
       try {
-        [totalTapDetails, totalTapEntries] = await Promise.all([
+        [
+          fetchedUser,
+          totalTapDetails,
+          totalTapEntries,
+          githubDetails,
+          githubEntries,
+        ] = await Promise.all([
+          storage.getUser(),
           getUserLeaderboardDetails(
             communityIssuer,
             LeaderboardEntryType.DEVCON_2024_TAP_COUNT
@@ -68,6 +89,14 @@ export default function DevconCommunityPage({
           getTopLeaderboardEntries(
             communityIssuer,
             LeaderboardEntryType.DEVCON_2024_TAP_COUNT
+          ),
+          getUserLeaderboardDetails(
+            communityIssuer,
+            LeaderboardEntryType.GITHUB_CONTRIBUTIONS_LAST_YEAR
+          ),
+          getTopLeaderboardEntries(
+            communityIssuer,
+            LeaderboardEntryType.GITHUB_CONTRIBUTIONS_LAST_YEAR
           ),
         ]);
 
@@ -88,8 +117,14 @@ export default function DevconCommunityPage({
         return;
       }
 
-      if (!totalTapDetails || !totalTapEntries) {
-        toast.error("User tap leaderboard info not found.");
+      if (
+        !fetchedUser ||
+        !totalTapDetails ||
+        !totalTapEntries ||
+        !githubDetails ||
+        !githubEntries
+      ) {
+        toast.error("User leaderboard info not found.");
         router.push("/profile");
         return;
       }
@@ -100,11 +135,16 @@ export default function DevconCommunityPage({
         return;
       }
 
+      setUser(fetchedUser);
+
       setLeaderboardTapDetails(totalTapDetails);
       setLeaderboardTapEntries(totalTapEntries);
 
       setLeaderboardOnboardingDetails(totalOnboardingDetails);
       setLeaderboardOnboardingEntries(totalOnboardingEntries);
+
+      setGithubLeaderboardDetails(githubDetails);
+      setGithubLeaderboardEntries(githubEntries);
 
       const props: CommunityCardProps[] = [
         {
@@ -132,6 +172,19 @@ export default function DevconCommunityPage({
             Math.round((totalOnboardingDetails.totalValue / 100) * 100)
           ),
           dashboard: DisplayedDashboard.USER_REGISTRATION_ONBOARDING,
+        },
+        {
+          image: "/images/buildclub.png",
+          title: "Hacker Club 👩‍💻",
+          description: `${githubDetails.totalValue} of 1000 contributions`,
+          type: "active",
+          position: githubDetails.userPosition,
+          totalContributors: githubDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((githubDetails.totalValue / 1000) * 100)
+          ),
+          dashboard: DisplayedDashboard.GITHUB,
         },
       ];
 
@@ -226,6 +279,38 @@ export default function DevconCommunityPage({
         unit="invites"
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
+        type="active"
+        returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
+      />
+    );
+  } else if (
+    githubLeaderboardDetails &&
+    githubLeaderboardEntries &&
+    displayedDashboard === DisplayedDashboard.GITHUB
+  ) {
+    return (
+      <DashboardDetail
+        image="/images/buildclub_wide.png"
+        title="Lanna Hacker Club 👩‍💻"
+        description={`Share your open source GitHub contributions with the Lanna Builder community!`}
+        leaderboardDetails={githubLeaderboardDetails}
+        leaderboardEntries={githubLeaderboardEntries}
+        goal={1000}
+        unit="contribution"
+        organizer="Cursive"
+        organizerDescription="Cryptography for human connection"
+        actionItem={
+          user &&
+          (!user.oauth ||
+            (user.oauth && !Object.keys(user?.oauth).includes("github"))) && (
+            <div
+              className="w-full"
+              onClick={() => logClientEvent("community-github-clicked", {})}
+            >
+              <ImportGithubButton fullWidth />
+            </div>
+          )
+        }
         type="active"
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
       />
