@@ -184,6 +184,7 @@ export default function LocationPage() {
   const leaderboardDetails = {
     totalValue: 0,
     userPosition: 0,
+    userValue: 0,
     totalContributors: 0,
     username: "test",
   };
