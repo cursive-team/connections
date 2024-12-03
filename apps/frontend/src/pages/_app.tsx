@@ -21,6 +21,9 @@ import { refreshMessages } from "@/lib/message";
 import { getUser, getUnregisteredUser } from "@/lib/storage/localStorage/user";
 import { getSession } from "@/lib/storage/localStorage/session";
 import { backfillEdgesForUserWithFeatureAlreadyEnabled } from "@/lib/storage/localStorage/graph";
+import { logClientEvent } from "@/lib/frontend/metrics";
+import Link from "next/link";
+import { FRONTEND_URL } from "@/config";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -65,8 +68,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       const session = getSession();
       const unregisteredUser = getUnregisteredUser();
 
-      if (!user && !session && unregisteredUser) {
+      // If session exists, it means a corresponding user also exists. Redirect to login.
+      if (session && session.authTokenExpiresAt < new Date()) {
+        router.push("/login");
+      }
 
+      if (!user && !session && unregisteredUser) {
         // Unregistered is only allowed onto:
         // - login view
         // - people view
@@ -81,9 +88,20 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           // Ensure toast only called once
           setIsToastDisabled(false);
 
-
           if (!isToastDisabled) {
-            toast.error("Unregistered users can only collect contacts. Get a chip at the Cursive booth near entrance to access other features!", {duration: 6000});
+            toast(<div>
+              {"Unregistered users can only collect contacts. Get a chip at the Cursive booth near entrance to access" +
+                " other features! If you already have an account, "}
+              <Link
+                href={`${FRONTEND_URL}/login`}
+                className="underline font-bold"
+                onClick={() => {
+                  logClientEvent("error-toast-login-link-clicked", {});
+                }}
+              >
+                login here.
+              </Link>
+            </div>, {duration: 6000});
           }
           router.push("/people");
         } else {
