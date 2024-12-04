@@ -390,12 +390,12 @@ const ProfilePage: React.FC = () => {
             </div>
             <div className="">
               <AppButton onClick={handleExportConnectionsToCSV} variant="outline">
-                Export connections to CSV
+                Export your connections
               </AppButton>
             </div>
             <div className="pb-6">
               <AppButton onClick={handleLogout} variant="secondary">
-                Log out
+                Sign out
               </AppButton>
             </div>
           </div>
@@ -405,7 +405,7 @@ const ProfilePage: React.FC = () => {
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-1">
               <span className="text-lg font-semibold text-label-primary font-sans">
-                Scary Settings
+                Destructive Settings
               </span>
             </div>
 
