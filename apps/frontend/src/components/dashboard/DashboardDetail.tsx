@@ -152,11 +152,9 @@ export function DashboardDetail({
             }
           ></div>
           <div className="flex flex-col flex-1 gap-2">
-            <p className="text-xs font-normal text-label-quaternary">{`${
-              (leaderboardDetails?.userPosition ?? 0) > 0
-                ? `#${leaderboardDetails?.userPosition} of `
-                : ""
-            } ${leaderboardDetails?.totalContributors} contributors. ${contributorMsg}`}</p>
+            <p className="text-xs font-normal text-label-quaternary">
+              {contributorMsg}
+            </p>
             <h2 className="text-xl font-bold leading-none text-label-primary">
               {title}
             </h2>
