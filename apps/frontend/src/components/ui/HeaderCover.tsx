@@ -5,7 +5,7 @@ interface HeaderCoverProps {
   isLoading?: boolean;
   className?: string;
   size?: number;
-  image?: "edge-city" | "devcon";
+  image?: "edge-city" | "devcon" | "ethindia";
 }
 
 export const CursiveLogo = ({
@@ -51,6 +51,22 @@ export const HeaderCover = ({ isLoading = false, image }: HeaderCoverProps) => {
             <Image
               src="/images/devcon_register_cover.png"
               alt="devcon register main"
+              className="object-cover w-full"
+              width={400}
+              height={300}
+            />
+            <CursiveLogo
+              className="position absolute -bottom-9 left-1/2 -ml-[30px]"
+              isLoading={isLoading}
+              image={image}
+            />
+          </>
+        )}
+        {image === "ethindia" && (
+          <>
+            <Image
+              src="/images/eth-india-register-header.svg"
+              alt="ethindia register main"
               className="object-cover w-full"
               width={400}
               height={300}
