@@ -198,7 +198,7 @@ export async function createUnregisteredUser(): Promise<UnregisteredUser> {
   return user;
 }
 
-export async function applyBackupsToNewUser(password: string): Promise<void> {
+export async function applyBackupsToNewUser(password: string, chipIssuer: ChipIssuer | undefined): Promise<void> {
   // Both these values should have been created in registerUser, if they don't, exit
   const user = await storage.getUser();
   const session = await storage.getSession();
@@ -216,11 +216,15 @@ export async function applyBackupsToNewUser(password: string): Promise<void> {
           case BackupEntryType.CONNECTION:
             const connection = ConnectionSchema.parse(JSON.parse(backup.backup));
 
-            // Give onboarding credit to first user connection
-            if (!gaveOnboardingCredit) {
+            // TODO: for each existing connection, notify to tap them back? Make UI easier to tap back?
+
+            // Give onboarding credit to first user connection, provided connection username and chip issuer are defined
+            if (!gaveOnboardingCredit && connection.user?.username && chipIssuer) {
+              // NOTE: This leaderboard type *increments* the EntryValue. The default behavior updates the value
+              // to the value passed in.
               await updateLeaderboardEntry({
                 authToken: session.authTokenValue,
-                chipIssuer: ChipIssuer.DEVCON_2024, // TODO: make this generic
+                chipIssuer: chipIssuer,
                 entryType: LeaderboardEntryType.USER_REGISTRATION_ONBOARDING,
                 entryValue: 1,
                 entryUsername: connection.user.username,

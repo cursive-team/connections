@@ -149,7 +149,7 @@ export enum LeaderboardEntryType {
   DEVCON_2024_DAY_3_TAP_COUNT = "DEVCON_2024_DAY_3_TAP_COUNT",
   DEVCON_2024_DAY_4_TAP_COUNT = "DEVCON_2024_DAY_4_TAP_COUNT",
   DEVCON_2024_TAP_COUNT_NO_PROOF = "DEVCON_2024_TAP_COUNT_NO_PROOF",
-  USER_REGISTRATION_ONBOARDING = "USER_REGISTRATION_ONBOARDING",
+  USER_REGISTRATION_ONBOARDING = "USER_REGISTRATION_ONBOARDING", // NOTE: This leaderboard type *increments* the EntryValue. The default updates the value to whats passed in.
 }
 
 export const LeaderboardEntryTypeSchema = z.nativeEnum(LeaderboardEntryType);
