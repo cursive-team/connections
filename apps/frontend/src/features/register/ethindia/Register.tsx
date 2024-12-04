@@ -24,17 +24,16 @@ enum DisplayState {
   CREATING_ACCOUNT,
 }
 
-interface RegisterDevconProps {
+interface RegisterETHIndiaProps {
   savedTap: TapInfo;
 }
 
-const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
+const RegisterETHIndia: React.FC<RegisterETHIndiaProps> = ({ savedTap }) => {
   const router = useRouter();
   const { pageHeight } = useSettings();
   const [displayState, setDisplayState] = useState<DisplayState>(
     DisplayState.ENTER_USER_INFO
   );
-  const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [telegramHandle, setTelegramHandle] = useState("");
@@ -42,7 +41,6 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
   const handleUserInfoSubmit = async (userInfo: {
-    username: string;
     displayName: string;
     bio: string;
     telegramHandle: string;
@@ -52,13 +50,6 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
       chipIssuer: savedTap.tapResponse.chipIssuer,
     });
 
-    const parsedUsername = UsernameSchema.parse(userInfo.username);
-    const usernameIsUnique = await verifyUsernameIsUnique(parsedUsername);
-    if (!usernameIsUnique) {
-      toast.error("Username is already taken");
-      return;
-    }
-    setUsername(parsedUsername);
     setDisplayName(userInfo.displayName);
     setBio(userInfo.bio);
     setTelegramHandle(userInfo.telegramHandle);
@@ -66,7 +57,25 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
     setDisplayState(DisplayState.REGISTER_WITH_PASSWORD);
   };
 
-  const handleRegisterWithPassword = async (password: string) => {
+  const handleRegisterWithPassword = async (
+    username: string,
+    password: string
+  ) => {
+    // Check username is valid
+    let parsedUsername;
+    try {
+      parsedUsername = UsernameSchema.parse(username);
+    } catch (error) {
+      toast.error("Invalid username");
+      console.error(error);
+      return;
+    }
+    const usernameIsUnique = await verifyUsernameIsUnique(parsedUsername);
+    if (!usernameIsUnique) {
+      toast.error("Username is already taken");
+      return;
+    }
+
     // Check password strength
     const passwordCheck = zxcvbn(password);
 
@@ -82,10 +91,11 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
     logClientEvent("register-register-with-password", {
       chipIssuer: savedTap.tapResponse.chipIssuer,
     });
-    await handleCreateAccount(password, false, undefined);
+    await handleCreateAccount(username, password, false, undefined);
   };
 
   const handleCreateAccount = async (
+    username: string,
     backupPassword: string,
     registeredWithPasskey: boolean,
     authPublicKey: string | undefined
@@ -162,7 +172,7 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
 
       setIsCreatingAccount(false);
     } catch (error) {
-      onGoBack();
+      setDisplayState(DisplayState.REGISTER_WITH_PASSWORD);
       logClientEvent("register-create-account-error", {
         error: errorToString(error),
       });
@@ -177,6 +187,8 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
         )
       );
       return;
+    } finally {
+      setIsCreatingAccount(false);
     }
   };
 
@@ -213,7 +225,6 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
       <div className="flex-grow flex px-6 center sm:mx-auto sm:w-full sm:max-w-md">
         {displayState === DisplayState.ENTER_USER_INFO && (
           <EnterUserInfo
-            username={username}
             displayName={displayName}
             bio={bio}
             telegramHandle={telegramHandle}
@@ -238,4 +249,4 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
   );
 };
 
-export default RegisterDevcon;
+export default RegisterETHIndia;

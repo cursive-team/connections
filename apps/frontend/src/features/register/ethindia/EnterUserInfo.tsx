@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { errorToString, UsernameSchema } from "@types";
+import { errorToString } from "@types";
 import { toast } from "sonner";
 import { AppButton } from "@/components/ui/Button";
 import { AppInput } from "@/components/ui/AppInput";
 import { SupportToast } from "@/components/ui/SupportToast";
 import { ERROR_SUPPORT_CONTACT } from "@/constants";
+import { AppTextarea } from "@/components/ui/Textarea";
+import { AppCopy } from "@/components/ui/AppCopy";
 
 interface FormData {
-  username: string;
   displayName: string;
   bio: string;
   telegramHandle: string;
@@ -16,7 +17,6 @@ interface FormData {
 
 interface EnterUserInfoProps {
   onSubmit: (userInfo: FormData) => Promise<void>;
-  username?: string;
   displayName?: string;
   bio?: string;
   telegramHandle?: string;
@@ -25,14 +25,12 @@ interface EnterUserInfoProps {
 
 const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
   onSubmit,
-  username = "",
   displayName = "",
   bio = "",
   telegramHandle = "",
   twitterHandle = "",
 }) => {
   const [formData, setFormData] = useState<FormData>({
-    username,
     displayName,
     bio,
     telegramHandle,
@@ -54,9 +52,6 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
     e.preventDefault();
 
     try {
-      // Validate username
-      UsernameSchema.parse(formData.username);
-
       // Validate handles don't include @
       if (
         formData.telegramHandle.includes("@") ||
@@ -94,76 +89,63 @@ const EnterUserInfo: React.FC<EnterUserInfoProps> = ({
     <div className="flex flex-col grow">
       <div className="flex flex-col gap-2 py-4">
         <span className="text-[20px] font-semibold font-sans text-label-primary">
-          Create an account
+          Set up your NFC chip
         </span>
         <span className="font-sans text-sm font-normal text-label-primary">
-          Enter the socials you want to give to others when they tap your NFC
-          accessory.
+          Tapping NFC chips builds a private social graph you can use to
+          discover and deepen connections. Add initial info to share with others
+          when they tap your chip.
         </span>
       </div>
+      <div className="flex flex-col mt-auto gap-4">
+        <form onSubmit={handleSubmit} className="space-y-2">
+          <AppInput
+            id="displayName"
+            name="displayName"
+            type="text"
+            label="Display name"
+            placeholder="Enter your name"
+            value={formData.displayName}
+            onChange={handleChange}
+          />
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <AppInput
-          id="username"
-          name="username"
-          type="text"
-          label="Unique Username"
-          required
-          value={formData.username}
-          onChange={handleChange}
-          autoComplete="username"
-        />
+          <AppInput
+            id="telegramHandle"
+            name="telegramHandle"
+            type="text"
+            label="Telegram"
+            placeholder="Enter username without @"
+            value={formData.telegramHandle}
+            onChange={handleChange}
+          />
 
-        <AppInput
-          id="displayName"
-          name="displayName"
-          type="text"
-          label="How do you want people to call you?"
-          value={formData.displayName}
-          onChange={handleChange}
-        />
+          <AppInput
+            id="twitterHandle"
+            name="twitterHandle"
+            type="text"
+            label="Twitter"
+            placeholder="Enter username without @"
+            value={formData.twitterHandle}
+            onChange={handleChange}
+          />
 
-        <AppInput
-          id="telegramHandle"
-          name="telegramHandle"
-          type="text"
-          label="Telegram"
-          placeholder="without @"
-          value={formData.telegramHandle}
-          onChange={handleChange}
-        />
-
-        <AppInput
-          id="twitterHandle"
-          name="twitterHandle"
-          type="text"
-          label="Twitter"
-          placeholder="without @"
-          value={formData.twitterHandle}
-          onChange={handleChange}
-        />
-
-        <div className="space-y-2">
-          <label
-            htmlFor="bio"
-            className="block text-sm font-medium text-label-primary"
-          >
-            Bio
-          </label>
-          <textarea
-            id="bio"
+          <AppTextarea
+            label="Bio"
             name="bio"
-            rows={3}
-            className="w-full px-3 py-2 bg-transparent border border-border rounded-md text-label-primary focus:outline-none focus:ring-2 focus:ring-primary"
+            autoExpand
+            placeholder="Enter a short bio"
+            variant="primary"
             value={formData.bio}
             onChange={handleChange}
           />
-        </div>
 
-        <AppButton type="submit" loading={loading} className="w-full">
-          Create Profile
-        </AppButton>
-      </form>
+          <AppButton type="submit" loading={loading} className="w-full">
+            Next
+          </AppButton>
+        </form>
+
+        <AppCopy className="text-center py-4" />
+      </div>
     </div>
   );
 };
