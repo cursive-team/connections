@@ -24,10 +24,10 @@ export const UserSchema = z.object({
   activities: z.array(ActivitySchema),
   oauth: nullToUndefined(z.record(z.string(), AccessTokenSchema)),
 
-  // graph related userData
+  // Tap graph attributes -- NOTE: tapGraphEnabled should be moved to UserSettings at some point
   tapGraphEnabled: nullToUndefined(z.boolean().nullable()),
   edgesBackfilledForUsersWithEnabledFeature: nullToUndefined(z.boolean().nullable()),
-  edges: nullToUndefined(z.array(EdgeBackupSchema))
+  edges: nullToUndefined(z.array(EdgeBackupSchema)),
 });
 
 export type User = z.infer<typeof UserSchema>;

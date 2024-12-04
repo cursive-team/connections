@@ -20,6 +20,7 @@ import { storage } from "@/lib/storage";
 import { sendMessages } from "@/lib/message";
 import { Socket } from "socket.io-client";
 import { updateUserData } from "@/lib/storage/localStorage/user/userData";
+import { upsertConnectionRefreshPSI } from "@/lib/storage/localStorage/user/connection/upsert";
 
 export type Intersection = {
   tensions: string[];
@@ -244,23 +245,19 @@ export const updateConnectionPSISize = async (newVerifiedIntersection: Intersect
   if (!newUserData.connectionPSISize) {
     newUserData.connectionPSISize = {};
   }
-  if (!newUserData.pullPSI) {
-    newUserData.pullPSI = {};
-  }
 
   newUserData.connectionPSISize[connection.user.username] = intersectionSize;
+
+  // Update the size on the user object
+  if (user && session) {
+    await updateUserData(newUserData);
+  }
 
   // There are two cases. In the flow User A refreshes, which then triggers User B to automatically refresh.
   // User A does not need to re-pull the intersection, after clicking refresh it's available.
   // User B has run the new intersection but needs to fetch the value.
   // In other words, User B needs to automatically pull the fresh results when they're on User A's connection page.
   if (triggerPull) {
-    // If set to true, automatically post refresh to pull the most recent intersection
-    newUserData.pullPSI[connection.user.username] = true;
-
-    // Update the size on the user object
-    if (user && session) {
-      await updateUserData(newUserData);
-    }
+    await upsertConnectionRefreshPSI(connection.user.username, true);
   }
 }

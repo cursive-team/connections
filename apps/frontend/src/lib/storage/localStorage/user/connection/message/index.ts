@@ -158,12 +158,15 @@ async function handleEdges(session: Session, user: User, messages: EdgeMessage[]
 async function handleConnectionPSIs(session: Session, user: User, messages: PSIMessage[]): Promise<void> {
   for (const message of messages) {
     if (message.senderUsername && user.connections && user.connections[message.senderUsername]) {
-      // Refresh intersection
-      const newVerifiedIntersection = await refreshPSI(user, user.connections[message.senderUsername]);
 
-      if (newVerifiedIntersection) {
-        // If intersection was successful, set the size of intersection
-        await updateConnectionPSISize(newVerifiedIntersection, user, session, user.connections[message.senderUsername], true);
+      if (user.userData?.settings?.automaticPSIEnabled) {
+        // Only if the setting is enabled should PSI be automatically refreshed
+        const newVerifiedIntersection = await refreshPSI(user, user.connections[message.senderUsername]);
+
+        if (newVerifiedIntersection) {
+          // If intersection is successful, set the size of intersection
+          await updateConnectionPSISize(newVerifiedIntersection, user, session, user.connections[message.senderUsername], true);
+        }
       }
     }
   }

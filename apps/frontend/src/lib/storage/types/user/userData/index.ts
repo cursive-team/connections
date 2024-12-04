@@ -16,8 +16,18 @@ import { LannaHalloweenDataSchema } from "./lannaHalloweenData";
 import { DevconSchema } from "./devconData";
 import {
   ConnectionPSISizeSchema,
-  PullPSISchema
 } from "@/lib/storage/types/user/userData/psiSizeData";
+
+export const UserSettingsSchema = z.object({
+  automaticPSIEnabled: nullToUndefined(z.boolean().nullable()),
+
+  // NOTE: In a future PR swap tapGraphEnabled to live in settings
+  // tapGraphEnabled: nullToUndefined(z.boolean().nullable()),
+
+  // NOTE: currently dark theme lives in localstorage at `cursive-connections-theme` key -- should it be moved to settings to persist it between sessions?
+});
+
+export type UserSettings = z.infer<typeof UserSettingsSchema>;
 
 export const UserDataSchema = z.object({
   username: z.string(),
@@ -40,7 +50,7 @@ export const UserDataSchema = z.object({
   lannaHalloween: nullToUndefined(LannaHalloweenDataSchema),
   devcon: nullToUndefined(DevconSchema),
   connectionPSISize: nullToUndefined(ConnectionPSISizeSchema),
-  pullPSI: nullToUndefined(PullPSISchema),
+  settings: nullToUndefined(UserSettingsSchema)
 });
 
 export type UserData = z.infer<typeof UserDataSchema>;

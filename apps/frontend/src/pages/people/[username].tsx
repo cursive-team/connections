@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { Connection, Session, User, UserData } from "@/lib/storage/types";
+import { Connection, Session, User } from "@/lib/storage/types";
 import { toast } from "sonner";
 import { ChipIssuer, ChipTapResponse, errorToString, GetChipIdResponse, SocketRequestType, TapParams, } from "@types";
 import { AppButton } from "@/components/ui/Button";
@@ -29,7 +29,7 @@ import { CringeSlider } from "@/components/ui/CringeSlider";
 import { getChipId } from "@/lib/chip/update";
 import { flowerSize, flowerType } from "@/lib/garden";
 import { Intersection, refreshPSI, triggerConnectionRefreshPSI, updateConnectionPSISize } from "@/lib/psi/refresh";
-import { updateUserData } from "@/lib/storage/localStorage/user/userData";
+import { upsertConnectionRefreshPSI } from "@/lib/storage/localStorage/user/connection/upsert";
 
 interface CommentModalProps {
   username: string;
@@ -262,25 +262,20 @@ const UserProfilePage: React.FC = () => {
             setShowCommentModal(true);
           }
 
-          // If pullPSI set to true, run refreshPSI and get most recent verified intersection
-          if (user?.userData?.pullPSI) {
-            const pullConnectionPSI = user.userData.pullPSI[username];
-            if (pullConnectionPSI) {
+          // If refreshPSI set to true, run refreshPSI and get most recent verified intersection
+          if (user && user.connections && user.connections[username]) {
+            const connection = user.connections[username];
+
+            if (connection.refreshPSI) {
 
               // Ideally this would get the existing PSI rather than refreshing it, but there's no guarantee the
               // result will still exist in memory.
-              const newVerifiedIntersection = await refreshPSI(user, user.connections[username]);
+              const newVerifiedIntersection = await refreshPSI(user, connection);
 
               setVerifiedIntersection(newVerifiedIntersection);
 
-              // Under what circumstances should your pullPSI boolean be turned to false?
-
-              const newUserData: UserData = user.userData;
-              if (!newUserData.pullPSI) {
-                newUserData.pullPSI = {};
-              }
-              newUserData.pullPSI[username] = false;
-              await updateUserData(newUserData);
+              // Update connection, should not pull PSI again, otherwise it pulls redundantly
+              await upsertConnectionRefreshPSI(username, false);
             }
           }
 
@@ -422,7 +417,8 @@ const UserProfilePage: React.FC = () => {
         await updateConnectionPSISize(newVerifiedIntersection, user, session, connection, false);
 
         if (socket) {
-          // If socket available, trigger connection to also automatically refresh PSI intersection
+          // If socket available and automatic PSI setting enabled, trigger connection to also automatically refresh PSI
+          // intersection
           await triggerConnectionRefreshPSI(socket, user, connection);
         } else {
           // If socket not available, explicitly nudge

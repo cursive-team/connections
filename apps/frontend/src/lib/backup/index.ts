@@ -20,7 +20,8 @@ import {
   UserDataSchema,
   UserSchema,
   OAuthAppSchema,
-  OAuthApp, EdgeIdsSchema,
+  OAuthApp,
+  EdgeIdsSchema,
 } from "@/lib/storage/types";
 import { decryptBackupString, encryptBackupString } from "@/lib/crypto/backup";
 import { BASE_API_URL } from "@/config";
@@ -214,10 +215,8 @@ export const processUserBackup = ({
           );
 
           user = updateBackfilledEdgesOnUser(user, updatedEdges);
-
         } catch (error) {
           console.error(`Error updating backfilled edges on user: ${errorToString(error)}`)
-          break;
         }
         break;
       default:
