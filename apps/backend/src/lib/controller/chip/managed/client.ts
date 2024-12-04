@@ -39,6 +39,13 @@ export class ManagedChipClient implements iChipClient {
   GetChipId(chipIssuer: ChipIssuer, username: string): Promise<string>;
 
   // @ts-expect-error (ts2391)
+  GetLeaderboardEntryValue(
+    username: string,
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType,
+  ): Promise<number>;
+
+  // @ts-expect-error (ts2391)
   UpdateLeaderboardEntry(
     username: string,
     chipIssuer: ChipIssuer,
@@ -77,4 +84,12 @@ export class ManagedChipClient implements iChipClient {
 
   // @ts-expect-error (ts2391)
   PollProofResults(): Promise<void>;
+
+  // @ts-expect-error (ts2391)
+  IncrementLeaderboardEntry(
+    username: string,
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType,
+    entryValue: number
+  ): Promise<void>;
 }

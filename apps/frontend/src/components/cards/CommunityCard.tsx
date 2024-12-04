@@ -16,6 +16,7 @@ export enum DisplayedDashboard {
   DEVCON_2024_TAP_COUNT = "devcon-total-taps",
   DEVCON_2024_DAY_1_TAP_COUNT = "devcon-day-1-taps",
   DEVCON_2024_DAY_2_TAP_COUNT = "devcon-day-2-taps",
+  USER_REGISTRATION_ONBOARDING = "user-registration-onboarding"
 }
 
 export interface CommunityCardProps {

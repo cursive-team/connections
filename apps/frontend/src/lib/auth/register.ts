@@ -6,13 +6,21 @@ import {
   ErrorResponse,
   UserRegisterRequest,
   UserRegisterResponseSchema,
-  errorToString, BackupEntryType, CreateBackupData,
+  errorToString,
+  BackupEntryType,
+  CreateBackupData, ChipIssuer, LeaderboardEntryType,
 } from "@types";
-import { createActivityBackup, createConnectionBackup, createInitialBackup, processUserBackup } from "@/lib/backup";
+import {
+  createActivityBackup,
+  createConnectionBackup,
+  createInitialBackup,
+  processUserBackup
+} from "@/lib/backup";
 import { ActivitySchema, ConnectionSchema, UnregisteredUser, User } from "@/lib/storage/types";
 import { storage } from "@/lib/storage";
 import { createRegisterActivity } from "../activity";
 import { saveBackupAndUpdateStorage } from "@/lib/storage/localStorage/utils";
+import { updateLeaderboardEntry } from "@/lib/chip";
 
 export interface RegisterUserArgs {
   email: string;
@@ -190,7 +198,7 @@ export async function createUnregisteredUser(): Promise<UnregisteredUser> {
   return user;
 }
 
-export async function applyBackupsToNewUser(password: string): Promise<void> {
+export async function applyBackupsToNewUser(password: string, chipIssuer: ChipIssuer | undefined): Promise<void> {
   // Both these values should have been created in registerUser, if they don't, exit
   const user = await storage.getUser();
   const session = await storage.getSession();
@@ -199,6 +207,7 @@ export async function applyBackupsToNewUser(password: string): Promise<void> {
   }
 
   const unregisteredUser = await storage.getUnregisteredUser();
+  let gaveOnboardingCredit = false;
   if (unregisteredUser) {
     const createBackups: CreateBackupData[] = [];
     for (const backup of unregisteredUser.backups) {
@@ -206,6 +215,22 @@ export async function applyBackupsToNewUser(password: string): Promise<void> {
         switch (backup.type) {
           case BackupEntryType.CONNECTION:
             const connection = ConnectionSchema.parse(JSON.parse(backup.backup));
+
+            // TODO: for each existing connection, notify to tap them back? Make UI easier to tap back?
+
+            // Give onboarding credit to first user connection, provided connection username and chip issuer are defined
+            if (!gaveOnboardingCredit && connection.user?.username && chipIssuer) {
+              // NOTE: This leaderboard type *increments* the EntryValue. The default behavior updates the value
+              // to the value passed in.
+              await updateLeaderboardEntry({
+                authToken: session.authTokenValue,
+                chipIssuer: chipIssuer,
+                entryType: LeaderboardEntryType.USER_REGISTRATION_ONBOARDING,
+                entryValue: 1,
+                entryUsername: connection.user.username,
+              });
+              gaveOnboardingCredit = true;
+            }
 
             const connectionBackupData = createConnectionBackup({
               email: user.email,

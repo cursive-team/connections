@@ -57,12 +57,13 @@ export function DashboardDetail({
     return () => clearTimeout(timer);
   }, [leaderboardDetails, goal]);
 
-  if (seeFullLeaderboard) {
-    let contributorMsg = `You are #${leaderboardDetails.userPosition} of ${leaderboardDetails.totalContributors} contributors!`;
+  let contributorMsg = `You are #${leaderboardDetails.userPosition} of ${leaderboardDetails.totalContributors} contributors, with ${leaderboardDetails.userValue} ${unit}!`;
 
-    if (leaderboardDetails.userPosition == -1) {
-      contributorMsg = "You are not on the leaderboard yet.";
-    }
+  if (leaderboardDetails.userPosition === 0) {
+    contributorMsg = "You are not on the leaderboard yet.";
+  }
+
+  if (seeFullLeaderboard) {
     return (
       <AppLayout
         withContainer={false}
@@ -71,7 +72,7 @@ export function DashboardDetail({
           <div className="w-full">
             <div className="flex-row w-full px-1 pt-8 pb-4 bg-background justify-between items-center inline-flex">
               <div className="text-label-primary text-xl font-semibold font-sans leading-tight">
-                {`Total (${
+                {`Total ${unit} (${
                   Number.isInteger(leaderboardDetails?.totalValue)
                     ? leaderboardDetails?.totalValue
                     : leaderboardDetails?.totalValue?.toFixed(2)
@@ -151,11 +152,9 @@ export function DashboardDetail({
             }
           ></div>
           <div className="flex flex-col flex-1 gap-2">
-            <p className="text-xs font-normal text-label-quaternary">{`${
-              (leaderboardDetails?.userPosition ?? 0) > 0
-                ? `#${leaderboardDetails?.userPosition} of `
-                : ""
-            } ${leaderboardDetails?.totalContributors} contributors`}</p>
+            <p className="text-xs font-normal text-label-quaternary">
+              {contributorMsg}
+            </p>
             <h2 className="text-xl font-bold leading-none text-label-primary">
               {title}
             </h2>

@@ -14,11 +14,16 @@ export interface iChipClient {
   UpdateChip(updateChip: UpdateChipRequest): Promise<Chip>;
   GetChipId(chipIssuer: ChipIssuer, username: string): Promise<string>;
   GetTapFromChip(tapParams: TapParams): Promise<ChipTapResponse>;
+  GetLeaderboardEntryValue(
+    username: string,
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType
+  ): Promise<number>;
   UpdateLeaderboardEntry(
     username: string,
     chipIssuer: ChipIssuer,
     entryType: LeaderboardEntryType,
-    entryValue: number
+    entryValue: number,
   ): Promise<void>;
   GetLeaderboardTotalValue(
     chipIssuer: ChipIssuer,
@@ -40,4 +45,10 @@ export interface iChipClient {
   ): Promise<LeaderboardEntry[] | null>;
   SubmitProofJob(username: string, jobId: string): Promise<void>;
   PollProofResults(): Promise<void>;
+  IncrementLeaderboardEntry(
+    username: string,
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType,
+    entryValue: number,
+  ): Promise<void>;
 }

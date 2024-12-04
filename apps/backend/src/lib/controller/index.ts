@@ -187,6 +187,18 @@ export class Controller {
     return this.chipClient.GetTapFromChip(tapParams);
   }
 
+  GetLeaderboardEntryValue(
+    username: string,
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType
+  ): Promise<number> {
+    return this.chipClient.GetLeaderboardEntryValue(
+      username,
+      chipIssuer,
+      entryType
+    );
+  }
+
   UpdateLeaderboardEntry(
     username: string,
     chipIssuer: ChipIssuer,
@@ -194,6 +206,20 @@ export class Controller {
     entryValue: number
   ): Promise<void> {
     return this.chipClient.UpdateLeaderboardEntry(
+      username,
+      chipIssuer,
+      entryType,
+      entryValue
+    );
+  }
+
+  IncrementLeaderboardEntry(
+    username: string,
+    chipIssuer: ChipIssuer,
+    entryType: LeaderboardEntryType,
+    entryValue: number
+  ): Promise<void> {
+    return this.chipClient.IncrementLeaderboardEntry(
       username,
       chipIssuer,
       entryType,

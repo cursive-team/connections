@@ -30,9 +30,14 @@ export default function DevconCommunityPage({
   setDisplayedDashboard: (dashboard: DisplayedDashboard) => void;
 }) {
   const router = useRouter();
-  const [leaderboardDetails, setLeaderboardDetails] =
+  const [leaderboardTapDetails, setLeaderboardTapDetails] =
     useState<LeaderboardDetails | null>(null);
-  const [leaderboardEntries, setLeaderboardEntries] =
+  const [leaderboardTapEntries, setLeaderboardTapEntries] =
+    useState<LeaderboardEntries | null>(null);
+
+  const [leaderboardOnboardingDetails, setLeaderboardOnboardingDetails] =
+    useState<LeaderboardDetails | null>(null);
+  const [leaderboardOnboardingEntries, setLeaderboardOnboardingEntries] =
     useState<LeaderboardEntries | null>(null);
 
   const [cardProps, setCardProps] = useState<CommunityCardProps[]>([]);
@@ -51,6 +56,9 @@ export default function DevconCommunityPage({
       let totalTapDetails: LeaderboardDetails | null = null;
       let totalTapEntries: LeaderboardEntries | null = null;
 
+      let totalOnboardingDetails: LeaderboardDetails | null = null;
+      let totalOnboardingEntries: LeaderboardEntries | null = null;
+
       try {
         [totalTapDetails, totalTapEntries] = await Promise.all([
           getUserLeaderboardDetails(
@@ -62,6 +70,17 @@ export default function DevconCommunityPage({
             LeaderboardEntryType.DEVCON_2024_TAP_COUNT
           ),
         ]);
+
+        [totalOnboardingDetails, totalOnboardingEntries] = await Promise.all([
+          getUserLeaderboardDetails(
+            communityIssuer,
+            LeaderboardEntryType.USER_REGISTRATION_ONBOARDING
+          ),
+          getTopLeaderboardEntries(
+            communityIssuer,
+            LeaderboardEntryType.USER_REGISTRATION_ONBOARDING
+          ),
+        ]);
       } catch (error) {
         console.error("Error getting user leaderboard info:", error);
         toast.error("Error getting user leaderboard info.");
@@ -70,13 +89,22 @@ export default function DevconCommunityPage({
       }
 
       if (!totalTapDetails || !totalTapEntries) {
-        toast.error("User leaderboard info not found.");
+        toast.error("User tap leaderboard info not found.");
         router.push("/profile");
         return;
       }
 
-      setLeaderboardDetails(totalTapDetails);
-      setLeaderboardEntries(totalTapEntries);
+      if (!totalOnboardingDetails || !totalOnboardingEntries) {
+        toast.error("User onboarding leaderboard info not found.");
+        router.push("/profile");
+        return;
+      }
+
+      setLeaderboardTapDetails(totalTapDetails);
+      setLeaderboardTapEntries(totalTapEntries);
+
+      setLeaderboardOnboardingDetails(totalOnboardingDetails);
+      setLeaderboardOnboardingEntries(totalOnboardingEntries);
 
       const props: CommunityCardProps[] = [
         {
@@ -92,7 +120,21 @@ export default function DevconCommunityPage({
           ),
           dashboard: DisplayedDashboard.DEVCON_2024_TAP_COUNT,
         },
+        {
+          image: "/images/week.png",
+          title: "User Onboarding Dashboard",
+          description: `${totalOnboardingDetails.totalValue} of 100 Onboardings`,
+          type: "active",
+          position: totalOnboardingDetails.userPosition,
+          totalContributors: totalOnboardingDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((totalOnboardingDetails.totalValue / 100) * 100)
+          ),
+          dashboard: DisplayedDashboard.USER_REGISTRATION_ONBOARDING,
+        },
       ];
+
 
       setCardProps(props);
     };
@@ -101,8 +143,8 @@ export default function DevconCommunityPage({
   }, [router]);
 
   if (
-    leaderboardDetails &&
-    leaderboardEntries &&
+    leaderboardTapDetails &&
+    leaderboardTapEntries &&
     displayedDashboard === DisplayedDashboard.DEVCON_2024_TAP_COUNT
   ) {
     return (
@@ -150,10 +192,38 @@ export default function DevconCommunityPage({
             </span>
           </>
         }
-        leaderboardDetails={leaderboardDetails}
-        leaderboardEntries={leaderboardEntries}
+        leaderboardDetails={leaderboardTapDetails}
+        leaderboardEntries={leaderboardTapEntries}
         goal={2000}
         unit="tap"
+        organizer="Cursive"
+        organizerDescription="Cryptography for human connection"
+        type="active"
+        returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
+      />
+    );
+  }
+
+  if (
+    leaderboardOnboardingDetails &&
+    leaderboardOnboardingEntries &&
+    displayedDashboard === DisplayedDashboard.USER_REGISTRATION_ONBOARDING
+  ) {
+    return (
+      <DashboardDetail
+        image="/images/week-wide.png"
+        title="User Onboarding Dashboard"
+        description={
+          <>
+            <span>
+              Bring your friends into the Cursive community! Tap them before registration, guide them through the registration process, and get credit for onboarding.
+            </span>
+          </>
+        }
+        leaderboardDetails={leaderboardOnboardingDetails}
+        leaderboardEntries={leaderboardOnboardingEntries}
+        goal={100}
+        unit="invites"
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
         type="active"
@@ -167,7 +237,7 @@ export default function DevconCommunityPage({
       <div className="py-3">
         <StoreBanner />
       </div>
-      {!leaderboardDetails || !leaderboardEntries ? (
+      {!leaderboardTapDetails || !leaderboardTapEntries || !leaderboardOnboardingDetails || !leaderboardOnboardingEntries ? (
         <div className="flex justify-center items-center pt-4">
           <CursiveLogo isLoading />
         </div>
