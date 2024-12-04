@@ -17,7 +17,7 @@ import { getUserAndSession } from "../..";
 import { Connection, User, Session } from "@/lib/storage/types";
 import {
   createActivityBackup,
-  createConnectionBackup,
+  upsertConnectionBackup,
   createEdgeBackup,
   createLastMessageFetchedAtBackup,
 } from "@/lib/backup";
@@ -96,7 +96,7 @@ function handleConnectionTapBacks(session: Session, user: User, lastMessageTimes
       }
 
       // Only create one backup entry per sender
-      const connectionBackup = createConnectionBackup({
+      const connectionBackup = upsertConnectionBackup({
         email: user.email,
         password: session.backupMasterPassword,
         connection: updatedConnection,

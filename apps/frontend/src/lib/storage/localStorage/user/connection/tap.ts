@@ -1,6 +1,6 @@
 import {
   createActivityBackup,
-  createConnectionBackup,
+  upsertConnectionBackup,
   unregisteredUserCreateActivityBackup,
   unregisteredUserCreateConnectionBackup
 } from "@/lib/backup";
@@ -171,7 +171,7 @@ export const addUserTap = async (
   };
 
   if (user && session) {
-    const connectionBackup = createConnectionBackup({
+    const connectionBackup = upsertConnectionBackup({
       email: user.email,
       password: session.backupMasterPassword,
       connection: newConnection,

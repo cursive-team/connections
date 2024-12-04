@@ -389,7 +389,7 @@ export interface CreateConnectionBackupArgs {
   connection: Connection;
 }
 
-export const createConnectionBackup = ({
+export const upsertConnectionBackup = ({
   email,
   password,
   connection,

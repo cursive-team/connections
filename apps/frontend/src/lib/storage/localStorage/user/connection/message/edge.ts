@@ -2,7 +2,7 @@ import { CreateMessageData } from "@types";
 import { getUserAndSession } from "@/lib/storage/localStorage/user";
 import { createEncryptedMessage, generateSerializedEdgeMessage } from "@/lib/message";
 import { SentMessage, SentMessageSchema } from "@/lib/storage/types";
-import { createConnectionBackup, createEdgeBackup } from "@/lib/backup";
+import { upsertConnectionBackup, createEdgeBackup } from "@/lib/backup";
 import { saveBackupAndUpdateStorage } from "@/lib/storage/localStorage/utils";
 
 export const createEdgeMessageAndHandleBackup = async (
@@ -36,7 +36,7 @@ export const createEdgeMessageAndHandleBackup = async (
   };
 
   // Backup for edge message to connection
-  const connectionBackup = createConnectionBackup({
+  const connectionBackup = upsertConnectionBackup({
     email: user.email,
     password: session.backupMasterPassword,
     connection: updatedConnection,

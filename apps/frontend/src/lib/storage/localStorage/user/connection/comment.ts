@@ -1,4 +1,4 @@
-import { createConnectionBackup } from "@/lib/backup";
+import { upsertConnectionBackup } from "@/lib/backup";
 import { saveBackupAndUpdateStorage } from "../../utils";
 import { CommentData, CommentDataSchema } from "@/lib/storage/types";
 import { getUserAndSession } from "..";
@@ -24,7 +24,7 @@ export const updateComment = async (
     comment: validatedCommentData,
   };
 
-  const connectionBackup = createConnectionBackup({
+  const connectionBackup = upsertConnectionBackup({
     email: user.email,
     password: session.backupMasterPassword,
     connection: updatedConnection,

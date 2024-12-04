@@ -1,4 +1,4 @@
-import { createActivityBackup, createConnectionBackup } from "@/lib/backup";
+import { createActivityBackup, upsertConnectionBackup } from "@/lib/backup";
 import { saveBackupAndUpdateStorage } from "../../utils";
 import { PSIData, PSIDataSchema } from "@/lib/storage/types";
 import { getUserAndSession } from "..";
@@ -25,7 +25,7 @@ export const updatePSI = async (
     psi: validatedPSIData,
   };
 
-  const connectionBackup = createConnectionBackup({
+  const connectionBackup = upsertConnectionBackup({
     email: user.email,
     password: session.backupMasterPassword,
     connection: updatedConnection,

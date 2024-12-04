@@ -6,7 +6,7 @@ import {
 import { getUserAndSession } from "@/lib/storage/localStorage/user";
 import { SentMessage, SentMessageSchema } from "@/lib/storage/types";
 import { getUserShareableData } from "@/lib/user";
-import { createActivityBackup, createConnectionBackup } from "@/lib/backup";
+import { createActivityBackup, upsertConnectionBackup } from "@/lib/backup";
 import { saveBackupAndUpdateStorage } from "../../../utils";
 import { createTapBackSentActivity } from "@/lib/activity";
 
@@ -54,7 +54,7 @@ export const createTapBackMessage = async (
     sentMessages: [...connection.sentMessages, newSentMessage],
   };
 
-  const connectionBackup = createConnectionBackup({
+  const connectionBackup = upsertConnectionBackup({
     email: user.email,
     password: session.backupMasterPassword,
     connection: updatedConnection,

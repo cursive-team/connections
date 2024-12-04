@@ -12,7 +12,7 @@ import {
 } from "@types";
 import {
   createActivityBackup,
-  createConnectionBackup,
+  upsertConnectionBackup,
   createInitialBackup,
   processUserBackup
 } from "@/lib/backup";
@@ -232,7 +232,7 @@ export async function applyBackupsToNewUser(password: string, chipIssuer: ChipIs
               gaveOnboardingCredit = true;
             }
 
-            const connectionBackupData = createConnectionBackup({
+            const connectionBackupData = upsertConnectionBackup({
               email: user.email,
               password: password,
               connection
