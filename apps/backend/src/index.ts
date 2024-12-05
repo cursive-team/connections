@@ -199,7 +199,7 @@ wsServer.on("connection", (socket: Socket) => {
             if (targetUser) {
               await controller.SendNotification(
                 targetUser.id,
-                `${socket.user.username} has refreshed your intersection! Go to their contact card and check out what common ground you share.`
+                `${socket.user.username} has refreshed your intersection! Go to their [contact card](${FRONTEND_URL}/people/${socket.user.username}) and check out what common ground you share.`
               );
             }
           }
