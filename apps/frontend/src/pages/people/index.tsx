@@ -215,14 +215,14 @@ const PeoplePage: React.FC = () => {
     <AppLayout
       seoTitle="People"
       header={
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full">
           <span className="text-label-primary text-xl leading-none font-bold tracking-[-0.1px] py-4 inline-flex">
             {`Connections (${Object.keys(connections)?.length})`}
-            <div className="justify-start items-center gap-[40-px] flex">
+            <div className="flex" style={{marginLeft: "auto"}}>
               <button className="relative" onClick={handleExportConnectionsToCSV}>
                 <Image
-                  width={30}
-                  height={30}
+                  width={25}
+                  height={25}
                   alt="download connections"
                   src="/images/download.svg"
                 />
