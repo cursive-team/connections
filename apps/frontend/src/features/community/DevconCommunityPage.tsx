@@ -176,13 +176,13 @@ export default function DevconCommunityPage({
         {
           image: "/images/buildclub.png",
           title: "Hacker Club 👩‍💻",
-          description: `${githubDetails.totalValue} of 1000 contributions`,
+          description: `${githubDetails.totalValue} of 2000 contributions`,
           type: "active",
           position: githubDetails.userPosition,
           totalContributors: githubDetails.totalContributors,
           progressPercentage: Math.min(
             100,
-            Math.round((githubDetails.totalValue / 1000) * 100)
+            Math.round((githubDetails.totalValue / 2000) * 100)
           ),
           dashboard: DisplayedDashboard.GITHUB,
         },
@@ -283,7 +283,9 @@ export default function DevconCommunityPage({
         returnToHome={() => setDisplayedDashboard(DisplayedDashboard.NONE)}
       />
     );
-  } else if (
+  }
+
+  if (
     githubLeaderboardDetails &&
     githubLeaderboardEntries &&
     displayedDashboard === DisplayedDashboard.GITHUB
@@ -291,11 +293,11 @@ export default function DevconCommunityPage({
     return (
       <DashboardDetail
         image="/images/buildclub_wide.png"
-        title="Lanna Hacker Club 👩‍💻"
-        description={`Share your open source GitHub contributions with the Lanna Builder community!`}
+        title="Hacker Club 👩‍💻"
+        description={`Share your open source GitHub contributions over the last year with the Builder community!`}
         leaderboardDetails={githubLeaderboardDetails}
         leaderboardEntries={githubLeaderboardEntries}
-        goal={1000}
+        goal={2000}
         unit="contribution"
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"

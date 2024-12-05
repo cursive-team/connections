@@ -452,22 +452,25 @@ const UserProfilePage: React.FC = () => {
         );
       }
 
-      // HERE: any ability to order on frequency?
-      let programmingLangs: string[] = [];
+      let languageNames: string[] = [];
+      let programmingLangHashes: string[] = [];
       if (user.userData?.github?.programmingLanguages?.value) {
-        const languages = Object.keys(
+        languageNames = Object.keys(
           user.userData?.github?.programmingLanguages?.value
         );
-        programmingLangs = await hashCommit(
+
+        programmingLangHashes = await hashCommit(
           user.encryptionPrivateKey,
           connection.user.encryptionPublicKey,
-          languages
+          languageNames
         );
       }
 
-      let starredRepos: string[] = [];
+      let repoNames: string[] = [];
+      let starredReposHashes: string[] = [];
       if (user.userData?.github?.starredRepos?.value) {
-        starredRepos = await hashCommit(
+        repoNames = user.userData.github.starredRepos.value;
+        starredReposHashes = await hashCommit(
           user.encryptionPrivateKey,
           connection.user.encryptionPublicKey,
           user.userData?.github?.starredRepos?.value
@@ -495,8 +498,8 @@ const UserProfilePage: React.FC = () => {
               hotTakes,
               contacts,
               devconEvents,
-              programmingLangs,
-              starredRepos,
+              programmingLangs: programmingLangHashes,
+              starredRepos: starredReposHashes,
             },
           }),
         }
@@ -544,13 +547,32 @@ const UserProfilePage: React.FC = () => {
           }
         }
 
+        const translatedLangs = [];
+        for (const hashLang of data.verifiedIntersectionState.programmingLangs) {
+          const index = programmingLangHashes.findIndex((lang) => lang === hashLang);
+          if (index !== -1) {
+            translatedLangs.push(languageNames[index]);
+          }
+        }
+
+        const translatedRepos = [];
+        for (const hashRepo of data.verifiedIntersectionState.starredRepos) {
+          const index = starredReposHashes.findIndex(
+            (repo) => repo === hashRepo
+          );
+
+          if (index !== -1) {
+            translatedRepos.push(repoNames[index]);
+          }
+        }
+
         const newVerifiedIntersection = {
           contacts: translatedContacts,
           hotTakes: data.verifiedIntersectionState.hotTakes,
           tensions: data.verifiedIntersectionState.tensions,
           devconEvents: translatedEvents,
-          programmingLangs: [],
-          starredRepos: [],
+          programmingLangs: translatedLangs,
+          starredRepos: translatedRepos,
         };
 
         setVerifiedIntersection(newVerifiedIntersection);
@@ -927,6 +949,44 @@ const UserProfilePage: React.FC = () => {
                         )}
                       </div>
                     </ul>
+                  )}
+                </IntersectionAccordion>
+
+                <IntersectionAccordion label="Shared Github starred repositories" icon="🛠️">
+                  {verifiedIntersection.contacts.length === 0 ? (
+                    <div className="text-sm text-label-primary font-sans font-normal">
+                      No starred repositories.
+                    </div>
+                  ) : (
+                    <div className="text-sm text-link-primary font-sans font-normal">
+                      {verifiedIntersection.starredRepos.map((repo, index) => (
+                        <>
+                          <span className="text-label-primary">
+                            {index !== 0 && " | "}
+                          </span>
+                          <Link href={`https://github.com/${repo}`}>{repo}</Link>
+                        </>
+                      ))}
+                    </div>
+                  )}
+                </IntersectionAccordion>
+
+                <IntersectionAccordion label="Shared programming languages" icon="⚛">
+                  {verifiedIntersection.contacts.length === 0 ? (
+                    <div className="text-sm text-label-primary font-sans font-normal">
+                      No programming languages.
+                    </div>
+                  ) : (
+                    <div className="text-sm text-link-primary font-sans font-normal">
+                      {verifiedIntersection.programmingLangs.map((language, index) => (
+                        <>
+                          <span className="text-label-primary">
+                            {index !== 0 && " | "}
+                          </span>
+                          {language}
+                        </>
+                      ))}
+                    </div>
                   )}
                 </IntersectionAccordion>
               </>
