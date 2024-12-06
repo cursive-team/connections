@@ -134,6 +134,16 @@ export async function updateTapLeaderboardEntry(
     // };
     // requests.push(updateTotalTapsRequest);
 
+    if (chipIssuer === ChipIssuer.ETH_INDIA_2024) {
+      const updateEthIndiaTapsRequest: UpdateLeaderboardEntryRequest = {
+        authToken: session.authTokenValue,
+        chipIssuer,
+        entryType: LeaderboardEntryType.ETHINDIA_2024_TAP_COUNT,
+        entryValue: totalTapCount,
+      };
+      requests.push(updateEthIndiaTapsRequest);
+    }
+
     if (chipIssuer === ChipIssuer.EDGE_CITY_LANNA) {
       const updateWeekTapsRequest: UpdateLeaderboardEntryRequest = {
         authToken: session.authTokenValue,
