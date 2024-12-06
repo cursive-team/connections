@@ -65,7 +65,7 @@ export const HeaderCover = ({ isLoading = false, image }: HeaderCoverProps) => {
         {image === "ethindia" && (
           <>
             <Image
-              src="/images/eth-india-register-header.svg"
+              src="/images/eth-india-register-header.png"
               alt="ethindia register main"
               className="object-cover w-full"
               width={400}
