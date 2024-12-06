@@ -9,7 +9,7 @@ export const StoreBanner = () => {
     // <Link href="/shop" className="flex w-full">
     <div className="flex flex-col gap-1">
       <span className="text-base font-bold font-sans text-label-primary">
-        Museum store
+        Merch store
       </span>
       <div
         className={cn(
@@ -20,7 +20,7 @@ export const StoreBanner = () => {
         <div className="p-2 flex items-center gap-[10px]">
           <div className="flex-shrink-0">
             <Image
-              src="/images/shop-cover.svg"
+              src="/images/shop-cover-ethindia.png"
               alt="shop cover"
               width={80}
               height={80}

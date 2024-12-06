@@ -420,10 +420,12 @@ ManagedChipClient.prototype.PollProofResults = async function () {
         pubkeyNullifiersByDay.total.add(proof.pubkeyNullifier);
       }
 
+      // TODO: Needs to handle communities in a more general way
+
       // Update leaderboard entries for each type
       const leaderboardUpdates = [
         {
-          entryType: LeaderboardEntryType.DEVCON_2024_TAP_COUNT,
+          entryType: LeaderboardEntryType.ETHINDIA_2024_TAP_COUNT,
           value: pubkeyNullifiersByDay.total.size,
         },
       ];
@@ -433,7 +435,7 @@ ManagedChipClient.prototype.PollProofResults = async function () {
           await this.prismaClient.leaderboardEntry.findFirst({
             where: {
               username: job.username,
-              chipIssuer: ChipIssuer.DEVCON_2024,
+              chipIssuer: ChipIssuer.ETH_INDIA_2024,
               entryType: update.entryType,
             },
           });
@@ -447,7 +449,7 @@ ManagedChipClient.prototype.PollProofResults = async function () {
           await this.prismaClient.leaderboardEntry.create({
             data: {
               username: job.username,
-              chipIssuer: ChipIssuer.DEVCON_2024,
+              chipIssuer: ChipIssuer.ETH_INDIA_2024,
               entryType: update.entryType,
               entryValue: update.value,
             },

@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import { User } from "@/lib/storage/types";
 import ImportGithubButton from "@/features/oauth/ImportGithubButton";
 
-export default function DevconCommunityPage({
+export default function EthIndiaCommunityPage({
   displayedDashboard,
   setDisplayedDashboard,
 }: {
@@ -62,7 +62,7 @@ export default function DevconCommunityPage({
         return;
       }
 
-      const communityIssuer: ChipIssuer = ChipIssuer.DEVCON_2024;
+      const communityIssuer: ChipIssuer = ChipIssuer.ETH_INDIA_2024;
 
       let fetchedUser: User | undefined = undefined;
       let totalTapDetails: LeaderboardDetails | null = null;
@@ -84,11 +84,11 @@ export default function DevconCommunityPage({
           storage.getUser(),
           getUserLeaderboardDetails(
             communityIssuer,
-            LeaderboardEntryType.DEVCON_2024_TAP_COUNT
+            LeaderboardEntryType.ETHINDIA_2024_TAP_COUNT
           ),
           getTopLeaderboardEntries(
             communityIssuer,
-            LeaderboardEntryType.DEVCON_2024_TAP_COUNT
+            LeaderboardEntryType.ETHINDIA_2024_TAP_COUNT
           ),
           getUserLeaderboardDetails(
             communityIssuer,
@@ -150,15 +150,15 @@ export default function DevconCommunityPage({
         {
           image: "/images/hand.png",
           title: "coSNARK Tap Leaderboard 🏆",
-          description: `${totalTapDetails.totalValue} of 2000 taps`,
+          description: `${totalTapDetails.totalValue} of 500 taps`,
           type: "active",
           position: totalTapDetails.userPosition,
           totalContributors: totalTapDetails.totalContributors,
           progressPercentage: Math.min(
             100,
-            Math.round((totalTapDetails.totalValue / 2000) * 100)
+            Math.round((totalTapDetails.totalValue / 500) * 100)
           ),
-          dashboard: DisplayedDashboard.DEVCON_2024_TAP_COUNT,
+          dashboard: DisplayedDashboard.ETHINDIA_2024_TAP_COUNT,
         },
         {
           image: "/images/week.png",
@@ -198,7 +198,7 @@ export default function DevconCommunityPage({
   if (
     leaderboardTapDetails &&
     leaderboardTapEntries &&
-    displayedDashboard === DisplayedDashboard.DEVCON_2024_TAP_COUNT
+    displayedDashboard === DisplayedDashboard.ETHINDIA_2024_TAP_COUNT
   ) {
     return (
       <DashboardDetail
@@ -207,7 +207,7 @@ export default function DevconCommunityPage({
         description={
           <>
             <span>
-              Grow the Devcon Social Graph by tapping NFC chips to share socials
+              Grow the EthIndia Social Graph by tapping NFC chips to share socials
               and discover common and complementary interests!
             </span>
             <br />

@@ -12,12 +12,14 @@ import { NextSeo } from "next-seo";
 import AppLayout from "@/layouts/AppLayout";
 import { DisplayedDashboard } from "@/components/cards/CommunityCard";
 import { NavTab } from "@/components/ui/NavTab";
+import EthIndiaCommunityPage from "@/features/community/EthIndiaCommunityPage";
 
 export const metadata: Metadata = {
   title: "Community",
 };
 
 enum ActiveTab {
+  ETHINDIA,
   DEVCON,
   LANNA,
   NONE,
@@ -58,7 +60,9 @@ const CommunityPage = () => {
 
       // Set initial selected community
       if (userChipIssuers.length > 0) {
-        if (userChipIssuers.includes(ChipIssuer.DEVCON_2024)) {
+        if (userChipIssuers.includes(ChipIssuer.ETH_INDIA_2024)) {
+          setActiveTab(ActiveTab.ETHINDIA);
+        } else if (userChipIssuers.includes(ChipIssuer.DEVCON_2024)) {
           setActiveTab(ActiveTab.DEVCON);
         } else if (userChipIssuers.includes(ChipIssuer.EDGE_CITY_LANNA)) {
           setActiveTab(ActiveTab.LANNA);
@@ -108,6 +112,16 @@ const CommunityPage = () => {
                 ></div>
               </div>
               <div className="py-3 flex gap-6">
+                {userChips && userChips.includes(ChipIssuer.ETH_INDIA_2024) && (
+                  <NavTab
+                    active={activeTab === ActiveTab.ETHINDIA}
+                    onClick={() => {
+                      setActiveTab(ActiveTab.ETHINDIA);
+                    }}
+                  >
+                    EthIndia
+                  </NavTab>
+                )}
                 {userChips && userChips.includes(ChipIssuer.DEVCON_2024) && (
                   <NavTab
                     active={activeTab === ActiveTab.DEVCON}
@@ -143,6 +157,12 @@ const CommunityPage = () => {
         )}
         {activeTab === ActiveTab.DEVCON && (
           <DevconCommunityPage
+            displayedDashboard={displayedDashboard}
+            setDisplayedDashboard={setDisplayedDashboard}
+          />
+        )}
+        {activeTab === ActiveTab.ETHINDIA && (
+          <EthIndiaCommunityPage
             displayedDashboard={displayedDashboard}
             setDisplayedDashboard={setDisplayedDashboard}
           />
