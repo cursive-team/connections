@@ -37,8 +37,8 @@ const RegisterWithPassword: React.FC<RegisterWithPasswordProps> = ({
           Set up your Cursive account
         </span>
         <span className="font-sans text-sm font-normal text-label-primary">
-          Your data is private to you, encrypted by your password and backed up
-          to load upon login.
+          Your data is private to you, encrypted by your password and backed up.
+          Please save your password so you can reload data upon login.
         </span>
       </div>
       <div className="flex flex-col mt-auto gap-4">
