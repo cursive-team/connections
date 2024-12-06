@@ -16,6 +16,47 @@ import { logClientEvent } from "@/lib/frontend/metrics";
 import { Icons } from "@/components/icons/Icons";
 import { flowerSize, flowerType } from "@/lib/garden";
 import { exportConnectionsToCSV } from "@/lib/exports";
+import { AppInput } from "@/components/ui/AppInput";
+
+const ContactListItem: React.FC<{
+  connection: Connection;
+  index: number;
+  darkTheme: boolean;
+}> = ({ connection, index, darkTheme }) => {
+  return (
+    <li
+      key={connection.user.username}
+      className="p-4"
+      style={{
+        borderTop:
+          index === 0 && darkTheme
+            ? "0.5px solid rgba(255, 255, 255, 0.20)"
+            : "0.5px solid rgba(0, 0, 0, 0.20)",
+        borderBottom: darkTheme
+          ? "0.5px solid rgba(255, 255, 255, 0.20)"
+          : "0.5px solid rgba(0, 0, 0, 0.20)",
+      }}
+    >
+      <Link
+        className="grid grid-cols-[1fr_20px] items-center gap-4"
+        href={`/people/${connection.user.username}`}
+      >
+        <div className="flex items-center gap-4">
+          <ProfileImage user={connection.user} />
+          <div className="flex flex-col gap-1">
+            <span className="text-sm font-medium text-label-primary">
+              {connection.user.displayName}
+            </span>
+            <span className="text-xs text-label-secondary font-medium">
+              @{connection.user.username}
+            </span>
+          </div>
+        </div>
+        <ArrowRight className="ml-auto" />
+      </Link>
+    </li>
+  );
+};
 
 function sortConnections(connections: Record<string, Connection>) {
   return Object.entries(connections)
@@ -31,6 +72,14 @@ enum ActiveTab {
   GARDEN,
   LIST,
 }
+
+type SearchResults = {
+  names: Record<string, Connection>;
+  bios: Record<string, Connection>;
+  notes: Record<string, Connection>;
+  labels: Record<string, Connection>;
+};
+
 const PeoplePage: React.FC = () => {
   const router = useRouter();
 
@@ -41,6 +90,11 @@ const PeoplePage: React.FC = () => {
   );
   const [psiSize, setPSISize] = useState<Record<string, number>>({});
   const [user, setUser] = useState<User | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResults | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchConnections = async () => {
@@ -78,43 +132,17 @@ const PeoplePage: React.FC = () => {
     [ActiveTab.LIST]: (
       <ul className="flex flex-col">
         {Object.values(connections).map((connection, index) => (
-          <li
+          <ContactListItem
             key={connection.user.username}
-            className="p-4"
-            style={{
-              borderTop:
-                index === 0 && darkTheme
-                  ? "0.5px solid rgba(255, 255, 255, 0.20)"
-                  : "0.5px solid rgba(0, 0, 0, 0.20)",
-              // for some reason tailwind not applying
-              borderBottom: darkTheme
-                ? "0.5px solid rgba(255, 255, 255, 0.20)"
-                : "0.5px solid rgba(0, 0, 0, 0.20)",
-            }}
-          >
-            <Link
-              className="grid grid-cols-[1fr_20px] items-center gap-4"
-              href={`/people/${connection.user.username}`}
-            >
-              <div className="flex items-center gap-4">
-                <ProfileImage user={connection.user} />
-                <div className="flex flex-col gap-1">
-                  <span className="text-sm font-medium text-label-primary">
-                    {connection.user.displayName}
-                  </span>
-                  <span className="text-xs text-label-secondary font-medium">
-                    @{connection.user.username}
-                  </span>
-                </div>
-              </div>
-              <ArrowRight className="ml-auto" />
-            </Link>
-          </li>
+            connection={connection}
+            index={index}
+            darkTheme={darkTheme}
+          />
         ))}
       </ul>
     ),
     [ActiveTab.GARDEN]: (
-      <ul className="grid grid-cols-2 gap-[1px]">
+      <ul className="py-3 grid grid-cols-2 gap-[1px]">
         {Object.values(connections).map((connection) => {
           let flowerStage = "sprout";
           if (psiSize && psiSize[connection.user.username]) {
@@ -211,15 +239,214 @@ const PeoplePage: React.FC = () => {
     ),
   };
 
+  const handleUpdateSearchQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    const query = e.target.value.toLowerCase();
+
+    if (!query) {
+      setSearchResults(null);
+      return;
+    }
+
+    const results: SearchResults = {
+      names: {},
+      bios: {},
+      notes: {},
+      labels: {},
+    };
+
+    Object.entries(connections).forEach(([key, connection]) => {
+      // Search display name and username
+      const displayName = connection.user.displayName;
+      const username = connection.user.username;
+      if (
+        (displayName && displayName.toLowerCase().includes(query)) ||
+        (username && username.toLowerCase().includes(query))
+      ) {
+        results.names[key] = connection;
+      }
+
+      // Search bio
+      const bio = connection.user.bio;
+      if (bio && bio.toLowerCase().includes(query)) {
+        results.bios[key] = connection;
+      }
+
+      // Search private notes
+      const note = connection.comment?.note;
+      if (note && note.toLowerCase().includes(query)) {
+        results.notes[key] = connection;
+      }
+
+      // Search emoji labels
+      const emoji = connection.comment?.emoji;
+      if (emoji && emoji.toLowerCase().includes(query)) {
+        results.labels[key] = connection;
+      }
+    });
+
+    setSearchResults(results);
+  };
+
+  const handleCloseSearch = () => {
+    setIsSearchOpen(false);
+  };
+
+  if (isSearchOpen) {
+    return (
+      <AppLayout
+        seoTitle="People"
+        header={
+          <div className="flex flex-col w-full mx-2">
+            <div className="flex items-center gap-4 py-4">
+              <button
+                onClick={handleCloseSearch}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                aria-label="Back"
+              >
+                <span className="text-xl">&lt;</span>
+              </button>
+              <div className="relative flex-1">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                  <Icons.Search size={24} />
+                </div>
+                <AppInput
+                  type="text"
+                  placeholder="Search connections..."
+                  value={searchQuery}
+                  onChange={handleUpdateSearchQuery}
+                />
+              </div>
+            </div>
+            {!searchQuery && (
+              <div className="flex justify-center">
+                <p className="text-sm text-gray-500 text-center mx-auto">
+                  Search across names, bios, notes, and labels
+                </p>
+              </div>
+            )}
+          </div>
+        }
+        className="mx-auto"
+        withContainer={false}
+      >
+        {searchQuery && searchResults && (
+          <div className="flex flex-col gap-4 p-4">
+            {Object.keys(searchResults.names).length > 0 && (
+              <section>
+                <h2 className="text-label-secondary mb-2">Contact</h2>
+                <div
+                  className="h-[2px]"
+                  style={{
+                    background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
+                  }}
+                ></div>
+                <ul className="flex flex-col">
+                  {Object.values(searchResults.names).map(
+                    (connection, index) => (
+                      <ContactListItem
+                        key={connection.user.username}
+                        connection={connection}
+                        index={index}
+                        darkTheme={darkTheme}
+                      />
+                    )
+                  )}
+                </ul>
+              </section>
+            )}
+
+            {Object.keys(searchResults.bios).length > 0 && (
+              <section>
+                <h2 className="text-label-secondary mb-2">Bio</h2>
+                <div
+                  className="h-[2px]"
+                  style={{
+                    background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
+                  }}
+                ></div>
+                <ul className="flex flex-col">
+                  {Object.values(searchResults.bios).map(
+                    (connection, index) => (
+                      <ContactListItem
+                        key={connection.user.username}
+                        connection={connection}
+                        index={index}
+                        darkTheme={darkTheme}
+                      />
+                    )
+                  )}
+                </ul>
+              </section>
+            )}
+
+            {Object.keys(searchResults.notes).length > 0 && (
+              <section>
+                <h2 className="text-label-secondary mb-2">Notes</h2>
+                <div
+                  className="h-[2px]"
+                  style={{
+                    background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
+                  }}
+                ></div>
+                <ul className="flex flex-col">
+                  {Object.values(searchResults.notes).map(
+                    (connection, index) => (
+                      <ContactListItem
+                        key={connection.user.username}
+                        connection={connection}
+                        index={index}
+                        darkTheme={darkTheme}
+                      />
+                    )
+                  )}
+                </ul>
+              </section>
+            )}
+
+            {Object.keys(searchResults.labels).length > 0 && (
+              <section>
+                <h2 className="text-label-secondary mb-2">Emoji</h2>
+                <div
+                  className="h-[2px]"
+                  style={{
+                    background: `linear-gradient(90deg, #7A74BC 0%, #FF9DF8 39%, #FB5D42 71%, #F00 100%)`,
+                  }}
+                ></div>
+                <ul className="flex flex-col">
+                  {Object.values(searchResults.labels).map(
+                    (connection, index) => (
+                      <ContactListItem
+                        key={connection.user.username}
+                        connection={connection}
+                        index={index}
+                        darkTheme={darkTheme}
+                      />
+                    )
+                  )}
+                </ul>
+              </section>
+            )}
+          </div>
+        )}
+      </AppLayout>
+    );
+  }
+
   return (
     <AppLayout
       seoTitle="People"
       header={
         <div className="flex flex-col w-full">
-          <span className="text-label-primary text-xl leading-none font-bold tracking-[-0.1px] py-4 inline-flex">
-            {`Connections (${Object.keys(connections)?.length})`}
-            <div className="flex" style={{marginLeft: "auto"}}>
-              <button className="relative" onClick={handleExportConnectionsToCSV}>
+          <div className="flex items-center py-4">
+            <span className="text-label-primary text-xl leading-none font-bold tracking-[-0.1px]">
+              {`Connections (${Object.keys(connections)?.length})`}
+            </span>
+            <div className="flex ml-auto">
+              <button
+                className="relative"
+                onClick={handleExportConnectionsToCSV}
+              >
                 <Image
                   width={25}
                   height={25}
@@ -227,9 +454,16 @@ const PeoplePage: React.FC = () => {
                   src="/images/download.svg"
                 />
               </button>
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                aria-label="Search connections"
+              >
+                <Icons.Search size={24} />
+              </button>
             </div>
-          </span>
-          <div className="py-3 flex gap-6">
+          </div>
+          <div className="flex gap-6">
             <NavTab
               active={activeTab === ActiveTab.GARDEN}
               onClick={() => {
