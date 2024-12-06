@@ -1,7 +1,6 @@
 import { sha256 } from "js-sha256";
 
 export const flowerSize = (size: number): string => {
-  console.log(size);
   if (size > 200) {
     return "large";
   } else if (size > 100) {
