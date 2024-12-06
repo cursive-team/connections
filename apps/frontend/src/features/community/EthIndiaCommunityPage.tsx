@@ -33,8 +33,7 @@ export default function EthIndiaCommunityPage({
 }) {
   const router = useRouter();
 
-  const [user, setUser] =
-    useState<User | undefined>(undefined);
+  const [user, setUser] = useState<User | undefined>(undefined);
 
   const [leaderboardTapDetails, setLeaderboardTapDetails] =
     useState<LeaderboardDetails | null>(null);
@@ -148,21 +147,8 @@ export default function EthIndiaCommunityPage({
 
       const props: CommunityCardProps[] = [
         {
-          image: "/images/hand.png",
-          title: "coSNARK Tap Leaderboard 🏆",
-          description: `${totalTapDetails.totalValue} of 500 taps`,
-          type: "active",
-          position: totalTapDetails.userPosition,
-          totalContributors: totalTapDetails.totalContributors,
-          progressPercentage: Math.min(
-            100,
-            Math.round((totalTapDetails.totalValue / 500) * 100)
-          ),
-          dashboard: DisplayedDashboard.ETHINDIA_2024_TAP_COUNT,
-        },
-        {
           image: "/images/week.png",
-          title: "User Onboarding Dashboard",
+          title: "User Onboarding Leaderboard 🤝",
           description: `${totalOnboardingDetails.totalValue} of 100 Onboardings`,
           type: "active",
           position: totalOnboardingDetails.userPosition,
@@ -175,7 +161,7 @@ export default function EthIndiaCommunityPage({
         },
         {
           image: "/images/buildclub.png",
-          title: "Hacker Club 👩‍💻",
+          title: "GitHub Commit Leaderboard 👩‍💻",
           description: `${githubDetails.totalValue} of 2000 contributions`,
           type: "active",
           position: githubDetails.userPosition,
@@ -186,8 +172,20 @@ export default function EthIndiaCommunityPage({
           ),
           dashboard: DisplayedDashboard.GITHUB,
         },
+        {
+          image: "/images/hand.png",
+          title: "Tap Leaderboard 🏆",
+          description: `${totalTapDetails.totalValue} of 500 taps`,
+          type: "active",
+          position: totalTapDetails.userPosition,
+          totalContributors: totalTapDetails.totalContributors,
+          progressPercentage: Math.min(
+            100,
+            Math.round((totalTapDetails.totalValue / 500) * 100)
+          ),
+          dashboard: DisplayedDashboard.ETHINDIA_2024_TAP_COUNT,
+        },
       ];
-
 
       setCardProps(props);
     };
@@ -203,45 +201,12 @@ export default function EthIndiaCommunityPage({
     return (
       <DashboardDetail
         image="/images/social-graph-wide.png"
-        title="coSNARK Tap Leaderboard 🏆"
+        title="Tap Leaderboard 🏆"
         description={
           <>
             <span>
-              Grow the EthIndia Social Graph by tapping NFC chips to share socials
-              and discover common and complementary interests!
-            </span>
-            <br />
-            <br />
-            <span>
-              Each tap is privately verified with Collaborative SNARKs built by{" "}
-              <a
-                href="https://taceo.io/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-link-primary"
-              >
-                TACEO
-              </a>
-              . Secret shares of your data is split between Cursive,{" "}
-              <a
-                href="https://taceo.io/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                TACEO
-              </a>
-              , and{" "}
-              <a
-                href="https://pse.dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-link-primary"
-              >
-                PSE
-              </a>{" "}
-              servers, who work together to generate a proof you have a valid
-              tap. This means you can delegate ZK proving without sacrificing
-              privacy!
+              Grow the ETHIndia Social Graph by tapping NFC chips to share
+              socials and discover common and complementary interests!
             </span>
           </>
         }
@@ -265,11 +230,13 @@ export default function EthIndiaCommunityPage({
     return (
       <DashboardDetail
         image="/images/week-wide.png"
-        title="User Onboarding Dashboard"
+        title="User Onboarding Leaderboard 🤝"
         description={
           <>
             <span>
-              Bring your friends into the Cursive community! Tap them before registration, guide them through the registration process, and get credit for onboarding.
+              Bring your friends into the Cursive community! Tap them before
+              registration, guide them through the registration process, and get
+              credit for onboarding.
             </span>
           </>
         }
@@ -324,7 +291,10 @@ export default function EthIndiaCommunityPage({
       <div className="py-3">
         <StoreBanner />
       </div>
-      {!leaderboardTapDetails || !leaderboardTapEntries || !leaderboardOnboardingDetails || !leaderboardOnboardingEntries ? (
+      {!leaderboardTapDetails ||
+      !leaderboardTapEntries ||
+      !leaderboardOnboardingDetails ||
+      !leaderboardOnboardingEntries ? (
         <div className="flex justify-center items-center pt-4">
           <CursiveLogo isLoading />
         </div>
