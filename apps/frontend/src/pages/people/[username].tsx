@@ -204,13 +204,16 @@ const UserProfilePage: React.FC = () => {
   const [chipId, setChipId] = useState("");
   const { socket } = useSocket();
 
+
+  // useEffect gates
+  const [ fetchedChipId, setFetchedChipId] = useState(false);
+
   useEffect(() => {
     const fetchChipIp = async () => {
       const user = await storage.getUser();
       const session = await storage.getSession();
       const unregisteredUser = await storage.getUnregisteredUser();
       if (user && session && !unregisteredUser) {
-        console.log('pre admin', user.userData)
         if (user && connection?.user?.username && (
           user.userData.username === "stevenelleman" ||
           user.userData.username === "andrew" ||
@@ -222,7 +225,10 @@ const UserProfilePage: React.FC = () => {
         }
       }
     }
-    fetchChipIp();
+    if (!fetchedChipId) {
+      fetchChipIp();
+      setFetchedChipId(true);
+    }
   });
 
   useEffect(() => {
