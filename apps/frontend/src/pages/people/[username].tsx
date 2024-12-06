@@ -414,7 +414,7 @@ const UserProfilePage: React.FC = () => {
         setVerifiedIntersection(newVerifiedIntersection);
 
         // set the size of intersection here
-        await updateConnectionPSISize(newVerifiedIntersection, user, session, connection, false);
+        await updateConnectionPSISize(newVerifiedIntersection, user, session, connection);
 
         if (socket) {
           // If socket available and automatic PSI setting enabled, trigger connection to also automatically refresh PSI
