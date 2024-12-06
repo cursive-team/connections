@@ -2,10 +2,6 @@ node_modules
 dist
 .env
 
-# Lanna chips
-src/scripts/lanna/chips.ts
-src/scripts/lanna/locationChips.ts
-
-# Devcon chips
-src/scripts/devcon/chips.ts
-src/scripts/devcon/locationChips.ts
+# all chips
+src/scripts/*/chips.ts
+src/scripts/*/locationChips.ts
