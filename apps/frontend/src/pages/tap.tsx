@@ -4,7 +4,6 @@ import {
   ChipTapResponse,
   errorToString,
   ChipIssuer,
-  ChipPublicKeySignatureSchema,
   UpsertSocialGraphEdgeResponse,
 } from "@types";
 import { toast } from "sonner";
@@ -25,18 +24,7 @@ import { upsertSocialGraphEdge } from "@/lib/graph";
 import { sha256 } from "js-sha256";
 import { sendMessages } from "@/lib/message";
 import { DEVCON } from "@/lib/storage/types";
-import { ConfigurationParameters } from "@taceo/csn-client";
-import {
-  derDecodeSignature,
-  getECDSAMessageHash,
-  getPublicInputsFromSignature,
-  publicKeyFromString,
-} from "@/lib/crypto/babyJubJub";
 import { logoutUser } from "@/lib/auth";
-
-function base64Decode(base64: string) {
-  return Buffer.from(base64, "base64");
-}
 
 const TapPage: React.FC = () => {
   const router = useRouter();
