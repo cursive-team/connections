@@ -149,7 +149,7 @@ export default function EthIndiaCommunityPage({
         {
           image: "/images/week.png",
           title: "User Onboarding Leaderboard 🤝",
-          description: `${totalOnboardingDetails.totalValue} of 100 Onboardings`,
+          description: `${totalOnboardingDetails.totalValue} of 100 onboardings`,
           type: "active",
           position: totalOnboardingDetails.userPosition,
           totalContributors: totalOnboardingDetails.totalContributors,
