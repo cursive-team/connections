@@ -21,11 +21,11 @@ import ImportDevconButton from "@/features/oauth/ImportDevconButton";
 import ToggleSwitch from "@/components/ui/Switch";
 import useSettings from "@/hooks/useSettings";
 import { storeAddChipRequest } from "@/lib/chip/addChip";
-import { toggleGraphConsent } from "@/lib/storage/localStorage/graph";
 import { DataImportSource } from "@types";
 import { deleteImports } from "@/lib/imports/delete";
 import AddNotificationButton from "@/features/notification/AddNotificationButton";
 import { exportConnectionsToCSV } from "@/lib/exports";
+// import { toggleGraphConsent } from "@/lib/storage/localStorage/graph";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -37,9 +37,9 @@ const ProfilePage: React.FC = () => {
     router.push("/login");
   };
 
-  const toggleGraph = async () => {
-    await toggleGraphConsent();
-  };
+  // const toggleGraph = async () => {
+  //   await toggleGraphConsent();
+  // };
 
   const handleExportConnectionsToCSV = async () => {
     if (window.confirm("Are you sure you want to export your connections?")) {
