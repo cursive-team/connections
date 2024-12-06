@@ -1,21 +1,20 @@
 import {z} from "zod";
 
 export enum SocketRequestType {
-  TAP_BACK = "TAP_BACK",
-  PSI = "PSI",
+  PULL_TAP_BACK_MSG = "PULL_TAP_BACK_MSG",
+  PULL_PSI_MSG = "PULL_PSI_MSG",
   EXPUNGE = "EXPUNGE",
 }
 
 export const SocketRequestTypeSchema = z.nativeEnum(SocketRequestType);
 
 export enum SocketResponseType {
-  TAP_BACK = "TAP_BACK",
-  PSI = "PSI",
+  PULL_TAP_BACK_MSG = "PULL_TAP_BACK_MSG",
+  PULL_PSI_MSG = "PULL_PSI_MSG",
   ERROR = "ERROR"
 }
 
 export const SocketResponseTypeSchema = z.nativeEnum(SocketResponseType);
-
 
 export const SocketErrorPayloadSchema = z.object({
   error: z.string(),

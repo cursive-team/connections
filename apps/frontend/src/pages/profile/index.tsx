@@ -26,6 +26,7 @@ import { deleteImports } from "@/lib/imports/delete";
 import AddNotificationButton from "@/features/notification/AddNotificationButton";
 import { exportConnectionsToCSV } from "@/lib/exports";
 // import { toggleGraphConsent } from "@/lib/storage/localStorage/graph";
+import { toggleAutomaticPSISetting } from "@/lib/storage/localStorage/settings";
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
@@ -46,6 +47,11 @@ const ProfilePage: React.FC = () => {
       await exportConnectionsToCSV();
     }
     router.push("/profile");
+  };
+
+  const toggleAutomaticPSI = async () => {
+    logClientEvent("toggle-setting-automatic-psi", {});
+    await toggleAutomaticPSISetting();
   };
 
   const handleImportDeletion = async () => {
@@ -376,7 +382,16 @@ const ProfilePage: React.FC = () => {
                 }}
               />
             </div>
-            {/* <div className="py-0">
+            <div className="py-0">
+              <ToggleSwitch
+                label="Refresh PSI automatically"
+                checked={!!user?.userData?.settings?.automaticPSIEnabled}
+                onChange={() => {
+                  toggleAutomaticPSI();
+                }}
+              />
+            </div>
+            {/*<div className="py-0">
               <ToggleSwitch
                 label="Join anonymous tap graph exhibit"
                 checked={!!user?.tapGraphEnabled}

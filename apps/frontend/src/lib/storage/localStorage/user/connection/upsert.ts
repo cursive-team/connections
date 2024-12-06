@@ -1,11 +1,10 @@
 import { upsertConnectionBackup } from "@/lib/backup";
-import { saveBackupAndUpdateStorage } from "../../utils";
-import { CommentData, CommentDataSchema } from "@/lib/storage/types";
-import { getUserAndSession } from "..";
+import { saveBackupAndUpdateStorage } from "@/lib/storage/localStorage/utils";
+import { getUserAndSession } from "@/lib/storage/localStorage/user";
 
-export const updateComment = async (
+export const upsertConnectionRefreshPSI = async (
   connectionUsername: string,
-  commentData: CommentData
+  refreshPSI: boolean,
 ): Promise<void> => {
   const { user, session } = await getUserAndSession();
 
@@ -14,14 +13,9 @@ export const updateComment = async (
     throw new Error("Connection not found");
   }
 
-  const validatedCommentData = CommentDataSchema.parse({
-    ...commentData,
-    lastUpdatedAt: new Date(),
-  });
-
   const updatedConnection = {
     ...connection,
-    comment: validatedCommentData,
+    refreshPSI: refreshPSI,
   };
 
   const connectionBackup = upsertConnectionBackup({

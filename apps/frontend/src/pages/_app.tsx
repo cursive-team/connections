@@ -119,6 +119,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     gateUnregisteredUser();
   });
 
+
+  // Note: this is becoming the de facto client event loop
   // Refresh imports when the page is refreshed
   useEffect(() => {
     const refreshImports = async () => {

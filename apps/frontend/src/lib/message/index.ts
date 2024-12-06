@@ -14,6 +14,7 @@ import {
 
 export * from "./tapBack";
 export * from "./edge";
+export * from "./psi";
 
 import { BASE_API_URL } from "@/config";
 import { storage } from "@/lib/storage";

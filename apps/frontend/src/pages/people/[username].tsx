@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { storage } from "@/lib/storage";
-import { Connection, Session, User, UserData } from "@/lib/storage/types";
+import { Connection, Session, User } from "@/lib/storage/types";
 import { toast } from "sonner";
 import { ChipIssuer, ChipTapResponse, errorToString, GetChipIdResponse, SocketRequestType, TapParams, } from "@types";
 import { AppButton } from "@/components/ui/Button";
@@ -14,8 +14,6 @@ import { ProfileImage } from "@/components/ui/ProfileImage";
 import { CursiveLogo } from "@/components/ui/HeaderCover";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { hotTakeLabels, tensionPairs } from "@/common/constants";
-import { hashCommit } from "@/lib/psi/hash";
-import { BASE_API_URL } from "@/config";
 import Link from "next/link";
 import { TensionSlider } from "../tensions";
 import { Icons } from "@/components/icons/Icons";
@@ -27,10 +25,11 @@ import { cn } from "@/lib/frontend/util";
 import { getConnectionSigPubKey } from "@/lib/user";
 import { socketEmit, useSocket } from "@/lib/socket";
 import { IntersectionAccordion } from "@/components/ui/IntersectionAccordion";
-import { updateUserData } from "@/lib/storage/localStorage/user/userData";
-import { flowerSize, flowerType } from "@/lib/garden";
 import { CringeSlider } from "@/components/ui/CringeSlider";
 import { getChipId } from "@/lib/chip/update";
+import { flowerSize, flowerType } from "@/lib/garden";
+import { Intersection, refreshPSI, triggerConnectionRefreshPSI, updateConnectionPSISize } from "@/lib/psi/refresh";
+import { upsertConnectionRefreshPSI } from "@/lib/storage/localStorage/user/connection/upsert";
 
 interface CommentModalProps {
   username: string;
@@ -199,14 +198,7 @@ const UserProfilePage: React.FC = () => {
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [refreshLoading, setRefreshLoading] = useState(false);
   const [waitingForOtherUser, setWaitingForOtherUser] = useState(false);
-  const [verifiedIntersection, setVerifiedIntersection] = useState<{
-    tensions: string[];
-    hotTakes: string[];
-    contacts: string[];
-    devconEvents: string[];
-    programmingLangs: string[];
-    starredRepos: string[];
-  } | null>(null);
+  const [verifiedIntersection, setVerifiedIntersection] = useState<Intersection | null>(null);
   const [isUnregistered, setIsUnregistered] = useState(false);
   const [copied, setCopied] = useState(false);
   const [chipId, setChipId] = useState("");
@@ -270,6 +262,23 @@ const UserProfilePage: React.FC = () => {
             setShowCommentModal(true);
           }
 
+          // If refreshPSI set to true, run refreshPSI and get most recent verified intersection
+          if (user && user.connections && user.connections[username]) {
+            const connection = user.connections[username];
+
+            if (connection.refreshPSI) {
+
+              // Ideally this would get the existing PSI rather than refreshing it, but there's no guarantee the
+              // result will still exist in memory.
+              const newVerifiedIntersection = await refreshPSI(user, connection);
+
+              setVerifiedIntersection(newVerifiedIntersection);
+
+              // Update connection, should not pull PSI again, otherwise it pulls redundantly
+              await upsertConnectionRefreshPSI(username, false);
+            }
+          }
+
         } else if (unregisteredUser) {
           // In unregistered user case, cannot do PSIs which require user object
           setConnection(unregisteredUser.connections[username]);
@@ -290,7 +299,7 @@ const UserProfilePage: React.FC = () => {
     };
 
     fetchConnectionAndTapInfo();
-  }, [username, router]);
+  }, [username, router, user]);
 
   const handleCloseCommentModal = async () => {
     logClientEvent("user-profile-comment-modal-closed", {});
@@ -326,7 +335,7 @@ const UserProfilePage: React.FC = () => {
         if (recipient) {
           socketEmit({
             socketInstance: socket,
-            type: SocketRequestType.TAP_BACK,
+            type: SocketRequestType.PULL_TAP_BACK_MSG,
             recipientSigPubKey: recipient,
           });
         }
@@ -390,219 +399,38 @@ const UserProfilePage: React.FC = () => {
 
   const updatePSIOverlap = async () => {
     setRefreshLoading(true);
-    if (!connection || !user) {
+    if (!connection || !user || !session) {
       setRefreshLoading(false);
       return;
     }
 
     try {
-      let tensions: string[] = [];
-      if (user.userData.tensionsRating?.revealAnswers) {
-        const tensionData = tensionPairs.map((tension, index) =>
-          user.userData.tensionsRating!.tensionRating[index] < 50
-            ? tension[0]
-            : tension[1]
-        );
-        tensions = await hashCommit(
-          user.encryptionPrivateKey,
-          connection.user.encryptionPublicKey,
-          tensionData
-        );
-      }
+      const newVerifiedIntersection = await refreshPSI(user, connection);
 
-      let hotTakes: string[] = [];
-      if (user.userData.hotTakesRating?.revealAnswers) {
-        const hotTakeData = hotTakeLabels.map((hotTake, index) => {
-          switch (user.userData.hotTakesRating!.rating[index]) {
-            case 0:
-              return "Based";
-            case 1:
-              return "Neutral";
-            case 2:
-              return "Cringe";
-            default:
-              return "";
-          }
-        });
-        hotTakes = await hashCommit(
-          user.encryptionPrivateKey,
-          connection.user.encryptionPublicKey,
-          hotTakeData
-        );
-      }
-
-      const contactData = Object.keys(user.connections);
-      const contacts = await hashCommit(
-        user.encryptionPrivateKey,
-        connection.user.encryptionPublicKey,
-        contactData
-      );
-
-      // Devcon events
-      let devconEventTitles: string[] = [];
-      let devconEvents: string[] = [];
-      if (user.userData?.devcon?.schedule) {
-        devconEventTitles = user.userData.devcon.schedule.map(
-          (event) => event.title
-        );
-        devconEvents = await hashCommit(
-          user.encryptionPrivateKey,
-          connection.user.encryptionPublicKey,
-          devconEventTitles
-        );
-      }
-
-      let languageNames: string[] = [];
-      let programmingLangHashes: string[] = [];
-      if (user.userData?.github?.programmingLanguages?.value) {
-        languageNames = Object.keys(
-          user.userData?.github?.programmingLanguages?.value
-        );
-
-        programmingLangHashes = await hashCommit(
-          user.encryptionPrivateKey,
-          connection.user.encryptionPublicKey,
-          languageNames
-        );
-      }
-
-      let repoNames: string[] = [];
-      let starredReposHashes: string[] = [];
-      if (user.userData?.github?.starredRepos?.value) {
-        repoNames = user.userData.github.starredRepos.value;
-        starredReposHashes = await hashCommit(
-          user.encryptionPrivateKey,
-          connection.user.encryptionPublicKey,
-          user.userData?.github?.starredRepos?.value
-        );
-      }
-
-      const [secretHash] = await hashCommit(
-        user.encryptionPrivateKey,
-        connection.user.encryptionPublicKey,
-        [""]
-      );
-
-      const response = await fetch(
-        `${BASE_API_URL}/user/refresh_intersection`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            secretHash,
-            index: user.userData.username < connection.user.username ? 0 : 1,
-            intersectionState: {
-              tensions,
-              hotTakes,
-              contacts,
-              devconEvents,
-              programmingLangs: programmingLangHashes,
-              starredRepos: starredReposHashes,
-            },
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`HTTP error! status: ${errorData.error}`);
-      }
-
-      if (socket && connection) {
-        // Get recipient id (pub key)
-        const recipient: string | null = getConnectionSigPubKey(
-          user,
-          connection.user.username
-        );
-
-        if (recipient) {
-          socketEmit({
-            socketInstance: socket,
-            type: SocketRequestType.PSI,
-            recipientSigPubKey: recipient,
-          });
-        }
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        const translatedContacts = [];
-        for (const hashContact of data.verifiedIntersectionState.contacts) {
-          const index = contacts.findIndex(
-            (contact) => contact === hashContact
-          );
-          if (index !== -1) {
-            translatedContacts.push(contactData[index]);
-          }
-        }
-
-        const translatedEvents = [];
-        for (const hashEvent of data.verifiedIntersectionState.devconEvents) {
-          const index = devconEvents.findIndex((event) => event === hashEvent);
-          if (index !== -1) {
-            translatedEvents.push(devconEventTitles[index]);
-          }
-        }
-
-        const translatedLangs = [];
-        for (const hashLang of data.verifiedIntersectionState.programmingLangs) {
-          const index = programmingLangHashes.findIndex((lang) => lang === hashLang);
-          if (index !== -1) {
-            translatedLangs.push(languageNames[index]);
-          }
-        }
-
-        const translatedRepos = [];
-        for (const hashRepo of data.verifiedIntersectionState.starredRepos) {
-          const index = starredReposHashes.findIndex(
-            (repo) => repo === hashRepo
-          );
-
-          if (index !== -1) {
-            translatedRepos.push(repoNames[index]);
-          }
-        }
-
-        const newVerifiedIntersection = {
-          contacts: translatedContacts,
-          hotTakes: data.verifiedIntersectionState.hotTakes,
-          tensions: data.verifiedIntersectionState.tensions,
-          devconEvents: translatedEvents,
-          programmingLangs: translatedLangs,
-          starredRepos: translatedRepos,
-        };
+      if (newVerifiedIntersection) {
+        // If non-null, the refresh was successful
+        logClientEvent("user-finished-psi", {});
 
         setVerifiedIntersection(newVerifiedIntersection);
 
         // set the size of intersection here
-        const intersectionSize: number = JSON.stringify(
-          newVerifiedIntersection
-        ).length;
+        await updateConnectionPSISize(newVerifiedIntersection, user, session, connection);
 
-        const newUserData: UserData = user.userData;
-        if (!newUserData.connectionPSISize) {
-          newUserData.connectionPSISize = {};
+        if (socket) {
+          // If socket available and automatic PSI setting enabled, trigger connection to also automatically refresh PSI
+          // intersection
+          await triggerConnectionRefreshPSI(socket, user, connection);
+        } else {
+          // If socket not available, explicitly nudge
+          if (!waitingForOtherUser) {
+            toast.info(
+              `Ask ${connection.user.username} to refresh to see results!`
+            );
+            setWaitingForOtherUser(false);
+          }
         }
-
-        newUserData.connectionPSISize[connection.user.username] =
-          intersectionSize;
-
-        // Update the size on the user object
-        if (user && session) {
-          await updateUserData(newUserData);
-        }
-
-        logClientEvent("user-finished-psi", {});
-        if (!waitingForOtherUser) {
-          toast.info(
-            `Ask ${connection.user.username} to refresh to see results!`
-          );
-        }
-        setWaitingForOtherUser(false);
       } else {
+        // This case means the intersection was not successful, ie the other side needs to also refresh.
         toast.info(
           `Ask ${connection.user.username} to press "Discover" after tapping!`
         );
@@ -840,12 +668,12 @@ const UserProfilePage: React.FC = () => {
                   ) : (
                     <div className="text-sm text-link-primary font-sans font-normal">
                       {verifiedIntersection.contacts.map((contact, index) => (
-                        <>
-                          <span className="text-label-primary">
-                            {index !== 0 && " | "}
-                          </span>
+                        <div key={index}>
+                        <span className="text-label-primary">
+                          {index !== 0 && " | "}
+                        </span>
                           <Link href={`/people/${contact}`}>{contact}</Link>
-                        </>
+                        </div>
                       ))}
                     </div>
                   )}
@@ -971,7 +799,7 @@ const UserProfilePage: React.FC = () => {
                   )}
                 </IntersectionAccordion>
 
-                <IntersectionAccordion label="Shared programming languages" icon="⚛">
+                <IntersectionAccordion label="Shared programming languages" icon="🤖">
                   {verifiedIntersection.contacts.length === 0 ? (
                     <div className="text-sm text-label-primary font-sans font-normal">
                       No programming languages.
