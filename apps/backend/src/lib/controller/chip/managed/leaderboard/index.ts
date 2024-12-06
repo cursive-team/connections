@@ -17,7 +17,7 @@ import { pollJobResult } from "@/lib/util";
 ManagedChipClient.prototype.GetLeaderboardEntryValue = async function (
   username: string,
   chipIssuer: ChipIssuer,
-  entryType: LeaderboardEntryType,
+  entryType: LeaderboardEntryType
 ): Promise<number> {
   try {
     const existingEntry = await this.prismaClient.leaderboardEntry.findFirst({
@@ -33,7 +33,10 @@ ManagedChipClient.prototype.GetLeaderboardEntryValue = async function (
     }
     return 0;
   } catch (error) {
-    console.error("Failed to get leaderboard entry value:", errorToString(error));
+    console.error(
+      "Failed to get leaderboard entry value:",
+      errorToString(error)
+    );
     throw new Error("Failed to get leaderboard entry value");
   }
 };
@@ -384,28 +387,6 @@ ManagedChipClient.prototype.PollProofResults = async function () {
         },
       });
 
-      // Compute daily leaderboards for Devcon 2024
-      const THAILAND_OFFSET = 7; // UTC+7
-
-      const timeWindows = {
-        day1: {
-          start: new Date("2024-11-12T00:00:00+07:00"), // Nov 12 12AM Thailand
-          end: new Date("2024-11-12T18:00:00+07:00"), // Nov 12 6PM Thailand
-        },
-        day2: {
-          start: new Date("2024-11-13T00:00:00+07:00"),
-          end: new Date("2024-11-13T18:00:00+07:00"),
-        },
-        day3: {
-          start: new Date("2024-11-14T00:00:00+07:00"),
-          end: new Date("2024-11-14T18:00:00+07:00"),
-        },
-        day4: {
-          start: new Date("2024-11-15T00:00:00+07:00"),
-          end: new Date("2024-11-15T18:00:00+07:00"),
-        },
-      };
-
       // Get all proofs for this user and calculate nullifier counts
       const userProofs = await this.prismaClient.proof.findMany({
         where: {
@@ -413,8 +394,6 @@ ManagedChipClient.prototype.PollProofResults = async function () {
           jobCompleted: true,
         },
       });
-
-      console.log(job.username, userProofs);
 
       // Verify all pubkeyNullifierRandomnessHash are the same
       const uniquePubkeyNullifierRandomnessHashes = new Set<string>();
@@ -431,10 +410,6 @@ ManagedChipClient.prototype.PollProofResults = async function () {
 
       // compute new leaderboard entries for each day
       const pubkeyNullifiersByDay = {
-        day1: new Set<string>(),
-        day2: new Set<string>(),
-        day3: new Set<string>(),
-        day4: new Set<string>(),
         total: new Set<string>(),
       };
 
@@ -443,33 +418,6 @@ ManagedChipClient.prototype.PollProofResults = async function () {
 
         // Add to total set
         pubkeyNullifiersByDay.total.add(proof.pubkeyNullifier);
-
-        // Convert UTC to Thailand time
-        const thailandTime = new Date(proof.createdAt);
-        thailandTime.setHours(thailandTime.getHours() + THAILAND_OFFSET);
-
-        // Check which day this proof belongs to
-        if (
-          thailandTime >= timeWindows.day1.start &&
-          thailandTime <= timeWindows.day1.end
-        ) {
-          pubkeyNullifiersByDay.day1.add(proof.pubkeyNullifier);
-        } else if (
-          thailandTime >= timeWindows.day2.start &&
-          thailandTime <= timeWindows.day2.end
-        ) {
-          pubkeyNullifiersByDay.day2.add(proof.pubkeyNullifier);
-        } else if (
-          thailandTime >= timeWindows.day3.start &&
-          thailandTime <= timeWindows.day3.end
-        ) {
-          pubkeyNullifiersByDay.day3.add(proof.pubkeyNullifier);
-        } else if (
-          thailandTime >= timeWindows.day4.start &&
-          thailandTime <= timeWindows.day4.end
-        ) {
-          pubkeyNullifiersByDay.day4.add(proof.pubkeyNullifier);
-        }
       }
 
       // Update leaderboard entries for each type
@@ -478,25 +426,7 @@ ManagedChipClient.prototype.PollProofResults = async function () {
           entryType: LeaderboardEntryType.DEVCON_2024_TAP_COUNT,
           value: pubkeyNullifiersByDay.total.size,
         },
-        {
-          entryType: LeaderboardEntryType.DEVCON_2024_DAY_1_TAP_COUNT,
-          value: pubkeyNullifiersByDay.day1.size,
-        },
-        {
-          entryType: LeaderboardEntryType.DEVCON_2024_DAY_2_TAP_COUNT,
-          value: pubkeyNullifiersByDay.day2.size,
-        },
-        {
-          entryType: LeaderboardEntryType.DEVCON_2024_DAY_3_TAP_COUNT,
-          value: pubkeyNullifiersByDay.day3.size,
-        },
-        {
-          entryType: LeaderboardEntryType.DEVCON_2024_DAY_4_TAP_COUNT,
-          value: pubkeyNullifiersByDay.day4.size,
-        },
       ];
-
-      console.log(pubkeyNullifiersByDay);
 
       for (const update of leaderboardUpdates) {
         const existingEntry =
@@ -570,7 +500,10 @@ ManagedChipClient.prototype.IncrementLeaderboardEntry = async function (
     }
     return;
   } catch (error) {
-    console.error("Failed to increment leaderboard entry:", errorToString(error));
+    console.error(
+      "Failed to increment leaderboard entry:",
+      errorToString(error)
+    );
     throw new Error("Failed to increment leaderboard entry");
   }
 };
