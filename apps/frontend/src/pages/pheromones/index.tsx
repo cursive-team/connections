@@ -50,15 +50,23 @@ export default function PheromonesPage() {
               <div className="text-sm">
                 Come by our{" "}
                 <a
+                  href="https://ethindia2024.devfolio.co/schedule#:~:text=Buliding%20multi%2Dparty%20computation%20apps"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-link-primary"
+                >
+                  Building MPC apps workshop
+                </a>{" "}
+                on Friday at 6:40pm to learn more! Or watch our{" "}
+                <a
                   href="https://app.devcon.org/schedule/LMCG3V"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-link-primary"
                 >
-                  Digital Pheromones workshop
-                </a>{" "}
-                on 11/13 at 3:20pm in Classroom A to try a live demo and learn
-                more.
+                  Devcon talk
+                </a>
+                .
               </div>
               <div className="text-sm">
                 Multi-party computation enables <b>digital pheromones</b>, the
