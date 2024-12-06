@@ -799,7 +799,7 @@ const UserProfilePage: React.FC = () => {
                   )}
                 </IntersectionAccordion>
 
-                <IntersectionAccordion label="Shared programming languages" icon="⚛">
+                <IntersectionAccordion label="Shared programming languages" icon="🤖">
                   {verifiedIntersection.contacts.length === 0 ? (
                     <div className="text-sm text-label-primary font-sans font-normal">
                       No programming languages.
