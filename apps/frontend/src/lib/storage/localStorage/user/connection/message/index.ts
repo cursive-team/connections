@@ -25,10 +25,7 @@ import { createTapBackReceivedActivity } from "@/lib/activity";
 import { sha256 } from "js-sha256";
 import { upsertSocialGraphEdge } from "@/lib/graph";
 import { DEVCON } from "@/lib/storage/types";
-import {
-  refreshPSI,
-  updateConnectionPSISize
-} from "@/lib/psi/refresh";
+import { upsertConnectionRefreshPSI } from "@/lib/storage/localStorage/user/connection/upsert";
 
 function handleConnectionTapBacks(session: Session, user: User, lastMessageTimestamp: Date, connectionTapBacks: Record<string, TapBackMessage[]>): CreateBackupData[] {
 
@@ -155,18 +152,13 @@ async function handleEdges(session: Session, user: User, messages: EdgeMessage[]
   return newBackupEntries;
 }
 
-async function handleConnectionPSIs(session: Session, user: User, messages: PSIMessage[]): Promise<void> {
+async function handleConnectionPSIs(user: User, messages: PSIMessage[]): Promise<void> {
   for (const message of messages) {
     if (message.senderUsername && user.connections && user.connections[message.senderUsername]) {
 
       if (user.userData?.settings?.automaticPSIEnabled) {
-        // Only if the setting is enabled should PSI be automatically refreshed
-        const newVerifiedIntersection = await refreshPSI(user, user.connections[message.senderUsername]);
-
-        if (newVerifiedIntersection) {
-          // If intersection is successful, set the size of intersection
-          await updateConnectionPSISize(newVerifiedIntersection, user, session, user.connections[message.senderUsername], true);
-        }
+        // Only if the setting is enabled should PSI be automatically refreshed when navigating to the connection's page
+        await upsertConnectionRefreshPSI(message.senderUsername, true);
       }
     }
   }
@@ -251,8 +243,7 @@ export const processNewMessages = async (
   newBackupEntries = newBackupEntries.concat(edgeBackups);
 
   // Handle all psi messages
-  // Currently we do not back up PSIs, therefore there's no associated backup
-  await handleConnectionPSIs(session, user, psiMessages);
+  await handleConnectionPSIs(user, psiMessages);
 
   // Update last message fetched at
   const lastMessageFetchedAtBackup = createLastMessageFetchedAtBackup({
