@@ -6,10 +6,9 @@ import Image from "next/image";
 export const StoreBanner = () => {
   const { darkTheme } = useSettings();
   return (
-    // <Link href="/shop" className="flex w-full">
     <div className="flex flex-col gap-1">
       <span className="text-base font-bold font-sans text-label-primary">
-        Museum store
+        Merch store
       </span>
       <div
         className={cn(
@@ -20,7 +19,7 @@ export const StoreBanner = () => {
         <div className="p-2 flex items-center gap-[10px]">
           <div className="flex-shrink-0">
             <Image
-              src="/images/shop-cover.svg"
+              src="/images/shop-cover-ethindia.png"
               alt="shop cover"
               width={80}
               height={80}
@@ -30,11 +29,11 @@ export const StoreBanner = () => {
           <div className="flex flex-col flex-1">
             {/* <p className="text-xs font-bold text-label-quaternary">47 taps</p> */}
             <h2 className="text-sm font-bold text-label-primary">
-              Tap chips to get exclusive merch!
+              Get merch by onboarding people!
             </h2>
             <p className="text-xs font-medium text-label-quaternary">
-              Featuring hand-made NFC necklaces, locally sourced NFC bracelets,
-              and historical cryptography T-shirts.
+              Featuring hand-made NFC bracelets and Cursive T-shirts. Find them
+              at the Cursive / PSE booth!
             </p>
           </div>
         </div>
