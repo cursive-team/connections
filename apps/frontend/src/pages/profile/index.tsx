@@ -50,6 +50,7 @@ const ProfilePage: React.FC = () => {
   };
 
   const toggleAutomaticPSI = async () => {
+    logClientEvent("toggle-setting-automatic-psi", {});
     await toggleAutomaticPSISetting();
   };
 
