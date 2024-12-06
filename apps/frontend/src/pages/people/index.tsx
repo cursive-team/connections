@@ -438,9 +438,11 @@ const PeoplePage: React.FC = () => {
       seoTitle="People"
       header={
         <div className="flex flex-col w-full">
-          <span className="text-label-primary text-xl leading-none font-bold tracking-[-0.1px] py-4 inline-flex">
-            {`Connections (${Object.keys(connections)?.length})`}
-            <div className="flex" style={{ marginLeft: "auto" }}>
+          <div className="flex items-center py-4">
+            <span className="text-label-primary text-xl leading-none font-bold tracking-[-0.1px]">
+              {`Connections (${Object.keys(connections)?.length})`}
+            </span>
+            <div className="flex ml-auto">
               <button
                 className="relative"
                 onClick={handleExportConnectionsToCSV}
@@ -460,8 +462,8 @@ const PeoplePage: React.FC = () => {
                 <Icons.Search size={24} />
               </button>
             </div>
-          </span>
-          <div className="py-3 flex gap-6">
+          </div>
+          <div className="flex gap-6">
             <NavTab
               active={activeTab === ActiveTab.GARDEN}
               onClick={() => {
