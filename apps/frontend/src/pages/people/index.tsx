@@ -142,7 +142,7 @@ const PeoplePage: React.FC = () => {
       </ul>
     ),
     [ActiveTab.GARDEN]: (
-      <ul className="grid grid-cols-2 gap-[1px]">
+      <ul className="py-3 grid grid-cols-2 gap-[1px]">
         {Object.values(connections).map((connection) => {
           let flowerStage = "sprout";
           if (psiSize && psiSize[connection.user.username]) {
