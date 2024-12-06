@@ -5,7 +5,11 @@ import { TelegramDataSchema } from "./telegramData";
 import { SignalDataSchema } from "./signalData";
 import { InstagramDataSchema } from "./instagramData";
 import { FarcasterDataSchema } from "./farcasterData";
-import { HotTakesRatingSchema, LannaDataSchema, TensionsRatingSchema } from "./lannaData";
+import {
+  HotTakesRatingSchema,
+  LannaDataSchema,
+  TensionsRatingSchema,
+} from "./lannaData";
 import { StravaDataSchema } from "./stravaData";
 import { GithubDataSchema } from "./githubData";
 import { LannaHalloweenDataSchema } from "./lannaHalloweenData";
@@ -50,7 +54,6 @@ export const FlattenedUserDataSchema = z.object({
   bio: z.string(),
   signaturePublicKey: z.string(),
   encryptionPublicKey: z.string(),
-  psiPublicKeyLink: z.string().optional(),
   twitterHandle: z.string().optional(),
   telegramHandle: z.string().optional(),
   signalHandle: z.string().optional(),

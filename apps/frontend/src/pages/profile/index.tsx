@@ -376,7 +376,7 @@ const ProfilePage: React.FC = () => {
                 }}
               />
             </div>
-            <div className="py-0">
+            {/* <div className="py-0">
               <ToggleSwitch
                 label="Join anonymous tap graph exhibit"
                 checked={!!user?.tapGraphEnabled}
@@ -384,12 +384,20 @@ const ProfilePage: React.FC = () => {
                   toggleGraph();
                 }}
               />
-            </div>
+            </div> */}
             <div className="">
               <AddNotificationButton buttonText="Add notifications" />
             </div>
             <div className="">
-              <AppButton onClick={handleExportConnectionsToCSV} variant="outline">
+              <AppButton onClick={handleImportDeletion} variant="outline">
+                Delete data imports
+              </AppButton>
+            </div>
+            <div className="">
+              <AppButton
+                onClick={handleExportConnectionsToCSV}
+                variant="primary"
+              >
                 Export your connections
               </AppButton>
             </div>
@@ -400,24 +408,6 @@ const ProfilePage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        <div className="p-4">
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1">
-              <span className="text-lg font-semibold text-label-primary font-sans">
-                Destructive Settings
-              </span>
-            </div>
-
-            <div className="">
-              <AppButton onClick={handleImportDeletion} variant="outline">
-                Delete data imports
-              </AppButton>
-            </div>
-          </div>
-        </div>
-
-
       </AppLayout>
     </>
   );
