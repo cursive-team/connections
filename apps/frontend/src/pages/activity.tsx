@@ -40,6 +40,7 @@ const parseActivity = (activity: Activity): ActivityDisplayItem => {
         USER: "user",
         EDGE_CITY_LANNA: "Edge City Lanna",
         DEVCON_2024: "Devcon 2024",
+        ETH_INDIA_2024: "Eth India 2024",
         TESTING: "Testing",
       };
       return {

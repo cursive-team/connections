@@ -112,7 +112,10 @@ const RegisterDevcon: React.FC<RegisterDevconProps> = ({ savedTap }) => {
       // This is the only place this method should be applied
       // Backups will only be applied if an unregistered user exists (which will only happen if an accountless client
       // goes through the tap flow)
-      await applyBackupsToNewUser(backupPassword);
+      await applyBackupsToNewUser(
+        backupPassword,
+        savedTap.tapResponse.chipIssuer
+      );
 
       const { user, session } = await storage.getUserAndSession();
 

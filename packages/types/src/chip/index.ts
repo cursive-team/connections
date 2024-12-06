@@ -5,6 +5,7 @@ export enum ChipIssuer {
   USER = "USER",
   EDGE_CITY_LANNA = "EDGE_CITY_LANNA",
   DEVCON_2024 = "DEVCON_2024",
+  ETH_INDIA_2024 = "ETH_INDIA_2024",
   TESTING = "TESTING",
 }
 
@@ -83,10 +84,12 @@ export const GetChipIdRequestParamsSchema = z.object({
   chipIssuer: ChipIssuerSchema,
 });
 
-export type GetChipIdRequestParams = z.infer<typeof GetChipIdRequestParamsSchema>;
+export type GetChipIdRequestParams = z.infer<
+  typeof GetChipIdRequestParamsSchema
+>;
 
 export const GetChipIdResponseSchema = z.object({
-  id: z.string()
+  id: z.string(),
 });
 
 export type GetChipIdResponse = z.infer<typeof GetChipIdResponseSchema>;

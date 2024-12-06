@@ -64,6 +64,25 @@ async function main() {
     skipDuplicates: true,
   });
 
+  const testEthIndia2024Chips = [
+    { chipId: "TESTETHINDIA001" },
+    { chipId: "TESTETHINDIA002" },
+    { chipId: "TESTETHINDIA003" },
+    { chipId: "TESTETHINDIA004" },
+    { chipId: "TESTETHINDIA005" },
+  ];
+
+  await prisma.chip.createMany({
+    data: testEthIndia2024Chips.map((chip) => ({
+      chipIssuer: "ETH_INDIA_2024",
+      chipId: chip.chipId,
+      chipVariant: "NTAG212",
+      chipIsRegistered: false,
+      chipTapCount: 0,
+    })),
+    skipDuplicates: true,
+  });
+
   const testLocationChips = [
     { chipId: "TESTLOC001" },
     { chipId: "TESTLOC002" },

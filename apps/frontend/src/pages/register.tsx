@@ -1,3 +1,4 @@
+import RegisterDevcon from "@/features/register/devcon/Register";
 import RegisterEthIndia from "@/features/register/ethindia/Register";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { storage } from "@/lib/storage";
@@ -48,7 +49,11 @@ const Register: React.FC = () => {
     return null;
   }
 
-  if (savedTap.tapResponse.chipIssuer === ChipIssuer.TESTING) {
+  if (savedTap.tapResponse.chipIssuer === ChipIssuer.DEVCON_2024) {
+    return <RegisterDevcon savedTap={savedTap} />;
+  }
+
+  if (savedTap.tapResponse.chipIssuer === ChipIssuer.ETH_INDIA_2024) {
     return <RegisterEthIndia savedTap={savedTap} />;
   }
 
