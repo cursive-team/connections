@@ -15,6 +15,7 @@ import Image from "next/image";
 import { logClientEvent } from "@/lib/frontend/metrics";
 import { Icons } from "@/components/icons/Icons";
 import { flowerSize, flowerType } from "@/lib/garden";
+import { exportConnectionsToCSV } from "@/lib/exports";
 
 function sortConnections(connections: Record<string, Connection>) {
   return Object.entries(connections)
@@ -66,6 +67,12 @@ const PeoplePage: React.FC = () => {
 
     fetchConnections();
   }, [router]);
+
+  const handleExportConnectionsToCSV = async () => {
+    if (window.confirm("Are you sure you want to export your connections?")) {
+      await exportConnectionsToCSV();
+    }
+  };
 
   const ViewMapping: Record<ActiveTab, React.ReactNode> = {
     [ActiveTab.LIST]: (
@@ -208,9 +215,19 @@ const PeoplePage: React.FC = () => {
     <AppLayout
       seoTitle="People"
       header={
-        <div className="flex flex-col">
-          <span className="text-label-primary text-xl leading-none font-bold tracking-[-0.1px] py-4">
+        <div className="flex flex-col w-full">
+          <span className="text-label-primary text-xl leading-none font-bold tracking-[-0.1px] py-4 inline-flex">
             {`Connections (${Object.keys(connections)?.length})`}
+            <div className="flex" style={{marginLeft: "auto"}}>
+              <button className="relative" onClick={handleExportConnectionsToCSV}>
+                <Image
+                  width={25}
+                  height={25}
+                  alt="download connections"
+                  src="/images/download.svg"
+                />
+              </button>
+            </div>
           </span>
           <div className="py-3 flex gap-6">
             <NavTab
