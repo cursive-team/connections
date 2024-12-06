@@ -247,7 +247,7 @@ export default function EthIndiaCommunityPage({
         }
         leaderboardDetails={leaderboardTapDetails}
         leaderboardEntries={leaderboardTapEntries}
-        goal={2000}
+        goal={500}
         unit="tap"
         organizer="Cursive"
         organizerDescription="Cryptography for human connection"
