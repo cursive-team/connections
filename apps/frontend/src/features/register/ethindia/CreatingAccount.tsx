@@ -25,19 +25,19 @@ const CreatingAccount: React.FC<CreatingAccountProps> = ({
       title: "Share and connect effortlessly",
       description:
         "We've securely encrypted your info. With a simple tap, you can share your details and make connections instantly—without compromising security.",
-      image: "/images/devcon_register_cover.png",
+      image: "/images/default_header_cover.svg",
     },
     {
       title: "Discover new commonalities",
       description:
         "Use Private Set Intersection (PSI) to find out what you have in common with people you meet. Any data not shared between you two is kept private!",
-      image: "/images/devcon_register_cover.png",
+      image: "/images/default_header_cover.svg",
     },
     {
       title: "Import data for richer connections",
       description:
         "Import data from Twitter, Github, and Strava to discover more meaningful commonalities with other attendees! All the data you import is private to you.",
-      image: "/images/devcon_register_cover.png",
+      image: "/images/default_header_cover.svg",
     },
   ];
 
