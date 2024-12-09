@@ -18,10 +18,10 @@ function flattenUserData(userData: UserData): FlattenedUserData {
 }
 
 function exportToCSV(connections: FlattenedUserData[]): Blob {
-  const separator = ",";
+  const delimiter = ";";
   const keys = Object.keys(connections[0]);
   const csvContent =
-    keys.join(separator) +
+    keys.join(delimiter) +
     "\n" +
     connections
       .map((connection) => {
@@ -32,7 +32,7 @@ function exportToCSV(connections: FlattenedUserData[]): Blob {
               connection[keyTyped] === undefined ? "" : connection[keyTyped];
             return cell;
           })
-          .join(separator);
+          .join(delimiter);
       })
       .join("\n");
 
