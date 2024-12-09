@@ -1,5 +1,5 @@
 import { storage } from "@/lib/storage";
-import { Connection, FlattenedUserData, UserData } from "@/lib/storage/types";
+import { Connection, FlattenedUserData } from "@/lib/storage/types";
 import { toast } from "sonner";
 
 // NOTE: the CSV delimiter is a semicolon. If a user-inputted value has a semicolon it's swapped out with a comma to
@@ -8,10 +8,12 @@ function swapSemicolons(data: string | undefined): string {
   if (!data) {
     return "";
   }
-  return data.replace(";", ",");
+  return data.replaceAll(";", ",");
 }
 
-function flattenAndEscapeUserData(userData: UserData): FlattenedUserData {
+function flattenAndEscapeUserData(user: Connection): FlattenedUserData {
+  const userData = user.user;
+  const comment = user.comment;
   return {
     username: swapSemicolons(userData.username),
     displayName: swapSemicolons(userData.displayName),
@@ -23,6 +25,8 @@ function flattenAndEscapeUserData(userData: UserData): FlattenedUserData {
     farcasterHandle: swapSemicolons(userData.farcaster?.username),
     bio: swapSemicolons(userData.bio),
     pronouns: swapSemicolons(userData.pronouns),
+    note: swapSemicolons(comment?.note),
+    emoji: swapSemicolons(comment?.emoji),
   };
 }
 
@@ -58,7 +62,7 @@ function convertConnectionsToCSVBlob(
     const username = usernames[i];
     const connectionData = connections[username];
     if (connectionData) {
-      connectionRows.push(flattenAndEscapeUserData(connectionData.user));
+      connectionRows.push(flattenAndEscapeUserData(connectionData));
     }
   }
 
