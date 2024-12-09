@@ -74,6 +74,8 @@ export const FlattenedUserDataSchema = z.object({
   instagramHandle: z.string().optional(),
   farcasterHandle: z.string().optional(),
   pronouns: z.string().optional(),
+  note: z.string().optional(),
+  emoji: z.string().optional(),
 });
 
 export type FlattenedUserData = z.infer<typeof FlattenedUserDataSchema>;
