@@ -2,18 +2,27 @@ import { storage } from "@/lib/storage";
 import { Connection, FlattenedUserData, UserData } from "@/lib/storage/types";
 import { toast } from "sonner";
 
-function flattenUserData(userData: UserData): FlattenedUserData {
+// NOTE: the CSV delimiter is a semicolon. If a user-inputted value has a semicolon it's swapped out with a comma to
+// prevent the exported CSV from being corrupted
+function swapSemicolons(data: string | undefined): string {
+  if (!data) {
+    return "";
+  }
+  return data.replace(";", ",");
+}
+
+function flattenAndEscapeUserData(userData: UserData): FlattenedUserData {
   return {
-    username: userData.username,
-    displayName: userData.displayName,
-    bio: userData.bio,
+    username: swapSemicolons(userData.username),
+    displayName: swapSemicolons(userData.displayName),
     signaturePublicKey: userData.signaturePublicKey,
     encryptionPublicKey: userData.encryptionPublicKey,
-    twitterHandle: userData.twitter?.username,
-    signalHandle: userData.signal?.username,
-    instagramHandle: userData.instagram?.username,
-    farcasterHandle: userData.farcaster?.username,
-    pronouns: userData.pronouns,
+    twitterHandle: swapSemicolons(userData.twitter?.username),
+    signalHandle: swapSemicolons(userData.signal?.username),
+    instagramHandle: swapSemicolons(userData.instagram?.username),
+    farcasterHandle: swapSemicolons(userData.farcaster?.username),
+    bio: swapSemicolons(userData.bio),
+    pronouns: swapSemicolons(userData.pronouns),
   };
 }
 
@@ -49,7 +58,7 @@ function convertConnectionsToCSVBlob(
     const username = usernames[i];
     const connectionData = connections[username];
     if (connectionData) {
-      connectionRows.push(flattenUserData(connectionData.user));
+      connectionRows.push(flattenAndEscapeUserData(connectionData.user));
     }
   }
 
