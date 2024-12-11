@@ -301,7 +301,9 @@ const PeoplePage: React.FC = () => {
             <div className="flex items-center gap-4 py-4">
               <button
                 onClick={handleCloseSearch}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                className={cn("p-2 rounded-full transition-colors",
+                  darkTheme ? "invert hover:bg-gray-800 dark:hover:bg-gray-100" :
+                    "hover:bg-gray-100 dark:hover:bg-gray-800")}
                 aria-label="Back"
               >
                 <span className="text-xl">&lt;</span>
@@ -450,13 +452,17 @@ const PeoplePage: React.FC = () => {
                 <Image
                   width={25}
                   height={25}
+                  className={cn("", darkTheme ? "invert": "")}
                   alt="download connections"
                   src="/images/download.svg"
                 />
               </button>
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                className={cn("p-2 rounded-full transition-colors",
+                  darkTheme ? "invert hover:bg-gray-800 dark:hover:bg-gray-100":
+                    "hover:bg-gray-100 dark:hover:bg-gray-800"
+                )}
                 aria-label="Search connections"
               >
                 <Icons.Search size={24} />
