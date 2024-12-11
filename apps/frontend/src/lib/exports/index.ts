@@ -4,29 +4,43 @@ import { toast } from "sonner";
 
 // NOTE: the CSV delimiter is a semicolon. If a user-inputted value has a semicolon it's swapped out with a comma to
 // prevent the exported CSV from being corrupted
-function swapSemicolons(data: string | undefined): string {
+function sanitizeCSVExport(data: string | undefined): string {
   if (!data) {
     return "";
   }
-  return data.replaceAll(";", ",");
+  // Delimiter
+  data = data.replaceAll(";", ",");
+
+  // Escape Characters
+  data = data.replaceAll("\n", " ");
+  data = data.replaceAll("\b", " ");
+  data = data.replaceAll("\f", " ");
+  data = data.replaceAll("\r", " ");
+  data = data.replaceAll("\t", " ");
+  data = data.replaceAll("\v", " ");
+
+  // Handle comments
+  data = data.replaceAll("#", " ");
+
+  return data
 }
 
 function flattenAndEscapeUserData(user: Connection): FlattenedUserData {
   const userData = user.user;
   const comment = user.comment;
   return {
-    username: swapSemicolons(userData.username),
-    displayName: swapSemicolons(userData.displayName),
+    username: sanitizeCSVExport(userData.username),
+    displayName: sanitizeCSVExport(userData.displayName),
     signaturePublicKey: userData.signaturePublicKey,
     encryptionPublicKey: userData.encryptionPublicKey,
-    twitterHandle: swapSemicolons(userData.twitter?.username),
-    signalHandle: swapSemicolons(userData.signal?.username),
-    instagramHandle: swapSemicolons(userData.instagram?.username),
-    farcasterHandle: swapSemicolons(userData.farcaster?.username),
-    bio: swapSemicolons(userData.bio),
-    pronouns: swapSemicolons(userData.pronouns),
-    note: swapSemicolons(comment?.note),
-    emoji: swapSemicolons(comment?.emoji),
+    twitterHandle: sanitizeCSVExport(userData.twitter?.username),
+    signalHandle: sanitizeCSVExport(userData.signal?.username),
+    instagramHandle: sanitizeCSVExport(userData.instagram?.username),
+    farcasterHandle: sanitizeCSVExport(userData.farcaster?.username),
+    bio: sanitizeCSVExport(userData.bio),
+    pronouns: sanitizeCSVExport(userData.pronouns),
+    note: sanitizeCSVExport(comment?.note),
+    emoji: sanitizeCSVExport(comment?.emoji),
   };
 }
 
