@@ -9,7 +9,13 @@ function sanitizeCSVExport(data: string | undefined): string {
     return "";
   }
   data = data.replaceAll(";", ",");
-  return data.replaceAll("\n", " ");
+  data = data.replaceAll("\n", " ");
+  data = data.replaceAll("\b", " ");
+  data = data.replaceAll("\f", " ");
+  data = data.replaceAll("\r", " ");
+  data = data.replaceAll("\t", " ");
+  data = data.replaceAll("\v", " ");
+  return data
 }
 
 function flattenAndEscapeUserData(user: Connection): FlattenedUserData {
